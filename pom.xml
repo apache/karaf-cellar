@@ -148,7 +148,7 @@
         <karaf.version>2.2.0</karaf.version>
         <felix.configadmin.version>1.2.8</felix.configadmin.version>
         <springdm.version>1.2.1</springdm.version>
-        <hazelcast.version>1.9.3-RC</hazelcast.version>
+        <hazelcast.version>1.9.3</hazelcast.version>
 
         <slf4j.version>1.5.8</slf4j.version>
         <junit.version>4.8.2</junit.version>
