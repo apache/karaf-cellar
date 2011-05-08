@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.Node;
@@ -26,7 +25,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author iocanel
+ * Command.
  */
 public class Command<R extends Result> extends Event {
 
@@ -101,4 +100,5 @@ public class Command<R extends Result> extends Event {
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
+
 }

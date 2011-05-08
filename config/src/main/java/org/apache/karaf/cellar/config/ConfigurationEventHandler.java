@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 
@@ -33,7 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author iocanel
+ * Configuration event handler.
  */
 public class ConfigurationEventHandler extends ConfigurationSupport implements EventHandler<RemoteConfigurationEvent> {
 
@@ -106,4 +105,5 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
     public Class<RemoteConfigurationEvent> getType() {
         return RemoteConfigurationEvent.class;
     }
+
 }

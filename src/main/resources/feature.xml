@@ -13,8 +13,7 @@
    limitations under the License.
   -->
 
-<features  xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
-    <repository>mvn:org.apache.karaf.assemblies.features/standard/${karaf.version}/xml/features</repository>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
     <feature name='hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
         <bundle>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
@@ -29,14 +28,14 @@
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
         <feature version='${springdm.version}'>spring-dm</feature>
-        <bundle>mvn:org.apache.karaf.cellar/core/${project.version}</bundle>
-        <bundle>mvn:org.apache.karaf.cellar/config/${project.version}</bundle>
-        <bundle>mvn:org.apache.karaf.cellar/features/${project.version}</bundle>
-        <bundle>mvn:org.apache.karaf.cellar/utils/${project.version}</bundle>
-        <bundle>mvn:org.apache.karaf.cellar/shell/${project.version}</bundle>
-        <bundle>mvn:org.apache.karaf.cellar/hazelcast/${project.version}</bundle>
-        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">mvn:org.apache.karaf.cellar/karaf-cellar/${project.version}/cfg/groups</configfile>
-        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">mvn:org.apache.karaf.cellar/karaf-cellar/${project.version}/cfg/node</configfile>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">mvn:org.apache.karaf/cellar/${project.version}/cfg/groups</configfile>
+        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">mvn:org.apache.karaf/cellar/${project.version}/cfg/node</configfile>
     </feature>
 
 </features>
