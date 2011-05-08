@@ -11,18 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
-
 
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
- * @author iocanel
+ * Remote configuration event.
  */
 public class RemoteConfigurationEvent extends Event {
 
     public RemoteConfigurationEvent(String id) {
         super(id);
     }
+
 }

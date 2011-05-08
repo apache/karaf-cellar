@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -33,7 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Local configuration listener.
  */
 public class LocalConfigurationListener extends ConfigurationSupport implements ConfigurationListener {
 
@@ -118,4 +117,5 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
     public void setProducerList(List<EventProducer> producerList) {
         this.producerList = producerList;
     }
+
 }
