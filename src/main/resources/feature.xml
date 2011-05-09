@@ -21,13 +21,13 @@
 
     <feature name='hazelcast-monitor' description='Hazelcast console' version='${hazelcast.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
-        <feature version='${karaf.version}'>war</feature>
+        <feature>war</feature>
         <bundle>mvn:com.hazelcast/hazelcast-monitor/${hazelcast.version}/war</bundle>
     </feature>
 
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
-        <feature version='${springdm.version}'>spring-dm</feature>
+        <feature>spring-dm</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
