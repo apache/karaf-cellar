@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.core.completers;
 
-
 import org.apache.karaf.cellar.core.Node;
 
 /**

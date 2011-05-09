@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.Consumer;
@@ -25,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author iocanel
+ * Manage handlers command handler.
  */
 public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersCommand, ManageHandlersResult> {
 
@@ -84,4 +83,5 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     public Switch getSwitch() {
         return getSwitch();
     }
+
 }

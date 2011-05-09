@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.karaf.cellar.core.Group;
@@ -19,7 +18,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
-import org.apache.karaf.cellar.shell.ClusterCommandSuppot;
+import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,14 +26,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Group command support.
  */
-public abstract class GroupSupport extends ClusterCommandSuppot {
+public abstract class GroupSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%1s %-20s %s";
 
     /**
-     * Execut the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -53,7 +52,6 @@ public abstract class GroupSupport extends ClusterCommandSuppot {
         }
 
         command.setAction(action);
-
 
         if (group != null) {
             command.setGroupName(group);
@@ -83,4 +81,5 @@ public abstract class GroupSupport extends ClusterCommandSuppot {
         }
         return null;
     }
+
 }

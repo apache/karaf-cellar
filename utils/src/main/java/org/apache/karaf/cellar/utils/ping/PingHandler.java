@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.CommandHandler;
@@ -19,7 +18,7 @@ import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 
 /**
- * @author iocanel
+ * Ping handler.
  */
 public class PingHandler extends CommandHandler<Ping, Pong> {
 
@@ -41,4 +40,5 @@ public class PingHandler extends CommandHandler<Ping, Pong> {
     public Switch getSwitch() {
         return commandSwitch;
     }
+
 }

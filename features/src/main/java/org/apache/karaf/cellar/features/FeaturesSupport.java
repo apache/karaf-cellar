@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.CellarSupport;
@@ -29,14 +28,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author iocanel
+ * Features support.
  */
 public class FeaturesSupport extends CellarSupport {
 
     private static Logger logger = LoggerFactory.getLogger(FeaturesSupport.class);
 
     protected FeaturesService featuresService;
-
 
     /**
      * Initialization method
@@ -71,7 +69,6 @@ public class FeaturesSupport extends CellarSupport {
         }
         return false;
     }
-
 
     /**
      * Pushes a {@code Feature} and its status to the distributed list of features.
@@ -128,7 +125,6 @@ public class FeaturesSupport extends CellarSupport {
         }
     }
 
-
     public FeaturesService getFeaturesService() {
         return featuresService;
     }
@@ -136,4 +132,5 @@ public class FeaturesSupport extends CellarSupport {
     public void setFeaturesService(FeaturesService featuresService) {
         this.featuresService = featuresService;
     }
+
 }

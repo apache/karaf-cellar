@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * @author iocanel
+ * Pong result handler.
  */
 public class PongHandler extends ResultHandler<Pong> {
 
@@ -25,4 +24,5 @@ public class PongHandler extends ResultHandler<Pong> {
     public Class<Pong> getType() {
         return Pong.class;
     }
+
 }

@@ -11,17 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.shell.completers;
 
 import org.apache.karaf.cellar.core.Group;
 
 /**
- * @author iocanel
+ * All groups completer.
  */
 public class AllGroupsCompleter extends GroupCompleterSupport {
+
     @Override
     protected boolean acceptsGroup(Group group) {
         return true;
     }
+
 }

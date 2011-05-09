@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import java.io.Serializable;
 
 /**
- * @author iocanel
+ * Generic dispatcher interface.
  */
 public interface Dispatcher<T extends Serializable> {
 
@@ -27,4 +26,5 @@ public interface Dispatcher<T extends Serializable> {
      * @param obj
      */
     public void dispatch(T obj);
+
 }

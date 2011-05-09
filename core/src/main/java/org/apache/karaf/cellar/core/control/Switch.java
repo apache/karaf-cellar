@@ -11,13 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 /**
  * An interface that describes objects that can be turned on/off and act like a switch.
- *
- * @author iocanel
  */
 public interface Switch {
 
@@ -44,4 +41,5 @@ public interface Switch {
      * @return
      */
     public SwitchStatus getStatus();
+
 }

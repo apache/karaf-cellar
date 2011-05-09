@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import java.io.Serializable;
@@ -19,13 +18,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Cellar group.
  */
 public class Group implements Serializable {
 
     private String name;
     private Set<Node> members = new HashSet<Node>();
-
 
     /**
      * Constructor
@@ -68,4 +66,5 @@ public class Group implements Serializable {
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
     }
+
 }

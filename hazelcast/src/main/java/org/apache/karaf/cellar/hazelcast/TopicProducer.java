@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -24,11 +23,8 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventProducer;
 
-
 /**
  * Produces {@code Event}s into the distributed {@code ITopic}.
- *
- * @author iocanel
  */
 public class TopicProducer<E extends Event> implements EventProducer<E> {
 
@@ -54,7 +50,6 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
      */
     public void destroy() {
     }
-
 
     /**
      * Propagates an event into the distributed {@code ITopic}.
@@ -96,4 +91,5 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
     public void setNode(Node node) {
         this.node = node;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.Group;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Local features listener.
  */
 public class LocalFeaturesListener extends FeaturesSupport implements org.apache.karaf.features.FeaturesListener {
 
@@ -119,4 +118,5 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void setProducerList(List<EventProducer> producerList) {
         this.producerList = producerList;
     }
+
 }

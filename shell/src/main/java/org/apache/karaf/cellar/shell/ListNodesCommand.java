@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
@@ -20,10 +19,10 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * List nodes command.
  */
 @Command(scope = "cluster", name = "list-nodes", description = "Lists the nodes of the cluster.")
-public class ListNodesCommand extends ClusterCommandSuppot {
+public class ListNodesCommand extends ClusterCommandSupport {
 
     private static final String LIST_FORMAT = "%1s %4s %-20s %5s %s";
 

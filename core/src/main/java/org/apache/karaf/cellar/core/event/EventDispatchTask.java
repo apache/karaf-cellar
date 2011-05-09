@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author iocanel
+ * Event dispatcher task.
  */
 public class EventDispatchTask<E extends Event> implements Runnable {
 
@@ -103,4 +102,5 @@ public class EventDispatchTask<E extends Event> implements Runnable {
     public void setInterval(long interval) {
         this.interval = interval;
     }
+
 }

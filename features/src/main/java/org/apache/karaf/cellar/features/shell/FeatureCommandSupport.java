@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * @author: iocanel
+ * Abstract feature command.
  */
 @Command(scope = "cluster", name = "feature-install", description = "Installs a feature to all members of a group")
 public abstract class FeatureCommandSupport extends CellarCommandSupport {
@@ -38,7 +37,6 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
     protected FeaturesService featuresService;
     protected BundleContext bundleContext;
-
 
     /**
      * Forces the features status for a specific group.
@@ -108,4 +106,5 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
     public void setFeaturesService(FeaturesService featuresService) {
         this.featuresService = featuresService;
     }
+
 }

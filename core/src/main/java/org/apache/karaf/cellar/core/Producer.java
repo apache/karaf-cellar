@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import org.apache.karaf.cellar.core.control.Switch;
@@ -19,9 +18,7 @@ import org.apache.karaf.cellar.core.control.Switch;
 import java.io.Serializable;
 
 /**
- * Generic Producer Interface.
- *
- * @author iocanel
+ * Generic producer interface.
  */
 public interface Producer<T extends Serializable> {
 
@@ -38,4 +35,5 @@ public interface Producer<T extends Serializable> {
      * @return
      */
     public Switch getSwitch();
+
 }

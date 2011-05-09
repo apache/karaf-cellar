@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.karaf.cellar.core.Group;
@@ -24,17 +23,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Group delete command.
  */
 @Command(scope = "cluster", name = "group-delete", description = "Deletes a group")
 public class GroupDeleteCommand extends GroupSupport {
-
 
     @Argument(index = 0, name = "group", description = "The name of the group to delete", required = false, multiValued = false)
     String group;
 
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -60,4 +58,5 @@ public class GroupDeleteCommand extends GroupSupport {
         }
         return null;
     }
+
 }
