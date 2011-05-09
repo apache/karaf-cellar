@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.ClusterManager;
@@ -36,7 +35,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Features synchronizer.
  */
 public class FeaturesSynchronizer extends FeaturesSupport implements Synchronizer {
 
@@ -171,7 +170,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
     }
 
-
     @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
@@ -213,4 +211,5 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void setFeaturesService(FeaturesService featuresService) {
         this.featuresService = featuresService;
     }
+
 }

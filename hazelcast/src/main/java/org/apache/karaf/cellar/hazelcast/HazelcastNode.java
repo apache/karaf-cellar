@@ -11,14 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
-
 
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * @author iocanel
+ * Hazelcast cluster node.
  */
 public class HazelcastNode implements Node {
 
@@ -28,7 +26,7 @@ public class HazelcastNode implements Node {
     private int port;
 
     /**
-     * Cosntructor
+     * Constructor
      *
      * @param host
      * @param port
@@ -76,4 +74,5 @@ public class HazelcastNode implements Node {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

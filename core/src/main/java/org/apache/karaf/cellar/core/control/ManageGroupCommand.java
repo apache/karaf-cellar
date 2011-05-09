@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * @author: iocanel
+ * Manager group command.
  */
 public class ManageGroupCommand extends Command<ManageGroupResult> {
 
@@ -44,4 +43,5 @@ public class ManageGroupCommand extends Command<ManageGroupResult> {
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
+
 }

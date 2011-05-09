@@ -11,17 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * @author iocanel
+ * Pong result.
  */
 public class Pong extends Result {
 
     public Pong(String id) {
         super(id);
     }
+
 }

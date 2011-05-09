@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.Node;
@@ -24,7 +23,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author iocanel
+ * Clustered execution context.
  */
 public class ClusteredExecutionContext implements ExecutionContext {
 
@@ -65,4 +64,5 @@ public class ClusteredExecutionContext implements ExecutionContext {
     public void setCommandStore(CommandStore commandStore) {
         this.commandStore = commandStore;
     }
+
 }

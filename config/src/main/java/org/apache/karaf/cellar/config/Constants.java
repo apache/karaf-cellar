@@ -11,13 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 /**
- * @author iocanel
+ * Cellar config constants.
  */
 public class Constants {
+
     public static final String CATEGORY = "config";
     public static final String CONFIGURATION_MAP = "org.apache.karaf.cellar.configuration.map";
+
 }

@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * @author iocanel
+ * Consumer switch result handler.
  */
 public class ConsumerSwitchResultHandler extends ResultHandler<ConsumerSwitchResult> {
 
@@ -25,4 +24,5 @@ public class ConsumerSwitchResultHandler extends ResultHandler<ConsumerSwitchRes
     public Class<ConsumerSwitchResult> getType() {
         return ConsumerSwitchResult.class;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 
@@ -21,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author iocanel
+ * Manage handlers result.
  */
 public class ManageHandlersResult extends Result {
 
@@ -43,4 +42,5 @@ public class ManageHandlersResult extends Result {
     public void setHandlers(Map<String, String> handlers) {
         this.handlers = handlers;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config.shell.completers;
 
 import org.apache.karaf.cellar.config.Constants;
@@ -27,7 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author: iocanel
+ * Command completer on the cluster config.
  */
 public class ClusterConfigCompleter implements Completer {
 
@@ -72,4 +71,5 @@ public class ClusterConfigCompleter implements Completer {
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Cluster manager interface.
  */
 public interface ClusterManager {
 
@@ -109,4 +108,5 @@ public interface ClusterManager {
      * Restarts the clustering support on the {@link Node}.
      */
     public void restart();
+
 }

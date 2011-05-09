@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import org.apache.karaf.cellar.core.control.Switch;
@@ -19,10 +18,9 @@ import org.apache.karaf.cellar.core.control.Switch;
 import java.io.Serializable;
 
 /**
- * @author iocanel
+ * Generic handler.
  */
 public interface Handler<T extends Serializable> {
-
 
     /**
      * Returns the Class of the object that is to be handled.
@@ -37,4 +35,5 @@ public interface Handler<T extends Serializable> {
      * @return
      */
     public Switch getSwitch();
+
 }

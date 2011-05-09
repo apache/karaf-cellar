@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -33,7 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Configuration synchronizer.
  */
 public class ConfigurationSynchronizer extends ConfigurationSupport implements Synchronizer {
 
@@ -194,4 +193,5 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     public void setProducerList(List<EventProducer> producerList) {
         this.producerList = producerList;
     }
+
 }

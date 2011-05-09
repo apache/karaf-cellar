@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import java.io.Serializable;
 
 /**
- * @author iocanel
+ * Feature info.
  */
 public class FeatureInfo implements Serializable {
 
@@ -64,4 +63,5 @@ public class FeatureInfo implements Serializable {
         result = 31 * result + (version != null ? version.hashCode() : 0);
         return result;
     }
+
 }

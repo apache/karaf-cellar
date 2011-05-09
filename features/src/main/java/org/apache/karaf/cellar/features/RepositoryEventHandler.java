@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 
 /**
- * @author iocanel
+ * Repository event handler.
  */
 public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<RemoteRepositoryEvent> {
 
@@ -66,4 +65,5 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     public Switch getSwitch() {
         return eventSwitch;
     }
+
 }

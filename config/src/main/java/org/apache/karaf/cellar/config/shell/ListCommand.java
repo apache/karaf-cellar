@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.config.Constants;
@@ -23,7 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author: iocanel
+ * List cluster config command.
  */
 @Command(scope = "cluster", name = "config-list", description = "List the config pids that are assigned to a group")
 public class ListCommand extends ConfigCommandSupport {
@@ -54,4 +53,5 @@ public class ListCommand extends ConfigCommandSupport {
         }
         return null;
     }
+
 }

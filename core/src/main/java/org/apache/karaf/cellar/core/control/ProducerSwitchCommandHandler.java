@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.Producer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 
 /**
- * @author iocanel
+ * Producer switch command handler.
  */
 public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchCommand, ProducerSwitchResult> {
 
@@ -69,4 +68,5 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
     public void setProducer(Producer producer) {
         this.producer = producer;
     }
+
 }

@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.FeatureEvent.EventType;
 
 /**
- * @author iocanel
+ * Remove features event.
  */
 public class RemoteFeaturesEvent extends Event {
 
@@ -46,4 +45,5 @@ public class RemoteFeaturesEvent extends Event {
     public EventType getType() {
         return type;
     }
+
 }

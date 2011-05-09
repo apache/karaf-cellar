@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.completers;
 
 import org.apache.karaf.cellar.core.ClusterManager;
@@ -22,7 +21,7 @@ import org.apache.karaf.shell.console.completer.StringsCompleter;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Completer on the node.
  */
 public abstract class NodeCompleterSupport implements Completer {
 
@@ -54,4 +53,5 @@ public abstract class NodeCompleterSupport implements Completer {
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
     }
+
 }

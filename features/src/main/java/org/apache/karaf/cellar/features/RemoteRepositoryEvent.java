@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.RepositoryEvent.EventType;
 
 /**
- * @author iocanel
+ * Remote repository event.
  */
 public class RemoteRepositoryEvent extends Event {
 
@@ -32,4 +31,5 @@ public class RemoteRepositoryEvent extends Event {
     public EventType getType() {
         return type;
     }
+
 }

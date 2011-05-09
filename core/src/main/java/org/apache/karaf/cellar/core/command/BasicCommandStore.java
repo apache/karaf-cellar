@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author iocanel
+ * Basic command store.
  */
 public class BasicCommandStore implements CommandStore {
 
@@ -31,4 +30,5 @@ public class BasicCommandStore implements CommandStore {
     public void setPending(ConcurrentMap<String, Command> pending) {
         this.pending = pending;
     }
+
 }

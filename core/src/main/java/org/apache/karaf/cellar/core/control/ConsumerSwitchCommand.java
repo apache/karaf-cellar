@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * @author iocanel
+ * Consumer switch command.
  */
 public class ConsumerSwitchCommand extends Command<ConsumerSwitchResult> {
 
@@ -61,4 +60,5 @@ public class ConsumerSwitchCommand extends Command<ConsumerSwitchResult> {
     public void setStatus(SwitchStatus status) {
         this.status = status;
     }
+
 }

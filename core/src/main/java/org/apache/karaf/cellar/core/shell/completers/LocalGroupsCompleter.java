@@ -11,16 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.shell.completers;
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * @author: iocanel
+ * Local groups completer.
  */
 public class LocalGroupsCompleter extends GroupCompleterSupport {
+
     @Override
     protected boolean acceptsGroup(Group group) {
         Node node = groupManager.getNode();
@@ -28,4 +28,5 @@ public class LocalGroupsCompleter extends GroupCompleterSupport {
             return true;
         else return false;
     }
+
 }
