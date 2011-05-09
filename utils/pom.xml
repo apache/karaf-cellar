@@ -36,13 +36,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
-            !org.apache.karaf.cellar.utils*;version=${project.version},
-            org.apache.karaf.cellar.core*;version=${project.version},
+            !org.apache.karaf.cellar.utils*,
+            org.apache.karaf.cellar.core*;version="${project.version}",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
         <osgi.export>
-            org.apache.karaf.cellar.utils*;version=${project.version}
+            org.apache.karaf.cellar.utils*;version="${project.version}"
         </osgi.export>
     </properties>
 
