@@ -37,14 +37,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             !org.apache.karaf.cellar.features*,
-            org.apache.karaf.cellar.core*;version=${project.version},
-            org.apache.karaf.cellar.common*;version=${project.version},
-            org.apache.karaf.features;version="[2,3)",
+            org.apache.karaf.cellar.core*;version="${project.version}",
+            org.apache.karaf.cellar.common*;version="${project.version}",
+            org.apache.karaf.features;version="[2,4)",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
         <osgi.export>
-            org.apache.karaf.cellar.features*;version=${project.version}
+            org.apache.karaf.cellar.features*;version="${project.version}"
         </osgi.export>
     </properties>
 
