@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -23,7 +22,7 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.Map;
 
 /**
- * iocanel iocanel
+ * List group features command.
  */
 @Command(scope = "cluster", name = "features-list", description = "List the features that are assigned to a group")
 public class ListGroupFeatures extends FeatureCommandSupport {
@@ -58,4 +57,5 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         }
         return null;
     }
+
 }

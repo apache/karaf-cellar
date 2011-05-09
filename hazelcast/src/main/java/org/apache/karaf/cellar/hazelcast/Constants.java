@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 /**
- * @author: iocanel
+ * Hazelcast constants.
  */
 public class Constants {
+
     public static final String TOPIC = "org.apache.karaf.cellar.event.topic";
+
 }

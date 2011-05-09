@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.apache.karaf.cellar.core.Consumer;
 
 /**
- * @author iocanel
+ * Event consumer.
  */
 public interface EventConsumer<E extends Event> extends Consumer<E> {
 
@@ -27,4 +26,5 @@ public interface EventConsumer<E extends Event> extends Consumer<E> {
      * @param event
      */
     public void consume(E event);
+
 }

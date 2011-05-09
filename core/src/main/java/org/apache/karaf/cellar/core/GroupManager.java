@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Generic group manager interface.
  */
 public interface GroupManager {
 

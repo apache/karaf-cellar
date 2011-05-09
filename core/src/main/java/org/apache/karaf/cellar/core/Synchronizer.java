@@ -11,11 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 /**
- * @author: iocanel
+ * Generic synchronizer interface.
  */
 public interface Synchronizer {
 
@@ -35,4 +34,5 @@ public interface Synchronizer {
      * @return
      */
     public Boolean isSyncEnabled(Group group);
+
 }

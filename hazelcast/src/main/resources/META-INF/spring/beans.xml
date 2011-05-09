@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -10,16 +11,16 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-  -->
-
+-->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:osgi="http://www.springframework.org/schema/osgi"
        xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-       http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
-
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       ">
 
     <!-- Hazelcast hazelcast -->
     <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance"
@@ -151,7 +152,6 @@
     <osgi:service ref="manageGroupCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
     <osgi:service ref="manageGroupResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
-
     <osgi:reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
     <!-- Group Consumer & Producer Serices -->
@@ -161,6 +161,5 @@
                filter="(type = group)"/>
 
     <osgi:list id="synchronizers" cardinality="0..N" interface="org.apache.karaf.cellar.core.Synchronizer"/>
-
 
 </beans>

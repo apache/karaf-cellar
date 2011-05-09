@@ -11,15 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.apache.karaf.cellar.core.Producer;
 
 /**
  * Transmits events to the cluster.
- *
- * @author iocanel
  */
 public interface EventProducer<E extends Event> extends Producer<E> {
 
@@ -29,4 +26,5 @@ public interface EventProducer<E extends Event> extends Producer<E> {
      * @param event
      */
     public void produce(E event);
+
 }

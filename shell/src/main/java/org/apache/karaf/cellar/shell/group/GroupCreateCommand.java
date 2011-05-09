@@ -11,25 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 /**
- * @author iocanel
+ * Group create command.
  */
 @Command(scope = "cluster", name = "group-create", description = "Creates an empty group")
 public class GroupCreateCommand extends GroupSupport {
 
-
     @Argument(index = 0, name = "group", description = "The name of the group to join", required = false, multiValued = false)
     String group;
 
-
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -38,4 +35,5 @@ public class GroupCreateCommand extends GroupSupport {
     protected Object doExecute() throws Exception {
         return groupManager.createGroup(group);
     }
+
 }

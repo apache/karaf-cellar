@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Group;
@@ -22,7 +21,7 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.features.FeatureEvent;
 
 /**
- * @author: iocanel
+ * Uninstall feature command.
  */
 @Command(scope = "cluster", name = "features-uninstall", description = "Uninstalls a feature to the group")
 public class UninstallFeatureCommand extends FeatureCommandSupport {
@@ -48,4 +47,5 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
         updateFeatureStatus(groupName, feature, version, true);
         return null;
     }
+
 }

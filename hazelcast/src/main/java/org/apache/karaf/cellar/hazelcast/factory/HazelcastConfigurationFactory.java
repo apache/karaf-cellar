@@ -11,15 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast.factory;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.GroupConfig;
 
-
 /**
- * @author: iocanel
+ * Hazelcast configuration factory.
  */
 public class HazelcastConfigurationFactory {
 
@@ -31,4 +29,5 @@ public class HazelcastConfigurationFactory {
         config.setGroupConfig(groupConfig);
         return config;
     }
+
 }

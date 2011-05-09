@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.handler;
 
 import org.apache.karaf.cellar.core.ClusterManager;
@@ -22,7 +21,7 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Handlers command.
  */
 @Command(scope = "cluster", name = "handlers", description = "Starts the handler of the specified nodes.")
 public class HandlersStartCommand extends HandlersSupport {
@@ -38,9 +37,8 @@ public class HandlersStartCommand extends HandlersSupport {
     @Argument(index = 1, name = "node", description = "The id of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
-
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -65,4 +63,5 @@ public class HandlersStartCommand extends HandlersSupport {
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
     }
+
 }

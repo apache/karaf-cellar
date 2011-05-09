@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -25,14 +24,10 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 
-
 /**
  * Consumes messages from the distributed {@code ITopic} and calls the {@code EventDispatcher}.
- *
- * @author iocanel
  */
 public class TopicConsumer<E extends Event> implements EventConsumer<E>, MessageListener<E> {
-
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.topic.consumer";
 
@@ -118,4 +113,5 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     public void setNode(Node node) {
         this.node = node;
     }
+
 }

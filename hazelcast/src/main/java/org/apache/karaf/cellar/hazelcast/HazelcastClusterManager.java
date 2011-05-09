@@ -11,9 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
-
 
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
@@ -35,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Hazelcast cluster manager.
  */
 public class HazelcastClusterManager implements ClusterManager {
 
@@ -49,9 +47,7 @@ public class HazelcastClusterManager implements ClusterManager {
     private List<EventProducer> producerList;
     private List<EventConsumer> consumerList;
 
-
     private ConfigurationAdmin configurationAdmin;
-
 
     /**
      * Returns a named distributed map.
@@ -81,7 +77,6 @@ public class HazelcastClusterManager implements ClusterManager {
         producer.setNode(getNode());
         return producer;
     }
-
 
     /**
      * Returns the list of Hazelcast Nodes.
@@ -196,7 +191,6 @@ public class HazelcastClusterManager implements ClusterManager {
         instance.restart();
     }
 
-
     /**
      * Returns the Hazelcast instance.
      *
@@ -238,4 +232,5 @@ public class HazelcastClusterManager implements ClusterManager {
     public void setConsumerList(List<EventConsumer> consumerList) {
         this.consumerList = consumerList;
     }
+
 }

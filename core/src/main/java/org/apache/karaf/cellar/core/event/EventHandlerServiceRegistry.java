@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.osgi.framework.BundleContext;
@@ -22,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author iocanel
+ * Event handler service registry.
  */
 public class EventHandlerServiceRegistry<E extends Event> implements EventHandlerRegistry<E> {
 
@@ -60,4 +59,5 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
         }
         return null;
     }
+
 }

@@ -11,13 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.features;
 
 /**
- * @author iocanel
+ * Features constants.
  */
 public class Constants {
+
     public static final String REPOSITORIES = "org.apache.karaf.cellar.repositories";
     public static final String FEATURES = "org.apache.karaf.cellar.features";
     public static final String REPOSITORIES_CATEGORY = "repositories";

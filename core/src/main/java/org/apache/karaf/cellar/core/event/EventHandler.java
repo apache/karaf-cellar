@@ -11,12 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 
 import org.apache.karaf.cellar.core.Handler;
 
+/**
+ * Event handler interface.
+ */
 public interface EventHandler<E extends Event> extends Handler<E> {
 
     public static String MANAGED_FILTER = "(managed=true)";
@@ -25,4 +27,5 @@ public interface EventHandler<E extends Event> extends Handler<E> {
      * Called to handle {@code Event}.
      */
     public void handle(E event);
+
 }

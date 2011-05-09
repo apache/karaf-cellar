@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
@@ -21,11 +20,10 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Group quit command.
  */
 @Command(scope = "cluster", name = "group-quit", description = "Manages nodes and groups")
 public class GroupQuitCommand extends GroupSupport {
-
 
     @Argument(index = 0, name = "group", description = "The name of the group to join", required = false, multiValued = false)
     String group;
@@ -34,7 +32,7 @@ public class GroupQuitCommand extends GroupSupport {
     List<String> nodes;
 
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -43,4 +41,5 @@ public class GroupQuitCommand extends GroupSupport {
     protected Object doExecute() throws Exception {
         return doExecute(ManageGroupAction.QUIT, group, nodes);
     }
+
 }
