@@ -11,17 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
-
 /**
- * @author: iocanel
+ * Manage group action enum state.
  */
 public enum ManageGroupAction {
+
     SET,
     JOIN,
     QUIT,
     PURGE,
     LIST;
+
 }

@@ -60,7 +60,6 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring DM -->

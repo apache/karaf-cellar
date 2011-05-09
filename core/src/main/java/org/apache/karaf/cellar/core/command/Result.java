@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
- * @author iocanel
+ * Result event.
  */
 public class Result extends Event {
 
@@ -30,4 +29,5 @@ public class Result extends Event {
     public Boolean getForce() {
         return true;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.completers;
 
 
@@ -19,13 +18,11 @@ import org.apache.karaf.cellar.core.Node;
 
 /**
  * A completer which includes all nodes.
- *
- * @author iocanel
  */
 public class AllNodeCompleter extends NodeCompleterSupport {
 
     /**
-     * Always returns true
+     * Always returns true.
      *
      * @param node
      * @return
@@ -34,4 +31,5 @@ public class AllNodeCompleter extends NodeCompleterSupport {
     protected boolean acceptsNode(Node node) {
         return true;
     }
+
 }

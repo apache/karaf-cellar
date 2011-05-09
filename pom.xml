@@ -28,6 +28,7 @@
     </parent>
 
     <artifactId>cellar</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
@@ -155,6 +156,38 @@
                 <groupId>com.hazelcast</groupId>
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
+            </dependency>
+
+            <!-- Cellar -->
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.features</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.shell</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.utils</artifactId>
+                <version>${project.version}</version>
             </dependency>
 
         </dependencies>

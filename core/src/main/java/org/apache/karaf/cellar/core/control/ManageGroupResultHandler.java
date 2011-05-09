@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * @author: iocanel
+ * Manager group result handler.
  */
 public class ManageGroupResultHandler extends ResultHandler<ManageGroupResult> {
 
@@ -25,4 +24,5 @@ public class ManageGroupResultHandler extends ResultHandler<ManageGroupResult> {
     public Class<ManageGroupResult> getType() {
         return ManageGroupResult.class;
     }
+
 }

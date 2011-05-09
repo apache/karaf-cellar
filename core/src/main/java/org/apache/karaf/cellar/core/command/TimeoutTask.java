@@ -11,13 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 /**
  * A Runnable task that is used for scheduling command timeout events.
- *
- * @author iocanel
  */
 public class TimeoutTask implements Runnable {
 
@@ -39,4 +36,5 @@ public class TimeoutTask implements Runnable {
             store.getPending().remove(command);
         }
     }
+
 }

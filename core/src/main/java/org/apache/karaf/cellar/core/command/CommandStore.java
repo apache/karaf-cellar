@@ -11,17 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author iocanel
+ * Command store interface.
  */
 public interface CommandStore {
 
     public ConcurrentMap<String, Command> getPending();
 
     public void setPending(ConcurrentMap<String, Command> pending);
+
 }

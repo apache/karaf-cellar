@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Manager group command handler.
  */
 public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand, ManageGroupResult> {
 
@@ -147,4 +146,5 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     public Switch getSwitch() {
         return commandSwitch;
     }
+
 }

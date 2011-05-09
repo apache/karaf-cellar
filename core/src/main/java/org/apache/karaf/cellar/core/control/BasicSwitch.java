@@ -11,11 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 /**
- * @author iocanel
+ * Basic switch.
  */
 public class BasicSwitch implements Switch {
 
@@ -67,4 +66,5 @@ public class BasicSwitch implements Switch {
     public String getName() {
         return name;
     }
+
 }
