@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -21,8 +20,6 @@ import org.apache.karaf.cellar.core.event.EventHandler;
 
 /**
  * An event handler class the handles result event.
- *
- * @author iocanel
  */
 public class ResultHandler<R extends Result> implements EventHandler<R> {
 
@@ -62,4 +59,5 @@ public class ResultHandler<R extends Result> implements EventHandler<R> {
     public Switch getSwitch() {
         return handlerSwitch;
     }
+
 }

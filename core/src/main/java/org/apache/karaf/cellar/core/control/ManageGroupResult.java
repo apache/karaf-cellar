@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.Group;
@@ -21,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Manager group result.
  */
 public class ManageGroupResult extends Result {
 

@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * @author
+ * Manage handlers command.
  */
 public class ManageHandlersCommand extends Command<ManageHandlersResult> {
 
@@ -48,4 +47,5 @@ public class ManageHandlersCommand extends Command<ManageHandlersResult> {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
 }
