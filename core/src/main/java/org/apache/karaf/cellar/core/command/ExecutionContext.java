@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.Node;
@@ -19,9 +18,7 @@ import org.apache.karaf.cellar.core.Node;
 import java.util.Map;
 
 /**
- * Command Execution Context.
- *
- * @author iocanel
+ * Command execution context.
  */
 public interface ExecutionContext {
 
@@ -35,4 +32,5 @@ public interface ExecutionContext {
      * @throws Exception
      */
     public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws Exception;
+
 }

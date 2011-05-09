@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.CellarSupport;
@@ -24,7 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Command handler.
  */
 public abstract class CommandHandler<C extends Command<R>, R extends Result> extends CellarSupport implements EventHandler<C> {
 
@@ -76,4 +75,5 @@ public abstract class CommandHandler<C extends Command<R>, R extends Result> ext
     public void setProducer(Producer producer) {
         this.producer = producer;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.producer;
 
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -21,7 +20,7 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Producer start command.
  */
 @Command(scope = "cluster", name = "producer-start", description = "Turns on the producer capabilities of a node.")
 public class ProducerStartCommand extends ProducerSupport {
@@ -29,9 +28,8 @@ public class ProducerStartCommand extends ProducerSupport {
     @Argument(index = 0, name = "node", description = "The id of the node(s) to turn on/off event producer", required = false, multiValued = true)
     List<String> nodes;
 
-
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -40,4 +38,5 @@ public class ProducerStartCommand extends ProducerSupport {
     protected Object doExecute() throws Exception {
         return doExecute(nodes, SwitchStatus.ON);
     }
+
 }

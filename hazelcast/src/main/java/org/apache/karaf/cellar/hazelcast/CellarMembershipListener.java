@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -26,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Cellar membership listener.
  */
 public class CellarMembershipListener implements MembershipListener {
 
@@ -81,4 +80,5 @@ public class CellarMembershipListener implements MembershipListener {
     public void setSynchronizers(List<? extends Synchronizer> synchronizers) {
         this.synchronizers = synchronizers;
     }
+
 }

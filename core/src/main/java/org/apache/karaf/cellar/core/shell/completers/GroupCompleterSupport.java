@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.shell.completers;
 
 import org.apache.karaf.cellar.core.Group;
@@ -22,7 +21,7 @@ import org.apache.karaf.shell.console.completer.StringsCompleter;
 import java.util.List;
 
 /**
- * @author: iocanel
+ * Abstract group completer.
  */
 public abstract class GroupCompleterSupport implements Completer {
 
@@ -55,4 +54,5 @@ public abstract class GroupCompleterSupport implements Completer {
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
+
 }

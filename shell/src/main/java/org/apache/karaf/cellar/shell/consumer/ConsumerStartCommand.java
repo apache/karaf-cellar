@@ -11,9 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.consumer;
-
 
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.felix.gogo.commands.Argument;
@@ -22,7 +20,7 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.List;
 
 /**
- * @author iocanel
+ * Consumer start command.
  */
 @Command(scope = "cluster", name = "consumer-start", description = "Turns on/off the producer capabilities of a node.")
 public class ConsumerStartCommand extends ConsumerSupport {
@@ -31,7 +29,7 @@ public class ConsumerStartCommand extends ConsumerSupport {
     List<String> nodes;
 
     /**
-     * Execut the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -40,4 +38,5 @@ public class ConsumerStartCommand extends ConsumerSupport {
     protected Object doExecute() throws Exception {
         return doExecute(nodes, SwitchStatus.ON);
     }
+
 }

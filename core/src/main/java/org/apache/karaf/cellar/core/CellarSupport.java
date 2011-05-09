@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import org.apache.karaf.cellar.core.event.EventType;
@@ -27,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Cellar support.
  */
 public class CellarSupport {
 
@@ -207,4 +206,5 @@ public class CellarSupport {
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
+
 }

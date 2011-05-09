@@ -11,11 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 /**
- * @author iocanel
+ * Switch status enum.
  */
 public enum SwitchStatus {
 
@@ -35,4 +34,5 @@ public enum SwitchStatus {
     public void setValue(Boolean value) {
         this.value = value;
     }
+
 }

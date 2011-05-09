@@ -11,13 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 /**
- * @author: iocanel
+ * Configurations.
  */
 public class Configurations {
+
     public static final String DEFAULT_GROUP_NAME = "default";
     public static final String GROUP = "org.apache.karaf.cellar.groups";
     public static final String GROUPS_KEY = "groups";
@@ -29,4 +29,5 @@ public class Configurations {
     public static final String PARENT = "parent";
     public static final String WHITELIST = "whitelist";
     public static final String BLACKLIST = "blacklist";
+
 }

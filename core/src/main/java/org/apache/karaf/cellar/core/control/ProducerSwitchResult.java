@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * @author iocanel
+ * Producer switch result.
  */
 public class ProducerSwitchResult extends Result {
 
@@ -72,4 +71,5 @@ public class ProducerSwitchResult extends Result {
     public void setStatus(Boolean status) {
         this.status = status;
     }
+
 }

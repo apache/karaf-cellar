@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.slf4j.Logger;
@@ -21,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @author iocanel
+ * Event handler service registry dispatcher.
  */
 public class EventHandlerServiceRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
 
@@ -64,4 +63,5 @@ public class EventHandlerServiceRegistryDispatcher<E extends Event> implements E
     public void setThreadPool(ExecutorService threadPool) {
         this.threadPool = threadPool;
     }
+
 }

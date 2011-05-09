@@ -11,16 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
 /**
- * @author: iocanel
+ * Abstract Cluster command.
  */
-public abstract class ClusterCommandSuppot extends CellarCommandSupport {
+public abstract class ClusterCommandSupport extends CellarCommandSupport {
 
     protected ExecutionContext executionContext;
 
@@ -31,4 +30,5 @@ public abstract class ClusterCommandSuppot extends CellarCommandSupport {
     public void setExecutionContext(ExecutionContext executionContext) {
         this.executionContext = executionContext;
     }
+
 }

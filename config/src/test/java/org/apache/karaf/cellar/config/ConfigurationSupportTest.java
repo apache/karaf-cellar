@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 import org.junit.Assert;
@@ -21,7 +20,7 @@ import java.util.Dictionary;
 import java.util.Properties;
 
 /**
- * @author iocanel
+ * Configuration support test.
  */
 public class ConfigurationSupportTest {
 
@@ -57,4 +56,5 @@ public class ConfigurationSupportTest {
         String result = support.convertStrings(absolutePath, home, var);
         Assert.assertEquals(expectedResult, result);
     }
+
 }

@@ -11,18 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.apache.karaf.cellar.core.Dispatcher;
 
 /**
  * A dispatcher which dispatches each event to the appropriate Handler.
- *
- * @author iocanel
  */
 public interface EventDispatcher<E extends Event> extends Dispatcher<E> {
-
 
     /**
      * Dispatches the Event to the appropriate handler.
@@ -30,4 +26,5 @@ public interface EventDispatcher<E extends Event> extends Dispatcher<E> {
      * @param event
      */
     public void dispatch(E event);
+
 }

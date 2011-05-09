@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
@@ -23,10 +22,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 /**
- * @author iocanel
+ * Ping command.
  */
 @Command(scope = "cluster", name = "ping", description = "Pings the nodes of the cluster.")
-public class PingCommand extends ClusterCommandSuppot {
+public class PingCommand extends ClusterCommandSupport {
 
     @Argument(index = 0, name = "node", description = "The id of the node(s) to ping", required = true, multiValued = false)
     String nodeId;
@@ -36,7 +35,6 @@ public class PingCommand extends ClusterCommandSuppot {
 
     @Argument(index = 2, name = "interval", description = "The time in millis to wait between iterations", required = false, multiValued = false)
     Long interval = 1000L;
-
 
     @Override
     protected Object doExecute() throws Exception {
@@ -54,4 +52,5 @@ public class PingCommand extends ClusterCommandSuppot {
         }
         return null;
     }
+
 }

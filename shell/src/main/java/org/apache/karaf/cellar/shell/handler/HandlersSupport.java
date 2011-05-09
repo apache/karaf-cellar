@@ -11,27 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.handler;
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ManageHandlersCommand;
 import org.apache.karaf.cellar.core.control.ManageHandlersResult;
-import org.apache.karaf.cellar.shell.ClusterCommandSuppot;
+import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Handlers command support.
  */
-public abstract class HandlersSupport extends ClusterCommandSuppot {
+public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %-7s %s";
 
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -54,7 +53,6 @@ public abstract class HandlersSupport extends ClusterCommandSuppot {
 
         command.setStatus(status);
 
-
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
@@ -72,4 +70,5 @@ public abstract class HandlersSupport extends ClusterCommandSuppot {
         }
         return null;
     }
+
 }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.config.Constants;
@@ -24,7 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author: iocanel
+ * Config properties set cluster command.
  */
 @Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a PID and group")
 public class PropSetCommand extends ConfigCommandSupport {
@@ -53,4 +52,5 @@ public class PropSetCommand extends ConfigCommandSupport {
         configurationTable.put(pid, properties);
         return null;
     }
+
 }

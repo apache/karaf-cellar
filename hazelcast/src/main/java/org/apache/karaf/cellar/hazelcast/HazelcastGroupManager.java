@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.Cluster;
@@ -47,7 +46,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Hazelcast group manager.
  */
 public class HazelcastGroupManager implements GroupManager, BundleContextAware {
 
@@ -63,7 +62,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private HazelcastInstance instance;
     private Dispatcher dispatcher;
     private ConfigurationAdmin configurationAdmin;
-
 
     public void init() throws Exception {
         //Add group to configuration
@@ -377,9 +375,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         } catch (IOException e) {
             logger.error("Error reading group configuration ", e);
         }
-
     }
-
 
     /**
      * Utility method which converts a set to a String.
@@ -398,7 +394,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
         return result;
     }
-
 
     /**
      * Utility method which converts String to Set.
@@ -459,4 +454,5 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
+
 }

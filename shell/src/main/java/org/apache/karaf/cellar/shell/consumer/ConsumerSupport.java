@@ -11,30 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.consumer;
-
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ConsumerSwitchCommand;
 import org.apache.karaf.cellar.core.control.ConsumerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
-import org.apache.karaf.cellar.shell.ClusterCommandSuppot;
+import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Abstract consumer command support.
  */
-
-public abstract class ConsumerSupport extends ClusterCommandSuppot {
+public abstract class ConsumerSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %s";
 
     /**
-     * Execute the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -61,4 +58,5 @@ public abstract class ConsumerSupport extends ClusterCommandSuppot {
         }
         return null;
     }
+
 }

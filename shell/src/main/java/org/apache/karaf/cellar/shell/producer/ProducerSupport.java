@@ -11,29 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.shell.producer;
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ProducerSwitchCommand;
 import org.apache.karaf.cellar.core.control.ProducerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
-import org.apache.karaf.cellar.shell.ClusterCommandSuppot;
+import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author iocanel
+ * Producer command support.
  */
-
-public abstract class ProducerSupport extends ClusterCommandSuppot {
+public abstract class ProducerSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %s";
 
     /**
-     * Execut the command.
+     * Executes the command.
      *
      * @return
      * @throws Exception
@@ -62,4 +60,5 @@ public abstract class ProducerSupport extends ClusterCommandSuppot {
         }
         return null;
     }
+
 }

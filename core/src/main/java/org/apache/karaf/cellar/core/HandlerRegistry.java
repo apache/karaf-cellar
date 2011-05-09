@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core;
 
 import java.io.Serializable;
 
 /**
- * @author iocanel
+ * Handler registry interface.
  */
 public interface HandlerRegistry<T extends Serializable, H extends Handler<T>> {
 
@@ -28,4 +27,5 @@ public interface HandlerRegistry<T extends Serializable, H extends Handler<T>> {
      * @return
      */
     public H getHandler(T obj);
+
 }

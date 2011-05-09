@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
@@ -23,7 +22,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 
 /**
- * @author iocanel
+ * Configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
 
@@ -189,4 +188,5 @@ public class ConfigurationSupport extends CellarSupport {
         }
         return false;
     }
+
 }
