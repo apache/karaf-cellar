@@ -384,15 +384,15 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
      * @return
      */
     protected String convertSetToString(Set<String> set) {
-        String result = "";
+        StringBuffer result = new StringBuffer();
         Iterator<String> groupIterator = set.iterator();
         while (groupIterator.hasNext()) {
             String name = groupIterator.next();
-            result = result + name;
+            result.append(name);
             if (groupIterator.hasNext())
-                result = result + ",";
+                result.append(",");
         }
-        return result;
+        return result.toString();
     }
 
     /**

@@ -30,7 +30,7 @@ import java.util.Set;
  */
 public class CellarSupport {
 
-    protected static Logger logger = LoggerFactory.getLogger(CellarSupport.class);
+    protected static final Logger logger = LoggerFactory.getLogger(CellarSupport.class);
 
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
@@ -135,7 +135,6 @@ public class CellarSupport {
      */
     public Boolean isAllowed(Group group, String category, String event, EventType type) {
         Boolean result = true;
-        Node node = clusterManager.getNode();
         Set<String> whiteList = getListEntries(Configurations.WHITELIST, group, category, type);
         Set<String> blackList = getListEntries(Configurations.BLACKLIST, group, category, type);
 

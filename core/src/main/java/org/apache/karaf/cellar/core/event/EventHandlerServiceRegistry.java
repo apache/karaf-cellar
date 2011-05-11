@@ -36,7 +36,7 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
     public EventHandler<E> getHandler(E event) {
         BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
 
-        ServiceReference[] references = new ServiceReference[0];
+        ServiceReference[] references;
         try {
             references = bundleContext.getServiceReferences("org.apache.karaf.cellar.core.event.EventHandler", null);
             if (references != null && references.length > 0) {

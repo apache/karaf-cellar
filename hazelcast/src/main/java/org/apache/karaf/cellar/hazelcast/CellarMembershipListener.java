@@ -43,16 +43,14 @@ public class CellarMembershipListener implements MembershipListener {
         Member member = membershipEvent.getMember();
         Member local = instance.getCluster().getLocalMember();
 
-        if (local.equals(member)) {
-            if (synchronizers != null && !synchronizers.isEmpty()) {
-                Set<Group> groups = groupManager.listLocalGroups();
-                if (groups != null && !groups.isEmpty()) {
-                    for (Group group : groups) {
-                        for (Synchronizer synchronizer : synchronizers) {
-                            if (synchronizer.isSyncEnabled(group)) {
-                                synchronizer.pull(group);
-                                synchronizer.push(group);
-                            }
+        if (local.equals(member) && synchronizers != null && !synchronizers.isEmpty()) {
+            Set<Group> groups = groupManager.listLocalGroups();
+            if (groups != null && !groups.isEmpty()) {
+                for (Group group : groups) {
+                    for (Synchronizer synchronizer : synchronizers) {
+                        if (synchronizer.isSyncEnabled(group)) {
+                            synchronizer.pull(group);
+                            synchronizer.push(group);
                         }
                     }
                 }

@@ -11,30 +11,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.core.completers;
+package org.apache.karaf.cellar.core.shell.completer;
 
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.shell.console.Completer;
 import org.apache.karaf.shell.console.completer.StringsCompleter;
 
 import java.util.List;
 
 /**
- * Completer on the node.
+ * Abstract group completer.
  */
-public abstract class NodeCompleterSupport implements Completer {
+public abstract class GroupCompleterSupport implements Completer {
 
-    private ClusterManager clusterManager;
+    protected GroupManager groupManager;
+
+    protected abstract boolean acceptsGroup(Group group);
 
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
-            for (Node node : clusterManager.listNodes()) {
-                if (acceptsNode(node)) {
-                    String id = node.getId();
-                    if (delegate.getStrings() != null && !delegate.getStrings().contains(id)) {
-                        delegate.getStrings().add(id);
+            for (Group group : groupManager.listAllGroups()) {
+                if (acceptsGroup(group)) {
+                    String name = group.getName();
+                    if (delegate.getStrings() != null && !delegate.getStrings().contains(name)) {
+                        delegate.getStrings().add(name);
                     }
                 }
             }
@@ -44,14 +46,13 @@ public abstract class NodeCompleterSupport implements Completer {
         return delegate.complete(buffer, cursor, candidates);
     }
 
-    protected abstract boolean acceptsNode(Node node);
 
-    public ClusterManager getClusterManager() {
-        return clusterManager;
+    public GroupManager getGroupManager() {
+        return groupManager;
     }
 
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
+    public void setGroupManager(GroupManager groupManager) {
+        this.groupManager = groupManager;
     }
 
 }

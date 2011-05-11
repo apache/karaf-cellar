@@ -188,19 +188,19 @@
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
 
     <!-- Completers -->
-    <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.completers.AllNodeCompleter">
+    <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.completer.AllNodeCompleter">
         <property name="clusterManager" ref="clusterManager"/>
     </bean>
 
-    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completers.AllGroupsCompleter">
+    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
-    <bean id="localGroupCompleter" class="org.apache.karaf.cellar.core.shell.completers.LocalGroupsCompleter">
+    <bean id="localGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.LocalGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
-    <bean id="otherGroupCompleter" class="org.apache.karaf.cellar.core.shell.completers.OtherGroupsCompleter">
+    <bean id="otherGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.OtherGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
