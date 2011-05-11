@@ -35,7 +35,7 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
      * @return
      * @throws Exception
      */
-    protected Object doExecute(String handler, List<String> nodes, Boolean status) throws Exception {
+    protected Object doExecute(String handlerName, List<String> nodes, Boolean status) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);
 
@@ -44,13 +44,7 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
             command.setDestination(recipientList);
         }
 
-        //Set the name of the handler.
-        if (handler != null && handler.length() > 2) {
-            handler = handler.substring(1);
-            handler = handler.substring(0, handler.length() - 1);
-            command.setHandlesName(handler);
-        }
-
+        command.setHandlesName(handlerName);
         command.setStatus(status);
 
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
@@ -58,11 +52,14 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
             System.out.println("No result received within given timeout");
         } else {
             System.out.println(String.format(OUTPUT_FORMAT, "Node", "Status", "Event Handler"));
-            for (Node node : results.keySet()) {
-                ManageHandlersResult result = results.get(node);
+            for (Map.Entry<Node,ManageHandlersResult> handlersResultEntry : results.entrySet()) {
+                Node node = handlersResultEntry.getKey();
+                ManageHandlersResult result = handlersResultEntry.getValue();
                 if (result != null && result.getHandlers() != null) {
-                    for (String h : result.getHandlers().keySet()) {
-                        String s = result.getHandlers().get(h);
+
+                    for (Map.Entry<String,String>  handlerEntry: result.getHandlers().entrySet()) {
+                        String handler =  handlerEntry.getKey();
+                        String s = handlerEntry.getValue();
                         System.out.println(String.format(OUTPUT_FORMAT, node.getId(), s, handler));
                     }
                 }
@@ -70,5 +67,4 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
         }
         return null;
     }
-
 }
