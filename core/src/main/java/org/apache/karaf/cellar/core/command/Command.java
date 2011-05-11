@@ -85,9 +85,10 @@ public class Command<R extends Result> extends Event {
      * @return
      * @throws Exception
      */
-    public Map<Node, R> getResult() throws Exception {
+    public Map<Node, R> getResult() throws InterruptedException {
+        Map<Node, R> nodeResults = null;
         if (this.resultQueue != null) {
-            Map<Node, R> nodeResults = resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
+            nodeResults = resultQueue.poll(timeout, TimeUnit.MILLISECONDS);
         }
         return nodeResults;
     }

@@ -34,23 +34,19 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
     public ConsumerSwitchResult execute(ConsumerSwitchCommand command) {
         //Query
         if (command.getStatus() == null) {
-            ConsumerSwitchResult result = new ConsumerSwitchResult(command.getId(), Boolean.TRUE, consumer.getSwitch().getStatus().getValue());
-            return result;
+            return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, consumer.getSwitch().getStatus().getValue());
         }
         //Turn on the switch
         if (command.getStatus().equals(SwitchStatus.ON)) {
             consumer.getSwitch().turnOn();
-            ConsumerSwitchResult result = new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
-            return result;
+            return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
         }
         //Turn on the switch
         else if (command.getStatus().equals(SwitchStatus.OFF)) {
             consumer.getSwitch().turnOff();
-            ConsumerSwitchResult result = new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
-            return result;
+            return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
         } else {
-            ConsumerSwitchResult result = new ConsumerSwitchResult(command.getId(), Boolean.FALSE, consumer.getSwitch().getStatus().getValue());
-            return result;
+            return new ConsumerSwitchResult(command.getId(), Boolean.FALSE, consumer.getSwitch().getStatus().getValue());
         }
     }
 
