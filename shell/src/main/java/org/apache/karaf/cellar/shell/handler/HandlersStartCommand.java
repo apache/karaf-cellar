@@ -28,9 +28,6 @@ public class HandlersStartCommand extends HandlersSupport {
 
     private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
 
-    private ClusterManager clusterManager;
-    private ExecutionContext executionContext;
-
     @Argument(index = 0, name = "handler-start", description = "The id of the event handler", required = false, multiValued = false)
     String handler;
 
@@ -47,21 +44,4 @@ public class HandlersStartCommand extends HandlersSupport {
     protected Object doExecute() throws Exception {
         return doExecute(handler, nodes, Boolean.TRUE);
     }
-
-    public ExecutionContext getExecutionContext() {
-        return executionContext;
-    }
-
-    public void setExecutionContext(ExecutionContext executionContext) {
-        this.executionContext = executionContext;
-    }
-
-    public ClusterManager getClusterManager() {
-        return clusterManager;
-    }
-
-    public void setClusterManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-    }
-
 }
