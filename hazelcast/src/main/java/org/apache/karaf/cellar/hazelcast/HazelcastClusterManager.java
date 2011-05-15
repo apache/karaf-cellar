@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.Cluster;
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
 import com.hazelcast.core.IdGenerator;
 import com.hazelcast.core.Member;
@@ -35,13 +34,12 @@ import java.util.Set;
 /**
  * Hazelcast cluster manager.
  */
-public class HazelcastClusterManager implements ClusterManager {
+public class HazelcastClusterManager extends HazelcastInstanceAware implements ClusterManager {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
 
     private static final String GENERATOR_ID = "org.apache.karaf.cellar.idgen";
 
-    private HazelcastInstance instance;
     private IdGenerator idgenerator;
 
     private List<EventProducer> producerList;
@@ -189,24 +187,6 @@ public class HazelcastClusterManager implements ClusterManager {
 
     public void restart() {
         instance.restart();
-    }
-
-    /**
-     * Returns the Hazelcast instance.
-     *
-     * @return
-     */
-    public HazelcastInstance getInstance() {
-        return instance;
-    }
-
-    /**
-     * Sets the Hazelcast instance.
-     *
-     * @param instance
-     */
-    public void setInstance(HazelcastInstance instance) {
-        this.instance = instance;
     }
 
     public ConfigurationAdmin getConfigurationAdmin() {
