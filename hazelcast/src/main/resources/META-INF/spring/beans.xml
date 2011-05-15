@@ -19,18 +19,25 @@
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
-       ">
+        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+
 
     <!-- Hazelcast hazelcast -->
-    <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance"
-          destroy-method="shutdown">
-        <constructor-arg ref="config"/>
+    <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-bean="instanceFactory"
+          factory-method="buildInstance" destroy-method="shutdown"/>
+
+
+    <bean id="instanceFactory" class="org.apache.karaf.cellar.hazelcast.factory.HazelcastServiceFactory"
+          destroy-method="destroy">
+        <osgix:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="bean-managed"
+                                  update-method="createOrUpdate"/>
     </bean>
+
 
     <bean id="membershipListener" class="org.apache.karaf.cellar.hazelcast.CellarMembershipListener">
         <constructor-arg index="0" ref="hazelcast"/>
         <property name="synchronizers" ref="synchronizers"/>
+        <property name="groupManager" ref="groupManager"/>
     </bean>
 
     <!-- Cluster Manager -->
@@ -116,25 +123,14 @@
     <bean id="commandStore" class="org.apache.karaf.cellar.core.command.BasicCommandStore"/>
 
 
-    <bean id="dispatcher" class="org.apache.karaf.cellar.core.event.EventHandlerServiceRegistryDispatcher" init-method="init">
+    <bean id="dispatcher" class="org.apache.karaf.cellar.core.event.EventHandlerRegistryDispatcher" init-method="init">
         <property name="handlerRegistry" ref="registry"/>
     </bean>
 
-    <!-- Registry -->
-    <bean id="registry" class="org.apache.karaf.cellar.core.event.EventHandlerServiceRegistry"/>
-
-    <!-- Hazelcast Config -->
-    <bean id="config" class="com.hazelcast.config.Config">
-        <property name="groupConfig" ref="groupConfig"/>
-    </bean>
-
-    <bean id="groupConfig" class="com.hazelcast.config.GroupConfig">
-        <property name="name" value="dev"/>
-        <property name="password" value="pwd"/>
-    </bean>
 
     <!-- Hazelcast Instance Service-->
     <osgi:service ref="hazelcast" interface="com.hazelcast.core.HazelcastInstance"/>
+
     <osgi:service ref="producer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
 
     <osgi:service ref="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
@@ -152,6 +148,7 @@
     <osgi:service ref="manageGroupCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
     <osgi:service ref="manageGroupResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
+    <osgi:reference id="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
     <osgi:reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
     <!-- Group Consumer & Producer Serices -->

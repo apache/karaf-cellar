@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.core.event;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleReference;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -25,7 +24,9 @@ import org.slf4j.LoggerFactory;
  */
 public class EventHandlerServiceRegistry<E extends Event> implements EventHandlerRegistry<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventHandlerServiceRegistryDispatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
+
+    private BundleContext bundleContext;
 
     /**
      * Returns the appropriate {@code EventHandler} found inside the {@code HandlerRegistry}.
@@ -34,7 +35,6 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
      * @return
      */
     public EventHandler<E> getHandler(E event) {
-        BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
 
         ServiceReference[] references = new ServiceReference[0];
         try {
@@ -60,4 +60,11 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
         return null;
     }
 
+    public BundleContext getBundleContext() {
+        return bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
 }
