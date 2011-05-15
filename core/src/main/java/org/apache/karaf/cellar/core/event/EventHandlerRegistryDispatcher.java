@@ -22,12 +22,12 @@ import java.util.concurrent.Executors;
 /**
  * Event handler service registry dispatcher.
  */
-public class EventHandlerServiceRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
+public class EventHandlerRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventHandlerServiceRegistryDispatcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
 
     private ExecutorService threadPool;
-    private EventHandlerServiceRegistry handlerRegistry;
+    private EventHandlerRegistry handlerRegistry;
 
     /**
      * Initialization
@@ -48,11 +48,11 @@ public class EventHandlerServiceRegistryDispatcher<E extends Event> implements E
         threadPool.execute(task);
     }
 
-    public EventHandlerServiceRegistry getHandlerRegistry() {
+    public EventHandlerRegistry getHandlerRegistry() {
         return handlerRegistry;
     }
 
-    public void setHandlerRegistry(EventHandlerServiceRegistry handlerRegistry) {
+    public void setHandlerRegistry(EventHandlerRegistry handlerRegistry) {
         this.handlerRegistry = handlerRegistry;
     }
 
