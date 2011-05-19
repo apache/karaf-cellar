@@ -168,6 +168,7 @@
         <module>core</module>
         <module>config</module>
         <module>features</module>
+        <module>bundle</module>
         <module>shell</module>
         <module>hazelcast</module>
         <module>utils</module>
