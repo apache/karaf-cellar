@@ -32,6 +32,7 @@ public class HazelcastServiceFactoryTest {
     public void setUp() throws Exception {
         factory.setUsername(GroupConfig.DEFAULT_GROUP_NAME);
         factory.setPassword(GroupConfig.DEFAULT_GROUP_PASSWORD);
+        factory.createOrUpdate(null);
 
     }
 
@@ -44,7 +45,6 @@ public class HazelcastServiceFactoryTest {
     public void testDefaultInstance() throws InterruptedException {
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
         HazelcastInstance factoryInstance = factory.buildInstance();
-        Thread.sleep(5000);
         Assert.assertEquals(true, factoryInstance.getCluster().getMembers().size() >= 2);
     }
 }
