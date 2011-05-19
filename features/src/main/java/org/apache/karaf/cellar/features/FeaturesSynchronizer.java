@@ -170,7 +170,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
     }
 
-    @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();

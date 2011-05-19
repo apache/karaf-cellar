@@ -80,7 +80,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
         } else groups = groupManager.listAllGroups();
 
         for (Group g : groups) {
-            if (g.getName() != null && !g.getName().isEmpty()) {
+            if (g.getName() != null && (g.getName().trim().length() > 0)) {
                 result.getGroups().add(g);
             }
         }

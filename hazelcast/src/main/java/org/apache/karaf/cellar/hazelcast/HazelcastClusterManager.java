@@ -67,7 +67,6 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return instance.getList(listName);
     }
 
-    @Override
     public EventProducer getEventProducer(String groupName) {
         ITopic topic = instance.getTopic(Constants.TOPIC + "." + groupName);
         TopicProducer producer = new TopicProducer();
@@ -160,7 +159,6 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return null;
     }
 
-    @Override
     public Set<Node> listNodesByGroup(Group group) {
         return group.getMembers();
     }
