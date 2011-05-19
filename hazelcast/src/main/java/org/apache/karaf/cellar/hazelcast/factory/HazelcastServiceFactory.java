@@ -1,5 +1,19 @@
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -76,57 +90,58 @@ public class HazelcastServiceFactory implements BundleContextAware {
             Boolean updated = Boolean.FALSE;
             //We need it to properly instantiate Hazelcast.
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            if (properties != null) {
+                String newUsername = (String) properties.get("username");
+                if (username != null && !username.endsWith(newUsername)) {
+                    this.username = newUsername;
+                    updated = Boolean.TRUE;
+                }
 
-            String newUsername = (String) properties.get("username");
-            if (username != null && !username.endsWith(newUsername)) {
-                this.username = newUsername;
-                updated = Boolean.TRUE;
-            }
+                String newPassword = (String) properties.get("password");
+                if (password != null && !password.equals(newPassword)) {
+                    this.password = newPassword;
+                }
 
-            String newPassword = (String) properties.get("password");
-            if (password != null && !password.equals(newPassword)) {
-                this.password = newPassword;
-            }
+                Boolean newMulticastEnabled = Boolean.parseBoolean((String) properties.get("multicastEnabled"));
+                if (multicastEnabled != newMulticastEnabled) {
+                    this.multicastEnabled = newMulticastEnabled;
+                    updated = Boolean.TRUE;
+                }
 
-            Boolean newMulticastEnabled = Boolean.parseBoolean((String) properties.get("multicastEnabled"));
-            if (multicastEnabled != newMulticastEnabled) {
-                this.multicastEnabled = newMulticastEnabled;
-                updated = Boolean.TRUE;
-            }
+                String newMulticastGroup = (String) properties.get("multicastGroup");
+                if (multicastGroup != null && !multicastGroup.endsWith(newMulticastGroup)) {
+                    this.multicastGroup = newMulticastGroup;
+                    updated = Boolean.TRUE;
+                }
 
-            String newMulticastGroup = (String) properties.get("multicastGroup");
-            if (multicastGroup != null && !multicastGroup.endsWith(newMulticastGroup)) {
-                this.multicastGroup = newMulticastGroup;
-                updated = Boolean.TRUE;
-            }
+                int multicastPort = Integer.parseInt((String) properties.get("multicastPort"));
+                if (multicastPort != 0) {
+                    this.multicastPort = multicastPort;
+                    updated = Boolean.TRUE;
+                }
 
-            int multicastPort = Integer.parseInt((String) properties.get("multicastPort"));
-            if (multicastPort != 0) {
-                this.multicastPort = multicastPort;
-                updated = Boolean.TRUE;
-            }
+                int newMulticastTimeoutSeconds = Integer.parseInt((String) properties.get("multicastTimeoutSeconds"));
+                if (multicastTimeoutSeconds != 0 && multicastTimeoutSeconds != newMulticastTimeoutSeconds) {
+                    this.multicastTimeoutSeconds = newMulticastTimeoutSeconds;
+                    updated = Boolean.TRUE;
+                }
 
-            int newMulticastTimeoutSeconds = Integer.parseInt((String) properties.get("multicastTimeoutSeconds"));
-            if (multicastTimeoutSeconds != 0 && multicastTimeoutSeconds != newMulticastTimeoutSeconds) {
-                this.multicastTimeoutSeconds = newMulticastTimeoutSeconds;
-                updated = Boolean.TRUE;
-            }
+                Boolean newTcpIpEnabled = Boolean.parseBoolean((String) properties.get("tcpIpEnabled"));
+                if (tcpIpEnabled != newTcpIpEnabled) {
+                    this.tcpIpEnabled = newTcpIpEnabled;
+                    updated = Boolean.TRUE;
+                }
 
-            Boolean newTcpIpEnabled = Boolean.parseBoolean((String) properties.get("tcpIpEnabled"));
-            if (tcpIpEnabled != newTcpIpEnabled) {
-                this.tcpIpEnabled = newTcpIpEnabled;
-                updated = Boolean.TRUE;
-            }
+                String newTcpIpMembers = (String) properties.get("tcpIpMembers");
+                if (tcpIpMembers != null && !tcpIpMembers.endsWith(newTcpIpMembers)) {
+                    updated = Boolean.TRUE;
 
-            String newTcpIpMembers = (String) properties.get("tcpIpMembers");
-            if (tcpIpMembers != null && !tcpIpMembers.endsWith(newTcpIpMembers)) {
-                updated = Boolean.TRUE;
-
-                String[] members = tcpIpMembers.split(",");
-                if (members != null && members.length > 0) {
-                    tcpIpMemberList = new ArrayList<String>();
-                    for (String member : members) {
-                        tcpIpMemberList.add(member);
+                    String[] members = tcpIpMembers.split(",");
+                    if (members != null && members.length > 0) {
+                        tcpIpMemberList = new ArrayList<String>();
+                        for (String member : members) {
+                            tcpIpMemberList.add(member);
+                        }
                     }
                 }
             }
