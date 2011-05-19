@@ -45,4 +45,9 @@
         </configfile>
     </feature>
 
+    <feature name='cellar-bundle' description='Cellar bundle module' version='${project.version}' resolver='(obr)'>
+        <feature version='${project.version}'>cellar</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
+    </feature>
+
 </features>
