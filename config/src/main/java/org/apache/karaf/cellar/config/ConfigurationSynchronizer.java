@@ -169,7 +169,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         }
     }
 
-    @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();

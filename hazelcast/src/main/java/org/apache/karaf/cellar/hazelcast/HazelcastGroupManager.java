@@ -80,7 +80,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Node getNode() {
         Node node = null;
         Cluster cluster = instance.getCluster();
@@ -91,7 +90,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         return node;
     }
 
-    @Override
     public Group createGroup(String groupName) {
         Group group = listGroups().get(groupName);
         if (group == null)
@@ -103,7 +101,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         return group;
     }
 
-    @Override
     public void deleteGroup(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -114,7 +111,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Set<Group> listLocalGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -125,7 +121,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Set<Group> listAllGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -136,7 +131,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Group findGroupByName(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -147,7 +141,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Map<String, Group> listGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -158,8 +151,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-
-    @Override
     public Set<Group> listGroups(Node node) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -180,7 +171,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Set<String> listGroupNames() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -191,7 +181,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public Set<String> listGroupNames(Node node) {
         Set<String> names = new HashSet<String>();
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -212,8 +201,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         return names;
     }
 
-
-    @Override
     public void registerGroup(Group group) {
         String groupName = group.getName();
         createGroup(groupName);
@@ -252,7 +239,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             Dictionary<String, String> properties = configuration.getProperties();
             String groups = properties.get(Configurations.GROUPS_KEY);
-            if (groups == null || groups.isEmpty()) {
+            if (groups == null || (groups.trim().length() < 1)) {
                 groups = groupName;
             } else {
 
@@ -261,7 +248,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 groups = convertSetToString(groupNamesSet);
             }
 
-            if (groups == null || groups.isEmpty()) {
+            if (groups == null || (groups.trim().length() < 1)) {
                 groups = groupName;
             }
             properties.put(Configurations.GROUPS_KEY, groups);
@@ -288,7 +275,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
     }
 
-    @Override
     public void registerGroup(String groupName) {
         Group group = listGroups().get(groupName);
         if (group == null)
@@ -296,7 +282,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         registerGroup(group);
     }
 
-    @Override
     public void unRegisterGroup(String groupName) {
         unRegisterGroup(listGroups().get(groupName));
     }
@@ -331,7 +316,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             Dictionary<String, String> properties = configuration.getProperties();
             String groups = properties.get(Configurations.GROUPS_KEY);
-            if (groups == null || groups.isEmpty()) {
+            if (groups == null || (groups.trim().length() < 1)) {
                 groups = "";
             } else if (groups.contains(groupName)) {
 

@@ -38,7 +38,6 @@ public class CellarMembershipListener implements MembershipListener {
         instance.getCluster().addMembershipListener(this);
     }
 
-    @Override
     public void memberAdded(MembershipEvent membershipEvent) {
         Member member = membershipEvent.getMember();
         Member local = instance.getCluster().getLocalMember();
@@ -60,7 +59,6 @@ public class CellarMembershipListener implements MembershipListener {
         }
     }
 
-    @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
 
     }
