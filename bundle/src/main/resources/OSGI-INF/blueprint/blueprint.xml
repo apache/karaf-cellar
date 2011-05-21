@@ -16,16 +16,14 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
     <!-- Cluster Configuration Listener -->
-    <bean id="bundleListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init" destroy-method="destroy">
+    <bean id="bundleListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init"
+          destroy-method="destroy">
         <property name="producerList" ref="groupEventProducers"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
-
-    <!-- Configuration Tracker -->
-    <bean id="tracker" class="org.apache.karaf.cellar.bundle.BundleTracker"/>
 
     <!-- Configuration Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.bundle.BundleSynchronizer"
@@ -39,7 +37,6 @@
 
     <bean id="eventHandler" class="org.apache.karaf.cellar.bundle.BundleEventHandler"
           init-method="init" destroy-method="destroy">
-        <property name="tracker" ref="tracker"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
@@ -49,7 +46,7 @@
     <service ref="eventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
-         </service-properties>
+        </service-properties>
     </service>
 
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
