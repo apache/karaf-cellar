@@ -51,19 +51,23 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                 for (Group group : groups) {
 
                     String symbolicName = event.getBundle().getSymbolicName();
-                    String version = event.getBundle().getVersion().toString();
-                    String bundleLocation = event.getBundle().getLocation();
-                    int type = event.getType();
-                    if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-                        RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                        remoteBundleEvent.setSourceGroup(group);
-                        remoteBundleEvent.setSourceNode(node);
-                        if (producerList != null && !producerList.isEmpty()) {
-                            for (EventProducer producer : producerList) {
-                                producer.produce(remoteBundleEvent);
+
+                    if (symbolicName != null) {
+                        String version = event.getBundle().getVersion().toString();
+                        String bundleLocation = event.getBundle().getLocation();
+                        int type = event.getType();
+                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                            remoteBundleEvent.setSourceGroup(group);
+                            remoteBundleEvent.setSourceNode(node);
+                            if (producerList != null && !producerList.isEmpty()) {
+                                for (EventProducer producer : producerList) {
+                                    producer.produce(remoteBundleEvent);
+                                }
                             }
-                        }
-                    } else logger.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND");
+                        } else logger.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND", symbolicName);
+                    } else logger.debug("Artifact is not a bundle");
+
                 }
             }
         }
@@ -76,6 +80,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
         if (clusterManager != null) {
             node = clusterManager.getNode();
         }
+        getBundleContext().addBundleListener(this);
     }
 
     /**

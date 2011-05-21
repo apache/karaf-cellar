@@ -40,14 +40,9 @@
             !org.apache.karaf.cellar.hazelcast*,
             com.hazelcast*,
             org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.config;version="${project.version}",
-            org.apache.karaf.cellar.features;version="${project.version}",
-            org.apache.karaf.cellar.utils.ping;version="${project.version}",
-            org.apache.karaf.features;version="[2,4)",
             *
         </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
+        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,org.apache.karaf.*</osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
