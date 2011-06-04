@@ -46,4 +46,10 @@
         </configfile>
     </feature>
 
+    <feature name='cellar-webconsole' description='Karaf Cellar Webconsole Plugin' version='${project.version}'
+             resolver='(obr)'>
+        <feature>webconsole</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
+    </feature>
+
 </features>
