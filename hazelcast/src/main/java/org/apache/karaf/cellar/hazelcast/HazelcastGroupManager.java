@@ -107,6 +107,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public void deleteGroup(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             if (!groupName.equals(Configurations.DEFAULT_GROUP_NAME))
                 listGroups().remove(groupName);
         } finally {
