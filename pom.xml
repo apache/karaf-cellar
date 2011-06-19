@@ -21,6 +21,12 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.apache</groupId>
+        <artifactId>apache</artifactId>
+        <version>8</version>
+    </parent>
+
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
     <version>3.0.0-SNAPSHOT</version>
@@ -50,6 +56,48 @@
         <module>utils</module>
         <module>webconsole</module>
     </modules>
+
+    <scm>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/trunk</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/trunk</developerConnection>
+        <url>http://svn.apache.org/repos/asf/karaf/cellar/trunk</url>
+    </scm>
+
+    <issueManagement>
+        <system>jira</system>
+        <url>https://issues.apache.org/jira/browse/KARAF</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Karaf Dev</name>
+            <subscribe>dev-subscribe@karaf.apache.org</subscribe>
+            <unsubscribe>dev-unsubscribe@karaf.apache.org</unsubscribe>
+            <post>-</post>
+            <archive>http://www.mail-archive.com/dev%karaf.apache.org/</archive>
+        </mailingList>
+        <mailingList>
+            <name>Karaf User</name>
+            <subscribe>user-subscribe@karaf.apache.org</subscribe>
+            <unsubscribe>user-unsubscribe@karaf.apache.org</unsubscribe>
+            <post>-</post>
+            <archive>http://www.mail-archive.com/user%40karaf.apache.org/</archive>
+        </mailingList>
+        <mailingList>
+            <name>Karaf Commits</name>
+            <subscribe>commits-subscribe@karaf.apache.org</subscribe>
+            <unsubscribe>commits-unsubscribe@karaf.apache.org</unsubscribe>
+            <post>-</post>
+            <archive>http://www.mail-archive.com/commits%40karaf.apache.org/</archive>
+        </mailingList>
+        <mailingList>
+            <name>Karaf Issues</name>
+            <subscribe>issues-subscribe@karaf.apache.org</subscribe>
+            <unsubscribe>issues-unsubscribe@karaf.apache.org</unsubscribe>
+            <post>-</post>
+            <archive>http://www.mail-archive.com/issues%40karaf.apache.org/</archive>
+        </mailingList>
+    </mailingLists>
 
     <dependencyManagement>
         <dependencies>
@@ -204,6 +252,18 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.0</version>
+                    <configuration>
+                        <useReleaseProfile>false</useReleaseProfile>
+                        <preparationGoals>clean install</preparationGoals>
+                        <goals>deploy</goals>
+                        <arguments>-Prelease,deploy</arguments>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
