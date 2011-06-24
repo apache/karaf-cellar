@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 <%@ var body: String %>
-<%@ var title: String = "Apache Karaf ${karaf.version}" %>
+<%@ var title: String = "Apache Karaf Cellar ${cellar.version}" %>
 <% escapeMarkup = false %>
 <!DOCTYPE html>
 <html>
@@ -807,8 +807,8 @@ div.compare div div {
 </head>
 <body>
   <div id="titlepage">
-    <div id="title">Apache Karaf</div>
-    <div id="subtitle">Version ${karaf.version}</div>
+    <div id="title">Apache Karaf Cellar</div>
+    <div id="subtitle">Version ${cellar.version}</div>
   </div>
   <div id="main">
     <%= body %>
