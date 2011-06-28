@@ -37,7 +37,7 @@
         <manual.dir>${project.build.directory}/manual</manual.dir>
         <manual>${manual.dir}/cellar-manual-${project.version}</manual>
         <scala.version>2.8.1</scala.version>
-        <scalate.version>1.4.0</scalate.version>
+        <scalate.version>1.3.2</scalate.version>
         <cellar.version>${project.version}</cellar.version>
     </properties>
 
