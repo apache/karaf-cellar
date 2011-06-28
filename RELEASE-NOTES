@@ -31,6 +31,7 @@
 ** Bug
     * [KARAF-652] - Deadlock inside HazelcastServiceFactory unit test.
     * [KARAF-674] - Incorrect Karaf version used in Cellar
+    * [KARAF-692] - Cellar HazelcastServiceFactoryTest failure
 
 ** Task
     * [KARAF-649] - Use maven-enforcer-plugin in cellar
