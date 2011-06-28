@@ -16,24 +16,18 @@ package org.apache.karaf.cellar.hazelcast.factory;
 import com.hazelcast.config.GroupConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
- * @author: iocanel
+ * Hazelcast service factory test.
  */
+@RunWith(JUnit4.class)
 public class HazelcastServiceFactoryTest {
-
-    HazelcastServiceFactory factory = new HazelcastServiceFactory();
 
     @Before
     public void setUp() throws Exception {
-        factory.setUsername(GroupConfig.DEFAULT_GROUP_NAME);
-        factory.setPassword(GroupConfig.DEFAULT_GROUP_PASSWORD);
-        factory.createOrUpdate(null);
-
     }
 
     @After
@@ -43,8 +37,13 @@ public class HazelcastServiceFactoryTest {
 
     @Test
     public void testDefaultInstance() throws InterruptedException {
+        HazelcastServiceFactory factory = new HazelcastServiceFactory();
+        factory.setUsername(GroupConfig.DEFAULT_GROUP_NAME);
+        factory.setPassword(GroupConfig.DEFAULT_GROUP_PASSWORD);
+        factory.createOrUpdate(null);
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
         HazelcastInstance factoryInstance = factory.buildInstance();
         Assert.assertEquals(true, factoryInstance.getCluster().getMembers().size() >= 2);
     }
+
 }
