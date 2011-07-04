@@ -29,7 +29,7 @@
     </parent>
 
     <groupId>org.apache.karaf.cellar</groupId>
-    <artifactId>webconsole</artifactId>
+    <artifactId>org.apache.karaf.cellar.webconsole</artifactId>
     <packaging>bundle</packaging>
     <name>Apache Karaf :: Cellar :: Webconsole</name>
 
