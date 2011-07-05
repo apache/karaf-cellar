@@ -32,6 +32,10 @@
     * [KARAF-652] - Deadlock inside HazelcastServiceFactory unit test.
     * [KARAF-674] - Incorrect Karaf version used in Cellar
     * [KARAF-692] - Cellar HazelcastServiceFactoryTest failure
+    * [KARAF-701] - Add Cellar source distribution
+    * [KARAF-702] - Cellar webconsole groupId is not correct
+    * [KARAF-703] - Check and ship the legal files in Cellar artifacts
 
 ** Task
     * [KARAF-649] - Use maven-enforcer-plugin in cellar
+    * [KARAF-691] - Release Apache Karaf Cellar 2.2.1
