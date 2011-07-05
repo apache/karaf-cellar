@@ -37,15 +37,16 @@ Initial Setup
 Building
 --------
 
-1) Checkout Apache Karaf Cellar source using subversion:
+1) Download and uncompress the Apache Karaf Cellar source distribution.
 
-        $> svn co http://svn.apache.org/repos/asf/karaf/cellar/trunk
+2) Change to the top level directory of Apache Karaf Cellar uncompressed source distribution.
 
-2) Run
+3) Run
 
          $> mvn
 
    This will compile Apache Karaf Cellar and run all of the tests in the
    Apache Karaf source distribution.
-3) Apache Karaf Cellar is now present in your local maven repository. Read the README file
+
+4) Apache Karaf Cellar is now present in your local maven repository. Read the README file
    to install Cellar into a running Apache Karaf instance.
