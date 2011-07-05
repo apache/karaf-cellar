@@ -187,7 +187,7 @@
                         </systemProperty>
                         <systemProperty>
                             <name>scalate.mode</name>
-                            <value>development</value>
+                            <value>production</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>
