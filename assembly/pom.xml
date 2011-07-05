@@ -81,17 +81,17 @@
                                     <classifier>features</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/groups.cfg</file>
+                                    <file>target/classes/groups.cfg</file>
                                     <type>cfg</type>
                                     <classifier>groups</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/node.cfg</file>
+                                    <file>target/classes/node.cfg</file>
                                     <type>cfg</type>
                                     <classifier>node</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/instance.cfg</file>
+                                    <file>target/classes/instance.cfg</file>
                                     <type>cfg</type>
                                     <classifier>instance</classifier>
                                 </artifact>
