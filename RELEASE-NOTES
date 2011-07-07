@@ -35,6 +35,9 @@
     * [KARAF-701] - Add Cellar source distribution
     * [KARAF-702] - Cellar webconsole groupId is not correct
     * [KARAF-703] - Check and ship the legal files in Cellar artifacts
+    * [KARAF-714] - Cellar features descriptor is not correct
+    * [KARAF-715] - Cellar manual doesn't include the Karaf logo
+    * [KARAF-716] - Cellar manual with broken links
 
 ** Task
     * [KARAF-649] - Use maven-enforcer-plugin in cellar
