@@ -36,13 +36,13 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
         <configfile finalname="/etc/org.apache.karaf.cellar.instance.cfg">
-            mvn:org.apache.karaf/cellar/${project.version}/cfg/instance
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/instance
         </configfile>
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
-            mvn:org.apache.karaf/cellar/${project.version}/cfg/groups
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups
         </configfile>
         <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
-            mvn:org.apache.karaf/cellar/${project.version}/cfg/node
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
         </configfile>
     </feature>
 
