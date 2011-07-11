@@ -106,7 +106,7 @@
                 </executions>
                 <configuration>
                     <remoteServerId>people.apache.org</remoteServerId>
-                    <remoteServerUrl>scp://people.apache.org/www/karaf.apache.org/subprojects/cellar/manual/${cellar.version}
+                    <remoteServerUrl>scp://people.apache.org/www/karaf.apache.org/manual/cellar/${cellar.version}
                     </remoteServerUrl>
                 </configuration>
                 <dependencies>
