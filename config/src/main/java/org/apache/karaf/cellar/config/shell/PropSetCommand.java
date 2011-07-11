@@ -37,7 +37,7 @@ public class PropSetCommand extends ConfigCommandSupport {
     @Argument(index = 2, name = "key", description = "The key of the property", required = true, multiValued = false)
     String key;
 
-    @Argument(index = 3, name = "key", description = "The key of the property", required = true, multiValued = false)
+    @Argument(index = 3, name = "value", description = "The value of the property", required = true, multiValued = false)
     String value;
 
     @Override
