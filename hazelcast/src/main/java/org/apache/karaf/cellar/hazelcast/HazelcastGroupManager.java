@@ -63,7 +63,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private Dispatcher dispatcher;
     private ConfigurationAdmin configurationAdmin;
 
-    public void init() throws Exception {
+    public void init() {
         //Add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
@@ -94,8 +94,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     @Override
     public Group createGroup(String groupName) {
         Group group = listGroups().get(groupName);
-        if (group == null)
+        if (group == null) {
             group = new Group(groupName);
+        }
         if (!listGroups().containsKey(groupName)) {
             copyGroupConfiguration(Configurations.DEFAULT_GROUP_NAME, groupName);
             listGroups().put(groupName, group);
@@ -108,8 +109,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            if (!groupName.equals(Configurations.DEFAULT_GROUP_NAME))
+            if (!groupName.equals(Configurations.DEFAULT_GROUP_NAME)) {
                 listGroups().remove(groupName);
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
@@ -171,8 +173,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             Collection<Group> groupCollection = groupMap.values();
             if (groupCollection != null && !groupCollection.isEmpty()) {
                 for (Group group : groupCollection) {
-                    if (group.getMembers().contains(node))
+                    if (group.getMembers().contains(node)) {
                         result.add(group);
+                    }
                 }
             }
             return result;
@@ -292,8 +295,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     @Override
     public void registerGroup(String groupName) {
         Group group = listGroups().get(groupName);
-        if (group == null)
+        if (group == null) {
             group = new Group(groupName);
+        }
         registerGroup(group);
     }
 
@@ -390,8 +394,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         while (groupIterator.hasNext()) {
             String name = groupIterator.next();
             result.append(name);
-            if (groupIterator.hasNext())
+            if (groupIterator.hasNext()) {
                 result.append(",");
+            }
         }
         return result.toString();
     }
@@ -410,7 +415,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             for (String name : groupNames) {
                 result.add(name);
             }
-        } else result.add(string);
+        } else {
+            result.add(string);
+        }
         return result;
     }
 
