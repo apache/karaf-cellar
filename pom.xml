@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!--
 
@@ -44,6 +45,8 @@
         <servlet.api.version>2.5</servlet.api.version>
         <slf4j.version>1.6.1</slf4j.version>
         <spring.osgi.version>1.2.1</spring.osgi.version>
+        <jclouds.version>1.0.0</jclouds.version>
+        <joda-time.version>1.6.2</joda-time.version>
     </properties>
 
     <modules>
@@ -54,6 +57,7 @@
         <module>shell</module>
         <module>hazelcast</module>
         <module>utils</module>
+        <module>cloud</module>
         <module>webconsole</module>
         <module>assembly</module>
     </modules>
@@ -122,6 +126,11 @@
             <dependency>
                 <groupId>org.apache.karaf.cellar</groupId>
                 <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.cellar</groupId>
+                <artifactId>org.apache.karaf.cellar.cloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -233,6 +242,27 @@
                 <groupId>org.springframework.osgi</groupId>
                 <artifactId>spring-osgi-core</artifactId>
                 <version>${spring.osgi.version}</version>
+            </dependency>
+
+
+            <!-- JClouds -->
+            <dependency>
+                <groupId>org.jclouds</groupId>
+                <artifactId>jclouds-blobstore</artifactId>
+                <version>${jclouds.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jclouds</groupId>
+                <artifactId>jclouds-allblobstore</artifactId>
+                <version>${jclouds.version}</version>
+            </dependency>
+
+            <!-- Joda Time -->
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time.version}</version>
             </dependency>
 
         </dependencies>
@@ -374,7 +404,8 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <tasks>
-                                <copy file="NOTICE" todir="target/maven-shared-archive-resources/META-INF" failonerror="false" overwrite="true"/>
+                                <copy file="NOTICE" todir="target/maven-shared-archive-resources/META-INF"
+                                      failonerror="false" overwrite="true"/>
                             </tasks>
                         </configuration>
                         <goals>
@@ -392,6 +423,7 @@
                     <instructions>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Activator>${osgi.bundle.activator}</Bundle-Activator>
                         <Export-Package>${osgi.export}</Export-Package>
                         <Import-Package>${osgi.import}</Import-Package>
                         <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>

@@ -15,6 +15,8 @@
 -->
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
+    <repository>mvn:org.jclouds.karaf/feature/1.0.0/xml/features</repository>
+
     <feature name='hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
         <bundle>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
@@ -27,7 +29,11 @@
 
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
+        <feature version="${jclouds.version}">jclouds</feature>
         <feature>spring-dm</feature>
+
+        <bundle dependency='true'>mvn:joda-time/joda-time/${joda-time.version}</bundle>
+
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
@@ -46,8 +52,17 @@
         </configfile>
     </feature>
 
+    <feature name='cellar-cloud' description='Karaf Cellar Cloud Feature' version='${project.version}' resolver='(obr)'>
+        <feature>cellar</feature>
+        <feature>jclouds</feature>
+        <!-- Adding S3 as the default Blobstore -->
+        <feature>jclouds-aws-s3</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
+    </feature>
+
     <feature name='cellar-webconsole' description='Karaf Cellar Webconsole Plugin' version='${project.version}'
              resolver='(obr)'>
+        <feature>cellar</feature>
         <feature>webconsole</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
     </feature>
