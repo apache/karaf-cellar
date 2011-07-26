@@ -39,7 +39,6 @@
             !org.apache.karaf.cellar.hazelcast*,
             com.hazelcast*,
             org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.karaf.cellar.config;version="${project.version}",
             org.apache.karaf.cellar.features;version="${project.version}",
             org.apache.karaf.cellar.utils.ping;version="${project.version}",
