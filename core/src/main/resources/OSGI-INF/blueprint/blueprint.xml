@@ -19,6 +19,7 @@
         <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
 
+    <!-- Service Registrations -->
     <service ref="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
 
 </blueprint>
