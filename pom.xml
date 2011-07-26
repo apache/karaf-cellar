@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!--
 
@@ -50,8 +51,9 @@
         <module>core</module>
         <module>config</module>
         <module>features</module>
+        <module>bundle</module>
         <module>shell</module>
-        <module>hazelcast</module>
+        <module>hazelcast</module>        
         <module>utils</module>
         <module>webconsole</module>
         <module>assembly</module>
@@ -101,6 +103,13 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Hazelcast -->
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
 
             <!-- Cellar -->
             <dependency>
