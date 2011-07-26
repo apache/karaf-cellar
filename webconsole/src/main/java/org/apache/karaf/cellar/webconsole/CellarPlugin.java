@@ -34,9 +34,6 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Set;
 
-/**
- * @author: iocanel
- */
 public class CellarPlugin extends AbstractWebConsolePlugin {
 
     /**
@@ -44,7 +41,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
      */
     private static final long serialVersionUID = 1L;
 
-    private final Logger log = LoggerFactory.getLogger(CellarPlugin.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarPlugin.class);
 
     public static final String NAME = "cellar";
 
@@ -54,12 +51,10 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
 
     private String cellarJs = "/cellar/res/ui/cellar.js";
 
-
     private ClusterManager clusterManager;
     private GroupManager groupManager;
 
     private BundleContext bundleContext;
-
 
     //
     // Blueprint lifecycle callback methods
@@ -70,15 +65,14 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
 
         this.classLoader = this.getClass().getClassLoader();
 
-        this.log.info(LABEL + " plugin activated");
+        this.LOGGER.info("{} plugin activated", LABEL);
     }
 
 
     public void stop() {
-        this.log.info(LABEL + " plugin deactivated");
+        this.LOGGER.info("{} plugin deactivated", LABEL);
         super.deactivate();
     }
-
 
     //
     // AbstractWebConsolePlugin interface
@@ -88,11 +82,9 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         return NAME;
     }
 
-
     public String getTitle() {
         return LABEL;
     }
-
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean success = false;
@@ -126,7 +118,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         }
     }
 
-
     protected void renderContent(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // get request info from request attribute
         final PrintWriter pw = response.getWriter();
@@ -153,7 +144,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         pw.println("</script>");
     }
 
-
     //
     // Additional methods
     //
@@ -165,18 +155,18 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
             try {
                 ins = url.openStream();
                 if (ins == null) {
-                    this.log.error("failed to open " + url);
+                    this.LOGGER.error("Failed to open {}", url);
                     url = null;
                 }
             } catch (IOException e) {
-                this.log.error(e.getMessage(), e);
+                this.LOGGER.error(e.getMessage(), e);
                 url = null;
             } finally {
                 if (ins != null) {
                     try {
                         ins.close();
                     } catch (IOException e) {
-                        this.log.error(e.getMessage(), e);
+                        this.LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
@@ -191,7 +181,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         final PrintWriter pw = response.getWriter();
         writeJSON(pw);
     }
-
 
     private void writeJSON(final PrintWriter pw) throws IOException {
         final Set<Group> groups = groupManager.listAllGroups();
@@ -247,7 +236,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         jw.endObject();
     }
 
-
     private String getStatusLine(final Set<Group> groups, Set<Node> members) {
         int groupCount = 0;
         int memberCount = 0;
@@ -265,7 +253,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         return builder.toString();
     }
 
-
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
@@ -277,4 +264,5 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
     }
+
 }

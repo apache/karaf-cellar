@@ -26,8 +26,6 @@ import java.util.List;
 @Command(scope = "cluster", name = "handler-stop", description = "Stops the handler of the specified nodes.")
 public class HandlersStopCommand extends HandlersSupport {
 
-    private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
-
     @Argument(index = 0, name = "handler", description = "The id of the event handler", required = false, multiValued = false)
     String handler;
 
@@ -44,4 +42,5 @@ public class HandlersStopCommand extends HandlersSupport {
     protected Object doExecute() throws Exception {
         return doExecute(handler, nodes, Boolean.FALSE);
     }
+
 }

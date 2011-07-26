@@ -26,8 +26,6 @@ import java.util.List;
 @Command(scope = "cluster", name = "handler-status", description = "Lists the handlers of the specified nodes.")
 public class HandlersStatusCommand extends HandlersSupport {
 
-    private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
-
     @Argument(index = 0, name = "handler-start", description = "The id of the event handler", required = false, multiValued = false)
     String handler;
 
@@ -44,4 +42,5 @@ public class HandlersStatusCommand extends HandlersSupport {
     protected Object doExecute() throws Exception {
         return doExecute(handler, nodes, null);
     }
+
 }

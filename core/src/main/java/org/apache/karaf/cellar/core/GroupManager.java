@@ -72,7 +72,6 @@ public interface GroupManager {
      */
     public Set<Group> listAllGroups();
 
-
     /**
      * Returns the {@link Group}s of the specified {@link Node}.
      *

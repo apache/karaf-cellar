@@ -14,8 +14,6 @@
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -25,8 +23,6 @@ import java.util.Properties;
  * Configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
-
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationSupport.class);
 
     private static String HOME_PLACEHOLDER = "karaf.home";
     private static String RELATIVE_HOME = "${" + HOME_PLACEHOLDER + "}";

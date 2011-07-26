@@ -13,9 +13,6 @@
  */
 package org.apache.karaf.cellar.core.event;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -23,8 +20,6 @@ import java.util.concurrent.Executors;
  * Event handler service registry dispatcher.
  */
 public class EventHandlerRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
-
-    private static final Logger logger = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
 
     private ExecutorService threadPool;
     private EventHandlerRegistry handlerRegistry;

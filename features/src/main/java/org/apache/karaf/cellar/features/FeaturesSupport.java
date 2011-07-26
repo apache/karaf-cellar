@@ -32,7 +32,7 @@ import java.util.Map;
  */
 public class FeaturesSupport extends CellarSupport {
 
-    private static Logger logger = LoggerFactory.getLogger(FeaturesSupport.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSupport.class);
 
     protected FeaturesService featuresService;
 
@@ -86,8 +86,8 @@ public class FeaturesSupport extends CellarSupport {
                     Boolean installed = featuresService.isInstalled(feature);
                     features.put(info, installed);
                 }
-            } else logger.debug("Feature with name {} is marked as BLOCKED OUTBOUND");
-        } else logger.debug("Feature is null");
+            } else LOGGER.debug("Feature with name {} is marked as BLOCKED OUTBOUND", feature.getName());
+        } else LOGGER.debug("Feature is null");
     }
 
     /**
@@ -106,8 +106,8 @@ public class FeaturesSupport extends CellarSupport {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     features.put(info, force);
                 }
-            } else logger.debug("Feature with name {} is marked as BLOCKED OUTBOUND");
-        } else logger.debug("Feature is null");
+            } else LOGGER.debug("Feature with name {} is marked as BLOCKED OUTBOUND", feature.getName());
+        } else LOGGER.debug("Feature is null");
     }
 
     /**

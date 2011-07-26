@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersCommand, ManageHandlersResult> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ManageHandlersCommandHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ManageHandlersCommandHandler.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.listhandlers.switch";
 
@@ -63,7 +63,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
                 }
             }
         } catch (InvalidSyntaxException e) {
-            logger.error("Syntax error looking up service {} using filter {}", EventHandler.class.getName(), EventHandler.MANAGED_FILTER);
+            LOGGER.error("Syntax error looking up service {} using filter {}", EventHandler.class.getName(), EventHandler.MANAGED_FILTER);
         } finally {
             if (references != null) {
                 for (ServiceReference ref : references) {

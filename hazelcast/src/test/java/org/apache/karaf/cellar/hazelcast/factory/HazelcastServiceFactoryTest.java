@@ -49,4 +49,5 @@ public class HazelcastServiceFactoryTest {
         HazelcastInstance factoryInstance = factory.buildInstance();
         Assert.assertEquals(true, factoryInstance.getCluster().getMembers().size() >= 2);
     }
+
 }
