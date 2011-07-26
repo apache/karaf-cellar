@@ -104,7 +104,9 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
             Member member = cluster.getLocalMember();
             HazelcastNode node = new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
             return node;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     /**

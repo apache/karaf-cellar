@@ -28,9 +28,16 @@
 
 
     <bean id="instanceFactory" class="org.apache.karaf.cellar.hazelcast.factory.HazelcastServiceFactory"
-          destroy-method="destroy">
+          init-method="init" destroy-method="destroy">
+        <property name="discoveryTask" ref="discoveryTask"/>
         <osgix:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="bean-managed"
                                   update-method="createOrUpdate"/>
+    </bean>
+
+    <!-- Discovery Task -->
+    <bean id="discoveryTask" class="org.apache.karaf.cellar.core.discovery.DiscoveryTask">
+        <property name="discoveryServices" ref="discoveryServices"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
 
@@ -150,6 +157,9 @@
 
     <osgi:reference id="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
     <osgi:reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+
+    <osgi:list id="discoveryServices" cardinality="0..N"
+               interface="org.apache.karaf.cellar.core.discovery.DiscoveryService"/>
 
     <!-- Group Consumer & Producer Serices -->
     <osgi:list id="groupEventProducers" cardinality="0..N" interface="org.apache.karaf.cellar.core.event.EventProducer"

@@ -20,6 +20,8 @@ import com.hazelcast.core.MembershipListener;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
@@ -27,10 +29,10 @@ import java.util.Set;
 /**
  * Cellar membership listener.
  */
-public class CellarMembershipListener implements MembershipListener {
+public class CellarMembershipListener extends HazelcastInstanceAware implements MembershipListener {
 
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarMembershipListener.class);
     private GroupManager groupManager;
-    private HazelcastInstance instance;
     private List<? extends Synchronizer> synchronizers;
 
     public CellarMembershipListener(HazelcastInstance instance) {
@@ -40,22 +42,26 @@ public class CellarMembershipListener implements MembershipListener {
 
     public void memberAdded(MembershipEvent membershipEvent) {
         Member member = membershipEvent.getMember();
-        Member local = instance.getCluster().getLocalMember();
+        try {
+            Member local = instance.getCluster().getLocalMember();
 
-        if (local.equals(member)) {
-            if (synchronizers != null && !synchronizers.isEmpty()) {
-                Set<Group> groups = groupManager.listLocalGroups();
-                if (groups != null && !groups.isEmpty()) {
-                    for (Group group : groups) {
-                        for (Synchronizer synchronizer : synchronizers) {
-                            if (synchronizer.isSyncEnabled(group)) {
-                                synchronizer.pull(group);
-                                synchronizer.push(group);
+            if (local.equals(member)) {
+                if (synchronizers != null && !synchronizers.isEmpty()) {
+                    Set<Group> groups = groupManager.listLocalGroups();
+                    if (groups != null && !groups.isEmpty()) {
+                        for (Group group : groups) {
+                            for (Synchronizer synchronizer : synchronizers) {
+                                if (synchronizer.isSyncEnabled(group)) {
+                                    synchronizer.pull(group);
+                                    synchronizer.push(group);
+                                }
                             }
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            LOGGER.warn("Error while calling memberAdded", e);
         }
     }
 
