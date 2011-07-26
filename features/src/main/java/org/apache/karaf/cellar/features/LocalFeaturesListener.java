@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
@@ -31,7 +30,8 @@ import java.util.Set;
  */
 public class LocalFeaturesListener extends FeaturesSupport implements org.apache.karaf.features.FeaturesListener {
 
-    private static Logger logger = LoggerFactory.getLogger(LocalFeaturesListener.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalFeaturesListener.class);
+
     private List<EventProducer> producerList;
 
     @Override
@@ -79,7 +79,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                 producer.produce(featureEvent);
                             }
                         }
-                    } else logger.debug("Feature with name {} is marked as local.", name);
+                    } else LOGGER.debug("Feature with name {} is marked as local.", name);
                 }
             }
         }

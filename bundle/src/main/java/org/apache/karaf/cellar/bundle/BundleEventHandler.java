@@ -14,7 +14,6 @@
 
 package org.apache.karaf.cellar.bundle;
 
-
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
@@ -29,12 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-/**
- * @author iocanel
- */
 public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BundleEventHandler.class);
+	private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
+
 	public static final String SWITCH_ID = "com.upstreamsystems.curry.cluster.bundle.handler";
 
 	private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
@@ -65,25 +62,29 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 				if(event.getType() == BundleEvent.INSTALLED) {
 					installBundleFromLocation(event.getLocation());
 					bundleTable.put(event.getId(),state);
+                    LOGGER.info("CELLAR BUNDLE EVENT: installed {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.UNINSTALLED) {
 					uninstallBundle(event.getSymbolicName(), event.getVersion());
 					bundleTable.remove(event.getId());
+                    LOGGER.info("CELLAR BUNDLE EVENT: uninstalled {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.STARTED) {
-					 startBundle(event.getSymbolicName(),event.getVersion());
-					 bundleTable.put(event.getId(),state);
+					startBundle(event.getSymbolicName(),event.getVersion());
+					bundleTable.put(event.getId(),state);
+                    LOGGER.info("CELLAR BUNDLE EVENT: started {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.STOPPED) {
-					 stopBundle(event.getSymbolicName(), event.getVersion());
-					 state.setStatus(BundleEvent.INSTALLED);
-					 bundleTable.put(event.getId(),state);
+					stopBundle(event.getSymbolicName(), event.getVersion());
+					state.setStatus(BundleEvent.INSTALLED);
+					bundleTable.put(event.getId(),state);
+                    LOGGER.info("CELLAR BUNDLE EVENT: stopped {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.UPDATED) {
 					updateBundle(event.getSymbolicName(), event.getVersion());
+                    LOGGER.info("CELLAR BUNDLE EVENT: updated {}/{}", event.getSymbolicName(), event.getVersion());
 				}
-			} else logger.debug("Bundle with symbolicName {} is marked as BLOCKED INBOUND",event.getSymbolicName());
+			} else LOGGER.debug("Bundle with symbolicName {} is marked as BLOCKED INBOUND", event.getSymbolicName());
 		} catch (BundleException e) {
-			logger.info("Failed to install bundle.");
+			LOGGER.info("Failed to install bundle.", e);
 		}
 	}
-
 
     /**
      * Initialization Method.
@@ -108,4 +109,5 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public Class<RemoteBundleEvent> getType() {
         return RemoteBundleEvent.class;
     }
+
 }

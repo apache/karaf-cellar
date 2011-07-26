@@ -20,7 +20,7 @@ import org.apache.karaf.cellar.core.command.Result;
  */
 public class ProducerSwitchResult extends Result {
 
-    protected Boolean sucess = Boolean.TRUE;
+    protected Boolean success = Boolean.TRUE;
     protected Boolean status = Boolean.TRUE;
 
     /**
@@ -36,32 +36,32 @@ public class ProducerSwitchResult extends Result {
      * Constructor
      *
      * @param id
-     * @param sucess
+     * @param success
      */
-    public ProducerSwitchResult(String id, Boolean sucess) {
+    public ProducerSwitchResult(String id, Boolean success) {
         super(id);
-        this.sucess = sucess;
+        this.success = success;
     }
 
     /**
      * Constructor
      *
      * @param id
-     * @param sucess
+     * @param success
      * @param status
      */
-    public ProducerSwitchResult(String id, Boolean sucess, Boolean status) {
+    public ProducerSwitchResult(String id, Boolean success, Boolean status) {
         super(id);
-        this.sucess = sucess;
+        this.success = success;
         this.status = status;
     }
 
-    public Boolean getSucess() {
-        return sucess;
+    public Boolean getSuccess() {
+        return success;
     }
 
-    public void setSucess(Boolean sucess) {
-        this.sucess = sucess;
+    public void setSuccess(Boolean success) {
+        this.success = success;
     }
 
     public Boolean getStatus() {

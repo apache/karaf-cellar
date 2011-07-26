@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
@@ -27,13 +26,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- * @author: iocanel
- */
 public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
 
     private static final String PROVIDER = "provider";
     private static final String IDENTITY = "identity";
@@ -93,17 +88,18 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
             if (oldRegistration != null) {
-                logger.info("Unregistering blobstore discovery service " + pid);
+                LOGGER.info("CELLAR CLOUD: Unregistering blobstore discovery service {}", pid);
                 oldRegistration.unregister();
             }
         }
     }
 
     public void deleted(String pid) {
-        logger.info("Blobstore discovery service deleted {}", pid);
+        LOGGER.info("CELLAR CLOUD: Deleting blobstore discovery service {}", pid);
         ServiceRegistration oldRegistration = registrations.remove(pid);
         if (oldRegistration != null) {
             oldRegistration.unregister();
         }
     }
+
 }

@@ -11,15 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.apache.karaf.cellar.core.Handler;
 import org.apache.karaf.cellar.core.HandlerRegistry;
 
-/**
- * @author iocanel
- */
 public interface EventHandlerRegistry<E extends Event> extends HandlerRegistry<E, Handler<E>> {
 
     /**
@@ -29,4 +25,5 @@ public interface EventHandlerRegistry<E extends Event> extends HandlerRegistry<E
      * @return
      */
     public EventHandler<E> getHandler(E event);
+
 }

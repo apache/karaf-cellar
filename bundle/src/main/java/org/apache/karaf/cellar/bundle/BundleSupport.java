@@ -19,19 +19,12 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Properties;
 
-/**
- * @author iocanel
- */
 public class BundleSupport extends CellarSupport {
-
-    private static final Logger logger = LoggerFactory.getLogger(CellarSupport.class);
 
 	protected BundleContext bundleContext;
 
@@ -155,4 +148,5 @@ public class BundleSupport extends CellarSupport {
 	public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
 		this.configurationAdmin = configurationAdmin;
 	}
+
 }

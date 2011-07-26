@@ -33,7 +33,7 @@ import java.util.Map;
 @Command(scope = "cluster", name = "feature-install", description = "Installs a feature to all members of a group")
 public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
-    protected static final Logger logger = LoggerFactory.getLogger(FeatureCommandSupport.class);
+    protected static final transient Logger LOGGER = LoggerFactory.getLogger(FeatureCommandSupport.class);
 
     protected FeaturesService featuresService;
     protected BundleContext bundleContext;
@@ -76,7 +76,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                         }
                     }
                 } catch (Exception e) {
-                    logger.error("Error while browsing features", e);
+                    LOGGER.error("Error while browsing features", e);
                 }
 
                 if (info.getVersion() != null && !info.getVersion().isEmpty()) {

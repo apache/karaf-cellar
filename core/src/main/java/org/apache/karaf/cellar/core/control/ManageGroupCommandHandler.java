@@ -17,8 +17,6 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.CommandHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.Set;
@@ -27,8 +25,6 @@ import java.util.Set;
  * Manager group command handler.
  */
 public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand, ManageGroupResult> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ManageGroupCommandHandler.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.managegroup.switch";
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
@@ -122,7 +118,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             }
         }
     }
-
 
     /**
      * Removes {@link Node} from ALL {@link Group}s.

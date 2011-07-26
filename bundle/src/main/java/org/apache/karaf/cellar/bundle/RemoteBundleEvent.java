@@ -11,15 +11,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
-
 
 import org.apache.karaf.cellar.core.event.Event;
 
-/**
- * @author iocanel
- */
 public class RemoteBundleEvent extends Event {
 
 	private String symbolicName;
@@ -72,4 +67,5 @@ public class RemoteBundleEvent extends Event {
 	public void setType(int type) {
 		this.type = type;
 	}
+
 }

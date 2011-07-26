@@ -34,15 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author iocanel
- */
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(BundleSynchronizer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
     private List<EventProducer> producerList;
-
 
     /**
      * Registration method
@@ -94,7 +90,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                     installBundleFromLocation(state.getLocation());
                                 }
                             } catch (BundleException e) {
-                                logger.error("Error while pulling bundle", e);
+                                LOGGER.error("Error while pulling bundle", e);
                             }
                         }
                     }
@@ -106,7 +102,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     /**
      * Publishses local configuration to the cluster.
      */
-
     public void push(Group group) {
 
         if (group != null) {
@@ -147,7 +142,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
     }
 
-
     @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
@@ -160,7 +154,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            logger.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("Error while checking if sync is enabled.", e);
         }
         return result;
     }
@@ -172,4 +166,5 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     public void setProducerList(List<EventProducer> producerList) {
         this.producerList = producerList;
     }
+
 }

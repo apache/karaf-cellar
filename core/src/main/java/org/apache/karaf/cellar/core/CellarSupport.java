@@ -30,12 +30,11 @@ import java.util.Set;
  */
 public class CellarSupport {
 
-    protected static final Logger logger = LoggerFactory.getLogger(CellarSupport.class);
+    protected static final transient Logger LOGGER = LoggerFactory.getLogger(CellarSupport.class);
 
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
     protected ConfigurationAdmin configurationAdmin;
-
 
     /**
      * Lists the BlackList for the specified feature.
@@ -71,7 +70,7 @@ public class CellarSupport {
                     }
                 }
             } catch (IOException e) {
-                logger.error("Error looking up for clustering group configuration cfg");
+                LOGGER.error("Error looking up for clustering group configuration cfg");
             }
         }
         return result;
@@ -101,7 +100,6 @@ public class CellarSupport {
         return result;
     }
 
-
     /**
      * Lists the BlackList for the specified feature.
      *
@@ -123,7 +121,6 @@ public class CellarSupport {
         }
         return result;
     }
-
 
     /**
      * Returns true if the specified event is allowed.

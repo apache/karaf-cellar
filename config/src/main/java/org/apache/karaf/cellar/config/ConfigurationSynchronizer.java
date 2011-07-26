@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public class ConfigurationSynchronizer extends ConfigurationSupport implements Synchronizer {
 
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationSynchronizer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationSynchronizer.class);
 
     private List<EventProducer> producerList;
 
@@ -90,9 +90,10 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             if (conf != null) {
                                 //Mark the remote configuration event.
                                 conf.update(preparePull(dictionary));
+                                LOGGER.info("CELLAR CONFIG EVENT: local configuration updated.");
                             }
                         } catch (IOException ex) {
-                            logger.error("Failed to read remote configuration", ex);
+                            LOGGER.error("Failed to read remote configuration", ex);
                         }
                     }
                 }
@@ -103,7 +104,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Publishses local configuration to the cluster.
+     * Publishes local configuration to the cluster.
      */
     public void push(Group group) {
         if (group != null) {
@@ -143,7 +144,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                         }
 
                                     }
-                                    logger.info("Publishing PID:" + pid);
+                                    LOGGER.info("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
                                 }
                             } else {
                                 RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
@@ -153,14 +154,14 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                         producer.produce(event);
                                     }
                                 }
-                                logger.info("Publishing PID:" + pid);
+                                LOGGER.info("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
                             }
                         }
                     }
                 } catch (IOException ex) {
-                    logger.error("Failed to read remote configuration, due to I/O error:", ex);
+                    LOGGER.error("Failed to read remote configuration, due to I/O error:", ex);
                 } catch (InvalidSyntaxException ex) {
-                    logger.error("Failed to read remote configuration, due to invalid filter syntax:", ex);
+                    LOGGER.error("Failed to read remote configuration, due to invalid filter syntax:", ex);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -180,7 +181,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            logger.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("Error while checking if sync is enabled.", e);
         }
         return result;
     }

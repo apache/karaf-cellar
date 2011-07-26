@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.discovery;
 
 import org.osgi.service.cm.Configuration;
@@ -26,16 +25,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author: iocanel
- */
 public class DiscoveryTask implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiscoveryTask.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(DiscoveryTask.class);
 
     private List<DiscoveryService> discoveryServices;
     private ConfigurationAdmin configurationAdmin;
-
 
     @Override
     public void run() {
@@ -59,11 +54,10 @@ public class DiscoveryTask implements Runnable {
                     configuration.update(properties);
                 }
             } catch (IOException e) {
-                logger.error("Failed to update member list", e);
+                LOGGER.error("Failed to update member list", e);
             }
         }
     }
-
 
     /**
      * Creates a comma delimited list of members.
@@ -83,7 +77,6 @@ public class DiscoveryTask implements Runnable {
         return builder.toString();
     }
 
-
     public List<DiscoveryService> getDiscoveryServices() {
         return discoveryServices;
     }
@@ -99,4 +92,5 @@ public class DiscoveryTask implements Runnable {
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
+
 }

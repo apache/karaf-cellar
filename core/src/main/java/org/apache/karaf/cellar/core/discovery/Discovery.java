@@ -14,9 +14,6 @@
 
 package org.apache.karaf.cellar.core.discovery;
 
-/**
- * @author: iocanel
- */
 public class Discovery {
 
     public static final String PID = "org.apache.karaf.cellar.instance";
@@ -27,4 +24,5 @@ public class Discovery {
 
     public static final Long DEFAULT_DELAY = 1000L;
     public static final Long DEFAULT_PERIOD = 10000L;
+
 }

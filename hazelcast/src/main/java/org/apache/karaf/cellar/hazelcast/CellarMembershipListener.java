@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class CellarMembershipListener extends HazelcastInstanceAware implements MembershipListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(CellarMembershipListener.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarMembershipListener.class);
 
     private GroupManager groupManager;
     private List<? extends Synchronizer> synchronizers;
@@ -61,16 +61,14 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
                 }
             }
         } catch (Exception e) {
-            logger.warn("Error while calling memberAdded", e);
+            LOGGER.warn("Error while calling memberAdded", e);
         }
     }
-
 
     @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
 
     }
-
 
     public GroupManager getGroupManager() {
         return groupManager;
