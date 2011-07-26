@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 public class EventHandlerServiceRegistry<E extends Event> implements EventHandlerRegistry<E> {
 
-    private static final Logger logger = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
 
     private BundleContext bundleContext;
 
@@ -48,14 +48,14 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
                             return handler;
                         }
                     } catch (Exception ex) {
-                        logger.error("Failed to get handler from Service Reference.", ex);
+                        LOGGER.error("Failed to get handler from Service Reference.", ex);
                     } finally {
                         bundleContext.ungetService(ref);
                     }
                 }
             }
         } catch (InvalidSyntaxException e) {
-            logger.error("Failed to lookup Service Registry for Event Hanlders.", e);
+            LOGGER.error("Failed to lookup Service Registry for Event Hanlders.", e);
         }
         return null;
     }
@@ -67,4 +67,5 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
+
 }

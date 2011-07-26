@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public class LocalConfigurationListener extends ConfigurationSupport implements ConfigurationListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalConfigurationListener.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalConfigurationListener.class);
 
     private List<EventProducer> producerList;
 
@@ -66,7 +66,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             producer.produce(configurationEvent);
                         }
                     }
-                } else logger.debug("Configuration with pid {} is marked as local.", pid);
+                } else LOGGER.debug("Configuration with PID {} is marked as local.", pid);
             }
         }
     }
@@ -88,9 +88,9 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                 configurationTable.put(configuration.getPid(), properties);
             }
         } catch (IOException e) {
-            logger.error("Failed to push configuration with pid:" + pid, e);
+            LOGGER.error("Failed to push configuration with PID {}" + pid, e);
         } catch (InvalidSyntaxException e) {
-            logger.error("Failed to retrieve configuration with pid:" + pid, e);
+            LOGGER.error("Failed to retrieve configuration with PID {}", pid, e);
         }
     }
 

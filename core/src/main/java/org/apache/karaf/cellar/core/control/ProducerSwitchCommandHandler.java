@@ -24,7 +24,6 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.producer.switch";
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
-
     /**
      * Handle the {@code ProducerSwitchCommand} command.
      *

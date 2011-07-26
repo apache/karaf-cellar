@@ -30,7 +30,7 @@ public abstract class CommandHandler<C extends Command<R>, R extends Result> ext
     protected Producer producer;
 
     /**
-     * Hanldes the the {@code Command}.
+     * Handles the the {@code Command}.
      *
      * @param command
      */

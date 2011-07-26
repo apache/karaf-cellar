@@ -27,7 +27,8 @@ import java.net.URI;
  */
 public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<RemoteRepositoryEvent> {
 
-    private static Logger logger = LoggerFactory.getLogger(RepositoryEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(RepositoryEventHandler.class);
+
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.repository.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
@@ -47,14 +48,16 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         RepositoryEvent.EventType type = event.getType();
         try {
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                logger.debug("Adding repository url {}", uri);
+                LOGGER.debug("Adding repository URL {}", uri);
                 featuresService.addRepository(new URI(uri));
+                LOGGER.info("CELLAR FEATURES EVENT: adding repository URL {}", uri);
             } else {
-                logger.debug("Removing repository url {}", uri);
+                LOGGER.debug("Removing repository url {}", uri);
                 featuresService.removeRepository(new URI(uri));
+                LOGGER.info("CELLAR FEATURES EVENT: removing repository URL {}", uri);
             }
         } catch (Exception e) {
-            logger.error("Failed to add/remove repository {}", uri);
+            LOGGER.error("Failed to add/remove repository URL {}", uri);
         }
     }
 

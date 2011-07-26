@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.core.event;
 
-
 import org.apache.karaf.cellar.core.Handler;
 
 /**

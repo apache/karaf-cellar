@@ -14,8 +14,6 @@
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -25,8 +23,6 @@ import java.util.Properties;
  * Configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
-
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationSupport.class);
 
     private static String HOME_PLACEHOLDER = "karaf.home";
     private static String RELATIVE_HOME = "${" + HOME_PLACEHOLDER + "}";
@@ -56,7 +52,6 @@ public class ConfigurationSupport extends CellarSupport {
         return properties;
     }
 
-
     /**
      * Prepares a dictionary for push
      *
@@ -76,7 +71,6 @@ public class ConfigurationSupport extends CellarSupport {
         }
         return properties;
     }
-
 
     /**
      * Prepares a dictionary for Pull
@@ -112,7 +106,6 @@ public class ConfigurationSupport extends CellarSupport {
         return result;
     }
 
-
     public Dictionary filterDictionary(Dictionary dictionary) {
         Dictionary result = new Properties();
         if (dictionary != null) {
@@ -128,7 +121,6 @@ public class ConfigurationSupport extends CellarSupport {
         return result;
     }
 
-
     /**
      * Returns true if dictionaries are equal.
      *
@@ -139,7 +131,6 @@ public class ConfigurationSupport extends CellarSupport {
     protected boolean dictionariesEqual(Dictionary dict1, Dictionary dict2) {
         return subDictionary(dict1, dict2) && subDictionary(dict2, dict1);
     }
-
 
     /**
      * Returns true if target contains all source key/value pairs.

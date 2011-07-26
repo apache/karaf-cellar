@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class HazelcastServiceFactory implements BundleContextAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(HazelcastServiceFactory.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(HazelcastServiceFactory.class);
 
     private String username = GroupConfig.DEFAULT_GROUP_NAME;
     private String password = GroupConfig.DEFAULT_GROUP_PASSWORD;
@@ -71,7 +71,7 @@ public class HazelcastServiceFactory implements BundleContextAware {
             //Make sure that an the properties will be applied before an instance is created.
             semaphore.acquire();
         } catch (InterruptedException e) {
-            logger.error("Failed to acquire intialization semaphore.", e);
+            LOGGER.error("Failed to acquire initialization semaphore.", e);
         }
     }
 
@@ -155,7 +155,6 @@ public class HazelcastServiceFactory implements BundleContextAware {
         }
     }
 
-
     public void updateMemberList() {
         HazelcastInstance instance = lookupInstance();
         if (instance != null) {
@@ -165,11 +164,10 @@ public class HazelcastServiceFactory implements BundleContextAware {
                 instance.getConfig().getNetworkConfig().getJoin().setTcpIpConfig(buildTcpIpConfig());
                 instance.getLifecycleService().restart();
             } catch (Exception ex) {
-                logger.error("Error while restarting Hazelcast instance.", ex);
+                LOGGER.error("Error while restarting Hazelcast instance.", ex);
             }
         }
     }
-
 
     /**
      * Returs a Hazelcast instance from service registry.
@@ -185,11 +183,10 @@ public class HazelcastServiceFactory implements BundleContextAware {
                 bundleContext.ungetService(reference);
             }
         } catch (Exception ex) {
-            logger.warn("No hazelcast instance found in service registry.");
+            LOGGER.warn("No Hazelcast instance found in service registry.");
         }
         return instance;
     }
-
 
     /**
      * Builds a {@link HazelcastInstance}
@@ -200,11 +197,10 @@ public class HazelcastServiceFactory implements BundleContextAware {
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
-            logger.error("Failed to acquire instance semaphore", e);
+            LOGGER.error("Failed to acquire instance semaphore", e);
         }
         return Hazelcast.newHazelcastInstance(buildConfig());
     }
-
 
     /**
      * Builds a Hazelcast {@link Config}
@@ -231,7 +227,6 @@ public class HazelcastServiceFactory implements BundleContextAware {
         return groupConfig;
     }
 
-
     /**
      * Builds a {@link MulticastConfig}
      *
@@ -245,7 +240,6 @@ public class HazelcastServiceFactory implements BundleContextAware {
         multicastConfig.setMulticastTimeoutSeconds(multicastTimeoutSeconds);
         return multicastConfig;
     }
-
 
     /**
      * Builds a {@link TcpIpConfig}.
@@ -313,7 +307,6 @@ public class HazelcastServiceFactory implements BundleContextAware {
             return true;
         }
     }
-
 
     public String getUsername() {
         return username;
@@ -386,4 +379,5 @@ public class HazelcastServiceFactory implements BundleContextAware {
     public void setDiscoveryTask(DiscoveryTask discoveryTask) {
         this.discoveryTask = discoveryTask;
     }
+
 }

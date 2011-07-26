@@ -36,12 +36,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author: iocanel
- */
 public class BlobStoreDiscoveryService implements DiscoveryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
 
     private String provider;
     private String identity;
@@ -57,7 +54,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      * Constructor
      */
     public BlobStoreDiscoveryService() {
-        logger.info("Cloud blob store discovery service initialized");
+        LOGGER.info("Cloud blob store discovery service initialized");
     }
 
     public void init() {
@@ -70,7 +67,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 signIn();
             }
         } catch (Exception ex) {
-            logger.error("Error while initializing blobstore discovery service", ex);
+            LOGGER.error("Error while initializing blobstore discovery service", ex);
         }
     }
 
@@ -80,7 +77,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     public void update(Map<String, Object> properties) {
-        logger.info("Updating properties");
+        LOGGER.info("Updating properties");
     }
 
     /**
@@ -134,10 +131,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
         } else {
-            logger.debug("Could not find the ip address of the current node, in the blobstore.");
+            LOGGER.debug("Could not find the ip address of the current node, in the blobstore.");
         }
     }
-
 
     /**
      * Reads from a {@link BlobStore}. It returns an Object.
@@ -157,9 +153,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             ois = new ObjectInputStream(is);
             result = ois.readObject();
         } catch (IOException e) {
-            logger.error("Error while reading blob.", e);
+            LOGGER.error("Error while reading blob.", e);
         } catch (ClassNotFoundException e) {
-            logger.error("Error while reading blob.", e);
+            LOGGER.error("Error while reading blob.", e);
         } finally {
             if (ois != null) {
                 try {
@@ -200,7 +196,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 blob.setPayload(baos.toByteArray());
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
-                logger.error("Error while writing blob", e);
+                LOGGER.error("Error while writing blob", e);
             } finally {
                 if (oos != null) {
                     try {
@@ -219,7 +215,6 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         }
     }
 
-
     /**
      * Get an instance of InetAddress for the local computer
      * and return its string representation.
@@ -228,7 +223,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
-            logger.error("Can't determine IP address for current node.", ex);
+            LOGGER.error("Can't determine IP address for current node.", ex);
             return null;
         }
     }
@@ -272,4 +267,5 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     public void setValidityPeriod(Integer validityPeriod) {
         this.validityPeriod = validityPeriod;
     }
+
 }

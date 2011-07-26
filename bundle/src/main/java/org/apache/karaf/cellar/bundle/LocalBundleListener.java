@@ -11,9 +11,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
-
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
@@ -27,12 +25,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author iocanel
- */
 public class LocalBundleListener extends BundleSupport implements BundleListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalBundleListener.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalBundleListener.class);
 
     private List<EventProducer> producerList;
 
@@ -65,9 +60,8 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                                     producer.produce(remoteBundleEvent);
                                 }
                             }
-                        } else logger.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND", symbolicName);
-                    } else logger.debug("Artifact is not a bundle");
-
+                        } else LOGGER.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND", symbolicName);
+                    } else LOGGER.debug("Artifact is not a bundle");
                 }
             }
         }
