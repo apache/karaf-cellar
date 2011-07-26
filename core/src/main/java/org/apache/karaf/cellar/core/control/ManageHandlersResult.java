@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.core.control;
 
-
 import org.apache.karaf.cellar.core.command.Result;
 
 import java.util.HashMap;

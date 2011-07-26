@@ -21,7 +21,8 @@ import org.slf4j.LoggerFactory;
  */
 public class EventDispatchTask<E extends Event> implements Runnable {
 
-    private Logger logger = LoggerFactory.getLogger(EventDispatchTask.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(EventDispatchTask.class);
+
     private E event;
     private EventHandlerRegistry handlerRegistry;
     private long timeout = 10000;
@@ -78,12 +79,12 @@ public class EventDispatchTask<E extends Event> implements Runnable {
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
-                    logger.warn("Interupted while waiting for event handler", e);
+                    LOGGER.warn("Interupted while waiting for event handler", e);
                 }
             }
         }
         if (!dispathced) {
-            logger.warn("Failed to retrieve handler for event {}", event.getClass());
+            LOGGER.warn("Failed to retrieve handler for event {}", event.getClass());
         }
     }
 

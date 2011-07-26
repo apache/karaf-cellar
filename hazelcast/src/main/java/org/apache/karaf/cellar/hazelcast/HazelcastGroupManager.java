@@ -50,7 +50,7 @@ import java.util.Set;
  */
 public class HazelcastGroupManager implements GroupManager, BundleContextAware {
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
+    private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
 
     private static final String GROUPS = "org.apache.karaf.cellar.groups";
 
@@ -76,7 +76,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 }
             }
         } catch (IOException e) {
-            logger.error("Error reading group configuration");
+            LOGGER.error("Error reading group configuration.");
         }
     }
 
@@ -255,7 +255,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             properties.put(Configurations.GROUPS_KEY, groups);
             configuration.update(properties);
         } catch (IOException e) {
-            logger.error("Error reading group configuration {}", group);
+            LOGGER.error("Error reading group configuration {}", group);
         }
 
         //Sync
@@ -272,7 +272,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 }
             }
         } catch (InvalidSyntaxException e) {
-            logger.error("Error looking up for Synchronizers", e);
+            LOGGER.error("Error looking up for synchronizers.", e);
         }
     }
 
@@ -329,7 +329,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             properties.put(Configurations.GROUPS_KEY, groups);
             configuration.update(properties);
         } catch (IOException e) {
-            logger.error("Error reading group configuration {}", group);
+            LOGGER.error("Error reading group configuration {}", group);
         }
     }
 
@@ -359,7 +359,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             conf.update(updatedProperties);
 
         } catch (IOException e) {
-            logger.error("Error reading group configuration ", e);
+            LOGGER.error("Error reading group configuration.", e);
         }
     }
 

@@ -45,7 +45,6 @@ public class Command<R extends Result> extends Event {
         return true;
     }
 
-
     /**
      * Process the event of timeout.
      */

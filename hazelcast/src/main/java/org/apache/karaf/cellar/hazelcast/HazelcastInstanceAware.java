@@ -2,9 +2,6 @@ package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 
-/**
- * @author: iocanel
- */
 public class HazelcastInstanceAware {
 
     protected HazelcastInstance instance;
@@ -24,4 +21,5 @@ public class HazelcastInstanceAware {
     public void setInstance(HazelcastInstance instance) {
         this.instance = instance;
     }
+
 }

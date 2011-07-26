@@ -36,7 +36,8 @@ import java.util.Properties;
  */
 public class ConfigurationEventHandler extends ConfigurationSupport implements EventHandler<RemoteConfigurationEvent> {
 
-    private static Logger logger = LoggerFactory.getLogger(ConfigurationEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationEventHandler.class);
+
     public static final String SWITCH_ID = "org.apache.karaf.cellar.configuration.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
@@ -72,14 +73,14 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         if (!dictionariesEqual(dictionary, existingConfiguration)) {
                             conf.update(preparePull(dictionary));
                         }
+                        LOGGER.info("CELLAR CONFIG EVENT: local configuration updated.");
                     }
                 } catch (IOException ex) {
-                    logger.error("Failed to read remote configurationTable", ex);
+                    LOGGER.error("Failed to read remote configurationTable", ex);
                 }
-            } else logger.debug("Configuration with pid {} is marked as local.", pid);
+            } else LOGGER.debug("Configuration with pid {} is marked as local.", pid);
         }
     }
-
 
     /**
      * Initialization Method.

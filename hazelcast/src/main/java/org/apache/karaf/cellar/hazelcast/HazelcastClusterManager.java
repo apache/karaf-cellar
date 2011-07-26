@@ -23,7 +23,6 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,8 +34,6 @@ import java.util.Set;
  * Hazelcast cluster manager.
  */
 public class HazelcastClusterManager extends HazelcastInstanceAware implements ClusterManager {
-
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
 
     private static final String GENERATOR_ID = "org.apache.karaf.cellar.idgen";
 

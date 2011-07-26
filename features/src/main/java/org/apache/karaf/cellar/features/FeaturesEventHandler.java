@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
  */
 public class FeaturesEventHandler extends FeaturesSupport implements EventHandler<RemoteFeaturesEvent> {
 
-    private static Logger logger = LoggerFactory.getLogger(FeaturesSynchronizer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
+
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.features.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
@@ -50,25 +51,27 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
         String name = event.getName();
         String version = event.getVersion();
         if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
-            logger.debug("Received features event {} version {} type {}.", new Object[]{event.getName(), event.getVersion(), event.getType()});
+            LOGGER.debug("Received features event {} version {} type {}.", new Object[]{event.getName(), event.getVersion(), event.getType()});
             FeatureEvent.EventType type = event.getType();
             Boolean isInstalled = isInstanlled(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
-                    logger.debug("Installing feature {} version {}", name, version);
+                    LOGGER.debug("Installing feature {} version {}", name, version);
                     if (version != null) {
                         featuresService.installFeature(name, version);
                     } else featuresService.installFeature(name);
+                    LOGGER.info("CELLAR FEATURES EVENT: installing feature {} version {}", name, version);
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
-                    logger.debug("Uninstalling feature {} version {}", name, version);
+                    LOGGER.debug("Uninstalling feature {} version {}", name, version);
                     if (version != null) {
                         featuresService.uninstallFeature(name, version);
                     } else featuresService.uninstallFeature(name);
+                    LOGGER.info("CELLAR FEATURES EVENT: uninstalling feature {} version {}", name, version);
                 }
             } catch (Exception e) {
-                logger.error("Failed to process feature event.", e);
+                LOGGER.error("Failed to process feature event.", e);
             }
-        } else logger.debug("Feature with name {} is marked as BLOCKED INBOUND", name);
+        } else LOGGER.debug("Feature with name {} is marked as BLOCKED INBOUND", name);
     }
 
     public Class<RemoteFeaturesEvent> getType() {
