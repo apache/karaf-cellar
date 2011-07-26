@@ -38,7 +38,7 @@
         <felix.configadmin.version>1.2.8</felix.configadmin.version>
         <felix.webconsole.version>3.1.8</felix.webconsole.version>
         <junit.bundle.version>4.7_3</junit.bundle.version>
-        <karaf.version>2.2.1</karaf.version>
+        <karaf.version>2.2.2</karaf.version>
         <hazelcast.version>1.9.3</hazelcast.version>
         <osgi.version>4.2.0</osgi.version>
         <servlet.api.version>2.5</servlet.api.version>
