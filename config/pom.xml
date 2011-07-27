@@ -38,6 +38,7 @@
         <osgi.import>
             !org.apache.karaf.cellar.config*,
             org.apache.karaf.cellar.core*;version="${project.version}",
+            org.apache.karaf.shell.console*;version="[2,4)",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
