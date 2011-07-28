@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.management.codec;
 
-import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
 
@@ -40,18 +39,13 @@ public class JmxNode {
         return data;
     }
 
-    public JmxNode(Node node, ClusterManager clusterManager) {
+    public JmxNode(Node node) {
         try {
             String[] itemNames = CellarNodeMBean.NODE;
             Object[] itemValues = new Object[itemNames.length];
             itemValues[0] = node.getId();
             itemValues[1] = node.getHost();
             itemValues[2] = node.getPort();
-            if (node.getHost().equals(clusterManager.getNode())) {
-                itemValues[3] = true;
-            } else {
-                itemValues[3] = false;
-            }
             data = new CompositeDataSupport(NODE, itemNames, itemValues);
         } catch (OpenDataException e) {
             throw new IllegalStateException("Cannot create node open data", e);
@@ -73,9 +67,6 @@ public class JmxNode {
 
             itemTypes[2] = SimpleType.INTEGER;
             descriptions[2] = "The port number of the Cellar node";
-
-            itemTypes[3] = SimpleType.BOOLEAN;
-            descriptions[3] = "Whether the Cellar node is the local one or not";
 
             return new CompositeType("Node", desc, itemNames, descriptions, itemTypes);
         } catch (OpenDataException e) {
