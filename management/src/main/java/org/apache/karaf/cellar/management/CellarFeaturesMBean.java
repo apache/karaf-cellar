@@ -16,21 +16,20 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- *  Cellar Node MBean to manipulate Cellar cluster nodes.
+ * MBean interface describing the operations and attributes on a Cellar feature.
  */
-public interface CellarNodeMBean {
+public interface CellarFeaturesMBean {
 
-    String NODE_ID = "ID";
-    String NODE_HOST = "Host";
-    String NODE_PORT = "Port";
-    String NODE_IS_LOCAL = "Is Local";
+    void install(String group, String name) throws Exception;
+    void install(String group, String name, String version) throws Exception;
+    void uninstall(String group, String name) throws Exception;
+    void uninstall(String group, String name, String version) throws Exception;
 
-    String[] NODE = { NODE_ID, NODE_HOST, NODE_PORT, NODE_IS_LOCAL };
+    TabularData listFeatures(String group) throws Exception;
 
-    // Operations
-    long pingNode(String nodeId) throws Exception;
-
-    // Attributes
-    TabularData getNodes() throws Exception;
+    String FEATURE_NAME = "Name";
+    String FEATURE_VERSION = "Version";
+    String FEATURE_INSTALLED = "Installed";
+    String[] FEATURE = { FEATURE_NAME, FEATURE_VERSION, FEATURE_INSTALLED };
 
 }

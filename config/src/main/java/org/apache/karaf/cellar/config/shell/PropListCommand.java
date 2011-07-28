@@ -56,7 +56,6 @@ public class PropListCommand extends CellarCommandSupport {
             } else System.err.print("No PIDs found for group:" + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-
         }
         return null;
     }

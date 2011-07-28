@@ -49,7 +49,6 @@ public class ListCommand extends ConfigCommandSupport {
             } else System.err.println("No PIDs found for group:" + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-
         }
         return null;
     }

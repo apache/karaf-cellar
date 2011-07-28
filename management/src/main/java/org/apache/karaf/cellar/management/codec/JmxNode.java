@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
 
 import javax.management.openmbean.*;
+import javax.management.openmbean.SimpleType;
 import java.util.List;
 
 /**
@@ -44,14 +45,16 @@ public class JmxNode {
             String[] itemNames = CellarNodeMBean.NODE;
             Object[] itemValues = new Object[itemNames.length];
             itemValues[0] = node.getId();
+            itemValues[1] = node.getHost();
+            itemValues[2] = node.getPort();
             if (node.getHost().equals(clusterManager.getNode())) {
-                itemValues[1] = true;
+                itemValues[3] = true;
             } else {
-                itemValues[1] = false;
+                itemValues[3] = false;
             }
             data = new CompositeDataSupport(NODE, itemNames, itemValues);
         } catch (OpenDataException e) {
-            throw new IllegalStateException("Cannot create instance open data", e);
+            throw new IllegalStateException("Cannot create node open data", e);
         }
     }
 
@@ -63,22 +66,28 @@ public class JmxNode {
             String[] descriptions = new String[itemNames.length];
 
             itemTypes[0] = SimpleType.STRING;
-            descriptions[0] = "The name of the Cellar node";
+            descriptions[0] = "The ID of the Cellar node";
 
-            itemTypes[1] = SimpleType.BOOLEAN;
-            descriptions[1] = "Whether the Cellar node is the local one or not";
+            itemTypes[1] = SimpleType.STRING;
+            descriptions[1] = "The hostname of the Cellar node";
+
+            itemTypes[2] = SimpleType.INTEGER;
+            descriptions[2] = "The port number of the Cellar node";
+
+            itemTypes[3] = SimpleType.BOOLEAN;
+            descriptions[3] = "Whether the Cellar node is the local one or not";
 
             return new CompositeType("Node", desc, itemNames, descriptions, itemTypes);
         } catch (OpenDataException e) {
-            throw new IllegalStateException("Unable to build instance type", e);
+            throw new IllegalStateException("Unable to build node type", e);
         }
     }
 
     private static TabularType createNodeTableType() {
         try {
-            return new TabularType("Nodes", "Table of all Karaf Cellar nodes", NODE, new String[] {CellarNodeMBean.NODE_NAME});
+            return new TabularType("Nodes", "Table of all Karaf Cellar nodes", NODE, new String[] {CellarNodeMBean.NODE_ID});
         } catch (OpenDataException e) {
-            throw new IllegalStateException("Unable to build node table tyep", e);
+            throw new IllegalStateException("Unable to build node table type", e);
         }
     }
 

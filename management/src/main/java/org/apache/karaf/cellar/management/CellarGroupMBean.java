@@ -16,21 +16,22 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- *  Cellar Node MBean to manipulate Cellar cluster nodes.
+ * Cellar Group MBean to manipule Cellar cluster group.
  */
-public interface CellarNodeMBean {
+public interface CellarGroupMBean {
 
-    String NODE_ID = "ID";
-    String NODE_HOST = "Host";
-    String NODE_PORT = "Port";
-    String NODE_IS_LOCAL = "Is Local";
+    String GROUP_NAME = "Name";
+    String GROUP_MEMBERS = "Members";
 
-    String[] NODE = { NODE_ID, NODE_HOST, NODE_PORT, NODE_IS_LOCAL };
+    String[] GROUP = { GROUP_NAME,GROUP_MEMBERS };
 
     // Operations
-    long pingNode(String nodeId) throws Exception;
+    void create(String name) throws Exception;
+    void delete(String name) throws Exception;
+    void join(String name, String nodeId) throws Exception;
+    void quit(String name, String nodeId) throws Exception;
 
     // Attributes
-    TabularData getNodes() throws Exception;
+    TabularData getGroups() throws Exception;
 
 }
