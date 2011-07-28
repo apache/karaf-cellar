@@ -16,6 +16,9 @@ package org.apache.karaf.cellar.management.internal;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
+import org.apache.karaf.cellar.core.control.ManageGroupAction;
+import org.apache.karaf.cellar.core.control.ManageGroupCommand;
+import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
 import org.apache.karaf.cellar.management.codec.JmxNode;
 import org.apache.karaf.cellar.utils.ping.Ping;
@@ -64,11 +67,27 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
     }
 
     public TabularData getNodes() throws Exception {
-        Set<Node> allNodes = clusterManager.listNodes();
+        // manipulate the class loader
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+
         List<JmxNode> nodes = new ArrayList<JmxNode>();
-        for (Node node : allNodes) {
-            nodes.add(new JmxNode(node, clusterManager));
+
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
+            Set<Node> recipientList = new HashSet<Node>();
+            recipientList.add(clusterManager.getNode());
+            command.setDestination(recipientList);
+            command.setAction(ManageGroupAction.LIST);
+
+            Map<Node, ManageGroupResult> results = executionContext.execute(command);
+            for (Node node : results.keySet()) {
+                nodes.add(new JmxNode(node));
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+
         TabularData table = JmxNode.tableFrom(nodes);
         return table;
     }

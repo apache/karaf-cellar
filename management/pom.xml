@@ -35,7 +35,7 @@
 
     <properties>
         <osgi.export>
-            org.apache.karaf.cellar.management;version="${project.version}"
+            org.apache.karaf.cellar.management*;version="${project.version}"
         </osgi.export>
         <osgi.import>
             !org.apache.karaf.cellar.management*,
