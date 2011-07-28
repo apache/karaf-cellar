@@ -42,9 +42,11 @@
             javax.management,
             javax.management.loading,
             org.apache.karaf.management*;version="[2,4)",
+            org.apache.karaf.features*;version="[2,4)",
             org.apache.karaf.cellar*;version="${project.version}",
             org.apache.karaf.cellar.config*;version="${project.version}",
             org.apache.karaf.cellar.core*;version="${project.version}",
+            org.apache.karaf.cellar.features*;version="${project.version}",
             org.apache.karaf.cellar.utils*;version="${project.version}",
             *
         </osgi.import>
@@ -58,7 +60,19 @@
         <!-- Karaf Cellar dependencies -->
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.features</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.utils</artifactId>
         </dependency>
     </dependencies>
 

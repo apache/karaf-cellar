@@ -13,24 +13,16 @@
  */
 package org.apache.karaf.cellar.management;
 
-import javax.management.openmbean.TabularData;
+import java.util.Properties;
+import java.util.Set;
 
 /**
- *  Cellar Node MBean to manipulate Cellar cluster nodes.
+ * Config interface describing the operations and attributes available on a Cellar configuration.
  */
-public interface CellarNodeMBean {
+public interface CellarConfigMBean {
 
-    String NODE_ID = "ID";
-    String NODE_HOST = "Host";
-    String NODE_PORT = "Port";
-    String NODE_IS_LOCAL = "Is Local";
-
-    String[] NODE = { NODE_ID, NODE_HOST, NODE_PORT, NODE_IS_LOCAL };
-
-    // Operations
-    long pingNode(String nodeId) throws Exception;
-
-    // Attributes
-    TabularData getNodes() throws Exception;
+    Set<String> list(String group) throws Exception;
+    Properties listProperties(String group, String pid) throws Exception;
+    void setProperty(String group, String pid, String key, String value) throws Exception;
 
 }

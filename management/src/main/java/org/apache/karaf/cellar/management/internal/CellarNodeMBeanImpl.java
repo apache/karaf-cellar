@@ -15,15 +15,15 @@ package org.apache.karaf.cellar.management.internal;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
 import org.apache.karaf.cellar.management.codec.JmxNode;
+import org.apache.karaf.cellar.utils.ping.Ping;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.TabularData;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of the Cellar Node MBean to manipulate Cellar cluster nodes.
@@ -31,6 +31,7 @@ import java.util.Set;
 public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBean {
 
     private ClusterManager clusterManager;
+    private ExecutionContext executionContext;
 
     public CellarNodeMBeanImpl() throws NotCompliantMBeanException {
         super(CellarNodeMBean.class);
@@ -44,9 +45,22 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
         this.clusterManager = clusterManager;
     }
 
-    public int pingNode(String name) throws Exception {
+    public ExecutionContext getExecutionContext() {
+        return this.executionContext;
+    }
 
-        return 0;
+    public void setExecutionContext(ExecutionContext executionContext) {
+        this.executionContext = executionContext;
+    }
+
+    public long pingNode(String nodeId) throws Exception {
+        Node node = clusterManager.findNodeById(nodeId);
+        Long start = System.currentTimeMillis();
+        Ping ping = new Ping(clusterManager.generateId());
+        ping.setDestination(new HashSet(Arrays.asList(node)));
+        executionContext.execute(ping);
+        Long stop = System.currentTimeMillis();
+        return (stop - start);
     }
 
     public TabularData getNodes() throws Exception {
