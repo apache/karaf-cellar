@@ -47,6 +47,7 @@
             org.apache.karaf.cellar.config*;version="${project.version}",
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.karaf.cellar.features*;version="${project.version}",
+            org.apache.karaf.cellar.hazelcast*;version="${project.version}",
             org.apache.karaf.cellar.utils*;version="${project.version}",
             *
         </osgi.import>
@@ -69,6 +70,10 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.features</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.hazelcast</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
