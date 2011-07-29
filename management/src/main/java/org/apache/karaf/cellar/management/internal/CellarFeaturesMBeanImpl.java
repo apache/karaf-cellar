@@ -84,26 +84,31 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     public TabularData getFeatures(String group) throws Exception {
-        Map<FeatureInfo, Boolean> allFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group);
-
         CompositeType featuresType = new CompositeType("Feature", "Karaf Cellar feature",
-                new String[]{ "name", "version", "installed" },
-                new String[]{ "Name of the feature", "Version of the feature", "Whether the feature is installed or not" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN });
+                new String[]{"name", "version", "installed"},
+                new String[]{"Name of the feature", "Version of the feature", "Whether the feature is installed or not"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN});
 
         TabularType tabularType = new TabularType("Features", "Table of all Karaf Cellar features",
-                featuresType, new String[]{ "name", "version" });
+                featuresType, new String[]{"name", "version"});
 
         TabularData table = new TabularDataSupport(tabularType);
 
-        if (allFeatures != null && !allFeatures.isEmpty()) {
-            for (FeatureInfo feature : allFeatures.keySet()) {
-                boolean installed = allFeatures.get(feature);
-                CompositeData data = new CompositeDataSupport(featuresType,
-                        new String[]{ "name", "version", "installed" },
-                        new Object[]{ feature.getName(), feature.getVersion(), installed });
-                table.put(data);
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<FeatureInfo, Boolean> allFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group);
+            if (allFeatures != null && !allFeatures.isEmpty()) {
+                for (FeatureInfo feature : allFeatures.keySet()) {
+                    boolean installed = allFeatures.get(feature);
+                    CompositeData data = new CompositeDataSupport(featuresType,
+                            new String[]{"name", "version", "installed"},
+                            new Object[]{feature.getName(), feature.getVersion(), installed});
+                    table.put(data);
+                }
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         return table;

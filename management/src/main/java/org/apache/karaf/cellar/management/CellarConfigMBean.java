@@ -13,16 +13,15 @@
  */
 package org.apache.karaf.cellar.management;
 
-import java.util.Properties;
-import java.util.Set;
+import javax.management.openmbean.TabularData;
 
 /**
  * Config interface describing the operations and attributes available on a Cellar configuration.
  */
 public interface CellarConfigMBean {
 
-    Set<String> list(String group) throws Exception;
-    Properties listProperties(String group, String pid) throws Exception;
+    String[] listConfig(String group) throws Exception;
+    TabularData listProperties(String group, String pid) throws Exception;
     void setProperty(String group, String pid, String key, String value) throws Exception;
 
 }
