@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.management.CellarConfigMBean;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
+import javax.management.openmbean.*;
 import java.util.*;
 
 /**
@@ -41,24 +42,64 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         super(CellarConfigMBean.class);
     }
 
-    public Set<String> list(String group) throws Exception {
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        return configurationTable.keySet();
+    public String[] listConfig(String group) throws Exception {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            ArrayType arrayType = new ArrayType(1, SimpleType.STRING);
+            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            return configurationTable.keySet().toArray(new String[configurationTable.keySet().size()]);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
     }
 
-    public Properties listProperties(String group, String pid) throws Exception {
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        return configurationTable.get(pid);
+    public TabularData listProperties(String group, String pid) throws Exception {
+
+        CompositeType compositeType = new CompositeType("Property", "Cellar Config Property",
+                new String[]{ "key", "value" },
+                new String[]{ "Property key", "Property value" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING });
+        TabularType tableType = new TabularType("Properties", "Table of all properties in the Config PID",
+                compositeType, new String[]{ "key" });
+        TabularData table = new TabularDataSupport(tableType);
+
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            Properties properties = configurationTable.get(pid);
+            if (properties != null) {
+                Enumeration propertyNames = properties.propertyNames();
+                while (propertyNames.hasMoreElements()) {
+                    String key = (String) propertyNames.nextElement();
+                    String value = (String) properties.get(key);
+                    CompositeDataSupport data = new CompositeDataSupport(compositeType,
+                            new String[]{ "key", "value" },
+                            new String[]{ key, value });
+                    table.put(data);
+                }
+            }
+            return table;
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
     }
 
     public void setProperty(String group, String pid, String key, String value) throws Exception {
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        Properties properties = configurationTable.get(pid);
-        if (properties == null) {
-            properties = new Properties();
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            Properties properties = configurationTable.get(pid);
+            if (properties == null) {
+                properties = new Properties();
+            }
+            properties.put(key, value);
+            configurationTable.put(pid, properties);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-        properties.put(key, value);
-        configurationTable.put(pid, properties);
     }
 
 }
