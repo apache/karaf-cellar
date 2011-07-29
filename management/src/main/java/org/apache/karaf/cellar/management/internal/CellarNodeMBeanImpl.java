@@ -20,12 +20,11 @@ import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
-import org.apache.karaf.cellar.management.codec.JmxNode;
 import org.apache.karaf.cellar.utils.ping.Ping;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
-import javax.management.openmbean.TabularData;
+import javax.management.openmbean.*;
 import java.util.*;
 
 /**
@@ -67,28 +66,30 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
     }
 
     public TabularData getNodes() throws Exception {
-        // manipulate the class loader
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 
-        List<JmxNode> nodes = new ArrayList<JmxNode>();
+        CompositeType nodeType = new CompositeType("Node", "Karaf Cellar cluster node",
+                new String[]{ "id", "hostname", "port" },
+                new String[]{ "ID of the node", "Hostname of the node", "Port number of the node" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER });
 
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
-            Set<Node> recipientList = new HashSet<Node>();
-            recipientList.add(clusterManager.getNode());
-            command.setDestination(recipientList);
-            command.setAction(ManageGroupAction.LIST);
+        TabularType tableType = new TabularType("Nodes", "Table of all Karaf Cellar nodes", nodeType, new String[]{ "id" });
 
-            Map<Node, ManageGroupResult> results = executionContext.execute(command);
-            for (Node node : results.keySet()) {
-                nodes.add(new JmxNode(node));
-            }
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        TabularData table = new TabularDataSupport(tableType);
+
+        ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
+        Set<Node> recipientList = new HashSet<Node>();
+        recipientList.add(clusterManager.getNode());
+        command.setDestination(recipientList);
+        command.setAction(ManageGroupAction.LIST);
+
+        Map<Node, ManageGroupResult> results = executionContext.execute(command);
+        for (Node node : results.keySet()) {
+            CompositeData data = new CompositeDataSupport(nodeType,
+                    new String[]{ "id", "hostname", "port" },
+                    new Object[]{ node.getId(), node.getHost(), node.getPort() });
+            table.put(data);
         }
 
-        TabularData table = JmxNode.tableFrom(nodes);
         return table;
     }
 

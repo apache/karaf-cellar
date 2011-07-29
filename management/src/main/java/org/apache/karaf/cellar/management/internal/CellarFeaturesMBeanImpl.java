@@ -22,13 +22,11 @@ import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.cellar.management.CellarFeaturesMBean;
-import org.apache.karaf.cellar.management.codec.JmxFeature;
 import org.apache.karaf.features.FeatureEvent;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
-import javax.management.openmbean.TabularData;
-import java.util.ArrayList;
+import javax.management.openmbean.*;
 import java.util.Map;
 
 /**
@@ -85,17 +83,29 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.uninstall(groupName, name, null);
     }
 
-    public TabularData listFeatures(String group) throws Exception {
+    public TabularData getFeatures(String group) throws Exception {
         Map<FeatureInfo, Boolean> allFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group);
-        ArrayList<JmxFeature> features = new ArrayList<JmxFeature>();
+
+        CompositeType featuresType = new CompositeType("Feature", "Karaf Cellar feature",
+                new String[]{ "name", "version", "installed" },
+                new String[]{ "Name of the feature", "Version of the feature", "Whether the feature is installed or not" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN });
+
+        TabularType tabularType = new TabularType("Features", "Table of all Karaf Cellar features",
+                featuresType, new String[]{ "name", "version" });
+
+        TabularData table = new TabularDataSupport(tabularType);
+
         if (allFeatures != null && !allFeatures.isEmpty()) {
             for (FeatureInfo feature : allFeatures.keySet()) {
                 boolean installed = allFeatures.get(feature);
-                JmxFeature jmxFeature = new JmxFeature(feature, installed);
-                features.add(jmxFeature);
+                CompositeData data = new CompositeDataSupport(featuresType,
+                        new String[]{ "name", "version", "installed" },
+                        new Object[]{ feature.getName(), feature.getVersion(), installed });
+                table.put(data);
             }
         }
-        TabularData table = JmxFeature.tableFrom(features);
+
         return table;
     }
 

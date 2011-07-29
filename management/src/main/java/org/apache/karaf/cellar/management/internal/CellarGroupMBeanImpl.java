@@ -20,13 +20,11 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
-import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.management.CellarGroupMBean;
-import org.apache.karaf.cellar.management.codec.JmxGroup;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
-import javax.management.openmbean.TabularData;
+import javax.management.openmbean.*;
 import java.util.*;
 
 /**
@@ -119,12 +117,29 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
 
     public TabularData getGroups() throws Exception {
         Set<Group> allGroups = groupManager.listAllGroups();
-        ArrayList<JmxGroup> groups = new ArrayList<JmxGroup>();
+
+        CompositeType groupType = new CompositeType("Group", "Karaf Cellar cluster group",
+                new String[]{ "name", "members"},
+                new String[]{ "Name of the cluster group", "Members of the cluster group" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING });
+
+        TabularType tableType = new TabularType("Groups", "Table of all Karaf Cellar groups", groupType,
+                new String[]{ "name" });
+
+        TabularData table = new TabularDataSupport(tableType);
+
         for (Group group : allGroups) {
-            JmxGroup jmxGroup = new JmxGroup(group);
-            groups.add(jmxGroup);
+            StringBuffer members = new StringBuffer();
+            for (Node node : group.getMembers()) {
+                members.append(node.getId());
+                members.append(" ");
+            }
+            CompositeData data = new CompositeDataSupport(groupType,
+                    new String[]{ "name", "members" },
+                    new Object[]{ group.getName(), members.toString() });
+            table.put(data);
         }
-        TabularData table = JmxGroup.tableFrom(groups);
+
         return table;
     }
 

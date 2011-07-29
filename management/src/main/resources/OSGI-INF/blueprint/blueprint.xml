@@ -19,7 +19,6 @@
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
 
-    <!-- Reference to the Karaf MBean Server -->
     <reference id="mbeanServer" interface="javax.management.MBeanServer">
         <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
     </reference>

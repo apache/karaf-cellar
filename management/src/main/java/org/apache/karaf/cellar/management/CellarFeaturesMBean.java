@@ -20,16 +20,11 @@ import javax.management.openmbean.TabularData;
  */
 public interface CellarFeaturesMBean {
 
+    // operations
     void install(String group, String name) throws Exception;
     void install(String group, String name, String version) throws Exception;
     void uninstall(String group, String name) throws Exception;
     void uninstall(String group, String name, String version) throws Exception;
-
-    TabularData listFeatures(String group) throws Exception;
-
-    String FEATURE_NAME = "Name";
-    String FEATURE_VERSION = "Version";
-    String FEATURE_INSTALLED = "Installed";
-    String[] FEATURE = { FEATURE_NAME, FEATURE_VERSION, FEATURE_INSTALLED };
+    TabularData getFeatures(String group) throws Exception;
 
 }

@@ -20,13 +20,6 @@ import javax.management.openmbean.TabularData;
  */
 public interface CellarNodeMBean {
 
-    String NODE_ID = "ID";
-    String NODE_HOST = "Host";
-    String NODE_PORT = "Port";
-    String NODE_IS_LOCAL = "Is Local";
-
-    String[] NODE = { NODE_ID, NODE_HOST, NODE_PORT, NODE_IS_LOCAL };
-
     // Operations
     long pingNode(String nodeId) throws Exception;
 
