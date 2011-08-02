@@ -20,11 +20,6 @@ import javax.management.openmbean.TabularData;
  */
 public interface CellarGroupMBean {
 
-    String GROUP_NAME = "Name";
-    String GROUP_MEMBERS = "Members";
-
-    String[] GROUP = { GROUP_NAME,GROUP_MEMBERS };
-
     // Operations
     void create(String name) throws Exception;
     void delete(String name) throws Exception;
