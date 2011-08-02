@@ -23,6 +23,11 @@
         <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
     </reference>
 
+    <bean id="cellarMBean" class="org.apache.karaf.cellar.management.internal.CellarMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="executionContext" ref="executionContext"/>
+    </bean>
+
     <bean id="cellarNodeMBean" class="org.apache.karaf.cellar.management.internal.CellarNodeMBeanImpl">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="executionContext" ref="executionContext"/>
@@ -46,6 +51,7 @@
     <bean id="mbeanRegister" class="org.apache.karaf.management.MBeanRegistrer">
         <property name="mbeans">
             <map>
+                <entry value="org.apache.karaf.cellar:type=core,name=${karaf.name}" key-ref="cellarMBean"/>
                 <entry value="org.apache.karaf.cellar:type=node,name=${karaf.name}" key-ref="cellarNodeMBean"/>
                 <entry value="org.apache.karaf.cellar:type=config,name=${karaf.name}" key-ref="cellarConfigMBean"/>
                 <entry value="org.apache.karaf.cellar:type=features,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
