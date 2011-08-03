@@ -57,6 +57,7 @@
         <module>hazelcast</module>        
         <module>utils</module>
         <module>cloud</module>
+        <module>management</module>
         <module>webconsole</module>
         <module>assembly</module>
     </modules>

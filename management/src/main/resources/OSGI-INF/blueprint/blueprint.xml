@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <!-- Reference to the Cellar services -->
+    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
+    <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
+    <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
+
+    <reference id="mbeanServer" interface="javax.management.MBeanServer">
+        <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
+    </reference>
+
+    <bean id="cellarMBean" class="org.apache.karaf.cellar.management.internal.CellarMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="executionContext" ref="executionContext"/>
+    </bean>
+
+    <bean id="cellarNodeMBean" class="org.apache.karaf.cellar.management.internal.CellarNodeMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="executionContext" ref="executionContext"/>
+    </bean>
+
+    <bean id="cellarConfigMBean" class="org.apache.karaf.cellar.management.internal.CellarConfigMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+    </bean>
+
+    <bean id="cellarFeaturesMBean" class="org.apache.karaf.cellar.management.internal.CellarFeaturesMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+    </bean>
+
+    <bean id="cellarGroupMBean" class="org.apache.karaf.cellar.management.internal.CellarGroupMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="executionContext" ref="executionContext"/>
+        <property name="groupManager" ref="groupManager"/>
+    </bean>
+
+    <bean id="mbeanRegister" class="org.apache.karaf.management.MBeanRegistrer">
+        <property name="mbeans">
+            <map>
+                <entry value="org.apache.karaf.cellar:type=core,name=${karaf.name}" key-ref="cellarMBean"/>
+                <entry value="org.apache.karaf.cellar:type=node,name=${karaf.name}" key-ref="cellarNodeMBean"/>
+                <entry value="org.apache.karaf.cellar:type=config,name=${karaf.name}" key-ref="cellarConfigMBean"/>
+                <entry value="org.apache.karaf.cellar:type=features,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
+                <entry value="org.apache.karaf.cellar:type=group,name=${karaf.name}" key-ref="cellarGroupMBean"/>
+            </map>
+        </property>
+    </bean>
+
+</blueprint>
