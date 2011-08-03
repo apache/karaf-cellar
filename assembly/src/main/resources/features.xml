@@ -41,6 +41,7 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.management/${project.version}</bundle>
         <configfile finalname="/etc/org.apache.karaf.cellar.instance.cfg">
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/instance
         </configfile>
