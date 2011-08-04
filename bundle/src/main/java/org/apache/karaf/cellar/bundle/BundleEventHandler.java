@@ -11,9 +11,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
-
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
@@ -29,9 +27,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-/**
- * @author iocanel
- */
 public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(BundleEventHandler.class);
@@ -84,7 +79,6 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 		}
 	}
 
-
     /**
      * Initialization Method.
      */
@@ -108,4 +102,5 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public Class<RemoteBundleEvent> getType() {
         return RemoteBundleEvent.class;
     }
+
 }

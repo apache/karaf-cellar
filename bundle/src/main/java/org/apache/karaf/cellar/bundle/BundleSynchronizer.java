@@ -11,7 +11,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -34,15 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author iocanel
- */
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final Logger logger = LoggerFactory.getLogger(BundleSynchronizer.class);
 
     private List<EventProducer> producerList;
-
 
     /**
      * Registration method
@@ -104,9 +99,8 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Publishses local configuration to the cluster.
+     * Publishes local configuration to the cluster.
      */
-
     public void push(Group group) {
 
         if (group != null) {
@@ -147,8 +141,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
     }
 
-
-    @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
@@ -172,4 +164,5 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     public void setProducerList(List<EventProducer> producerList) {
         this.producerList = producerList;
     }
+
 }

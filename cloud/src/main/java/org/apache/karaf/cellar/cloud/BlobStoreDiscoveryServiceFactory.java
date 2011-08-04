@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
@@ -27,10 +26,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- * @author: iocanel
- */
 public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
@@ -54,12 +49,10 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         this.bundleContext = bundleContext;
     }
 
-    @Override
     public String getName() {
         return "Blobstore discovery service factory";
     }
 
-    @Override
     public void updated(String pid, Dictionary properties) throws ConfigurationException {
         ServiceRegistration newRegistration = null;
         try {
@@ -106,4 +99,5 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
             oldRegistration.unregister();
         }
     }
+
 }
