@@ -11,7 +11,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.CellarSupport;
@@ -26,9 +25,6 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Properties;
 
-/**
- * @author iocanel
- */
 public class BundleSupport extends CellarSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(CellarSupport.class);
@@ -55,7 +51,6 @@ public class BundleSupport extends CellarSupport {
 		}
 		return properties;
 	}
-
 
 	/**
 	 * Installs a bundle using its location.
@@ -155,4 +150,5 @@ public class BundleSupport extends CellarSupport {
 	public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
 		this.configurationAdmin = configurationAdmin;
 	}
+
 }

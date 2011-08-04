@@ -11,9 +11,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
-
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
@@ -27,9 +25,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author iocanel
- */
 public class LocalBundleListener extends BundleSupport implements BundleListener {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalBundleListener.class);

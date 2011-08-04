@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
@@ -36,9 +35,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author: iocanel
- */
 public class BlobStoreDiscoveryService implements DiscoveryService {
 
     private static final Logger logger = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
@@ -138,7 +134,6 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         }
     }
 
-
     /**
      * Reads from a {@link BlobStore}. It returns an Object.
      *
@@ -219,7 +214,6 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         }
     }
 
-
     /**
      * Get an instance of InetAddress for the local computer
      * and return its string representation.
@@ -272,4 +266,5 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     public void setValidityPeriod(Integer validityPeriod) {
         this.validityPeriod = validityPeriod;
     }
+
 }
