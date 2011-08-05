@@ -15,6 +15,44 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.2.2
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
+ representing an update to Apache Karaf Cellar 2.2.1. It contains bug fixes
+ identified in the prior release, and introduces new features like bundle
+ replication, JMX MBeans, and clouding support.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-724] - cluster:config-propset help is not correct
+    * [KARAF-759] - Equinox cannot resolve Cellar Hazelcast bundle
+    * [KARAF-804] - Bad link in http://karaf.apache.org/manual/cellar/2.2.1/user-guide/index.html
+
+** Dependency upgrade
+    * [KARAF-774] - Upgrade to Karaf 2.2.2 in Cellar
+
+** Improvement
+    * [KARAF-721] - Add logging statements to Cellar where it makes sense.
+    * [KARAF-723] - Create JMX Mbeans to report all Cellar events and provide details.
+    * [KARAF-732] - Fixes to Cellar Arch Guide and Cellar User's Manual
+    * [KARAF-763] - Editorial fixes to Cellar documentation
+
+** New Feature
+    * [KARAF-628] - Bundle replication
+    * [KARAF-641] - Create shell commands for editing Cellar's instance configuration.
+    * [KARAF-642] - Leverage Cellar instance configuration to allow Cloud discovery
+
+** Task
+    * [KARAF-801] - Update Cellar NOTICE file to mention jclouds
+
                     Apache Karaf Cellar 2.2.1
                     =========================
 
