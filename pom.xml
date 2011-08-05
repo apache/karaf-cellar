@@ -29,7 +29,7 @@
 
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
-    <version>2.2.2</version>
+    <version>2.2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
@@ -63,9 +63,9 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/tags/cellar-2.2.2</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/tags/cellar-2.2.2</developerConnection>
-        <url>http://svn.apache.org/repos/asf/karaf/cellar/tags/cellar-2.2.2</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</url>
     </scm>
 
     <issueManagement>
