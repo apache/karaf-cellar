@@ -32,7 +32,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 
 	private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
 
-	public static final String SWITCH_ID = "com.upstreamsystems.curry.cluster.bundle.handler";
+	public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
 
 	private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     private Node node;
