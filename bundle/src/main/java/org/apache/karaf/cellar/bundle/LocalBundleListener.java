@@ -39,6 +39,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * @param event
      */
     public void bundleChanged(BundleEvent event) {
+        try {
         if (event != null && event.getBundle() != null) {
             Set<Group> groups = groupManager.listLocalGroups();
 
@@ -64,6 +65,9 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                     } else LOGGER.debug("Artifact is not a bundle");
                 }
             }
+        }
+        }catch (Exception ex) {
+            LOGGER.warn("Error handling bundle event",ex);
         }
     }
 
