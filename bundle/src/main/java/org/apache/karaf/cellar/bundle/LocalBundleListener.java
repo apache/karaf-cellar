@@ -39,6 +39,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * @param event
      */
     public void bundleChanged(BundleEvent event) {
+        try {
         if (event != null && event.getBundle() != null) {
             Set<Group> groups = groupManager.listLocalGroups();
 
@@ -61,6 +62,9 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                     } else logger.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND");
                 }
             }
+        }
+        }catch (Exception ex) {
+            LOGGER.warn("Error handling bundle event",ex);
         }
     }
 
