@@ -15,11 +15,17 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
     <!-- Registry -->
-    <bean id="registry" class="org.apache.karaf.cellar.core.event.EventHandlerServiceRegistry">
-        <property name="bundleContext" ref="blueprintBundleContext"/>
-    </bean>
+    <bean id="registry" class="org.apache.karaf.cellar.core.event.EventHandlerServiceRegistry"/>
+
 
     <!-- Service Registrations -->
     <service ref="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
+
+
+    <reference-list id="eventHandlers" interface="org.apache.karaf.cellar.core.event.EventHandler" availability="optional">
+        <reference-listener bind-method="bind" unbind-method="unbind">
+            <ref component-id="registry"/>
+        </reference-listener>
+    </reference-list>
 
 </blueprint>
