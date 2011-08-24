@@ -19,6 +19,11 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 /**
  * Event handler service registry.
  */
@@ -26,7 +31,7 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
 
-    private BundleContext bundleContext;
+    private Map<Class,EventHandler> eventHandlerMap = new ConcurrentHashMap<Class,EventHandler>();
 
     /**
      * Returns the appropriate {@code EventHandler} found inside the {@code HandlerRegistry}.
@@ -35,37 +40,23 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
      * @return
      */
     public EventHandler<E> getHandler(E event) {
-
-        ServiceReference[] references = new ServiceReference[0];
-        try {
-            references = bundleContext.getServiceReferences("org.apache.karaf.cellar.core.event.EventHandler", null);
-            if (references != null && references.length > 0) {
-                for (int i = 0; i < references.length; i++) {
-                    ServiceReference ref = references[i];
-                    try {
-                        EventHandler handler = (EventHandler) bundleContext.getService(ref);
-                        if (handler.getType().equals(event.getClass())) {
-                            return handler;
-                        }
-                    } catch (Exception ex) {
-                        LOGGER.error("Failed to get handler from Service Reference.", ex);
-                    } finally {
-                        bundleContext.ungetService(ref);
-                    }
-                }
-            }
-        } catch (InvalidSyntaxException e) {
-            LOGGER.error("Failed to lookup Service Registry for Event Hanlders.", e);
+        if (event != null) {
+            Class clazz = event.getClass();
+            return eventHandlerMap.get(clazz);
         }
         return null;
     }
 
-    public BundleContext getBundleContext() {
-        return bundleContext;
+    public void bind(EventHandler handler) {
+        if(handler != null && handler.getType() != null) {
+            eventHandlerMap.put(handler.getType(),handler);
+        }
     }
 
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
+    public void unbind(EventHandler handler) {
+         if(handler != null && handler.getType() != null) {
+            eventHandlerMap.remove(handler.getType());
+        }
     }
 
 }
