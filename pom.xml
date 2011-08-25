@@ -429,6 +429,7 @@
                         <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
+                        <Export-Service>${osgi.export.service}</Export-Service>
                     </instructions>
                     <supportedProjectTypes>
                         <supportedProjectType>jar</supportedProjectType>
