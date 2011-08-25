@@ -39,7 +39,7 @@ public class GroupSetCommand extends GroupSupport {
      */
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.SET, group, nodes);
+        return doExecute(ManageGroupAction.SET, group, nodes,false);
     }
 
 }

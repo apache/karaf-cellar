@@ -34,11 +34,26 @@ public abstract class GroupSupport extends ClusterCommandSupport {
 
     /**
      * Executes the command.
-     *
+     * @param action
+     * @param group
+     * @param nodes
      * @return
      * @throws Exception
      */
     protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes) throws Exception {
+     return doExecute(action,group,nodes,true);
+    }
+
+    /**
+     * Executes the command.
+     * @param action
+     * @param group
+     * @param nodes
+     * @param supressOutput
+     * @return
+     * @throws Exception
+     */
+    protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes,Boolean supressOutput) throws Exception {
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);
 
@@ -58,6 +73,7 @@ public abstract class GroupSupport extends ClusterCommandSupport {
         }
 
         Map<Node, ManageGroupResult> results = executionContext.execute(command);
+        if(!supressOutput) {
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
@@ -78,6 +94,7 @@ public abstract class GroupSupport extends ClusterCommandSupport {
                     }
                 }
             }
+        }
         }
         return null;
     }

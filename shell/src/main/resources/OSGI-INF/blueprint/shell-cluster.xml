@@ -153,6 +153,17 @@
             </completers>
         </command>
 
+        <command name="cluster/group-pick">
+            <action class="org.apache.karaf.cellar.shell.group.GroupPickCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="executionContext" ref="executionContext"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+            </completers>
+        </command>
+
         <command name="cluster/group-list">
             <action class="org.apache.karaf.cellar.shell.group.GroupListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -183,9 +194,9 @@
     </command-bundle>
 
     <!-- Reference to the Cluster Manager -->
-    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
-    <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
-    <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
+    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager" availability="optional"/>
+    <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager" availability="optional"/>
+    <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext" availability="optional"/>
 
     <!-- Completers -->
     <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.completer.AllNodeCompleter">

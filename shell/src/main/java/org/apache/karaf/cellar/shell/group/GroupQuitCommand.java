@@ -39,7 +39,7 @@ public class GroupQuitCommand extends GroupSupport {
      */
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.QUIT, group, nodes);
+        return doExecute(ManageGroupAction.QUIT, group, nodes,false);
     }
 
 }
