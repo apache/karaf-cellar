@@ -39,7 +39,7 @@ public class GroupJoinCommand extends GroupSupport {
      */
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.JOIN, group, nodes);
+        return doExecute(ManageGroupAction.JOIN, group, nodes,false);
     }
 
 }
