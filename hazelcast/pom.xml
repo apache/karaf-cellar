@@ -49,6 +49,16 @@
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
+        <osgi.export.service>
+            org.apache.karaf.cellar.core.ClusterManager,
+            org.apache.karaf.cellar.core.GroupManager,
+            org.apache.karaf.cellar.core.event.EventTransportFactory,
+            org.apache.karaf.cellar.core.command.ExecutionContext,
+            org.apache.karaf.cellar.core.command.CommandStore,
+            org.apache.karaf.cellar.core.event.EventHandler,
+            org.apache.karaf.cellar.core.event.EventProducer,
+            org.apache.karaf.cellar.core.event.EventProducer;type=group
+        </osgi.export.service>
     </properties>
 
     <dependencies>
