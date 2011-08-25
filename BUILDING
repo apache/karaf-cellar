@@ -43,10 +43,10 @@ Building
 
 3) Run
 
-         $> mvn
+         $> mvn install
 
    This will compile Apache Karaf Cellar and run all of the tests in the
-   Apache Karaf source distribution.
+   Apache Karaf Cellar source distribution.
 
 4) Apache Karaf Cellar is now present in your local maven repository. Read the README file
    to install Cellar into a running Apache Karaf instance.
