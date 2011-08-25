@@ -36,7 +36,7 @@ public class GroupListCommand extends GroupSupport {
      */
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.LIST, null, nodes);
+        return doExecute(ManageGroupAction.LIST, null, nodes,false);
     }
 
 }
