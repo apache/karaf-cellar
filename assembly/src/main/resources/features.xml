@@ -29,15 +29,11 @@
         <bundle>mvn:com.hazelcast/hazelcast-monitor/${hazelcast.version}/war</bundle>
     </feature>
 
-    <feature name='cellar-core' description='Karaf clustering - Core' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
         <feature>spring-dm</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
-    </feature>
-
-    <feature name='cellar' description='Karaf clustering - Modules' version='${project.version}' resolver='(obr)'>
-        <feature version='${project.version}'>cellar-core</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
