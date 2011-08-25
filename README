@@ -42,7 +42,7 @@ BUILDING for instructions on building Apache Karaf.
 
 To install Apache Karaf Cellar, first you have to register the Cellar features descriptor:
 
-karaf@root> features:addurl mvn:org.apache.karaf/cellar/2.2.1/xml/features
+karaf@root> features:addurl mvn:org.apache.karaf.cellar/apache-karaf-cellar/2.2.1/xml/features
 
 Now, you can install the Cellar feature simply by typing:
 
