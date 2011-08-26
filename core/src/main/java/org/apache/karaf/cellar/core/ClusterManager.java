@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.core;
 
+import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
 
 import java.util.Collection;
@@ -41,13 +42,14 @@ public interface ClusterManager {
      */
     public List getList(String listName);
 
+
     /**
-     * Returns an Event Producer that produces {@link Event}s for a specific {@link Group}.
+     * Returns a named distributed list.
      *
-     * @param groupName
+     * @param setName
      * @return
      */
-    public EventProducer getEventProducer(String groupName);
+    public Set getSet(String setName);
 
 
     /**

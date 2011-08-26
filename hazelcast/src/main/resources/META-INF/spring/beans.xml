@@ -53,12 +53,18 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
-    <!-- Cluster Manager -->
+    <!-- Group Manager -->
     <bean id="groupManager" class="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager" init-method="init">
         <property name="instance" ref="hazelcast"/>
-        <property name="dispatcher" ref="dispatcher"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
     </bean>
+
+    <bean id="eventTransportFactory" class="org.apache.karaf.cellar.hazelcast.HazelcastEventTransportFactory">
+        <property name="dispatcher"  ref="dispatcher"/>
+        <property name="instance" ref="hazelcast"/>
+    </bean>
+
 
     <!-- Hazelcast Cluster and Node -->
     <bean id="node" factory-bean="clusterManager" factory-method="getNode"/>
@@ -142,6 +148,7 @@
 
     <osgi:service ref="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <osgi:service ref="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
+    <osgi:service ref="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <osgi:service ref="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
     <osgi:service ref="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
 
