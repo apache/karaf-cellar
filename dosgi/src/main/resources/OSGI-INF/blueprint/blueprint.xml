@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+    <!-- Import Service Listener -->
+    <bean id="importListener" class="org.apache.karaf.cellar.dosgi.ImportServiceListener" init-method="init" destroy-method="destroy">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="commandStore" ref="commandStore"/>
+        <property name="bundleContext" ref="blueprintBundleContext"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
+    </bean>
+
+    <!-- Export Service Listener -->
+    <bean id="exportistener" class="org.apache.karaf.cellar.dosgi.ExportServiceListener" init-method="init" destroy-method="destroy">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="bundleContext" ref="blueprintBundleContext"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
+    </bean>
+
+    <bean id="remoterServiceCallHandler" class="org.apache.karaf.cellar.dosgi.RemoteServiceCallHandler">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
+        <property name="bundleContext" ref="blueprintBundleContext"/>
+    </bean>
+
+    <bean id="remoteServiceResultlHandler" class="org.apache.karaf.cellar.dosgi.RemoteServiceResultHandler">
+        <property name="commandStore" ref="commandStore"/>
+    </bean>
+
+    <!-- Service References -->
+    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
+    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
+    <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
+
+    <!-- Services -->
+    <service ref="importListener" interface="org.osgi.framework.hooks.service.ListenerHook"/>
+    <service ref="remoterServiceCallHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
+        <service-properties>
+            <entry key="managed" value="true"/>
+        </service-properties>
+    </service>
+    <service ref="remoteServiceResultlHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+
+</blueprint>

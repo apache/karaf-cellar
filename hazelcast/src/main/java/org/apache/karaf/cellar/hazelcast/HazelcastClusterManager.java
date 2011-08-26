@@ -14,10 +14,12 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.Cluster;
+import com.hazelcast.core.IQueue;
 import com.hazelcast.core.ITopic;
 import com.hazelcast.core.IdGenerator;
 import com.hazelcast.core.Member;
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventConsumer;
@@ -39,10 +41,8 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
 
     private IdGenerator idgenerator;
 
-    private List<EventProducer> producerList;
-    private List<EventConsumer> consumerList;
-
     private ConfigurationAdmin configurationAdmin;
+
 
     /**
      * Returns a named distributed map.
@@ -64,14 +64,15 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return instance.getList(listName);
     }
 
-    @Override
-    public EventProducer getEventProducer(String groupName) {
-        ITopic topic = instance.getTopic(Constants.TOPIC + "." + groupName);
-        TopicProducer producer = new TopicProducer();
-        producer.setTopic(topic);
-        producer.setNode(getNode());
-        return producer;
+    /**
+     * Returns a named distributed set.
+     * @param setName
+     * @return
+     */
+    public Set getSet(String setName) {
+        return instance.getSet(setName);
     }
+
 
     /**
      * Returns the list of Hazelcast Nodes.
@@ -94,20 +95,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return nodes;
     }
 
-    /**
-     * Returns the node on which the command was run.
-     *
-     * @return
-     */
-    public Node getNode() {
-        Cluster cluster = instance.getCluster();
-        if (cluster != null) {
-            Member member = cluster.getLocalMember();
-            return new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
-        } else {
-            return null;
-        }
-    }
+
 
     /**
      * Returns the {@code Node}s with the corresponding ids.
@@ -194,21 +182,4 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
-
-    public List<EventProducer> getProducerList() {
-        return producerList;
-    }
-
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
-    }
-
-    public List<EventConsumer> getConsumerList() {
-        return consumerList;
-    }
-
-    public void setConsumerList(List<EventConsumer> consumerList) {
-        this.consumerList = consumerList;
-    }
-
 }

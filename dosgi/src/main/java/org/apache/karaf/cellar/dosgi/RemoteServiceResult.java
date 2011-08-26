@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,15 +11,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.hazelcast;
+
+package org.apache.karaf.cellar.dosgi;
+
+import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * Hazelcast constants.
+ * @author: iocanel
  */
-public class Constants {
+public class RemoteServiceResult extends Result {
 
-    public static final String SEPARATOR = ".";
-    public static final String TOPIC = "org.apache.karaf.cellar.event.topic";
-    public static final String QUEUE = "org.apache.karaf.cellar.event.queue";
+    private Object result;
 
+    /**
+     * Constructor
+     *
+     * @param id
+     */
+    public RemoteServiceResult(String id) {
+        super(id);
+    }
+
+    public Object getResult() {
+        return result;
+    }
+
+    public void setResult(Object result) {
+        this.result = result;
+    }
 }
