@@ -89,7 +89,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             //Update the configuration.
                             if (conf != null) {
                                 //Mark the remote configuration event.
-                                RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
                                 conf.update(preparePull(dictionary));
                             }
                             LOGGER.info("CELLAR CONFIGURATION EVENT: read remote configuration.");

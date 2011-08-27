@@ -11,22 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.core.shell.completers;
+package org.apache.karaf.cellar.core.completer;
 
-import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * Other groups completer.
+ * A completer which includes all nodes.
  */
-public class OtherGroupsCompleter extends GroupCompleterSupport {
+public class AllNodeCompleter extends NodeCompleterSupport {
 
+    /**
+     * Always returns true.
+     *
+     * @param node
+     * @return
+     */
     @Override
-    protected boolean acceptsGroup(Group group) {
-        Node node = groupManager.getNode();
-        if (group.getMembers().contains(node))
-            return false;
-        else return true;
+    protected boolean acceptsNode(Node node) {
+        return true;
     }
 
 }
