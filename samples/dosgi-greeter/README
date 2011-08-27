@@ -1,0 +1,34 @@
+DOSGi Greeter is a sample application that demonstrates the DOSGi feature of Cellar.
+
+Requirements / Setup
+--------------------
+It requires a cellar cluster of at least to nodes, say node A and B.
+
+Node B will export the Greeter service and node A will import the service.
+
+192.168.1.101:5701 (Node A)
+192.168.1.101:5702 (Node B)
+
+Installation
+------------
+1. Start the two nodes.
+2. Connect to the shell of node A.
+
+   Node A Shell:
+   -------------
+   karaf@root> features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features
+   karaf@root> cluster:group-set greeter-exporter-group 192.168.1.1:5702
+   Node                 Group
+   * 192.168.1.101:5701   greeter-exporter-group
+     192.168.1.101:5702   greeter-exporter-group
+   karaf@root> cluster:group-set greeter-importer-group 192.168.1.1:5701
+   Node                 Group
+   * 192.168.1.101:5701   greeter-importer-group
+   karaf@root> cluster:features-install greeter-exporter-group greeter-service
+   karaf@root> cluster:features-install greeter-importer-group greeter-client
+
+3. Executing the greet (Pass a greet message and the number of iterations).
+   karaf@root> dosgi-greeter:greet Halo 2
+   Halo.Halo from node 192.168.1.101:5702 count 0.
+   Halo.Halo from node 192.168.1.101:5702 count 1.
+

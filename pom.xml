@@ -64,6 +64,7 @@
         <module>management</module>
         <module>webconsole</module>
         <module>assembly</module>
+        <module>samples</module>
     </modules>
 
     <scm>
