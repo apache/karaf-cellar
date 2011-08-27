@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
@@ -36,6 +37,7 @@ import java.util.Map;
 public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeaturesMBean {
 
     private ClusterManager clusterManager;
+    private EventTransportFactory eventTransportFactory;
     private GroupManager groupManager;
 
     public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
@@ -58,9 +60,17 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.groupManager = groupManager;
     }
 
+    public EventTransportFactory getEventTransportFactory() {
+        return eventTransportFactory;
+    }
+
+    public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
+        this.eventTransportFactory = eventTransportFactory;
+    }
+
     public void install(String groupName, String name, String version) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = clusterManager.getEventProducer(groupName);
+        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
         event.setForce(true);
         event.setSourceGroup(group);
@@ -73,7 +83,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
     public void uninstall(String groupName, String name, String version) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = clusterManager.getEventProducer(groupName);
+        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setForce(true);
         event.setSourceGroup(group);

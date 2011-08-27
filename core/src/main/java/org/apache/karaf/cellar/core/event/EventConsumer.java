@@ -27,4 +27,14 @@ public interface EventConsumer<E extends Event> extends Consumer<E> {
      */
     public void consume(E event);
 
+    /**
+     * Start consuming
+     */
+    public void start();
+
+    /**
+     * Stop consuming
+     */
+    public void stop();
+
 }
