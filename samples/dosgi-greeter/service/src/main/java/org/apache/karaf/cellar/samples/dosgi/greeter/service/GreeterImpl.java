@@ -31,7 +31,7 @@ public class GreeterImpl implements Greeter {
     @Override
     public GreetResponse greet(Greet greet) {
         String message = greet.getMessage();
-        String response = message+"." +String.format("Halo from node %s count %s.",id,counter++);
+        String response = message+"." +String.format("Hello from node %s count %s.",id,counter++);
         GreetResponse greetResponse = new GreetResponse(greet,response);
         return greetResponse;
     }
