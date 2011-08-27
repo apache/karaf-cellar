@@ -19,9 +19,7 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
-/**
- * @author: iocanel
- */
+
 @Command(scope = "dosgi-greeter", name = "greet", description = "Starts the greet client")
 public class GreetCommand extends OsgiCommandSupport {
 
