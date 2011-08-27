@@ -2,7 +2,7 @@ DOSGi Greeter is a sample application that demonstrates the DOSGi feature of Cel
 
 Requirements / Setup
 --------------------
-It requires a cellar cluster of at least to nodes, say node A and B.
+It requires a cellar cluster of at least two nodes, say node A and B.
 
 Node B will export the Greeter service and node A will import the service.
 
@@ -29,6 +29,6 @@ Installation
 
 3. Executing the greet (Pass a greet message and the number of iterations).
    karaf@root> dosgi-greeter:greet Halo 2
-   Halo.Halo from node 192.168.1.101:5702 count 0.
-   Halo.Halo from node 192.168.1.101:5702 count 1.
+   Hello.Hello from node 192.168.1.101:5702 count 0.
+   Hello.Hello from node 192.168.1.101:5702 count 1.
 
