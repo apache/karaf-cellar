@@ -23,7 +23,7 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 @Command(scope = "dosgi-greeter", name = "greet", description = "Starts the greet client")
 public class GreetCommand extends OsgiCommandSupport {
 
-    @Argument(index = 0, name = "greetMessage", description = "The message that will be sent as greet.", required = true, multiValued = false)
+    @Argument(index = 0, name = "greetMessage", description = "The message that will be sent as the greeting.", required = true, multiValued = false)
     String greetMessage;
 
     @Argument(index = 1, name = "iterations", description = "The number of greet iterations to perform", required = false, multiValued = false)
