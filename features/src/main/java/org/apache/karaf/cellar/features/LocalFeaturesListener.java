@@ -93,8 +93,6 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
      */
     public void repositoryEvent(RepositoryEvent event) {
         if (event != null && event.getRepository() != null) {
-
-            Node node = clusterManager.getNode();
             Set<Group> groups = groupManager.listLocalGroups();
 
             if (groups != null && !groups.isEmpty()) {

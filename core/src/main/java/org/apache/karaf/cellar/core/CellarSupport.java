@@ -134,7 +134,6 @@ public class CellarSupport {
      */
     public Boolean isAllowed(Group group, String category, String event, EventType type) {
         Boolean result = true;
-        Node node = clusterManager.getNode();
         Set<String> whiteList = getListEntries(Configurations.WHITELIST, group, category, type);
         Set<String> blackList = getListEntries(Configurations.BLACKLIST, group, category, type);
 

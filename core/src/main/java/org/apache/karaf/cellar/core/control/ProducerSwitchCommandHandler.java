@@ -32,23 +32,19 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
     public ProducerSwitchResult execute(ProducerSwitchCommand command) {
         //Query
         if (command.getStatus() == null) {
-            ProducerSwitchResult result = new ProducerSwitchResult(command.getId(), Boolean.TRUE, producer.getSwitch().getStatus().getValue());
-            return result;
+            return new ProducerSwitchResult(command.getId(), Boolean.TRUE, producer.getSwitch().getStatus().getValue());
         }
         //Turn on the switch
         else if (command.getStatus().equals(SwitchStatus.ON)) {
             producer.getSwitch().turnOn();
-            ProducerSwitchResult result = new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
-            return result;
+            return new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
         }
         //Turn on the switch
         else if (command.getStatus().equals(SwitchStatus.OFF)) {
             producer.getSwitch().turnOff();
-            ProducerSwitchResult result = new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
-            return result;
+            return new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
         } else {
-            ProducerSwitchResult result = new ProducerSwitchResult(command.getId(), Boolean.FALSE, producer.getSwitch().getStatus().getValue());
-            return result;
+            return new ProducerSwitchResult(command.getId(), Boolean.FALSE, producer.getSwitch().getStatus().getValue());
         }
     }
 

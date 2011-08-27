@@ -48,7 +48,7 @@
         </command>
     </command-bundle>
 
-    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completers.AllGroupsCompleter">
+    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 

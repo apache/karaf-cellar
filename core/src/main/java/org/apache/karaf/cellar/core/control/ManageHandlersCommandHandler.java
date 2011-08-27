@@ -81,7 +81,6 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
 
     @Override
     public Switch getSwitch() {
-        return getSwitch();
+        return commandSwitch;
     }
-
 }

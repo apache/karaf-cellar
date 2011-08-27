@@ -15,6 +15,8 @@ package org.apache.karaf.cellar.core.command;
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.Producer;
+import org.apache.karaf.cellar.core.exception.ProducerNotFoundException;
+import org.apache.karaf.cellar.core.exception.StoreNotFoundException;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,21 +34,20 @@ public class ClusteredExecutionContext implements ExecutionContext {
 
     private ScheduledExecutorService timeoutScheduler = new ScheduledThreadPoolExecutor(10);
 
-    public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws Exception {
+    public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws StoreNotFoundException, ProducerNotFoundException, InterruptedException {
         if (command == null) {
-            throw new Exception("Command store not found");
+            throw new StoreNotFoundException("Command store not found");
         } else {
             commandStore.getPending().put(command.getId(), command);
             TimeoutTask timeoutTask = new TimeoutTask(command, commandStore);
-            ScheduledFuture<?> timeoutFuture = timeoutScheduler.schedule(timeoutTask, command.getTimeout(), TimeUnit.MILLISECONDS);
+            timeoutScheduler.schedule(timeoutTask, command.getTimeout(), TimeUnit.MILLISECONDS);
         }
 
         if (producer != null) {
             producer.produce(command);
-            Map<Node, R> result = command.getResult();
-            return result;
+            return command.getResult();
         }
-        throw new Exception("Command producer not found");
+        throw new ProducerNotFoundException("Command producer not found");
     }
 
     public Producer getProducer() {
