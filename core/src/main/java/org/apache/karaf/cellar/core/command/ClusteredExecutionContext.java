@@ -20,7 +20,6 @@ import org.apache.karaf.cellar.core.exception.StoreNotFoundException;
 
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +33,14 @@ public class ClusteredExecutionContext implements ExecutionContext {
 
     private ScheduledExecutorService timeoutScheduler = new ScheduledThreadPoolExecutor(10);
 
+    public ClusteredExecutionContext() {
+    }
+
+    public ClusteredExecutionContext(Producer producer, CommandStore commandStore) {
+        this.producer = producer;
+        this.commandStore = commandStore;
+    }
+
     public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws StoreNotFoundException, ProducerNotFoundException, InterruptedException {
         if (command == null) {
             throw new StoreNotFoundException("Command store not found");
@@ -46,8 +53,9 @@ public class ClusteredExecutionContext implements ExecutionContext {
         if (producer != null) {
             producer.produce(command);
             return command.getResult();
-        }
+        } else {
         throw new ProducerNotFoundException("Command producer not found");
+    }
     }
 
     public Producer getProducer() {

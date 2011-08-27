@@ -25,6 +25,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -53,6 +54,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
 
     private static final String GROUPS = "org.apache.karaf.cellar.groups";
+    private static final String DEFAULT_GROUP = "default";
 
     private Map<String, ServiceRegistration> producerRegistrations = new HashMap<String, ServiceRegistration>();
     private Map<String, ServiceRegistration> consumerRegistrations = new HashMap<String, ServiceRegistration>();
@@ -60,24 +62,31 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private BundleContext bundleContext;
 
     private HazelcastInstance instance;
-    private Dispatcher dispatcher;
     private ConfigurationAdmin configurationAdmin;
 
-    public void init() throws Exception {
+    private EventTransportFactory eventTransportFactory;
+
+    public void init() {
         //Add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
-            Dictionary<String, String> properties = configuration.getProperties();
-            String groups = properties.get(Configurations.GROUPS_KEY);
-            Set<String> groupNames = convertStringToSet(groups);
-            if (groupNames != null && !groupNames.isEmpty()) {
-                for (String groupName : groupNames) {
-                    registerGroup(groupName);
+            if (configuration != null) {
+                Dictionary<String, String> properties = configuration.getProperties();
+                if (properties != null) {
+                    String groups = properties.get(Configurations.GROUPS_KEY);
+                    Set<String> groupNames = convertStringToSet(groups);
+                    if (groupNames != null && !groupNames.isEmpty()) {
+                        for (String groupName : groupNames) {
+                            registerGroup(groupName);
+                        }
+                        return;
+                    }
                 }
             }
         } catch (IOException e) {
             LOGGER.error("Error reading group configuration.");
         }
+        registerGroup(DEFAULT_GROUP);
     }
 
     public Node getNode() {
@@ -224,13 +233,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         }
 
         if (!consumerRegistrations.containsKey(groupName)) {
-            TopicConsumer consumer = new TopicConsumer();
-            consumer.setDispatcher(dispatcher);
-            consumer.setTopic(topic);
-            consumer.setNode(getNode());
-            consumer.init();
-
-
+            EventConsumer consumer = eventTransportFactory.getEventConsumer(groupName,true);
             ServiceRegistration consumerRegistration = bundleContext.registerService(EventConsumer.class.getCanonicalName(), consumer, serviceProperties);
             consumerRegistrations.put(groupName, consumerRegistration);
         }
@@ -247,10 +250,10 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 groups = groupName;
             } else {
 
-                Set<String> groupNamesSet = convertStringToSet(groups);
-                groupNamesSet.add(groupName);
-                groups = convertSetToString(groupNamesSet);
-            }
+                        Set<String> groupNamesSet = convertStringToSet(groups);
+                        groupNamesSet.add(groupName);
+                        groups = convertSetToString(groupNamesSet);
+                    }
 
             if (groups == null || (groups.trim().length() < 1)) {
                 groups = groupName;
@@ -346,21 +349,26 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public void copyGroupConfiguration(String sourceGroupName, String targetGroupName) {
         try {
             Configuration conf = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary dictionary = conf.getProperties();
-            Dictionary updatedProperties = new Properties();
-            Enumeration keyEnumeration = dictionary.keys();
-            while (keyEnumeration.hasMoreElements()) {
-                String key = (String) keyEnumeration.nextElement();
-                String value = (String) dictionary.get(key);
+            if (conf != null) {
+                Dictionary dictionary = conf.getProperties();
+                if (dictionary != null) {
+                    Dictionary updatedProperties = new Properties();
+                    Enumeration keyEnumeration = dictionary.keys();
+                    while (keyEnumeration.hasMoreElements()) {
+                        String key = (String) keyEnumeration.nextElement();
+                        String value = (String) dictionary.get(key);
 
-                if (key.startsWith(sourceGroupName)) {
-                    String newKey = key.replace(sourceGroupName, targetGroupName);
-                    updatedProperties.put(newKey, value);
+                        if (key.startsWith(sourceGroupName)) {
+                            String newKey = key.replace(sourceGroupName, targetGroupName);
+                            updatedProperties.put(newKey, value);
+                        }
+                        updatedProperties.put(key, value);
+                    }
+
+
+                    conf.update(updatedProperties);
                 }
-                updatedProperties.put(key, value);
             }
-
-            conf.update(updatedProperties);
 
         } catch (IOException e) {
             LOGGER.error("Error reading group configuration.", e);
@@ -406,23 +414,6 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         return result;
     }
 
-    /**
-     * Returns the {@link Dispatcher}
-     *
-     * @return
-     */
-    public Dispatcher getDispatcher() {
-        return dispatcher;
-    }
-
-    /**
-     * Sets the {@link Dispatcher}
-     *
-     * @param dispatcher
-     */
-    public void setDispatcher(Dispatcher dispatcher) {
-        this.dispatcher = dispatcher;
-    }
 
     public HazelcastInstance getInstance() {
         return instance;
@@ -448,4 +439,11 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         this.configurationAdmin = configurationAdmin;
     }
 
+    public EventTransportFactory getEventTransportFactory() {
+        return eventTransportFactory;
+    }
+
+    public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
+        this.eventTransportFactory = eventTransportFactory;
+    }
 }

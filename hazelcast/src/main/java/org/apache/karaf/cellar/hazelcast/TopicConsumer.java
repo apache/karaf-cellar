@@ -42,21 +42,14 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
      * Initialization method.
      */
     public void init() {
-        if (topic != null) {
-            topic.addMessageListener(this);
-        } else {
-            topic = instance.getTopic(Constants.TOPIC);
-            topic.addMessageListener(this);
-        }
+        start();
     }
 
     /**
      * Destruction method.
      */
     public void destroy() {
-        if (topic != null) {
-            topic.removeMessageListener(this);
-        }
+        stop();
     }
 
     /**
@@ -70,6 +63,24 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
                 dispatcher.dispatch(event);
             }
         }
+
+    @Override
+    public void start() {
+        if (topic != null) {
+            topic.addMessageListener(this);
+        } else {
+            topic = instance.getTopic(Constants.TOPIC);
+            topic.addMessageListener(this);
+        }
+
+    }
+
+    @Override
+    public void stop() {
+        if (topic != null) {
+            topic.removeMessageListener(this);
+        }
+    }
 
     public void onMessage(E message) {
         consume(message);

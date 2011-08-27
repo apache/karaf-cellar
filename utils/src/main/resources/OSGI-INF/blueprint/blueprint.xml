@@ -27,10 +27,10 @@
     <!-- OSGi Services  & References -->
     <service ref="pingHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
     <service ref="pongHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
-    <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
+
+    <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager" availability="optional"/>
+    <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore" availability="optional"/>
+    <reference id="producer" interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(!(type = group))" availability="optional"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-    <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
-    <reference id="producer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
 
 </blueprint>

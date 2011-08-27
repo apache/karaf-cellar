@@ -17,6 +17,7 @@
     <!-- Reference to the Cellar services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
+    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
 
     <reference id="mbeanServer" interface="javax.management.MBeanServer">
@@ -39,6 +40,7 @@
 
     <bean id="cellarFeaturesMBean" class="org.apache.karaf.cellar.management.internal.CellarFeaturesMBeanImpl">
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
