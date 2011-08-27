@@ -13,9 +13,7 @@
  */
 package org.apache.karaf.cellar.samples.dosgi.greeter.api;
 
-/**
- * @author: iocanel
- */
+
 public interface Greeter {
 
     /**

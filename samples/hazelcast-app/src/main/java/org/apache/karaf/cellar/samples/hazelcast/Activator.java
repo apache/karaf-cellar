@@ -24,9 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-/**
- * @author: iocanel
- */
 public class Activator implements BundleActivator {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(Activator.class);
