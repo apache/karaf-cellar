@@ -16,9 +16,7 @@ package org.apache.karaf.cellar.samples.dosgi.greeter.api;
 
 import java.io.Serializable;
 
-/**
- * @author: iocanel
- */
+
 public class GreetResponse implements Serializable {
 
     private Greet greet;

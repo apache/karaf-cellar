@@ -14,9 +14,7 @@
 
 package org.apache.karaf.cellar.samples.hazelcast;
 
-/**
- * @author: iocanel
- */
+
 public class MessageListener implements com.hazelcast.core.MessageListener {
     @Override
     public void onMessage(Object message) {

@@ -16,9 +16,7 @@ package org.apache.karaf.cellar.samples.hazelcast;
 
 import java.io.Serializable;
 
-/**
- * @author: iocanel
- */
+
 public class Message implements Serializable {
 
     private final String text;

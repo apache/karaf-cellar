@@ -18,9 +18,7 @@ import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greet;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.GreetResponse;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
 
-/**
- * @author: iocanel
- */
+
 public class GreeterImpl implements Greeter {
 
     private int counter=0;
