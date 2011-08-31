@@ -43,12 +43,14 @@ public class PropSetCommand extends ConfigCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        Properties properties = configurationTable.get(pid);
-        if (properties == null) {
-            properties = new Properties();
+        if (configurationTable != null) {
+            Properties properties = configurationTable.get(pid);
+            if (properties == null) {
+                properties = new Properties();
+            }
+            properties.put(key, value);
+            configurationTable.put(pid, properties);
         }
-        properties.put(key, value);
-        configurationTable.put(pid, properties);
         return null;
     }
 

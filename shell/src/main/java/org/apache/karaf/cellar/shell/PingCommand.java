@@ -39,16 +39,21 @@ public class PingCommand extends ClusterCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Node node = clusterManager.findNodeById(nodeId);
-        System.out.println("Pinging node :" + node.getId());
-        for (int i = 1; i <= iterations; i++) {
-            Long start = System.currentTimeMillis();
-            Ping ping = new Ping(clusterManager.generateId());
-            ping.setDestination(new HashSet(Arrays.asList(node)));
-            executionContext.execute(ping);
-            Long stop = System.currentTimeMillis();
-            Long delay = stop - start;
-            System.out.println(String.format("PING %s %s %sms", i, node.getId(), delay));
-            Thread.sleep(interval);
+        if (node == null) {
+            System.out.println("Node " + nodeId + " is not found.");
+        }
+        else {
+            System.out.println("Pinging node :" + node.getId());
+            for (int i = 1; i <= iterations; i++) {
+                Long start = System.currentTimeMillis();
+                Ping ping = new Ping(clusterManager.generateId());
+                ping.setDestination(new HashSet(Arrays.asList(node)));
+                executionContext.execute(ping);
+                Long stop = System.currentTimeMillis();
+                Long delay = stop - start;
+                System.out.println(String.format("PING %s %s %sms", i, node.getId(), delay));
+                Thread.sleep(interval);
+            }
         }
         return null;
     }
