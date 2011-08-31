@@ -45,7 +45,7 @@ public class PropListCommand extends CellarCommandSupport {
             Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             if (configurationTable != null && !configurationTable.isEmpty()) {
-                System.out.println(String.format("Property list for PID:" + pid + " for group:" + groupName));
+                System.out.println(String.format("Property list for PID " + pid + " for group " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
                 Properties properties = configurationTable.get(pid);
                 if (properties != null && !properties.isEmpty())
@@ -53,7 +53,7 @@ public class PropListCommand extends CellarCommandSupport {
                         String value = properties.getProperty((String) key);
                         System.out.println(String.format(OUTPUT_FORMAT, key, value));
                     }
-            } else System.err.print("No PIDs found for group:" + groupName);
+            } else System.err.print("No PIDs found for group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
