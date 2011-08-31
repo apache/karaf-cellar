@@ -41,7 +41,11 @@
             org.apache.karaf.cellar.config*;version="${project.version}",
             org.apache.karaf.cellar*;version="${project.version}",
             org.apache.karaf.cellar.utils*;version="${project.version}",
-            org.apache.karaf.shell.console*;version="[2,4)",
+            org.apache.felix.service.command,
+            org.apache.felix.gogo.commands,
+            org.apache.karaf.shell.console;version="[2.2,4)",
+            org.apache.karaf.shell.console.commands;version="[2.2,4)",
+            org.apache.karaf.shell.console.completer;version="[2.2,4)",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
