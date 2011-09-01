@@ -71,6 +71,11 @@ public class ExportServiceListener implements ServiceListener {
 
     public void destroy() {
         bundleContext.removeServiceListener(this);
+            for(Map.Entry<String,EventConsumer> consumerEntry:consumers.entrySet()) {
+                EventConsumer consumer = consumerEntry.getValue();
+                consumer.stop();
+            }
+            consumers.clear();
     }
 
 
@@ -127,9 +132,13 @@ public class ExportServiceListener implements ServiceListener {
                     remoteEndpoints.put(endpointId, endpoint);
 
                     //Register the endpoint consumer
-                    EventConsumer consumer = eventTransportFactory.getEventConsumer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpointId, false);
-                    consumers.put(endpointId, consumer);
-
+                    EventConsumer consumer = consumers.get(endpointId);
+                    if(consumer == null) {
+                        consumer = eventTransportFactory.getEventConsumer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpointId, false);
+                        consumers.put(endpointId, consumer);
+                    } else if(!consumer.isConsuming()) {
+                        consumer.start();
+                    }
                 }
             }
         } finally {

@@ -37,4 +37,9 @@ public interface EventConsumer<E extends Event> extends Consumer<E> {
      */
     public void stop();
 
+    /**
+     * Returns true if Consumer is consuming
+     */
+    public Boolean isConsuming();
+
 }
