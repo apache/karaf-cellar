@@ -38,11 +38,29 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             !org.apache.karaf.cellar.hazelcast*,
+            org.apache.karaf.features;version="[2.2,4)";resolution:=optional,
             com.hazelcast*,
-            org.apache.karaf.cellar.core*;version="${project.version}",
             *
         </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,org.apache.karaf.*</osgi.dynamic.import>
+        <osgi.dynamic.import>
+            javax.*,
+            org.w3c.*,
+            org.xml.*,
+            org.apache.karaf.cellar.bundle,
+            org.apache.karaf.cellar.bundle.*,
+            org.apache.karaf.cellar.cloud,
+            org.apache.karaf.cellar.config,
+            org.apache.karaf.cellar.config.*,
+            org.apache.karaf.cellar.dosgi,
+            org.apache.karaf.cellar.features,
+            org.apache.karaf.cellar.features.*,
+            org.apache.karaf.cellar.management,
+            org.apache.karaf.cellar.management.*,
+            org.apache.karaf.cellar.shell,
+            org.apache.karaf.cellar.shell.*,
+            org.apache.karaf.cellar.utils,
+            org.apache.karaf.cellar.utils.*
+        </osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
