@@ -38,6 +38,8 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     private Dispatcher dispatcher;
     private Node node;
 
+    private boolean isConsuming;
+
     /**
      * Initialization method.
      */
@@ -66,6 +68,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
 
     @Override
     public void start() {
+        isConsuming = true;
         if (topic != null) {
             topic.addMessageListener(this);
         } else {
@@ -77,9 +80,15 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
 
     @Override
     public void stop() {
+        isConsuming = false;
         if (topic != null) {
             topic.removeMessageListener(this);
         }
+    }
+
+    @Override
+    public Boolean isConsuming() {
+        return isConsuming;
     }
 
     public void onMessage(E message) {

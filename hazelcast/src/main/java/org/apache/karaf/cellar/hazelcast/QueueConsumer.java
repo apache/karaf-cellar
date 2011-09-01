@@ -15,9 +15,7 @@ package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
-import com.hazelcast.core.ITopic;
 import com.hazelcast.core.ItemListener;
-import com.hazelcast.core.MessageListener;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -25,27 +23,35 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Consumes messages from the distributed {@code ITopic} and calls the {@code EventDispatcher}.
  */
-public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemListener<E> {
+public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemListener<E>, Runnable {
+
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(QueueConsumer.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.queue.consumer";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    private Boolean isConsuming = Boolean.TRUE;
 
     private HazelcastInstance instance;
     private IQueue queue;
     private Dispatcher dispatcher;
     private Node node;
 
-    private QueueConsumeTask queueConsumeTask = new QueueConsumeTask(this);
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    public QueueConsumer() {
+    }
 
 
     /**
@@ -58,7 +64,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
             queue = instance.getQueue(Constants.QUEUE);
             queue.addItemListener(this,true);
         }
-
+        executorService.execute(this);
     }
 
     /**
@@ -67,6 +73,31 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     public void destroy() {
         if (queue != null) {
             queue.removeItemListener(this);
+        }
+        executorService.shutdown();
+    }
+
+    @Override
+    public void run() {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            while (isConsuming) {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                E e = null;
+                try {
+                        e = getQueue().poll(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e1) {
+                    LOGGER.warn("Consume task interrupted");
+                }
+                if (e != null) {
+                    consume(e);
+                }
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error while consuming from queue",ex);
+        }
+        finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 
@@ -84,14 +115,18 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     @Override
     public void start()
     {
-        queueConsumeTask.activate();
-        executorService.execute(queueConsumeTask);
+        isConsuming = true;
+        executorService.execute(this);
     }
 
 
     @Override
     public void stop() {
-      queueConsumeTask.deactivate();
+      isConsuming = false;
+    }
+
+    public Boolean isConsuming() {
+        return isConsuming;
     }
 
     @Override
@@ -102,14 +137,6 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     @Override
     public void itemRemoved(E event) {
 
-    }
-
-    public QueueConsumeTask getQueueConsumeTask() {
-        return queueConsumeTask;
-    }
-
-    public void setQueueConsumeTask(QueueConsumeTask queueConsumeTask) {
-        this.queueConsumeTask = queueConsumeTask;
     }
 
     public Dispatcher getDispatcher() {
