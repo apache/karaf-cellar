@@ -54,7 +54,7 @@
     </bean>
 
     <!-- Group Manager -->
-    <bean id="groupManager" class="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager" init-method="init">
+    <bean id="groupManager" class="org.apache.karaf.cellar.hazelcast.HazelcastGroupManager" init-method="init" destroy-method="destroy">
         <property name="instance" ref="hazelcast"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>

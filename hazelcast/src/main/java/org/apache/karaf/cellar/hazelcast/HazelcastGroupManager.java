@@ -59,6 +59,9 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private Map<String, ServiceRegistration> producerRegistrations = new HashMap<String, ServiceRegistration>();
     private Map<String, ServiceRegistration> consumerRegistrations = new HashMap<String, ServiceRegistration>();
 
+    private Map<String, EventProducer> groupProducers = new HashMap<String, EventProducer>();
+    private Map<String, EventConsumer> groupConsumer = new HashMap<String, EventConsumer>();
+
     private BundleContext bundleContext;
 
     private HazelcastInstance instance;
@@ -87,6 +90,15 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
             LOGGER.error("Error reading group configuration");
         }
         registerGroup(DEFAULT_GROUP);
+    }
+
+    public void destroy() {
+        for(Map.Entry<String,EventConsumer> consumerEntry:groupConsumer.entrySet()) {
+            EventConsumer consumer = consumerEntry.getValue();
+            consumer.stop();
+        }
+        groupConsumer.clear();
+        groupProducers.clear();
     }
 
     @Override
@@ -228,23 +240,30 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public void registerGroup(Group group) {
         String groupName = group.getName();
         createGroup(groupName);
-        ITopic topic = instance.getTopic(Constants.TOPIC + "." + groupName);
 
         Properties serviceProperties = new Properties();
         serviceProperties.put("type", "group");
         serviceProperties.put("name", groupName);
 
         if (!producerRegistrations.containsKey(groupName)) {
-            TopicProducer producer = new TopicProducer();
-            producer.setTopic(topic);
-            producer.setNode(getNode());
+            EventProducer producer = groupProducers.get(groupName);
+            if(producer == null) {
+                producer = eventTransportFactory.getEventProducer(groupName,Boolean.TRUE);
+                groupProducers.put(groupName,producer);
+            }
 
             ServiceRegistration producerRegistration = bundleContext.registerService(EventProducer.class.getCanonicalName(), producer, serviceProperties);
             producerRegistrations.put(groupName, producerRegistration);
         }
 
         if (!consumerRegistrations.containsKey(groupName)) {
-            EventConsumer consumer = eventTransportFactory.getEventConsumer(groupName,true);
+            EventConsumer consumer = groupConsumer.get(groupName);
+            if(consumer == null) {
+                consumer = eventTransportFactory.getEventConsumer(groupName,true);
+                groupConsumer.put(groupName,consumer);
+            } else if(!consumer.isConsuming()) {
+                consumer.start();
+            }
             ServiceRegistration consumerRegistration = bundleContext.registerService(EventConsumer.class.getCanonicalName(), consumer, serviceProperties);
             consumerRegistrations.put(groupName, consumerRegistration);
         }
@@ -335,6 +354,15 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 producerRegistrations.remove(groupName);
             }
         }
+
+        //4. Remove Consumers & Producers
+        groupProducers.remove(groupName);
+        EventConsumer consumer = groupConsumer.remove(groupName);
+        if(consumer != null) {
+            consumer.stop();
+        }
+
+
 
         //Remove group from configuration
         try {
