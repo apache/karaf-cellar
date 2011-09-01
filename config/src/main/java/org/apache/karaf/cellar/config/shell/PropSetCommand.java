@@ -50,6 +50,8 @@ public class PropSetCommand extends ConfigCommandSupport {
             }
             properties.put(key, value);
             configurationTable.put(pid, properties);
+        } else {
+            System.out.println("Group " + groupName + " doesn't exist.");
         }
         return null;
     }
