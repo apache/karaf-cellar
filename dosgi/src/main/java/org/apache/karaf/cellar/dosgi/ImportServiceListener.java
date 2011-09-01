@@ -62,6 +62,13 @@ public class ImportServiceListener implements ListenerHook {
             ServiceRegistration registration = entry.getValue();
             registration.unregister();
         }
+        for (Map.Entry<String, EventConsumer> consumerEntry : consumers.entrySet()) {
+            EventConsumer consumer = consumerEntry.getValue();
+            consumer.stop();
+        }
+        consumers.clear();
+        producers.clear();
+
     }
 
     @Override
@@ -134,8 +141,19 @@ public class ImportServiceListener implements ListenerHook {
     private void importService(EndpointDescription endpoint, ListenerInfo listenerInfo) {
         LOGGER.info("CELLAR DOSGI EVENT: Importing remote service.");
 
-        EventProducer requestProducer = eventTransportFactory.getEventProducer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpoint.getId(),Boolean.FALSE);
-        EventConsumer resultConsumer = eventTransportFactory.getEventConsumer(Constants.RESULT_PREFIX + Constants.SEPARATOR + clusterManager.getNode().getId() + endpoint.getId(), Boolean.FALSE);
+        EventProducer requestProducer = producers.get(endpoint.getId());
+        if(requestProducer == null) {
+            requestProducer = eventTransportFactory.getEventProducer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpoint.getId(),Boolean.FALSE);
+            producers.put(endpoint.getId(),requestProducer);
+        }
+
+        EventConsumer resultConsumer = consumers.get(endpoint.getId());
+        if(resultConsumer == null) {
+            resultConsumer = eventTransportFactory.getEventConsumer(Constants.RESULT_PREFIX + Constants.SEPARATOR + clusterManager.getNode().getId() + endpoint.getId(), Boolean.FALSE);
+            consumers.put(endpoint.getId(),resultConsumer);
+        } else if(!resultConsumer.isConsuming()) {
+            resultConsumer.start();
+        }
 
         producers.put(endpoint.getId(),requestProducer);
         consumers.put(endpoint.getId(),resultConsumer);
