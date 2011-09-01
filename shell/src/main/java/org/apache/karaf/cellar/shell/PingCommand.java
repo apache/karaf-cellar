@@ -39,7 +39,11 @@ public class PingCommand extends ClusterCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Node node = clusterManager.findNodeById(nodeId);
-        System.out.println("Pinging node :" + node.getId());
+        if (node == null) {
+            System.out.println("Node " + nodeId + " doesn't exist.");
+            return null;
+        }
+        System.out.println("Pinging node " + node.getId());
         for (int i = 1; i <= iterations; i++) {
             Long start = System.currentTimeMillis();
             Ping ping = new Ping(clusterManager.generateId());
