@@ -30,6 +30,7 @@
     <bean id="instanceFactory" class="org.apache.karaf.cellar.hazelcast.factory.HazelcastServiceFactory"
           init-method="init" destroy-method="destroy">
         <property name="discoveryTask" ref="discoveryTask"/>
+        <property name="combinedClassLoader" ref="combinedClassLoader"/>
         <osgix:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="bean-managed"
                                   update-method="createOrUpdate"/>
     </bean>
@@ -51,6 +52,7 @@
     <bean id="clusterManager" class="org.apache.karaf.cellar.hazelcast.HazelcastClusterManager">
         <property name="instance" ref="hazelcast"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="combinedClassLoader" ref="combinedClassLoader"/>
     </bean>
 
     <!-- Group Manager -->
@@ -58,12 +60,20 @@
         <property name="instance" ref="hazelcast"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
+        <property name="combinedClassLoader" ref="combinedClassLoader"/>
     </bean>
 
     <bean id="eventTransportFactory" class="org.apache.karaf.cellar.hazelcast.HazelcastEventTransportFactory">
         <property name="dispatcher"  ref="dispatcher"/>
         <property name="instance" ref="hazelcast"/>
+        <property name="combinedClassLoader" ref="combinedClassLoader"/>
     </bean>
+
+    <bean id="cellarExtender" class="org.apache.karaf.cellar.hazelcast.CellarExtender"  init-method="init" destroy-method="destroy">
+        <property name="combinedClassLoader" ref="combinedClassLoader"/>
+    </bean>
+
+    <bean id="combinedClassLoader" class="org.apache.karaf.cellar.core.utils.CombinedClassLoader" init-method="init" destroy-method="destroy"/>
 
 
     <!-- Hazelcast Cluster and Node -->
