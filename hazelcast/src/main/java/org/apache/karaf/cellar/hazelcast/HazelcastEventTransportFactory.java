@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ import java.util.Map;
 public class HazelcastEventTransportFactory extends HazelcastInstanceAware implements EventTransportFactory {
 
     private Dispatcher dispatcher;
+    private CombinedClassLoader combinedClassLoader;
 
 
     @Override
@@ -64,7 +66,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
         } else {
 
                 IQueue queue = instance.getQueue(Constants.QUEUE + Constants.SEPARATOR + name);
-                QueueConsumer consumer = new QueueConsumer();
+                QueueConsumer consumer = new QueueConsumer(combinedClassLoader);
                 consumer.setQueue(queue);
                 consumer.setNode(getNode());
                 consumer.setDispatcher(dispatcher);
@@ -79,5 +81,13 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
 
     public void setDispatcher(Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
+    }
+
+    public CombinedClassLoader getCombinedClassLoader() {
+        return combinedClassLoader;
+    }
+
+    public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
+        this.combinedClassLoader = combinedClassLoader;
     }
 }

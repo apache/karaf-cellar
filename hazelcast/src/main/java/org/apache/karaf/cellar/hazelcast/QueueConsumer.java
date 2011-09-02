@@ -23,6 +23,7 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
+import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,11 +49,15 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     private IQueue queue;
     private Dispatcher dispatcher;
     private Node node;
+    private CombinedClassLoader combinedClassLoader;
 
 
     public QueueConsumer() {
     }
 
+    public QueueConsumer(CombinedClassLoader combinedClassLoader) {
+        this.combinedClassLoader = combinedClassLoader;
+    }
 
     /**
      * Initialization method.
@@ -82,7 +87,9 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             while (isConsuming) {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                if(combinedClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(combinedClassLoader);
+                } else Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 E e = null;
                 try {
                         e = getQueue().poll(10, TimeUnit.SECONDS);

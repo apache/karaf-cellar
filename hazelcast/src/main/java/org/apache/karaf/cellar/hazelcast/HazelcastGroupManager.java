@@ -26,6 +26,7 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -68,6 +69,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     private ConfigurationAdmin configurationAdmin;
 
     private EventTransportFactory eventTransportFactory;
+    private CombinedClassLoader combinedClassLoader;
 
     public void init() {
         //Add group to configuration
@@ -129,7 +131,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public void deleteGroup(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             if (!groupName.equals(Configurations.DEFAULT_GROUP_NAME)) {
                 listGroups().remove(groupName);
             }
@@ -142,7 +144,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Set<Group> listLocalGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             return listGroups(getNode());
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -153,7 +155,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Set<Group> listAllGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             return new HashSet<Group>(listGroups().values());
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -164,7 +166,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Group findGroupByName(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             return listGroups().get(groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -175,7 +177,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Map<String, Group> listGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             return instance.getMap(GROUPS);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -186,7 +188,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Set<Group> listGroups(Node node) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             Set<Group> result = new HashSet<Group>();
 
             Map<String, Group> groupMap = instance.getMap(GROUPS);
@@ -208,7 +210,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
     public Set<String> listGroupNames() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             return listGroupNames(getNode());
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -220,7 +222,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
         Set<String> names = new HashSet<String>();
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
             Map<String, Group> groups = listGroups();
 
             if (groups != null && !groups.isEmpty()) {
@@ -490,5 +492,13 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
 
     public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
         this.eventTransportFactory = eventTransportFactory;
+    }
+
+    public CombinedClassLoader getCombinedClassLoader() {
+        return combinedClassLoader;
+    }
+
+    public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
+        this.combinedClassLoader = combinedClassLoader;
     }
 }
