@@ -21,6 +21,7 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.karaf.cellar.core.discovery.DiscoveryTask;
+import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -56,9 +57,6 @@ public class HazelcastServiceFactory implements BundleContextAware {
     public static final String TCPIP_ENABLED="tcpIpEnabled";
     public static final String TCPIP_MEMBERS="tcpIpMembers";
 
-
-
-
     private String username = GroupConfig.DEFAULT_GROUP_NAME;
     private String password = GroupConfig.DEFAULT_GROUP_PASSWORD;
 
@@ -71,10 +69,12 @@ public class HazelcastServiceFactory implements BundleContextAware {
     private String tcpIpMembers = "";
     private Set<String> tcpIpMemberSet = new LinkedHashSet<String>();
 
+    private DiscoveryTask discoveryTask;
+    private CombinedClassLoader combinedClassLoader;
+
     private BundleContext bundleContext;
 
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private DiscoveryTask discoveryTask;
 
     private Semaphore semaphore = new Semaphore(1);
 
@@ -92,6 +92,9 @@ public class HazelcastServiceFactory implements BundleContextAware {
 
     public void init() {
         scheduler.scheduleAtFixedRate(discoveryTask, 0, 10, TimeUnit.SECONDS);
+        if(combinedClassLoader != null) {
+            combinedClassLoader.addBundle(bundleContext.getBundle());
+        }
     }
 
     public void destroy() {
@@ -107,7 +110,9 @@ public class HazelcastServiceFactory implements BundleContextAware {
         try {
             Boolean updated = Boolean.FALSE;
             //We need it to properly instantiate Hazelcast.
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            if(combinedClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(combinedClassLoader);
+            }
             if (properties != null) {
                 if (properties.containsKey(USERNAME)) {
                     String newUsername = (String) properties.get(USERNAME);
@@ -241,6 +246,9 @@ public class HazelcastServiceFactory implements BundleContextAware {
      * @return
      */
     public HazelcastInstance buildInstance() {
+        if(combinedClassLoader != null) {
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
+        }
         try {
             semaphore.acquire();
         } catch (InterruptedException e) {
@@ -433,5 +441,12 @@ public class HazelcastServiceFactory implements BundleContextAware {
 
     public void setDiscoveryTask(DiscoveryTask discoveryTask) {
         this.discoveryTask = discoveryTask;
+    }
+    public CombinedClassLoader getCombinedClassLoader() {
+        return combinedClassLoader;
+    }
+
+    public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
+        this.combinedClassLoader = combinedClassLoader;
     }
 }
