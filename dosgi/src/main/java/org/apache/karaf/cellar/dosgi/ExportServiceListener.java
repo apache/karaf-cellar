@@ -125,6 +125,7 @@ public class ExportServiceListener implements ServiceListener {
 
                     if (remoteEndpoints.containsKey(endpointId)) {
                         endpoint = remoteEndpoints.get(endpointId);
+                        endpoint.getNodes().add(nodeId);
                     } else {
                         endpoint = new EndpointDescription(endpointId,nodeId);
                     }
