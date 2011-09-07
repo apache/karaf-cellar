@@ -19,6 +19,8 @@ import org.osgi.framework.Bundle;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A class loader which combines multiple bundle class loaders.
@@ -27,7 +29,7 @@ import java.util.Map;
  */
 public class CombinedClassLoader extends ClassLoader {
 
-    private final Map<Long, Bundle> bundles = new LinkedHashMap<Long, Bundle>();
+    private final ConcurrentMap<Long, Bundle> bundles = new ConcurrentHashMap<Long, Bundle>();
 
     public void init() {
         bundles.clear();
