@@ -18,6 +18,7 @@ public class Discovery {
 
     public static final String PID = "org.apache.karaf.cellar.instance";
     public static final String MEMBERS_PROPERTY_NAME = "tcpIpMembers";
+    public static final String DISCOVERED_MEMBERS_PROPERTY_NAME = "discoveredMembers";
 
     public static final String INTERVAL = "interval";
     public static final String TASK_ID = "discovery-task-id";

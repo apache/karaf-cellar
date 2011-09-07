@@ -20,6 +20,7 @@ import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.apache.karaf.cellar.core.discovery.Discovery;
 import org.apache.karaf.cellar.core.discovery.DiscoveryTask;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
@@ -68,6 +69,7 @@ public class HazelcastServiceFactory implements BundleContextAware {
     private boolean tcpIpEnabled = true;
     private String tcpIpMembers = "";
     private Set<String> tcpIpMemberSet = new LinkedHashSet<String>();
+    private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
 
     private DiscoveryTask discoveryTask;
     private CombinedClassLoader combinedClassLoader;
@@ -182,6 +184,12 @@ public class HazelcastServiceFactory implements BundleContextAware {
                     tcpIpMemberSet = newTcpIpMemberSet;
                     updated = Boolean.TRUE;
                 }
+
+                Set<String> newDiscoveredMemberSet = createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
+                if (discoveredMemberSet != null && newDiscoveredMemberSet != null && !collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
+                    discoveredMemberSet = newDiscoveredMemberSet;
+                    updated = Boolean.TRUE;
+                }
             }
 
             if (updated) {
@@ -294,6 +302,9 @@ public class HazelcastServiceFactory implements BundleContextAware {
         TcpIpConfig tcpIpConfig = new TcpIpConfig();
         tcpIpConfig.setEnabled(tcpIpEnabled);
         tcpIpConfig.setMembers(new ArrayList(tcpIpMemberSet));
+        if(discoveredMemberSet != null && !discoveredMemberSet.isEmpty() && tcpIpConfig.getMembers() != null) {
+            tcpIpConfig.getMembers().addAll(new ArrayList(discoveredMemberSet));
+        }
         return tcpIpConfig;
     }
 
