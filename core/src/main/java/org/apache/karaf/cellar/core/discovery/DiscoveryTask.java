@@ -27,12 +27,13 @@ import java.util.Set;
 
 public class DiscoveryTask implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(DiscoveryTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTask.class);
 
     private List<DiscoveryService> discoveryServices;
     private ConfigurationAdmin configurationAdmin;
 
     public void run() {
+        LOGGER.trace("CELLAR DISCOVERY: Starting the discovery task.");
         if (configurationAdmin != null) {
             Set<String> members = new LinkedHashSet<String>();
             if (discoveryServices != null && !discoveryServices.isEmpty()) {
@@ -41,19 +42,18 @@ public class DiscoveryTask implements Runnable {
                     Set<String> discovered = service.discoverMembers();
                     members.addAll(discovered);
                 }
-            }
-
             try {
                 Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
                 Dictionary properties = configuration.getProperties();
                 String newMemberText = buildMemberList(members);
                 String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
-                if (newMemberText != null && !newMemberText.equals(memberText)) {
-                    properties.put(Discovery.MEMBERS_PROPERTY_NAME, newMemberText);
+                if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
+                    properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
                     configuration.update(properties);
                 }
             } catch (IOException e) {
-                logger.error("Failed to update member list", e);
+                LOGGER.error("Failed to update member list", e);
+            }
             }
         }
     }
