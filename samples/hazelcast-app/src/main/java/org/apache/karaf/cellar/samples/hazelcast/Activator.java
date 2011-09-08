@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -23,7 +22,9 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Bundle activator that start a Hazelcast topic.
+ */
 public class Activator implements BundleActivator {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(Activator.class);
@@ -39,7 +40,7 @@ public class Activator implements BundleActivator {
         HazelcastInstance instance = (HazelcastInstance) context.getService(reference);
         context.ungetService(reference);
         try {
-            IdGenerator idGenerator = instance.getIdGenerator("cellar-smaple-generator");
+            IdGenerator idGenerator = instance.getIdGenerator("cellar-sample-generator");
             Long id = idGenerator.newId();
             topic = instance.getTopic("cellar-sample-topic");
             topic.addMessageListener(messageListener);
@@ -54,4 +55,5 @@ public class Activator implements BundleActivator {
     public void stop(BundleContext context) throws Exception {
         topic.removeMessageListener(messageListener);
     }
+
 }
