@@ -104,7 +104,7 @@ public class HazelcastServiceFactory implements BundleContextAware {
     }
 
     /**
-     * Creates or Updates HazelcastInstace.
+     * Creates or Updates Hazelcast Instance.
      *
      * @param properties
      */
