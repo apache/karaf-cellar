@@ -11,14 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.dosgi.greeter.client;
 
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greet;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.GreetResponse;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
 
-
+/**
+ * Client that use a remote Greeter service.
+ */
 public class GreeterClient {
 
     private Greeter greeter;
@@ -40,4 +41,5 @@ public class GreeterClient {
             } else System.out.println("Time out!");
         }
     }
+
 }

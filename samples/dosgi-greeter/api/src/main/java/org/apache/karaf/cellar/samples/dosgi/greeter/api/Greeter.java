@@ -13,7 +13,9 @@
  */
 package org.apache.karaf.cellar.samples.dosgi.greeter.api;
 
-
+/**
+ * Interface describing the Greeter service.
+ */
 public interface Greeter {
 
     /**
@@ -21,4 +23,5 @@ public interface Greeter {
      * @return
      */
     public GreetResponse greet(Greet greet);
+
 }

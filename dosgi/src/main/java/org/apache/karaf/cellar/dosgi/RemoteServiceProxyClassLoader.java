@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.osgi.framework.Bundle;
 
 /**
- * @author: iocanel
+ * Class loader for a remote service proxy.
  */
 public class RemoteServiceProxyClassLoader extends ClassLoader {
 
@@ -40,4 +39,5 @@ public class RemoteServiceProxyClassLoader extends ClassLoader {
         }
         return clazz;
     }
+
 }

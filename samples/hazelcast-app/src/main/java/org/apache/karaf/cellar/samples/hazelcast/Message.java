@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.hazelcast;
 
 import java.io.Serializable;
 
-
+/**
+ * Topic message.
+ */
 public class Message implements Serializable {
 
     private final String text;
@@ -33,4 +34,5 @@ public class Message implements Serializable {
     public String toString() {
         return "Message[text='"+text+"']";
     }
+
 }

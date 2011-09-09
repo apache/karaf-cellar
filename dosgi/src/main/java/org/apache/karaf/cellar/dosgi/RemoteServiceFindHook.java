@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.osgi.framework.BundleContext;
@@ -20,7 +19,7 @@ import org.osgi.framework.hooks.service.FindHook;
 import java.util.Collection;
 
 /**
- * @author: iocanel
+ * Remote service finder.
  */
 public class RemoteServiceFindHook implements FindHook {
 
@@ -28,4 +27,5 @@ public class RemoteServiceFindHook implements FindHook {
     public void find(BundleContext context, String name, String filter, boolean allServices, Collection references) {
 
     }
+
 }

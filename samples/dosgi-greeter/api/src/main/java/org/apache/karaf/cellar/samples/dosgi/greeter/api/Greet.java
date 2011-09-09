@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.dosgi.greeter.api;
 
 import java.io.Serializable;
 
-
+/**
+ * Object used in the Greeter interface/service.
+ */
 public class Greet implements Serializable {
     String message;
 
@@ -31,4 +32,5 @@ public class Greet implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }
