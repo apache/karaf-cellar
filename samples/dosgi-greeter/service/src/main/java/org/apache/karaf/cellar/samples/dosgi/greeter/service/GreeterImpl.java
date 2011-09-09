@@ -11,14 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.dosgi.greeter.service;
 
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greet;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.GreetResponse;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
 
-
+/**
+ * Implementation of the Greeter service.
+ */
 public class GreeterImpl implements Greeter {
 
     private int counter=0;
@@ -35,4 +36,5 @@ public class GreeterImpl implements Greeter {
         GreetResponse greetResponse = new GreetResponse(greet,response);
         return greetResponse;
     }
+
 }

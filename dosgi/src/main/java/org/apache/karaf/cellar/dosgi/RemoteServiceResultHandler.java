@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * @author: iocanel
+ * Handler on a remote service result.
  */
 public class RemoteServiceResultHandler extends ResultHandler<RemoteServiceResult> {
 
@@ -25,4 +24,5 @@ public class RemoteServiceResultHandler extends ResultHandler<RemoteServiceResul
     public Class<RemoteServiceResult> getType() {
         return RemoteServiceResult.class;
     }
+
 }

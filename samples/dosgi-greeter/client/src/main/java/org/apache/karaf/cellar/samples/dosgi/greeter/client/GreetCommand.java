@@ -11,14 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.dosgi.greeter.client;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
-
 
 @Command(scope = "dosgi-greeter", name = "greet", description = "Starts the greet client")
 public class GreetCommand extends OsgiCommandSupport {
@@ -29,8 +27,7 @@ public class GreetCommand extends OsgiCommandSupport {
     @Argument(index = 1, name = "iterations", description = "The number of greet iterations to perform", required = false, multiValued = false)
     Integer iterations = 10;
 
-     private Greeter greeter;
-
+    private Greeter greeter;
 
     protected Object doExecute() throws Exception {
         GreeterClient greeterClient = new GreeterClient(greeter, greetMessage,iterations);
@@ -45,4 +42,5 @@ public class GreetCommand extends OsgiCommandSupport {
     public void setGreeter(Greeter greeter) {
         this.greeter = greeter;
     }
+
 }

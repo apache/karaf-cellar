@@ -16,7 +16,9 @@ package org.apache.karaf.cellar.samples.dosgi.greeter.api;
 
 import java.io.Serializable;
 
-
+/**
+ * Response returned by the Greeter service.
+ */
 public class GreetResponse implements Serializable {
 
     private Greet greet;
@@ -42,4 +44,5 @@ public class GreetResponse implements Serializable {
     public void setResponse(String response) {
         this.response = response;
     }
+
 }

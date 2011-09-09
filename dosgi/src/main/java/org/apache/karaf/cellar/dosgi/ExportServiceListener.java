@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.ClusterManager;
@@ -32,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Listener on the export service action.
  */
 public class ExportServiceListener implements ServiceListener {
 
@@ -77,7 +76,6 @@ public class ExportServiceListener implements ServiceListener {
             }
             consumers.clear();
     }
-
 
     @Override
     public void serviceChanged(ServiceEvent event) {
@@ -247,4 +245,5 @@ public class ExportServiceListener implements ServiceListener {
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
+
 }

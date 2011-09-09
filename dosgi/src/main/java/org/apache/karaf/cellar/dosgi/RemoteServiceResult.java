@@ -11,13 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * @author: iocanel
+ * Result of a remote service call.
  */
 public class RemoteServiceResult extends Result {
 
@@ -39,4 +38,5 @@ public class RemoteServiceResult extends Result {
     public void setResult(Object result) {
         this.result = result;
     }
+
 }

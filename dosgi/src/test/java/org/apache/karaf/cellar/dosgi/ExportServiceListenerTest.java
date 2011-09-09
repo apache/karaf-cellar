@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.junit.After;
@@ -24,12 +23,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * @author: iocanel
+ * Unit test on a export service listener.
  */
 public class ExportServiceListenerTest {
 
     private ExportServiceListener listener = new ExportServiceListener();
-
 
     @Before
     public void setUp() throws Exception {
@@ -60,4 +58,5 @@ public class ExportServiceListenerTest {
         Assert.assertTrue(result.contains("java.util.List"));
         Assert.assertTrue(result.contains("java.io.Serializable"));
     }
+
 }
