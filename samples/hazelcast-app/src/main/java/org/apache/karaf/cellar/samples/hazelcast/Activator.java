@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -23,7 +22,9 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+/**
+ * Bundle activator that use the Hazelcast instance OSGi service.
+ */
 public class Activator implements BundleActivator {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(Activator.class);

@@ -11,13 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.samples.hazelcast;
 
-
+/**
+ * Hazelcast message listener.
+ */
 public class MessageListener implements com.hazelcast.core.MessageListener {
+
     @Override
     public void onMessage(Object message) {
         System.out.println("Received message:"+message);
     }
+
 }
