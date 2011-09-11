@@ -185,6 +185,13 @@
                 <version>${karaf.version}</version>
             </dependency>
 
+            <!-- Testing -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+            </dependency>
+
             <!-- Easymock -->
             <dependency>
                 <groupId>org.easymock</groupId>
