@@ -100,7 +100,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         //Check if feature is blocked.
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
                             Boolean remotelyInstalled = features.get(info);
-                            Boolean localyInstalled = isInstanlled(info.getName(), info.getVersion());
+                            Boolean localyInstalled = isInstalled(info.getName(), info.getVersion());
 
                             //If feature needs to be installed locally.
                             if (remotelyInstalled && !localyInstalled) {
