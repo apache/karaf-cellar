@@ -56,7 +56,7 @@ public class FeaturesSupport extends CellarSupport {
      * @param version
      * @return
      */
-    public Boolean isInstanlled(String name, String version) {
+    public Boolean isInstalled(String name, String version) {
         if (featuresService != null) {
             Feature[] features = featuresService.listInstalledFeatures();
 

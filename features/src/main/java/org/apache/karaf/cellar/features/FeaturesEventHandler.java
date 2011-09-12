@@ -53,7 +53,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
         if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
             LOGGER.debug("Received features event {} version {} type {}.", new Object[]{event.getName(), event.getVersion(), event.getType()});
             FeatureEvent.EventType type = event.getType();
-            Boolean isInstalled = isInstanlled(name, version);
+            Boolean isInstalled = isInstalled(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
                     LOGGER.debug("Installing feature {} version {}", name, version);
