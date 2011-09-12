@@ -44,7 +44,7 @@
             org.apache.karaf.shell.console;version="[2.2,4)",
             org.apache.karaf.shell.console.commands;version="[2.2,4)",
             org.apache.karaf.shell.console.completer;version="[2.2,4)",
-            org.slf4j;resolution:=optional
+            *
         </osgi.import>
         <osgi.export>
             org.apache.karaf.cellar.obr*;version="${project.version}"

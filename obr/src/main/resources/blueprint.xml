@@ -18,6 +18,9 @@
     <bean id="obrBundleEventHandler" class="org.apache.karaf.cellar.obr.ObrBundleEventHandler"
             init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <!-- OBR Bundle Event Handler OSGi service -->
@@ -31,6 +34,7 @@
     <reference id="repositoryAdmin" interface="org.apache.felix.bundlerepository.RepositoryAdmin"/>
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
     <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
 
 </blueprint>
