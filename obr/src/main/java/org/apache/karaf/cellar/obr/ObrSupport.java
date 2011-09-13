@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ public class ObrSupport extends CellarSupport {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrSupport.class);
 
+    protected BundleContext bundleContext;
     protected RepositoryAdmin obrService;
 
     public void init() { }
@@ -82,6 +84,14 @@ public class ObrSupport extends CellarSupport {
 
     public void setObrService(RepositoryAdmin obrService) {
         this.obrService = obrService;
+    }
+
+    public BundleContext getBundleContext() {
+        return this.bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
 }

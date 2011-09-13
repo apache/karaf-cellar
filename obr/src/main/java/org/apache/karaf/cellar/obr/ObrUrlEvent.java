@@ -22,16 +22,22 @@ import org.apache.karaf.cellar.core.event.EventType;
 public class ObrUrlEvent extends Event {
 
     private String url;
+    private String action;
     private EventType type;
 
-    public ObrUrlEvent(String url, EventType type) {
-        super(url);
+    public ObrUrlEvent(String url, String action, EventType type) {
+        super(url + "/" + action);
         this.url = url;
+        this.action = action;
         this.type = type;
     }
 
     public String getUrl() {
         return this.url;
+    }
+
+    public String getAction() {
+        return this.action;
     }
 
     public EventType getType() {

@@ -38,7 +38,6 @@
         <osgi.import>
             !org.apache.karaf.cellar.obr*,
             org.apache.karaf.cellar.core*;version=${project.version},
-            org.apache.felix.bundlerepository;version="[2,3)",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
             org.apache.karaf.shell.console;version="[2.2,4)",
@@ -46,6 +45,10 @@
             org.apache.karaf.shell.console.completer;version="[2.2,4)",
             *
         </osgi.import>
+        <osgi.dynamic.import>
+            org.apache.felix.bundlerepository,
+            org.osgi.service.obr
+        </osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.obr*;version="${project.version}"
         </osgi.export>
