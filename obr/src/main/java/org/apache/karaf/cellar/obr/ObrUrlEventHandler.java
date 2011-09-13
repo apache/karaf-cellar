@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.obr;
 
-import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.event.EventHandler;
@@ -50,9 +49,20 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     @Override
     public void handle(ObrUrlEvent obrUrlEvent) {
         String url = obrUrlEvent.getUrl();
-        if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
-            LOGGER.debug("Received OBR URL {} event with type {}", url, obrUrlEvent.getType());
-
+        String action = obrUrlEvent.getAction();
+        try {
+            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
+                if (action.equals("ADD")) {
+                    LOGGER.debug("Received OBR ADD URL {} event with type {}", url, obrUrlEvent.getType());
+                    obrService.addRepository(url);
+                }
+                if (action.equals("REMOVE")) {
+                    LOGGER.debug("Received OBR REMOVE URL {} event with type {}", url, obrUrlEvent.getType());
+                    obrService.removeRepository(url);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to register URL {}", url, e);
         }
     }
 

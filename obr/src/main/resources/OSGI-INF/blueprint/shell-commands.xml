@@ -24,6 +24,40 @@
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="cluster/obr-listurl">
+            <action class="org.apache.karaf.cellar.obr.shell.ObrListUrlCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="cluster/obr-addurl">
+            <action class="org.apache.karaf.cellar.obr.shell.ObrAddUrlCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="cluster/obr-removeurl">
+            <action class="org.apache.karaf.cellar.obr.shell.ObrRemoveUrlCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+                <null/>
             </completers>
         </command>
     </command-bundle>

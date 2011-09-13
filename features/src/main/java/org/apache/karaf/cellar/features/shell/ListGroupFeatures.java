@@ -40,7 +40,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
 
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             if (features != null && !features.isEmpty()) {
-                System.out.println(String.format("Features for group:" + groupName));
+                System.out.println(String.format("Features for group " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "Name", "Version", "Status"));
                 for (FeatureInfo info : features.keySet()) {
                     String name = info.getName();

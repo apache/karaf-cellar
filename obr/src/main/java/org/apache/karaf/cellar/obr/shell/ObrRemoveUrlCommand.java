@@ -21,35 +21,34 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
-import org.apache.karaf.cellar.obr.ObrBundleEvent;
+import org.apache.karaf.cellar.obr.ObrUrlEvent;
 
 import java.util.Set;
 
 /**
- * Deploy a bundle from the OBR.
+ * cluster:obr-removeurl command
  */
-@Command(scope = "cluster", name = "obr-deploy", description = "Deploy a bundle from the OBR on a cluster group")
-public class ObrDeployCommand extends CellarCommandSupport {
+@Command(scope = "cluster", name = "obr-removeurl", description = "Remove a repository URL from the distributed OBR service")
+public class ObrRemoveUrlCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group where to deploy the bundle from the OBR", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name="bundleId", description = "The bundle ID (in the OBR) to deploy", required = true, multiValued = false)
-    String bundleId;
+    @Argument(index = 1, name = "url", description = "The repository URL to add in the OBR service", required = true, multiValued = false)
+    String url;
 
-    @Override
-    protected Object doExecute() throws Exception {
+    public Object doExecute() throws Exception {
         // find the group for the given name
         Group group = groupManager.findGroupByName(groupName);
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        ObrBundleEvent event = new ObrBundleEvent(bundleId, EventType.INBOUND);
+        ObrUrlEvent event = new ObrUrlEvent(url, "REMOVE", EventType.INBOUND);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
-        // push the OBR bundle ID into the distributed set
-        Set<String> bundles = clusterManager.getSet(Constants.OBR_BUNDLE + Configurations.SEPARATOR + groupName);
-        bundles.add(bundleId);
+        // remove the OBR URL from the distributed set
+        Set<String> urls = clusterManager.getSet(Constants.OBR_URL + Configurations.SEPARATOR + groupName);
+        urls.remove(url);
         return null;
     }
 
