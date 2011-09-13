@@ -20,5 +20,7 @@ public class Constants {
 
     public static final String OBR_BUNDLE = "org.apache.karaf.cellar.obr.bundle";
     public static final String OBR_BUNDLE_CATEGORY = "obr.bundle";
+    public static final String OBR_URL = "org.apache.karaf.cellar.obr.url";
+    public static final String OBR_URL_CATEGORY = "obr.url";
 
 }

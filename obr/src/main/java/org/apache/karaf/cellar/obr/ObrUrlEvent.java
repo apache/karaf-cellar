@@ -17,21 +17,21 @@ import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventType;
 
 /**
- * OBR bundle cluster event.
+ * OBR URL Event.
  */
-public class ObrBundleEvent extends Event {
+public class ObrUrlEvent extends Event {
 
-    private String bundleId;
+    private String url;
     private EventType type;
 
-    public ObrBundleEvent(String bundleId, EventType type) {
-        super(bundleId);
-        this.bundleId = bundleId;
+    public ObrUrlEvent(String url, EventType type) {
+        super(url);
+        this.url = url;
         this.type = type;
     }
 
-    public String getBundleId() {
-        return this.bundleId;
+    public String getUrl() {
+        return this.url;
     }
 
     public EventType getType() {

@@ -41,6 +41,7 @@ public class ObrDeployCommand extends CellarCommandSupport {
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
+        // push the bundle to the distributed set
         return null;
     }
 
