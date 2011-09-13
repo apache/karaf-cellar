@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.obr;
 
+import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.event.EventHandler;
@@ -21,13 +22,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Bundles event handler.
+ * OBR URL Event handler.
  */
-public class ObrBundleEventHandler extends ObrSupport implements EventHandler<ObrBundleEvent> {
+public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUrlEvent> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrBundleEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlEventHandler.class);
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.bundle";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.url";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
@@ -42,26 +43,21 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
     }
 
     /**
-     * Process an OBR bundle event.
+     * Process an OBR URL event.
      *
-     * @param event the OBR bundle event.
+     * @param obrUrlEvent the OBR URL Event.
      */
     @Override
-    public void handle(ObrBundleEvent event) {
-        String bundleId = event.getBundleId();
-        if (isAllowed(event.getSourceGroup(), Constants.OBR_BUNDLE_CATEGORY, bundleId, EventType.INBOUND)) {
-            // TODO no need to use an event type (it's always deploy for a bundle)
-            // TODO call the resolver
-            LOGGER.debug("Received OBR bundle event {}", bundleId);
-            EventType eventType = event.getType();
-            System.out.println("OBR event received.");
-            System.out.println("Bundle ID: " + bundleId);
-            System.out.println("Type: " + eventType);
-        } else LOGGER.debug("OBR bundle event {} is marked as BLOCKED INBOUND", bundleId);
+    public void handle(ObrUrlEvent obrUrlEvent) {
+        String url = obrUrlEvent.getUrl();
+        if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
+            LOGGER.debug("Received OBR URL {} event with type {}", url, obrUrlEvent.getType());
+
+        }
     }
 
-    public Class<ObrBundleEvent> getType() {
-        return ObrBundleEvent.class;
+    public Class<ObrUrlEvent> getType() {
+        return ObrUrlEvent.class;
     }
 
     public Switch getSwitch() {

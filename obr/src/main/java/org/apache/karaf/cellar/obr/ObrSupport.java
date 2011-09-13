@@ -38,9 +38,10 @@ public class ObrSupport extends CellarSupport {
     public void destroy() { }
 
     /**
-     * Push an OBR bundle ID in the distribution map.
-     * @param bundleId
-     * @param group
+     * Push an OBR bundle ID in the distribution set.
+     *
+     * @param bundleId OBR bundle ID.
+     * @param group the target group.
      */
     public void pushBundle(String bundleId, Group group) {
         if (bundleId != null) {
@@ -53,6 +54,26 @@ public class ObrSupport extends CellarSupport {
                 }
             } else LOGGER.debug("OBR bundle ID {} event is marked as BLOCKED OUTBOUND", bundleId);
         } else LOGGER.debug("OBR bundle ID is null");
+    }
+
+    /**
+     * Push an OBR URL in the distribution set.
+     *
+     * @param url the OBR URL.
+     * @param group the target group.
+     */
+    public void pushUrl(String url, Group group) {
+        if (url != null) {
+            String groupName = group.getName();
+            Set<String> urls = clusterManager.getSet(Constants.OBR_URL + Configurations.SEPARATOR + groupName);
+
+            if (isAllowed(group, Constants.OBR_URL_CATEGORY, url, EventType.OUTBOUND)) {
+                if (obrService != null && urls != null) {
+                    urls.add(url);
+                    LOGGER.debug("OBR URL {} (group {}) added to the distributed set", url, groupName);
+                }
+            } else LOGGER.debug("OBR URL {} event is marked as BLOCKED OUTBOUND", url);
+        } else LOGGER.debug("OBR URL is null");
     }
 
     public RepositoryAdmin getObrService() {
