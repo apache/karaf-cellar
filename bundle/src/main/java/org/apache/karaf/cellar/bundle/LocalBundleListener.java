@@ -67,7 +67,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
             }
         }
         }catch (Exception ex) {
-            LOGGER.warn("Error handling bundle event",ex);
+            LOGGER.warn("Error handling bundle {} event", event.getBundle().getSymbolicName(), ex);
         }
     }
 

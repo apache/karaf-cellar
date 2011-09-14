@@ -48,13 +48,11 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         RepositoryEvent.EventType type = event.getType();
         try {
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                LOGGER.debug("Adding repository URL {}", uri);
                 featuresService.addRepository(new URI(uri));
-                LOGGER.info("CELLAR FEATURES EVENT: adding repository URL {}", uri);
+                LOGGER.debug("CELLAR FEATURES EVENT: adding repository URL {}", uri);
             } else {
-                LOGGER.debug("Removing repository url {}", uri);
                 featuresService.removeRepository(new URI(uri));
-                LOGGER.info("CELLAR FEATURES EVENT: removing repository URL {}", uri);
+                LOGGER.debug("CELLAR FEATURES EVENT: removing repository URL {}", uri);
             }
         } catch (Exception e) {
             LOGGER.error("Failed to add/remove repository URL {}", uri);

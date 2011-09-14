@@ -88,14 +88,14 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
             if (oldRegistration != null) {
-                LOGGER.info("CELLAR CLOUD: Unregistering blobstore discovery service {}", pid);
+                LOGGER.debug("CELLAR CLOUD: Unregistering blobstore discovery service {}", pid);
                 oldRegistration.unregister();
             }
         }
     }
 
     public void deleted(String pid) {
-        LOGGER.info("CELLAR CLOUD: Deleting blobstore discovery service {}", pid);
+        LOGGER.debug("CELLAR CLOUD: Deleting blobstore discovery service {}", pid);
         ServiceRegistration oldRegistration = registrations.remove(pid);
         if (oldRegistration != null) {
             oldRegistration.unregister();

@@ -33,7 +33,6 @@ public class ObrListUrlCommand extends CellarCommandSupport {
     public Object doExecute() throws Exception {
         // get the URLs from the distribution set
         Set<String> urls = clusterManager.getSet(Constants.OBR_URL + Configurations.SEPARATOR + groupName);
-        System.out.println("OBR URLs for group " + groupName);
         if (urls != null) {
             for (String url : urls) {
                 System.out.println(url);

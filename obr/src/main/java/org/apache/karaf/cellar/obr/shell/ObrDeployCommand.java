@@ -53,9 +53,6 @@ public class ObrDeployCommand extends CellarCommandSupport {
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
-        // push the OBR bundle ID into the distributed set
-        Set<String> bundles = clusterManager.getSet(Constants.OBR_BUNDLE + Configurations.SEPARATOR + groupName);
-        bundles.add(bundleId);
         return null;
     }
 

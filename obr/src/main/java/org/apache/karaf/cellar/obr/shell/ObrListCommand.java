@@ -18,27 +18,48 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
+import org.apache.karaf.cellar.obr.ObrBundleInfo;
 
 import java.util.Set;
 
 /**
  * cluster:obr-list command.
  */
-@Command(scope = "cluster", name = "obr-list", description = "List the bundles available in the distributed OBR for the given group.")
+@Command(scope = "cluster", name = "obr-list", description = "List available bundles in the OBR of all nodes of the same cluster group.")
 public class ObrListCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    public Object doExecute() throws Exception {
-        Set<String> bundles = clusterManager.getSet(Constants.OBR_BUNDLE + Configurations.SEPARATOR + groupName);
-        System.out.println("OBR Bundles for group " + groupName);
-        if (bundles != null) {
-            for (String bundle : bundles) {
-                System.out.println(bundle);
+    public Object doExecute() {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.OBR_BUNDLE + Configurations.SEPARATOR + groupName);
+            int maxPName = 4;
+            int maxSName = 13;
+            int maxVersion = 7;
+            for (ObrBundleInfo bundle : bundles) {
+                maxPName = Math.max(maxPName, emptyIfNull(bundle.getPresentationName()).length());
+                maxSName = Math.max(maxSName, emptyIfNull(bundle.getSymbolicName()).length());
+                maxVersion = Math.max(maxVersion, emptyIfNull(bundle.getVersion()).length());
             }
+            String formatHeader = "  %-" + maxPName + "s  %-" + maxSName + "s   %-" + maxVersion + "s";
+            String formatLine = "[%-" + maxPName + "s] [%-" + maxSName + "s] [%-" + maxVersion + "s]";
+            System.out.println(String.format(formatHeader, "NAME", "SYMBOLIC NAME", "VERSION"));
+            for (ObrBundleInfo bundle : bundles) {
+                System.out.println(String.format(formatLine, emptyIfNull(bundle.getPresentationName()), emptyIfNull(bundle.getSymbolicName()), emptyIfNull(bundle.getVersion())));
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
         return null;
+    }
+
+    private String emptyIfNull(Object st) {
+        return st == null ? "" : st.toString();
     }
 
 }

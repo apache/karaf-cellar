@@ -16,6 +16,17 @@
 
     <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+        <command name="cluster/obr-list">
+            <action class="org.apache.karaf.cellar.obr.shell.ObrListCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+                <null/>
+            </completers>
+        </command>
         <command name="cluster/obr-deploy">
             <action class="org.apache.karaf.cellar.obr.shell.ObrDeployCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -43,6 +54,7 @@
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
                 <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="obrService" ref="repositoryAdmin"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -54,6 +66,7 @@
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
                 <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="obrService" ref="repositoryAdmin"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>

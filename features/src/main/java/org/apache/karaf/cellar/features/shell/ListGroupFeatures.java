@@ -53,7 +53,6 @@ public class ListGroupFeatures extends FeatureCommandSupport {
             } else System.err.print("No features found for group:" + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-
         }
         return null;
     }

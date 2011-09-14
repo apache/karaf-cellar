@@ -13,6 +13,9 @@
  */
 package org.apache.karaf.cellar.obr.shell;
 
+import org.apache.felix.bundlerepository.Repository;
+import org.apache.felix.bundlerepository.Resource;
+import org.apache.felix.bundlerepository.impl.RepositoryAdminImpl;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
@@ -21,6 +24,7 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
+import org.apache.karaf.cellar.obr.ObrBundleInfo;
 import org.apache.karaf.cellar.obr.ObrUrlEvent;
 
 import java.util.Set;
@@ -29,7 +33,7 @@ import java.util.Set;
  * cluster:obr-removeurl command
  */
 @Command(scope = "cluster", name = "obr-removeurl", description = "Remove a repository URL from the distributed OBR service")
-public class ObrRemoveUrlCommand extends CellarCommandSupport {
+public class ObrRemoveUrlCommand extends ObrCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -46,9 +50,20 @@ public class ObrRemoveUrlCommand extends CellarCommandSupport {
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
-        // remove the OBR URL from the distributed set
+        // remove URL from the distributed map
         Set<String> urls = clusterManager.getSet(Constants.OBR_URL + Configurations.SEPARATOR + groupName);
         urls.remove(url);
+        // remove bundles from the distributed map
+        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.OBR_BUNDLE + Configurations.SEPARATOR + groupName);
+        synchronized(obrService) {
+            Repository repository = obrService.addRepository(url);
+            Resource[] resources = repository.getResources();
+            for (Resource resource : resources) {
+                ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(),resource.getSymbolicName(), resource.getVersion().toString());
+                bundles.remove(info);
+            }
+            obrService.removeRepository(url);
+        }
         return null;
     }
 

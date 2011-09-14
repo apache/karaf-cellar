@@ -49,6 +49,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     @Override
     public void handle(ObrUrlEvent obrUrlEvent) {
         String url = obrUrlEvent.getUrl();
+        String groupName = obrUrlEvent.getSourceGroup().getName();
         try {
             if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
                 LOGGER.debug("Received OBR URL {} event {}", url, obrUrlEvent.getType());
@@ -58,7 +59,10 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
                 }
                 if (obrUrlEvent.getType() == Constants.OBR_URL_REMOVE_TYPE) {
                     LOGGER.debug("Remove OBR URL {}", url);
-                    obrService.removeRepository(url);
+                    boolean removed = obrService.removeRepository(url);
+                    if (!removed) {
+                        LOGGER.warn("The repository URL hasn't been removed from the OBR service");
+                    }
                 }
             }
         } catch (Exception e) {
