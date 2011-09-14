@@ -82,9 +82,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (repositories != null && !repositories.isEmpty()) {
                     for (String url : repositories) {
                         try {
-                            LOGGER.debug("Adding repository {}", url);
                             featuresService.addRepository(new URI(url));
-                            LOGGER.info("CELLAR FEATURES EVENT: added new repository {}", url);
+                            LOGGER.debug("CELLAR FEATURES EVENT: added new repository {}", url);
                         } catch (MalformedURLException e) {
                             LOGGER.error("Failed to add features repository! URL {} is malformed", url);
                         } catch (Exception e) {
@@ -105,18 +104,16 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             //If feature needs to be installed locally.
                             if (remotelyInstalled && !localyInstalled) {
                                 try {
-                                    LOGGER.debug("Installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
-                                    LOGGER.info("CELLAR FEATURES EVENT: installing feature {}/{}", info.getName(), info.getVersion());
+                                    LOGGER.debug("CELLAR FEATURES EVENT: installing feature {}/{}", info.getName(), info.getVersion());
                                 } catch (Exception e) {
                                     LOGGER.error("Failed to install feature {}/{} ", info.getName(), info.getVersion());
                                 }
                                 //If feature needs to be localy uninstalled.
                             } else if (!remotelyInstalled && localyInstalled) {
                                 try {
-                                    LOGGER.debug("Uninstalling feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
-                                    LOGGER.info("CELLAR FEATURES EVENT: uninstalling feature {}/{}", info.getName(), info.getVersion());
+                                    LOGGER.debug("CELLAR FEATURES EVENT: uninstalling feature {}/{}", info.getName(), info.getVersion());
                                 } catch (Exception e) {
                                     LOGGER.error("Failed to uninstall feature {}/{} ", info.getName(), info.getVersion());
                                 }

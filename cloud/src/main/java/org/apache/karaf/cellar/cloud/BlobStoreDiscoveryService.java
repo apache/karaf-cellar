@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
@@ -54,7 +53,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      * Constructor
      */
     public BlobStoreDiscoveryService() {
-        LOGGER.info("Cloud blob store discovery service initialized");
+        LOGGER.debug("Cloud blob store discovery service initialized");
     }
 
     public void init() {
@@ -77,7 +76,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     public void update(Map<String, Object> properties) {
-        LOGGER.info("Updating properties");
+        LOGGER.debug("Updating properties");
     }
 
     /**
@@ -131,7 +130,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
         } else {
-            LOGGER.debug("Could not find the ip address of the current node, in the blobstore.");
+            LOGGER.debug("Could not find the IP address of the current node, in the blobstore.");
         }
     }
 

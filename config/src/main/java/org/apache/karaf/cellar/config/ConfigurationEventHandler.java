@@ -73,7 +73,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         if (!dictionariesEqual(dictionary, existingConfiguration)) {
                             conf.update(preparePull(dictionary));
                         }
-                        LOGGER.info("CELLAR CONFIG EVENT: pull configuration {}", pid);
+                        LOGGER.debug("CELLAR CONFIG EVENT: pull configuration {}", pid);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("Failed to read remote configurationTable", ex);

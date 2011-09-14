@@ -90,7 +90,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             if (conf != null) {
                                 //Mark the remote configuration event.
                                 conf.update(preparePull(dictionary));
-                                LOGGER.info("CELLAR CONFIG EVENT: local configuration updated.");
+                                LOGGER.debug("CELLAR CONFIG EVENT: local configuration updated.");
                             }
                         } catch (IOException ex) {
                             LOGGER.error("Failed to read remote configuration", ex);
@@ -144,7 +144,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                         }
 
                                     }
-                                    LOGGER.info("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
+                                    LOGGER.debug("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
                                 }
                             } else {
                                 RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
@@ -154,7 +154,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                         producer.produce(event);
                                     }
                                 }
-                                LOGGER.info("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
+                                LOGGER.debug("CELLAR CONFIG EVENT: publishing config PID {} to remote map", pid);
                             }
                         }
                     }
