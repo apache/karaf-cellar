@@ -13,29 +13,17 @@
  */
 package org.apache.karaf.cellar.obr;
 
-import org.apache.karaf.cellar.core.event.Event;
-import org.apache.karaf.cellar.core.event.EventType;
+import java.io.Serializable;
 
 /**
- * OBR URL Event.
+ * Simple wrapper object to store OBR Bundle information.
  */
-public class ObrUrlEvent extends Event {
+public class ObrBundleInfo implements Serializable {
 
-    private String url;
-    private int type;
+    private String presentationName;
+    private String symbolicName;
+    private String version;
 
-    public ObrUrlEvent(String url, int type) {
-        super(url);
-        this.url = url;
-        this.type = type;
-    }
 
-    public String getUrl() {
-        return this.url;
-    }
-
-    public int getType() {
-        return this.type;
-    }
 
 }

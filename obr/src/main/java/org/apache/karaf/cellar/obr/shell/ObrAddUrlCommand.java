@@ -42,7 +42,7 @@ public class ObrAddUrlCommand extends CellarCommandSupport {
         Group group = groupManager.findGroupByName(groupName);
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        ObrUrlEvent event = new ObrUrlEvent(url, "ADD", EventType.INBOUND);
+        ObrUrlEvent event = new ObrUrlEvent(url, Constants.OBR_URL_ADD_TYPE);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);

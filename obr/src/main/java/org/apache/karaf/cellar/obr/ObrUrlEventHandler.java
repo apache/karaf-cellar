@@ -49,15 +49,15 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     @Override
     public void handle(ObrUrlEvent obrUrlEvent) {
         String url = obrUrlEvent.getUrl();
-        String action = obrUrlEvent.getAction();
         try {
             if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
-                if (action.equals("ADD")) {
-                    LOGGER.debug("Received OBR ADD URL {} event with type {}", url, obrUrlEvent.getType());
+                LOGGER.debug("Received OBR URL {} event {}", url, obrUrlEvent.getType());
+                if (obrUrlEvent.getType() == Constants.OBR_URL_ADD_TYPE) {
+                    LOGGER.debug("Add OBR URL {}", url);
                     obrService.addRepository(url);
                 }
-                if (action.equals("REMOVE")) {
-                    LOGGER.debug("Received OBR REMOVE URL {} event with type {}", url, obrUrlEvent.getType());
+                if (obrUrlEvent.getType() == Constants.OBR_URL_REMOVE_TYPE) {
+                    LOGGER.debug("Remove OBR URL {}", url);
                     obrService.removeRepository(url);
                 }
             }

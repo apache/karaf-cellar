@@ -123,7 +123,9 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
                 if ((resolver.getAddedResources() != null) &&
                         (resolver.getAddedResources().length > 0)) {
                     if (resolver.resolve()) {
-                        resolver.deploy(Resolver.START);
+                        if (event.getType() == Constants.OBR_BUNDLE_START_TYPE)
+                            resolver.deploy(Resolver.START);
+                        else resolver.deploy(0);
                     }
                 } else {
                     Reason[] reqs = resolver.getUnsatisfiedRequirements();
