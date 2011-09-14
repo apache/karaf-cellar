@@ -23,8 +23,24 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
+    <!-- OBR URL Event Handler -->
+    <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"
+          init-method="init" destroy-method="destroy">
+        <property name="obrService" ref="repositoryAdmin"/>
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+    </bean>
+
     <!-- OBR Bundle Event Handler OSGi service -->
     <service ref="obrBundleEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
+        <service-properties>
+            <entry key="managed" value="true"/>
+        </service-properties>
+    </service>
+
+    <!-- OBR URL Event Handler OSGi service -->
+    <service ref="obrUrlEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>

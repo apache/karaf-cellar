@@ -22,9 +22,9 @@ import org.apache.karaf.cellar.core.event.EventType;
 public class ObrBundleEvent extends Event {
 
     private String bundleId;
-    private EventType type;
+    private int type;
 
-    public ObrBundleEvent(String bundleId, EventType type) {
+    public ObrBundleEvent(String bundleId, int type) {
         super(bundleId);
         this.bundleId = bundleId;
         this.type = type;
@@ -34,7 +34,7 @@ public class ObrBundleEvent extends Event {
         return this.bundleId;
     }
 
-    public EventType getType() {
+    public int getType() {
         return this.type;
     }
 
