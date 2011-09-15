@@ -51,7 +51,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
         String url = obrUrlEvent.getUrl();
         String groupName = obrUrlEvent.getSourceGroup().getName();
         try {
-            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.OBR_URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
+            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
                 LOGGER.debug("Received OBR URL {} event {}", url, obrUrlEvent.getType());
                 if (obrUrlEvent.getType() == Constants.OBR_URL_ADD_TYPE) {
                     LOGGER.debug("Add OBR URL {}", url);

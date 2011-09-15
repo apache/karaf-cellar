@@ -20,7 +20,8 @@ public class Constants {
 
     public static final String REPOSITORIES = "org.apache.karaf.cellar.repositories";
     public static final String FEATURES = "org.apache.karaf.cellar.features";
-    public static final String REPOSITORIES_CATEGORY = "repositories";
+
+    public static final String REPOSITORIES_CATEGORY = "features.repositories";
     public static final String FEATURES_CATEGORY = "features";
 
 }

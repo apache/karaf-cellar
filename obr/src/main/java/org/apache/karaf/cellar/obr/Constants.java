@@ -18,10 +18,11 @@ package org.apache.karaf.cellar.obr;
  */
 public class Constants {
 
-    public static final String OBR_BUNDLE = "org.apache.karaf.cellar.obr.bundle";
-    public static final String OBR_BUNDLE_CATEGORY = "obr.bundle";
-    public static final String OBR_URL = "org.apache.karaf.cellar.obr.url";
-    public static final String OBR_URL_CATEGORY = "obr.url";
+    public static final String BUNDLE = "org.apache.karaf.cellar.obr.bundle";
+    public static final String URL = "org.apache.karaf.cellar.obr.url";
+
+    public static final String BUNDLE_CATEGORY = "obr.bundle";
+    public static final String URL_CATEGORY = "obr.url";
 
     public static final int OBR_URL_ADD_TYPE = 1;
     public static final int OBR_URL_REMOVE_TYPE = 0;

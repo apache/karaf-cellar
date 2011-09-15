@@ -23,6 +23,16 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
+    <!-- OBR URL Synchronizer -->
+    <bean id="obrUrlSynchronizer" class="org.apache.karaf.cellar.obr.ObrUrlSynchronizer"
+            init-method="init" destroy-method="destroy">
+        <property name="obrService" ref="repositoryAdmin"/>
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="producerList" ref="groupEventProducers"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+    </bean>
+
     <!-- OBR URL Event Handler -->
     <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"
           init-method="init" destroy-method="destroy">
@@ -39,7 +49,8 @@
         </service-properties>
     </service>
 
-    <!-- OBR URL Event Handler OSGi service -->
+    <!-- OBR OSGi service -->
+    <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
     <service ref="obrUrlEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
@@ -52,5 +63,8 @@
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
     <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
+    <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
+    <reference-list id="groupEventProducers" member-type="service-object"
+                    interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
 </blueprint>
