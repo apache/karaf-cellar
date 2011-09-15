@@ -111,7 +111,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
     public void handle(ObrBundleEvent event) {
         String bundleId = event.getBundleId();
         try {
-            if (isAllowed(event.getSourceGroup(), Constants.OBR_BUNDLE_CATEGORY, bundleId, EventType.INBOUND)) {
+            if (isAllowed(event.getSourceGroup(), Constants.BUNDLE_CATEGORY, bundleId, EventType.INBOUND)) {
                 Resolver resolver = obrService.resolver();
                 String[] target = getTarget(bundleId);
                 Resource resource = selectNewestVersion(searchRepository(target[0], target[1]));
