@@ -59,7 +59,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                 }
 
             } catch (InvalidSyntaxException e) {
-                LOGGER.error("Could not lookup service", e);
+                LOGGER.error("CELLAR DOSGI: could not lookup service", e);
             }
 
             if (targetService != null) {
@@ -91,11 +91,11 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                     producer.produce(result);
 
                 } catch (NoSuchMethodException e) {
-                    LOGGER.error("Could not find remote method for service", e);
+                    LOGGER.error("CELLAR DOSGI: unable to find remote method for service", e);
                 } catch (InvocationTargetException e) {
-                    LOGGER.error("Could not invoke remote method for service", e);
+                    LOGGER.error("CELLAR DOSGI: unable to invoke remote method for service", e);
                 } catch (IllegalAccessException e) {
-                    LOGGER.error("Could not invoke remote method for service", e);
+                    LOGGER.error("CELLAR DOSGI: unable to access remote method for service", e);
                 }
             }
         }

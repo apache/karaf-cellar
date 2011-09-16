@@ -17,7 +17,7 @@ import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventType;
 
 /**
- * OBR URL Event.
+ * OBR URLS_DISTRIBUTED_SET_NAME Event.
  */
 public class ObrUrlEvent extends Event {
 

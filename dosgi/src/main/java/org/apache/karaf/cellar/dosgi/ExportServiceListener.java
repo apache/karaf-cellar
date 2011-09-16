@@ -64,7 +64,7 @@ public class ExportServiceListener implements ServiceListener {
             }
         }
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("Error exporting existing remote services.",e);
+            LOGGER.error("CELLAR DOSGI: error exporting existing remote services", e);
         }
     }
 
@@ -109,7 +109,7 @@ public class ExportServiceListener implements ServiceListener {
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI EVENT: Exporting remote service.");
+                LOGGER.debug("CELLAR DOSGI: Exporting remote service");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
@@ -157,7 +157,7 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI EVENT: Unexporting remote service.");
+                LOGGER.debug("CELLAR DOSGI: un-exporting remote service");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
@@ -215,7 +215,7 @@ public class ExportServiceListener implements ServiceListener {
                         String ifaceName = clazz.getCanonicalName();
                         interfaceList.add(ifaceName);
                     } catch (ClassNotFoundException e) {
-                        LOGGER.warn("Could not load class", e);
+                        LOGGER.error("CELLAR DOSGI: could not load class", e);
                     }
                 }
             }

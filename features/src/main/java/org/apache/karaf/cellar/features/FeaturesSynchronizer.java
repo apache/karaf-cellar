@@ -54,7 +54,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                }
+                } else LOGGER.warn("CELLAR FEATURES: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -82,12 +82,12 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (repositories != null && !repositories.isEmpty()) {
                     for (String url : repositories) {
                         try {
+                            LOGGER.debug("CELLAR FEATURES: adding new repository {}", url);
                             featuresService.addRepository(new URI(url));
-                            LOGGER.debug("CELLAR FEATURES EVENT: added new repository {}", url);
                         } catch (MalformedURLException e) {
-                            LOGGER.error("Failed to add features repository! URL {} is malformed", url);
+                            LOGGER.error("CELLAR FEATURES: failed to add features repository URL {} (malformed)", url, e);
                         } catch (Exception e) {
-                            LOGGER.error("Failed to add features repository.", e);
+                            LOGGER.error("CELLAR FEATURES: failed to add features repository URL {}", url, e);
                         }
                     }
                 }
@@ -104,21 +104,21 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             //If feature needs to be installed locally.
                             if (remotelyInstalled && !localyInstalled) {
                                 try {
+                                    LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
-                                    LOGGER.debug("CELLAR FEATURES EVENT: installing feature {}/{}", info.getName(), info.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.error("Failed to install feature {}/{} ", info.getName(), info.getVersion());
+                                    LOGGER.error("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
                                 //If feature needs to be localy uninstalled.
                             } else if (!remotelyInstalled && localyInstalled) {
                                 try {
+                                    LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
-                                    LOGGER.debug("CELLAR FEATURES EVENT: uninstalling feature {}/{}", info.getName(), info.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.error("Failed to uninstall feature {}/{} ", info.getName(), info.getVersion());
+                                    LOGGER.error("CELLAR FEATURES: failed to uninstall feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
                             }
-                        } else LOGGER.debug("Feature with name {} is marked as BLOCKED INBOUND", name);
+                        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
                     }
                 }
             } finally {
@@ -148,7 +148,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     repositoryList = featuresService.listRepositories();
                     featuresList = featuresService.listFeatures();
                 } catch (Exception e) {
-                    LOGGER.error("Error listing features.", e);
+                    LOGGER.error("CELLAR FEATURES: error listing features", e);
                 }
 
                 //Process repository list
@@ -182,7 +182,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            LOGGER.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("CELLAR FEATURES: error while checking if sync is enabled", e);
         }
         return result;
     }

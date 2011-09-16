@@ -51,7 +51,7 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
     @Override
     public String getName() {
-        return "Blobstore discovery service factory";
+        return "CELLAR CLOUD: blob store discovery service factory";
     }
 
     @Override
@@ -88,14 +88,14 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
             if (oldRegistration != null) {
-                LOGGER.debug("CELLAR CLOUD: Unregistering blobstore discovery service {}", pid);
+                LOGGER.debug("CELLAR CLOUD: un-registering blob store discovery service {}", pid);
                 oldRegistration.unregister();
             }
         }
     }
 
     public void deleted(String pid) {
-        LOGGER.debug("CELLAR CLOUD: Deleting blobstore discovery service {}", pid);
+        LOGGER.debug("CELLAR CLOUD: deleting blob store discovery service {}", pid);
         ServiceRegistration oldRegistration = registrations.remove(pid);
         if (oldRegistration != null) {
             oldRegistration.unregister();

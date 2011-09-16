@@ -43,10 +43,9 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
                 if (isSyncEnabled(group)) {
-                    LOGGER.debug("CELLAR OBR: Synchronize group {}", group.getName());
                     pull(group);
                     push(group);
-                } else LOGGER.debug("CELLAR OBR: Synchronize is not enabled for group {}", group.getName());
+                } else LOGGER.debug("CELLAR OBR: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -56,24 +55,24 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     }
 
     /**
-     * Pull the OBR URL from the cluster.
+     * Pull the OBR URLS_DISTRIBUTED_SET_NAME from the cluster.
      *
      * @param group the cluster group.
      */
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Set<String> urls = clusterManager.getSet(Constants.URL + Configurations.SEPARATOR + groupName);
+            Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 if (urls != null && !urls.isEmpty()) {
                     for (String url : urls) {
                         try {
+                            LOGGER.debug("CELLAR OBR: adding repository URL {}", url);
                             obrService.addRepository(url);
-                            LOGGER.debug("CELLAR OBR EVENT: add OBR repository URL {}", url);
                         } catch (Exception e) {
-                            LOGGER.error("CELLAR OBR FAILURE: unable to add the OBR repository URL {}", url, e);
+                            LOGGER.error("CELLAR OBR: failed to add repository URL {}", url, e);
                         }
                     }
                 }
@@ -91,7 +90,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Set<String> urls = clusterManager.getSet(Constants.URL + Configurations.SEPARATOR + groupName);
+            Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -100,7 +99,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 for (Repository repository : repositories) {
                     urls.add(repository.getURI().toString());
                     // push the bundles in the OBR distributed set
-                    Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLE + Configurations.SEPARATOR + groupName);
+                    Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
                     Resource[] resources = repository.getResources();
                     for (Resource resource : resources) {
                         ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(),resource.getSymbolicName(), resource.getVersion().toString());
@@ -122,11 +121,11 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             Dictionary<String, String> properties = configuration.getProperties();
-            String propertyKey = groupName + Configurations.SEPARATOR + Constants.URL_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
+            String propertyKey = groupName + Configurations.SEPARATOR + Constants.URLS_CONFIG_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            LOGGER.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("CELLAR OBR: error while checking if sync is enabled", e);
         }
         return result;
     }

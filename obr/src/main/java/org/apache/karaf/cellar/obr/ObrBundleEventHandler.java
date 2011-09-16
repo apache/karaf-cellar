@@ -111,35 +111,35 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
     public void handle(ObrBundleEvent event) {
         String bundleId = event.getBundleId();
         try {
-            if (isAllowed(event.getSourceGroup(), Constants.BUNDLE_CATEGORY, bundleId, EventType.INBOUND)) {
+            if (isAllowed(event.getSourceGroup(), Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.INBOUND)) {
                 Resolver resolver = obrService.resolver();
                 String[] target = getTarget(bundleId);
                 Resource resource = selectNewestVersion(searchRepository(target[0], target[1]));
                 if (resource != null) {
                     resolver.add(resource);
                 } else {
-                    LOGGER.warn("OBR bundle {} unknown", target[0]);
+                    LOGGER.warn("CELLAR OBR: bundle {} unknown", target[0]);
                 }
                 if ((resolver.getAddedResources() != null) &&
                         (resolver.getAddedResources().length > 0)) {
                     if (resolver.resolve()) {
-                        if (event.getType() == Constants.OBR_BUNDLE_START_TYPE)
+                        if (event.getType() == Constants.BUNDLE_START_EVENT_TYPE)
                             resolver.deploy(Resolver.START);
                         else resolver.deploy(0);
                     }
                 } else {
                     Reason[] reqs = resolver.getUnsatisfiedRequirements();
                     if (reqs != null && reqs.length > 0) {
-                        LOGGER.warn("Unsatisfied requirement(s): ");
+                        LOGGER.warn("CELLAR OBR: unsatisfied requirement(s): ");
                         for (int reqIdx = 0; reqIdx < reqs.length; reqIdx++) {
                             LOGGER.warn("  {}", reqs[reqIdx].getRequirement().getFilter());
                             LOGGER.warn("    {}", reqs[reqIdx].getResource().getPresentationName());
                         }
-                    } else LOGGER.warn("Could not resolve targets.");
+                    } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.debug("OBR bundle event {} is marked as BLOCKED INBOUND", bundleId);
+            } else LOGGER.warn("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND", bundleId);
         } catch (Exception e) {
-            LOGGER.warn("OBR bundle event {} handling failed", bundleId, e);
+            LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }
     }
 

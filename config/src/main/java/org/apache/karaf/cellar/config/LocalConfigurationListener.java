@@ -66,7 +66,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             producer.produce(configurationEvent);
                         }
                     }
-                } else LOGGER.debug("Configuration with PID {} is marked as local.", pid);
+                } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
             }
         }
     }
@@ -88,9 +88,9 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                 configurationTable.put(configuration.getPid(), properties);
             }
         } catch (IOException e) {
-            LOGGER.error("Failed to push configuration with PID {}" + pid, e);
+            LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {}", pid, e);
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("Failed to retrieve configuration with PID {}", pid, e);
+            LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {}", pid, e);
         }
     }
 

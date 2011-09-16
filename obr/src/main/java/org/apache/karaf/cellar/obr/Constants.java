@@ -18,15 +18,15 @@ package org.apache.karaf.cellar.obr;
  */
 public class Constants {
 
-    public static final String BUNDLE = "org.apache.karaf.cellar.obr.bundle";
-    public static final String URL = "org.apache.karaf.cellar.obr.url";
+    public static final String BUNDLES_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.bundle";
+    public static final String URLS_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.url";
 
-    public static final String BUNDLE_CATEGORY = "obr.bundle";
-    public static final String URL_CATEGORY = "obr.url";
+    public static final String BUNDLES_CONFIG_CATEGORY = "obr.bundles";
+    public static final String URLS_CONFIG_CATEGORY = "obr.urls";
 
-    public static final int OBR_URL_ADD_TYPE = 1;
-    public static final int OBR_URL_REMOVE_TYPE = 0;
+    public static final int URL_ADD_EVENT_TYPE = 1;
+    public static final int URL_REMOVE_EVENT_TYPE = 0;
 
-    public static final int OBR_BUNDLE_START_TYPE = 1;
+    public static final int BUNDLE_START_EVENT_TYPE = 1;
 
 }
