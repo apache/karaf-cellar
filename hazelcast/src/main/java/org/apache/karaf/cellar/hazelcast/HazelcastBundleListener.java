@@ -14,14 +14,11 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
+import org.osgi.framework.*;
 
 import java.util.Dictionary;
 
-public class HazelcastBundleListener implements BundleListener {
+public class HazelcastBundleListener implements SynchronousBundleListener {
 
     private BundleContext bundleContext;
     private CombinedClassLoader combinedClassLoader;
