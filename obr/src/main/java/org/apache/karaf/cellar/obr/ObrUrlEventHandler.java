@@ -27,7 +27,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlEventHandler.class);
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.url";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.urls.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 

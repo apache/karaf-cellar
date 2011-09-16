@@ -35,7 +35,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
 
     protected static final char VERSION_DELIM = ',';
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.bundle";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.bundles.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
