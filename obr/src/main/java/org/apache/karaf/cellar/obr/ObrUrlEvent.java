@@ -11,16 +11,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.features;
+package org.apache.karaf.cellar.obr;
+
+import org.apache.karaf.cellar.core.event.Event;
+import org.apache.karaf.cellar.core.event.EventType;
 
 /**
- * Features constants.
+ * OBR URL Event.
  */
-public class Constants {
+public class ObrUrlEvent extends Event {
 
-    public static final String REPOSITORIES = "org.apache.karaf.cellar.repositories";
-    public static final String FEATURES = "org.apache.karaf.cellar.features";
-    public static final String REPOSITORIES_CATEGORY = "features.repositories";
-    public static final String FEATURES_CATEGORY = "features";
+    private String url;
+    private int type;
+
+    public ObrUrlEvent(String url, int type) {
+        super(url);
+        this.url = url;
+        this.type = type;
+    }
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public int getType() {
+        return this.type;
+    }
 
 }

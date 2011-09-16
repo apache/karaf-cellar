@@ -35,6 +35,7 @@
 
     <properties>
         <easymock.version>2.4</easymock.version>
+        <felix.bundlerepository.version>1.6.6</felix.bundlerepository.version>
         <felix.configadmin.version>1.2.8</felix.configadmin.version>
         <felix.webconsole.version>3.1.8</felix.webconsole.version>
         <hazelcast.version>1.9.4</hazelcast.version>
@@ -56,6 +57,7 @@
         <module>config</module>
         <module>features</module>
         <module>bundle</module>
+        <module>obr</module>
         <module>dosgi</module>
         <module>shell</module>
         <module>hazelcast</module>        
@@ -201,6 +203,11 @@
             </dependency>
 
             <!-- Felix -->
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.bundlerepository</artifactId>
+                <version>${felix.bundlerepository.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.configadmin</artifactId>

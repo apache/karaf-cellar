@@ -40,6 +40,4 @@ public class HazelcastInstanceAware {
         this.instance = instance;
     }
 
-
-
 }

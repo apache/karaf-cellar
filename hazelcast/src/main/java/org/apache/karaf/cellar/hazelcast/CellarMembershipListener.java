@@ -32,6 +32,7 @@ import java.util.Set;
 public class CellarMembershipListener extends HazelcastInstanceAware implements MembershipListener {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarMembershipListener.class);
+
     private GroupManager groupManager;
     private List<? extends Synchronizer> synchronizers;
 
@@ -61,7 +62,7 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Error while calling memberAdded", e);
+            LOGGER.warn("CELLAR HAZELCAST: error while calling memberAdded", e);
         }
     }
 

@@ -55,16 +55,16 @@ public class ExportServiceListener implements ServiceListener {
         //Lookup for already exported services.
         ServiceReference[] references = null;
         try {
-            String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES+")";
+            String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
             references = bundleContext.getServiceReferences(null, filter);
 
-        if (references != null) {
-            for (ServiceReference reference : references) {
-                exportService(reference);
+            if (references != null) {
+                for (ServiceReference reference : references) {
+                    exportService(reference);
+                }
             }
-        }
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("Error exporting existing remote services.",e);
+            LOGGER.error("CELLAR DOSGI: unable to export existing remote services", e);
         }
     }
 
@@ -108,7 +108,7 @@ public class ExportServiceListener implements ServiceListener {
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.info("CELLAR DOSGI EVENT: Exporting remote service.");
+                LOGGER.debug("CELLAR DOSGI: exporting remote service");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
@@ -156,7 +156,7 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.info("CELLAR DOSGI EVENT: Unexporting remote service.");
+                LOGGER.debug("CELLAR DOSGI: unexporting remote service.");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
@@ -214,7 +214,7 @@ public class ExportServiceListener implements ServiceListener {
                         String ifaceName = clazz.getCanonicalName();
                         interfaceList.add(ifaceName);
                     } catch (ClassNotFoundException e) {
-                        LOGGER.warn("Could not load class", e);
+                        LOGGER.error("CELLAR DOSGI: could not load class", e);
                     }
                 }
             }

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.IQueue;
@@ -25,14 +24,10 @@ import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author: iocanel
- */
 public class HazelcastEventTransportFactory extends HazelcastInstanceAware implements EventTransportFactory {
 
     private Dispatcher dispatcher;
     private CombinedClassLoader combinedClassLoader;
-
 
     @Override
     public EventProducer getEventProducer(String name, Boolean pubsub) {
@@ -90,4 +85,5 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }
