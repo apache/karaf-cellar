@@ -29,13 +29,13 @@ import java.util.Set;
 /**
  * cluster:obr-removeurl command
  */
-@Command(scope = "cluster", name = "obr-removeurl", description = "Remove a repository URL from the distributed OBR service")
+@Command(scope = "cluster", name = "obr-removeurl", description = "Remove a repository URLS_DISTRIBUTED_SET_NAME from the distributed OBR service")
 public class ObrRemoveUrlCommand extends ObrCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "url", description = "The repository URL to add in the OBR service", required = true, multiValued = false)
+    @Argument(index = 1, name = "url", description = "The repository URLS_DISTRIBUTED_SET_NAME to add in the OBR service", required = true, multiValued = false)
     String url;
 
     public Object doExecute() throws Exception {
@@ -43,15 +43,15 @@ public class ObrRemoveUrlCommand extends ObrCommandSupport {
         Group group = groupManager.findGroupByName(groupName);
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        ObrUrlEvent event = new ObrUrlEvent(url, Constants.OBR_URL_REMOVE_TYPE);
+        ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
-        // remove URL from the distributed map
-        Set<String> urls = clusterManager.getSet(Constants.URL + Configurations.SEPARATOR + groupName);
+        // remove URLS_DISTRIBUTED_SET_NAME from the distributed map
+        Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.remove(url);
         // remove bundles from the distributed map
-        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLE + Configurations.SEPARATOR + groupName);
+        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         synchronized(obrService) {
             Repository repository = obrService.addRepository(url);
             Resource[] resources = repository.getResources();

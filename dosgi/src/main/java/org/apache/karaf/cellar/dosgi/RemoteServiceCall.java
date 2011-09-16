@@ -67,4 +67,5 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
     public void setEndpointId(String endpointId) {
         this.endpointId = endpointId;
     }
+
 }

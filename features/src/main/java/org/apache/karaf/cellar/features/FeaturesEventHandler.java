@@ -51,25 +51,30 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
         String name = event.getName();
         String version = event.getVersion();
         if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
-            LOGGER.debug("Received features event {} version {} type {}.", new Object[]{event.getName(), event.getVersion(), event.getType()});
             FeatureEvent.EventType type = event.getType();
             Boolean isInstalled = isInstalled(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
                     if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
                         featuresService.installFeature(name, version);
-                    } else featuresService.installFeature(name);
-                    LOGGER.debug("CELLAR FEATURES EVENT: installed feature {}/{}", name, version);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
+                        featuresService.installFeature(name);
+                    }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
                     if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
                         featuresService.uninstallFeature(name, version);
-                    } else featuresService.uninstallFeature(name);
-                    LOGGER.debug("CELLAR FEATURES EVENT: uninstalled feature {}/{}", name, version);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                        featuresService.uninstallFeature(name);
+                    }
                 }
             } catch (Exception e) {
-                LOGGER.error("Failed to process feature event.", e);
+                LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
             }
-        } else LOGGER.warn("Feature with name {} is marked as BLOCKED INBOUND", name);
+        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
     }
 
     public Class<RemoteFeaturesEvent> getType() {

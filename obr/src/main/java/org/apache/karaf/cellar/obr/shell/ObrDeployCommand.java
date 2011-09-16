@@ -16,15 +16,11 @@ package org.apache.karaf.cellar.obr.shell;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
-import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventProducer;
-import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleEvent;
-
-import java.util.Set;
 
 /**
  * Deploy a bundle from the OBR.
@@ -48,7 +44,7 @@ public class ObrDeployCommand extends CellarCommandSupport {
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         int type = 0;
-        if (start) type = Constants.OBR_BUNDLE_START_TYPE;
+        if (start) type = Constants.BUNDLE_START_EVENT_TYPE;
         ObrBundleEvent event = new ObrBundleEvent(bundleId, type);
         event.setForce(true);
         event.setSourceGroup(group);

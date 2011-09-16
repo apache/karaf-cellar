@@ -49,7 +49,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                }
+                } else LOGGER.warn("CELLAR BUNDLE: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -89,9 +89,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                     installBundleFromLocation(state.getLocation());
                                 }
                             } catch (BundleException e) {
-                                LOGGER.error("Error while pulling bundle", e);
+                                LOGGER.error("CELLAR BUNDLE: error while pulling bundle", e);
                             }
-                        }
+                        } LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
                     }
                 }
             }
@@ -136,7 +136,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             producer.produce(event);
                         }
                     }
-                }
+                } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
             }
         }
     }
@@ -153,7 +153,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            LOGGER.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("CELLAR BUNDLE: error while checking if sync is enabled", e);
         }
         return result;
     }

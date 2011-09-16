@@ -23,7 +23,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
-    <!-- OBR URL Synchronizer -->
+    <!-- OBR URLS_DISTRIBUTED_SET_NAME Synchronizer -->
     <bean id="obrUrlSynchronizer" class="org.apache.karaf.cellar.obr.ObrUrlSynchronizer"
             init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>
@@ -33,7 +33,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
-    <!-- OBR URL Event Handler -->
+    <!-- OBR URLS_DISTRIBUTED_SET_NAME Event Handler -->
     <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>

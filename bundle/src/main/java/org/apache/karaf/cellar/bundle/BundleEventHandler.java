@@ -62,27 +62,27 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 				if(event.getType() == BundleEvent.INSTALLED) {
 					installBundleFromLocation(event.getLocation());
 					bundleTable.put(event.getId(),state);
-                    LOGGER.debug("CELLAR BUNDLE EVENT: installed {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.UNINSTALLED) {
 					uninstallBundle(event.getSymbolicName(), event.getVersion());
 					bundleTable.remove(event.getId());
-                    LOGGER.debug("CELLAR BUNDLE EVENT: uninstalled {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.STARTED) {
 					startBundle(event.getSymbolicName(),event.getVersion());
 					bundleTable.put(event.getId(),state);
-                    LOGGER.debug("CELLAR BUNDLE EVENT: started {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.STOPPED) {
 					stopBundle(event.getSymbolicName(), event.getVersion());
 					state.setStatus(BundleEvent.INSTALLED);
 					bundleTable.put(event.getId(),state);
-                    LOGGER.debug("CELLAR BUNDLE EVENT: stopped {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: stopping {}/{}", event.getSymbolicName(), event.getVersion());
 				} else if(event.getType() == BundleEvent.UPDATED) {
 					updateBundle(event.getSymbolicName(), event.getVersion());
-                    LOGGER.debug("CELLAR BUNDLE EVENT: updated {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: updating {}/{}", event.getSymbolicName(), event.getVersion());
 				}
-			} else LOGGER.debug("Bundle with symbolicName {} is marked as BLOCKED INBOUND", event.getSymbolicName());
+			} else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getSymbolicName());
 		} catch (BundleException e) {
-			LOGGER.warn("Failed to install bundle {}/{}.", new Object[]{ event.getSymbolicName(), event.getVersion() }, e);
+			LOGGER.error("CELLAR BUNDLE: failed to install bundle {}/{}.", new Object[]{ event.getSymbolicName(), event.getVersion() }, e);
 		}
 	}
 

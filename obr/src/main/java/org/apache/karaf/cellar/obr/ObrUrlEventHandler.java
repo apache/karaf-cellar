@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OBR URL Event handler.
+ * OBR URLS_DISTRIBUTED_SET_NAME Event handler.
  */
 public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUrlEvent> {
 
@@ -42,31 +42,30 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     }
 
     /**
-     * Process an OBR URL event.
+     * Process an OBR URLS_DISTRIBUTED_SET_NAME event.
      *
-     * @param obrUrlEvent the OBR URL Event.
+     * @param obrUrlEvent the OBR URLS_DISTRIBUTED_SET_NAME Event.
      */
     @Override
     public void handle(ObrUrlEvent obrUrlEvent) {
         String url = obrUrlEvent.getUrl();
         String groupName = obrUrlEvent.getSourceGroup().getName();
         try {
-            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.URL_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
-                LOGGER.debug("Received OBR URL {} event {}", url, obrUrlEvent.getType());
-                if (obrUrlEvent.getType() == Constants.OBR_URL_ADD_TYPE) {
-                    LOGGER.debug("Add OBR URL {}", url);
+            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.URLS_CONFIG_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
+                if (obrUrlEvent.getType() == Constants.URL_ADD_EVENT_TYPE) {
+                    LOGGER.debug("CELLAR OBR: adding repository URL {}", url);
                     obrService.addRepository(url);
                 }
-                if (obrUrlEvent.getType() == Constants.OBR_URL_REMOVE_TYPE) {
-                    LOGGER.debug("Remove OBR URL {}", url);
+                if (obrUrlEvent.getType() == Constants.URL_REMOVE_EVENT_TYPE) {
+                    LOGGER.debug("CELLAR OBR: removing repository URL {}", url);
                     boolean removed = obrService.removeRepository(url);
                     if (!removed) {
-                        LOGGER.warn("The repository URL hasn't been removed from the OBR service");
+                        LOGGER.warn("CELLAR OBR: repository URL {} has not been added to the OBR service", url);
                     }
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Failed to register URL {}", url, e);
+            LOGGER.error("CELLAR OBR: failed to register repository URL {}", url, e);
         }
     }
 

@@ -53,7 +53,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      * Constructor
      */
     public BlobStoreDiscoveryService() {
-        LOGGER.debug("Cloud blob store discovery service initialized");
+        LOGGER.debug("CELLAR CLOUD: blob store discovery service initialized");
     }
 
     public void init() {
@@ -66,7 +66,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 signIn();
             }
         } catch (Exception ex) {
-            LOGGER.error("Error while initializing blobstore discovery service", ex);
+            LOGGER.error("CELLAR CLOUD: error while initializing blob store discovery service", ex);
         }
     }
 
@@ -76,7 +76,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     public void update(Map<String, Object> properties) {
-        LOGGER.debug("Updating properties");
+        LOGGER.debug("CELLAR CLOUD: updating properties");
     }
 
     /**
@@ -130,7 +130,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
         } else {
-            LOGGER.debug("Could not find the IP address of the current node, in the blobstore.");
+            LOGGER.debug("CELLAR CLOUD: could not find the IP address of the current node in the blob store.");
         }
     }
 
@@ -152,9 +152,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             ois = new ObjectInputStream(is);
             result = ois.readObject();
         } catch (IOException e) {
-            LOGGER.error("Error while reading blob.", e);
+            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Error while reading blob.", e);
+            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
         } finally {
             if (ois != null) {
                 try {
@@ -195,7 +195,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 blob.setPayload(baos.toByteArray());
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
-                LOGGER.error("Error while writing blob", e);
+                LOGGER.error("CELLAR CLOUD: error while writing blob", e);
             } finally {
                 if (oos != null) {
                     try {
@@ -222,7 +222,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
-            LOGGER.error("Can't determine IP address for current node.", ex);
+            LOGGER.error("CELLAR CLOUD: can't determine IP address for current node", ex);
             return null;
         }
     }

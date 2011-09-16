@@ -37,7 +37,7 @@ public class ObrListCommand extends CellarCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLE + Configurations.SEPARATOR + groupName);
+            Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
             int maxPName = 4;
             int maxSName = 13;
             int maxVersion = 7;

@@ -79,7 +79,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                 producer.produce(featureEvent);
                             }
                         }
-                    } else LOGGER.debug("Feature with name {} is marked as local.", name);
+                    } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", name);
                 }
             }
         }

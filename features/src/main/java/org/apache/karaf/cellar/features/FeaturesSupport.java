@@ -86,8 +86,8 @@ public class FeaturesSupport extends CellarSupport {
                     Boolean installed = featuresService.isInstalled(feature);
                     features.put(info, installed);
                 }
-            } else LOGGER.debug("Feature with name {} is marked as BLOCKED OUTBOUND", feature.getName());
-        } else LOGGER.debug("Feature is null");
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+        } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**
@@ -106,8 +106,8 @@ public class FeaturesSupport extends CellarSupport {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     features.put(info, force);
                 }
-            } else LOGGER.debug("Feature with name {} is marked as BLOCKED OUTBOUND", feature.getName());
-        } else LOGGER.debug("Feature is null");
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+        } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**

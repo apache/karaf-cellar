@@ -73,12 +73,12 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         if (!dictionariesEqual(dictionary, existingConfiguration)) {
                             conf.update(preparePull(dictionary));
                         }
-                        LOGGER.debug("CELLAR CONFIG EVENT: pull configuration {}", pid);
+                        LOGGER.debug("CELLAR CONFIG: pulling configuration with PID {}", pid);
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("Failed to read remote configurationTable", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
                 }
-            } else LOGGER.debug("Configuration with pid {} is marked as local.", pid);
+            } else LOGGER.warn("CELLAR CONFIG: configuration with pid {} is marked as BLOCKED INBOUND", pid);
         }
     }
 
