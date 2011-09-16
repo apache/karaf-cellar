@@ -11,16 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.features;
+package org.apache.karaf.cellar.obr;
 
 /**
- * Features constants.
+ * Cellar OBR constants
  */
 public class Constants {
 
-    public static final String REPOSITORIES = "org.apache.karaf.cellar.repositories";
-    public static final String FEATURES = "org.apache.karaf.cellar.features";
-    public static final String REPOSITORIES_CATEGORY = "features.repositories";
-    public static final String FEATURES_CATEGORY = "features";
+    public static final String BUNDLES_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.bundles";
+    public static final String URLS_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.urls";
+
+    public static final String BUNDLES_CONFIG_CATEGORY = "obr.bundles";
+    public static final String URLS_CONFIG_CATEGORY = "obr.urls";
+
+    public static final int URL_ADD_EVENT_TYPE = 1;
+    public static final int URL_REMOVE_EVENT_TYPE = 0;
+
+    public static final int BUNDLE_START_EVENT_TYPE = 1;
 
 }

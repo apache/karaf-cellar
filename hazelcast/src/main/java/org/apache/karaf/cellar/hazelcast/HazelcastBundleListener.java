@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
@@ -23,7 +22,6 @@ import org.osgi.framework.BundleListener;
 import java.util.Dictionary;
 
 public class HazelcastBundleListener implements BundleListener {
-
 
     private BundleContext bundleContext;
     private CombinedClassLoader combinedClassLoader;

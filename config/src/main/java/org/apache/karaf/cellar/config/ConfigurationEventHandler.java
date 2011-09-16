@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.config;
 
-
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
@@ -73,12 +72,12 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         if (!dictionariesEqual(dictionary, existingConfiguration)) {
                             conf.update(preparePull(dictionary));
                         }
-                        LOGGER.info("CELLAR CONFIG EVENT: local configuration updated.");
+                        LOGGER.debug("CELLAR CONFIG: local configuration updated.");
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("Failed to read remote configurationTable", ex);
+                    LOGGER.error("CELLAR CONFIG: fail to read distributed configuration map", ex);
                 }
-            } else LOGGER.debug("Configuration with pid {} is marked as local.", pid);
+            } else LOGGER.debug("CELLAR CONFIG: configuration pid {} is marked as local", pid);
         }
     }
 

@@ -58,24 +58,29 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 				state.setStatus(event.getType());
 
 				if(event.getType() == BundleEvent.INSTALLED) {
+                    LOGGER.debug("CELLAR BUNDLE: install bundle {} from {}", event.getId(), event.getLocation());
 					installBundleFromLocation(event.getLocation());
 					bundleTable.put(event.getId(),state);
 				} else if(event.getType() == BundleEvent.UNINSTALLED) {
+                    LOGGER.debug("CELLAR BUNDLE: uninstall bundle {}/{}", event.getSymbolicName(), event.getVersion());
 					uninstallBundle(event.getSymbolicName(), event.getVersion());
 					bundleTable.remove(event.getId());
 				} else if(event.getType() == BundleEvent.STARTED) {
-					 startBundle(event.getSymbolicName(),event.getVersion());
-					 bundleTable.put(event.getId(),state);
+                    LOGGER.debug("CELLAR BUNDLE: start bundle {}/{}", event.getSymbolicName(), event.getVersion());
+					startBundle(event.getSymbolicName(),event.getVersion());
+					bundleTable.put(event.getId(),state);
 				} else if(event.getType() == BundleEvent.STOPPED) {
-					 stopBundle(event.getSymbolicName(), event.getVersion());
-					 state.setStatus(BundleEvent.INSTALLED);
-					 bundleTable.put(event.getId(),state);
+                    LOGGER.debug("CELLAR BUNDLE: stop bundle {}/{}", event.getSymbolicName(), event.getVersion());
+					stopBundle(event.getSymbolicName(), event.getVersion());
+					state.setStatus(BundleEvent.INSTALLED);
+					bundleTable.put(event.getId(),state);
 				} else if(event.getType() == BundleEvent.UPDATED) {
+                    LOGGER.debug("CELLAR BUNDLE: update bundle {}/{}", event.getSymbolicName(), event.getVersion());
 					updateBundle(event.getSymbolicName(), event.getVersion());
 				}
-			} else logger.debug("Bundle with symbolicName {} is marked as BLOCKED INBOUND",event.getSymbolicName());
+			} else logger.debug("CELLAR BUNDLE: event {} is marked as BLOCKED INBOUND",event.getId());
 		} catch (BundleException e) {
-			logger.info("Failed to install bundle.");
+			logger.error("CELLAR BUNDLE: fail to handle bundle event {}", event.getId(), e);
 		}
 	}
 

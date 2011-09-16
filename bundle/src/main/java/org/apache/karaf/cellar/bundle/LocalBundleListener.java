@@ -27,7 +27,7 @@ import java.util.Set;
 
 public class LocalBundleListener extends BundleSupport implements BundleListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalBundleListener.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalBundleListener.class);
 
     private List<EventProducer> producerList;
 
@@ -40,31 +40,32 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      */
     public void bundleChanged(BundleEvent event) {
         try {
-        if (event != null && event.getBundle() != null) {
-            Set<Group> groups = groupManager.listLocalGroups();
+            if (event != null && event.getBundle() != null) {
+                Set<Group> groups = groupManager.listLocalGroups();
 
-            if (groups != null && !groups.isEmpty()) {
-                for (Group group : groups) {
+                if (groups != null && !groups.isEmpty()) {
+                    for (Group group : groups) {
 
-                    String symbolicName = event.getBundle().getSymbolicName();
-                    String version = event.getBundle().getVersion().toString();
-                    String bundleLocation = event.getBundle().getLocation();
-                    int type = event.getType();
-                    if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-                        RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                        remoteBundleEvent.setSourceGroup(group);
-                        remoteBundleEvent.setSourceNode(node);
-                        if (producerList != null && !producerList.isEmpty()) {
-                            for (EventProducer producer : producerList) {
-                                producer.produce(remoteBundleEvent);
+                        String symbolicName = event.getBundle().getSymbolicName();
+                        String version = event.getBundle().getVersion().toString();
+                        String bundleLocation = event.getBundle().getLocation();
+                        int type = event.getType();
+                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                            remoteBundleEvent.setSourceGroup(group);
+                            remoteBundleEvent.setSourceNode(node);
+                            if (producerList != null && !producerList.isEmpty()) {
+                                for (EventProducer producer : producerList) {
+                                    producer.produce(remoteBundleEvent);
+                                }
                             }
-                        }
-                    } else logger.debug("Bundle with symbolicName {} is marked as BLOCKED OUTBOUND");
+                        } else
+                            LOGGER.debug("CELLAR BUNDLE: event {}/{} is marked as BLOCKED OUTBOUND", event.getBundle().getSymbolicName(), event.getBundle().getVersion());
+                    }
                 }
             }
-        }
-        }catch (Exception ex) {
-            LOGGER.warn("Error handling bundle event",ex);
+        } catch (Exception ex) {
+            LOGGER.error("CELLAR BUNDLE: fail to process bundle {}/{}", new Object[]{ event.getBundle().getSymbolicName(), event.getBundle().getVersion() }, ex);
         }
     }
 

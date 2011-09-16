@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
-    private static final Logger logger = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
 
     private static final String PROVIDER = "provider";
     private static final String IDENTITY = "identity";
@@ -50,7 +50,7 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
     }
 
     public String getName() {
-        return "Blobstore discovery service factory";
+        return "CELLAR CLOUD: blob store discovery service factory";
     }
 
     public void updated(String pid, Dictionary properties) throws ConfigurationException {
@@ -86,14 +86,14 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
             if (oldRegistration != null) {
-                logger.info("Unregistering blobstore discovery service " + pid);
+                LOGGER.debug("CELLAR CLOUD: un-registering blob store discovery service {}", pid);
                 oldRegistration.unregister();
             }
         }
     }
 
     public void deleted(String pid) {
-        logger.info("Blobstore discovery service deleted {}", pid);
+        LOGGER.debug("CELLAR CLOUD: blob store discovery service deleted {}", pid);
         ServiceRegistration oldRegistration = registrations.remove(pid);
         if (oldRegistration != null) {
             oldRegistration.unregister();

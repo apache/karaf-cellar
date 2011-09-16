@@ -11,16 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.features;
+package org.apache.karaf.cellar.obr.shell;
 
-/**
- * Features constants.
- */
-public class Constants {
+import org.apache.felix.bundlerepository.RepositoryAdmin;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
-    public static final String REPOSITORIES = "org.apache.karaf.cellar.repositories";
-    public static final String FEATURES = "org.apache.karaf.cellar.features";
-    public static final String REPOSITORIES_CATEGORY = "features.repositories";
-    public static final String FEATURES_CATEGORY = "features";
+public abstract class ObrCommandSupport extends CellarCommandSupport {
+
+    protected RepositoryAdmin obrService;
+
+    public RepositoryAdmin getObrService() {
+        return this.obrService;
+    }
+
+    public void setObrService(RepositoryAdmin obrService) {
+        this.obrService = obrService;
+    }
+
+    public abstract Object doExecute() throws Exception;
 
 }

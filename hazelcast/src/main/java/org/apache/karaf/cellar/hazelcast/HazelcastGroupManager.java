@@ -89,7 +89,7 @@ public class HazelcastGroupManager implements GroupManager, BundleContextAware {
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Error reading group configuration.");
+            LOGGER.error("CELLAR HAZELCAST: error reading group configuration", e);
         }
         registerGroup(DEFAULT_GROUP);
     }

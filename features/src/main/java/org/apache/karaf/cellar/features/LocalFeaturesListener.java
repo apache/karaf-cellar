@@ -80,7 +80,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                 producer.produce(featureEvent);
                             }
                         }
-                    } else LOGGER.debug("Feature with name {} is marked as local.", name);
+                    } else LOGGER.debug("CELLAR FEATURES: feature {} is marked as local.", name);
                 }
             }
         }

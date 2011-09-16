@@ -35,7 +35,7 @@ import java.util.Set;
 
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(BundleSynchronizer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
     private List<EventProducer> producerList;
 
@@ -49,7 +49,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                }
+                } else LOGGER.warn("CELLAR BUNDLE: sync is disable for group {}", group.getName());
             }
         }
     }
@@ -89,7 +89,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                     installBundleFromLocation(state.getLocation());
                                 }
                             } catch (BundleException e) {
-                                logger.error("Error while pulling bundle", e);
+                                LOGGER.error("CELLAR BUNDLE: fail to pull bundle {}", id, e);
                             }
                         }
                     }
@@ -152,7 +152,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            logger.error("Error while checking if sync is enabled.", e);
+            LOGGER.error("CELLAR BUNDLE: fail to check if sync is enabled.", e);
         }
         return result;
     }
