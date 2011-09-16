@@ -43,10 +43,9 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
                 if (isSyncEnabled(group)) {
-                    LOGGER.debug("CELLAR OBR: synchronize group {}", group.getName());
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR OBR: synchronize is not enabled for group {}", group.getName());
+                } else LOGGER.warn("CELLAR OBR: sync is disabled for group {}", group.getName());
             }
         }
     }

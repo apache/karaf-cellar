@@ -156,7 +156,7 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: unexporting remote service.");
+                LOGGER.debug("CELLAR DOSGI: un-exporting remote service");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 

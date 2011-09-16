@@ -56,7 +56,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR CONFFIG: sync is disabled for group {}", group.getName());
+                } else LOGGER.warn("CELLAR CONFIG: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -91,11 +91,11 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 //Mark the remote configuration event.
                                 conf.update(preparePull(dictionary));
                             }
-                            LOGGER.debug("CELLAR CONFIG: read remote configuration.");
+                            LOGGER.debug("CELLAR CONFIG: read from the distributed map");
                         } catch (IOException ex) {
-                            LOGGER.error("CELLAR CONFIG: fail to read distributed configuration map", ex);
+                            LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
-                    }
+                    } LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -154,13 +154,13 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                     }
                                 }
                             }
-                            LOGGER.debug("CELLAR CONFIG: publish PID {} to distributed configuration map", pid);
-                        }
+                            LOGGER.debug("CELLAR CONFIG: publishing PID {} to the distributed map", pid);
+                        } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("CELLAR CONFIG: fail to read distributed configuration map (IO error)", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to read from the distributed map (IO error)", ex);
                 } catch (InvalidSyntaxException ex) {
-                    LOGGER.error("CELLAR CONFIG: fail to read distributed configuration map (invalid syntax error)", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to read from the distributed map (invalid syntax error)", ex);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -179,7 +179,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             String propertyValue = properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
-            LOGGER.error("CELLAR CONFIG: unable to check if sync is enabled", e);
+            LOGGER.error("CELLAR CONFIG: failed to check if sync is enabled", e);
         }
         return result;
     }

@@ -59,13 +59,12 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                                     producer.produce(remoteBundleEvent);
                                 }
                             }
-                        } else
-                            LOGGER.debug("CELLAR BUNDLE: event {}/{} is marked as BLOCKED OUTBOUND", event.getBundle().getSymbolicName(), event.getBundle().getVersion());
+                        } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
                     }
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("CELLAR BUNDLE: fail to process bundle {}/{}", new Object[]{ event.getBundle().getSymbolicName(), event.getBundle().getVersion() }, ex);
+            LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", ex);
         }
     }
 

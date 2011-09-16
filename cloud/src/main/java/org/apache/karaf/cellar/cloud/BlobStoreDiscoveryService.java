@@ -130,7 +130,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
         } else {
-            LOGGER.debug("CELLAR CLOUD: unable to find the IP address of the current node in the blob store.");
+            LOGGER.debug("CELLAR CLOUD: unable to find the IP address of the current node in the blob store");
         }
     }
 
