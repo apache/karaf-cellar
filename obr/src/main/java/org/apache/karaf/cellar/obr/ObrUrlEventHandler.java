@@ -27,7 +27,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlEventHandler.class);
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.url";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.urls.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
@@ -64,7 +64,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
                         LOGGER.warn("CELLAR OBR: the repository URL hasn't been removed from the OBR service");
                     }
                 }
-            }
+            } else LOGGER.warn("CELLAR OBR: repository URL {} is marked as BLOCKED INBOUND", url);
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to register URL {}", url, e);
         }

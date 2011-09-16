@@ -29,8 +29,9 @@ import java.util.Map;
 
 public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
 
-	private static final Logger logger = LoggerFactory.getLogger(BundleEventHandler.class);
-	public static final String SWITCH_ID = "com.upstreamsystems.curry.cluster.bundle.handler";
+	private static final Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
+
+	public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
 
 	private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     private Node node;
@@ -57,30 +58,30 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 				state.setLocation(event.getLocation());
 				state.setStatus(event.getType());
 
-				if(event.getType() == BundleEvent.INSTALLED) {
-                    LOGGER.debug("CELLAR BUNDLE: install bundle {} from {}", event.getId(), event.getLocation());
+				if (event.getType() == BundleEvent.INSTALLED) {
+                    LOGGER.debug("CELLAR BUNDLE: installing bundle {} from {}", event.getId(), event.getLocation());
 					installBundleFromLocation(event.getLocation());
-					bundleTable.put(event.getId(),state);
+					bundleTable.put(event.getId(), state);
 				} else if(event.getType() == BundleEvent.UNINSTALLED) {
-                    LOGGER.debug("CELLAR BUNDLE: uninstall bundle {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: un-installing bundle {}/{}", event.getSymbolicName(), event.getVersion());
 					uninstallBundle(event.getSymbolicName(), event.getVersion());
 					bundleTable.remove(event.getId());
 				} else if(event.getType() == BundleEvent.STARTED) {
-                    LOGGER.debug("CELLAR BUNDLE: start bundle {}/{}", event.getSymbolicName(), event.getVersion());
-					startBundle(event.getSymbolicName(),event.getVersion());
-					bundleTable.put(event.getId(),state);
+                    LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{}", event.getSymbolicName(), event.getVersion());
+					startBundle(event.getSymbolicName(), event.getVersion());
+					bundleTable.put(event.getId(), state);
 				} else if(event.getType() == BundleEvent.STOPPED) {
-                    LOGGER.debug("CELLAR BUNDLE: stop bundle {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{}", event.getSymbolicName(), event.getVersion());
 					stopBundle(event.getSymbolicName(), event.getVersion());
 					state.setStatus(BundleEvent.INSTALLED);
-					bundleTable.put(event.getId(),state);
+					bundleTable.put(event.getId(), state);
 				} else if(event.getType() == BundleEvent.UPDATED) {
-                    LOGGER.debug("CELLAR BUNDLE: update bundle {}/{}", event.getSymbolicName(), event.getVersion());
+                    LOGGER.debug("CELLAR BUNDLE: updating bundle {}/{}", event.getSymbolicName(), event.getVersion());
 					updateBundle(event.getSymbolicName(), event.getVersion());
 				}
-			} else logger.debug("CELLAR BUNDLE: event {} is marked as BLOCKED INBOUND",event.getId());
+			} else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
 		} catch (BundleException e) {
-			logger.error("CELLAR BUNDLE: fail to handle bundle event {}", event.getId(), e);
+			LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", e);
 		}
 	}
 

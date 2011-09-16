@@ -55,20 +55,26 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             Boolean isInstalled = isInstalled(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
-                    LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
                     if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
                         featuresService.installFeature(name, version);
-                    } else featuresService.installFeature(name);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
+                        featuresService.installFeature(name);
+                    }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
-                    LOGGER.debug("CELLAR FEATURES: uninstalling feature {}/{}", name, version);
                     if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
                         featuresService.uninstallFeature(name, version);
-                    } else featuresService.uninstallFeature(name);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                        featuresService.uninstallFeature(name);
+                    }
                 }
             } catch (Exception e) {
-                LOGGER.warn("CELLAR FEATURES: failed to handle event.", e);
+                LOGGER.error("CELLAR FEATURES: failed to handle event", e);
             }
-        } else LOGGER.debug("CELLAR FEATURES: event {} is marked as BLOCKED INBOUND", name);
+        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
     }
 
     public Class<RemoteFeaturesEvent> getType() {

@@ -138,7 +138,7 @@ public class ImportServiceListener implements ListenerHook {
      * @param listenerInfo
      */
     private void importService(EndpointDescription endpoint, ListenerInfo listenerInfo) {
-        LOGGER.debug("CELLAR DOSGI: importing remote service.");
+        LOGGER.debug("CELLAR DOSGI: importing remote service");
 
         EventProducer requestProducer = producers.get(endpoint.getId());
         if(requestProducer == null) {

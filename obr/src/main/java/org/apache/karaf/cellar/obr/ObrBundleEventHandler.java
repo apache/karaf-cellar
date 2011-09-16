@@ -35,7 +35,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
 
     protected static final char VERSION_DELIM = ',';
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.bundle";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.event.obr.bundles.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
@@ -136,7 +136,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.debug("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND", bundleId);
+            } else LOGGER.warn("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND", bundleId);
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }

@@ -66,7 +66,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             producer.produce(configurationEvent);
                         }
                     }
-                } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked as local.", pid);
+                } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
             }
         }
     }

@@ -112,13 +112,13 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 //If feature needs to be localy uninstalled.
                             } else if (!remotelyInstalled && localyInstalled) {
                                 try {
-                                    LOGGER.debug("CELLAR FEATURES: uninstalling feature {}/{}", info.getName(), info.getVersion());
+                                    LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
                                 } catch (Exception e) {
                                     LOGGER.warn("CELLAR FEATURES: failed to uninstall feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
                             }
-                        } else LOGGER.debug("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", info.getName());
+                        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
                     }
                 }
             } finally {
