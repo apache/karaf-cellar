@@ -22,13 +22,13 @@ import java.util.List;
 /**
  * Group quit command.
  */
-@Command(scope = "cluster", name = "group-quit", description = "Manages nodes and groups")
+@Command(scope = "cluster", name = "group-quit", description = "Quit node(s) from a cluster group")
 public class GroupQuitCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group to join", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
     String group;
 
-    @Argument(index = 1, name = "node", description = "The id of the node(s) to turn on/off event producer", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

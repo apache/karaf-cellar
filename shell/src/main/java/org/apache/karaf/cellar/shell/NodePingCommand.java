@@ -24,10 +24,10 @@ import java.util.HashSet;
 /**
  * Ping command.
  */
-@Command(scope = "cluster", name = "ping", description = "Pings the nodes of the cluster.")
-public class PingCommand extends ClusterCommandSupport {
+@Command(scope = "cluster", name = "node-ping", description = "Ping a node of the cluster.")
+public class NodePingCommand extends ClusterCommandSupport {
 
-    @Argument(index = 0, name = "node", description = "The id of the node(s) to ping", required = true, multiValued = false)
+    @Argument(index = 0, name = "node", description = "The ID of the node to ping", required = true, multiValued = false)
     String nodeId;
 
     @Argument(index = 1, name = "iterations", description = "The number of iterations to perform", required = false, multiValued = false)
@@ -40,10 +40,10 @@ public class PingCommand extends ClusterCommandSupport {
     protected Object doExecute() throws Exception {
         Node node = clusterManager.findNodeById(nodeId);
         if (node == null) {
-            System.out.println("Node " + nodeId + " is not found.");
+            System.out.println("Node " + nodeId + " is not found");
             return null;
         }
-        System.out.println("Pinging node :" + node.getId());
+        System.out.println("Pinging node: " + node.getId());
         for (int i = 1; i <= iterations; i++) {
             Long start = System.currentTimeMillis();
             Ping ping = new Ping(clusterManager.generateId());

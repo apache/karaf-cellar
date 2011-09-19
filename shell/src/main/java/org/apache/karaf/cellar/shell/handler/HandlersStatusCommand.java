@@ -23,15 +23,13 @@ import java.util.List;
 /**
  * Handlers status command.
  */
-@Command(scope = "cluster", name = "handler-status", description = "Lists the handlers of the specified nodes.")
+@Command(scope = "cluster", name = "handler-status", description = "Give the status of a given handler")
 public class HandlersStatusCommand extends HandlersSupport {
 
-    private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
-
-    @Argument(index = 0, name = "handler-start", description = "The id of the event handler", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler-start", description = "The ID of the event handler", required = false, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The id of the node(s)", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

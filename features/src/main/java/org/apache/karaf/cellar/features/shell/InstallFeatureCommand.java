@@ -23,10 +23,10 @@ import org.apache.karaf.features.FeatureEvent;
 /**
  * Install feature command.
  */
-@Command(scope = "cluster", name = "features-install", description = "Installs a feature to the group")
+@Command(scope = "cluster", name = "features-install", description = "Installs a feature to the cluster group")
 public class InstallFeatureCommand extends FeatureCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group that will install the feature", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
     String groupName;
 
     @Argument(index = 1, name = "feature", description = "The name of the feature", required = true, multiValued = false)

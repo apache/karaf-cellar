@@ -21,10 +21,10 @@ import java.util.List;
 /**
  * Producer start command.
  */
-@Command(scope = "cluster", name = "producer-start", description = "Displays the producer capabilities of a node.")
+@Command(scope = "cluster", name = "producer-start", description = "Give current producer status of the node(s)")
 public class ProducerStatusCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The id of the node(s) to turn on/off event producer", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

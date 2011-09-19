@@ -23,10 +23,10 @@ import org.apache.karaf.features.FeatureEvent;
 /**
  * Uninstall feature command.
  */
-@Command(scope = "cluster", name = "features-uninstall", description = "Uninstalls a feature to the group")
+@Command(scope = "cluster", name = "features-uninstall", description = "Uninstall a feature from the cluster group")
 public class UninstallFeatureCommand extends FeatureCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group that will uninstall the feature", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
     String groupName;
 
     @Argument(index = 1, name = "feature", description = "The name of the feature", required = true, multiValued = false)

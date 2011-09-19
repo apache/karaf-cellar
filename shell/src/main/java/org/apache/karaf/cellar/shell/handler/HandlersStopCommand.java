@@ -23,15 +23,13 @@ import java.util.List;
 /**
  * Handlers stop command.
  */
-@Command(scope = "cluster", name = "handler-stop", description = "Stops the handler of the specified nodes.")
+@Command(scope = "cluster", name = "handler-stop", description = "Stop the handler of the specified nodes")
 public class HandlersStopCommand extends HandlersSupport {
 
-    private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
-
-    @Argument(index = 0, name = "handler", description = "The id of the event handler", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler", description = "The ID of the event handler", required = false, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The id of the node(s)", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**
