@@ -22,13 +22,13 @@ import java.util.List;
 /**
  * Group set command.
  */
-@Command(scope = "cluster", name = "group-set", description = "Set the target nodes to a specific group")
+@Command(scope = "cluster", name = "group-set", description = "Set the target nodes for a specific cluster group")
 public class GroupSetCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group to join", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
     String group;
 
-    @Argument(index = 1, name = "node", description = "The id of the node(s) to turn on/off event producer. If none specified current is assumed", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

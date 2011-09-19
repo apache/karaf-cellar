@@ -21,8 +21,8 @@ import java.util.Set;
 /**
  * List nodes command.
  */
-@Command(scope = "cluster", name = "list-nodes", description = "Lists the nodes of the cluster.")
-public class ListNodesCommand extends ClusterCommandSupport {
+@Command(scope = "cluster", name = "nodes-list", description = "Lists the nodes of the cluster")
+public class NodesListCommand extends ClusterCommandSupport {
 
     private static final String LIST_FORMAT = "%1s %4s %-20s %5s %s";
 
@@ -43,7 +43,7 @@ public class ListNodesCommand extends ClusterCommandSupport {
                     System.out.println(String.format(LIST_FORMAT, mark, count++, node.getHost(), node.getPort(), node.getId()));
                 }
             } else {
-                System.err.println("No node found in the cluster!");
+                System.err.println("No node found in the cluster");
                 return null;
             }
         }

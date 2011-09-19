@@ -23,13 +23,13 @@ import java.util.List;
 /**
  * Handlers command.
  */
-@Command(scope = "cluster", name = "handlers", description = "Starts the handler of the specified nodes.")
+@Command(scope = "cluster", name = "handlers", description = "Start an event handler")
 public class HandlersStartCommand extends HandlersSupport {
 
-    @Argument(index = 0, name = "handler-start", description = "The id of the event handler", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler-start", description = "The ID of the event handler", required = false, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The id of the node(s)", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

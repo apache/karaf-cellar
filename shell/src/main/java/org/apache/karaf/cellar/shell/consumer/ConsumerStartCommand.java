@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * Consumer start command.
  */
-@Command(scope = "cluster", name = "consumer-start", description = "Turns on/off the producer capabilities of a node.")
+@Command(scope = "cluster", name = "consumer-start", description = "Start an event consumer")
 public class ConsumerStartCommand extends ConsumerSupport {
 
-    @Argument(index = 0, name = "node", description = "The id of the node(s) to turn on/off event producer", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**

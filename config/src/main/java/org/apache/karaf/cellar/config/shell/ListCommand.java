@@ -24,7 +24,7 @@ import java.util.Properties;
 /**
  * List cluster config command.
  */
-@Command(scope = "cluster", name = "config-list", description = "List the config pids that are assigned to a group")
+@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs that are assigned to a group")
 public class ListCommand extends ConfigCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s";
@@ -41,12 +41,12 @@ public class ListCommand extends ConfigCommandSupport {
             Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             if (configurationTable != null && !configurationTable.isEmpty()) {
-                System.out.println(String.format("PIDs for group " + groupName));
+                System.out.println(String.format("Configuration PIDs for group " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "PID"));
                 for (String pid : configurationTable.keySet()) {
                     System.out.println(String.format(OUTPUT_FORMAT, pid));
                 }
-            } else System.err.println("No PIDs found for group " + groupName);
+            } else System.err.println("No configuration PID found for group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
 

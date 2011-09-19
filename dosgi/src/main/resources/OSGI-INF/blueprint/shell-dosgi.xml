@@ -16,7 +16,7 @@
 
     <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/list-distributed-services">
+        <command name="cluster/list-services">
             <action class="org.apache.karaf.cellar.dosgi.shell.ListDistributedServicesCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="eventTransportFactory" ref="eventTransportFactory"/>
