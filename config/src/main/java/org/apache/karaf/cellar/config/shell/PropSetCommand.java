@@ -25,13 +25,13 @@ import java.util.Properties;
 /**
  * Config properties set cluster command.
  */
-@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a PID and group")
+@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a configuration PID and group")
 public class PropSetCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "pid", description = "The pid of the configuration", required = true, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The PID of the configuration", required = true, multiValued = false)
     String pid;
 
     @Argument(index = 2, name = "key", description = "The key of the property", required = true, multiValued = false)
@@ -51,7 +51,7 @@ public class PropSetCommand extends ConfigCommandSupport {
             properties.put(key, value);
             configurationTable.put(pid, properties);
         } else {
-            System.out.println("Group " + groupName + " doesn't exist.");
+            System.out.println("Group " + groupName + " doesn't exist");
         }
         return null;
     }

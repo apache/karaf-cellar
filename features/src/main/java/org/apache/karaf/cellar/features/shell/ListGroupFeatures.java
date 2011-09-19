@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * List group features command.
  */
-@Command(scope = "cluster", name = "features-list", description = "List the features that are assigned to a group")
+@Command(scope = "cluster", name = "features-list", description = "List the features that are assigned to a cluster group")
 public class ListGroupFeatures extends FeatureCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %20s %-4s ";

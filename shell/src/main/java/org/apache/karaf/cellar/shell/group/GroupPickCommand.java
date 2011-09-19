@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * @author: iocanel
  */
-@Command(scope = "cluster", name = "group-pick", description = "Picks a number of nodes from one group and moves them into an other")
+@Command(scope = "cluster", name = "group-pick", description = "Pick a number of nodes from one group and moves them into an other")
 public class GroupPickCommand extends GroupSupport  {
 
     @Argument(index = 0, name = "sourceGroupName", description = "The name of the source group that will act as a selection pool", required = true, multiValued = false)

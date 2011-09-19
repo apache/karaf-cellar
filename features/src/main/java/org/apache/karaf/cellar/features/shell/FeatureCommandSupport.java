@@ -30,7 +30,6 @@ import java.util.Map;
 /**
  * Abstract feature command.
  */
-@Command(scope = "cluster", name = "feature-install", description = "Installs a feature to all members of a group")
 public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
     protected static final transient Logger LOGGER = LoggerFactory.getLogger(FeatureCommandSupport.class);

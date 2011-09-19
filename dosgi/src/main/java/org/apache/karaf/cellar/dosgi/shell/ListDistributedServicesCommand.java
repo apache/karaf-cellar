@@ -21,7 +21,7 @@ import org.apache.karaf.cellar.dosgi.EndpointDescription;
 import java.util.Map;
 import java.util.Set;
 
-@Command(scope = "cluster", name = "list-distributed-services", description = "List the remote services")
+@Command(scope = "cluster", name = "list-services", description = "List the distributed services")
 public class ListDistributedServicesCommand extends CellarCommandSupport {
 
     private static final String LIST_FORMAT = "%-80s %-20s";
@@ -45,7 +45,7 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                 }
 
             } else {
-                System.out.println("There are no distributed services.");
+                System.out.println("There are no distributed service");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
