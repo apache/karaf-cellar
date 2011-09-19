@@ -17,14 +17,14 @@
 
     <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/list-nodes">
-            <action class="org.apache.karaf.cellar.shell.ListNodesCommand">
+        <command name="cluster/nodes-list">
+            <action class="org.apache.karaf.cellar.shell.NodesListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
             </action>
         </command>
 
-        <command name="cluster/ping">
-            <action class="org.apache.karaf.cellar.shell.PingCommand">
+        <command name="cluster/node-ping">
+            <action class="org.apache.karaf.cellar.shell.NodePingCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="executionContext" ref="executionContext"/>
             </action>

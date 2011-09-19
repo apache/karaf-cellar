@@ -25,10 +25,10 @@ import java.util.List;
 /**
  * Group delete command.
  */
-@Command(scope = "cluster", name = "group-delete", description = "Deletes a group")
+@Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group")
 public class GroupDeleteCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group to delete", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
     String group;
 
     /**
@@ -44,7 +44,7 @@ public class GroupDeleteCommand extends GroupSupport {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Group g = groupManager.findGroupByName(group);
             if (g == null) {
-                System.out.println("Group " + group + " doesn't exist.");
+                System.out.println("Group " + group + " doesn't exist");
                 return null;
             }
             List<String> nodes = new LinkedList<String>();

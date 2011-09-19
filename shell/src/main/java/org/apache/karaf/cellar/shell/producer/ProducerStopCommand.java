@@ -22,10 +22,10 @@ import java.util.List;
 /**
  * Producer stop command.
  */
-@Command(scope = "cluster", name = "producer-stop", description = "Turns off the producer capabilities of a node.")
+@Command(scope = "cluster", name = "producer-stop", description = "Stop producer")
 public class ProducerStopCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The id of the node(s) to turn on/off event producer", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
     List<String> nodes;
 
     /**
