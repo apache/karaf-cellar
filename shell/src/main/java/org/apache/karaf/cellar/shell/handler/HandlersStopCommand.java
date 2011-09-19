@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Handlers stop command.
  */
-@Command(scope = "cluster", name = "handler-stop", description = "Stop the handler of the specified nodes")
+@Command(scope = "cluster", name = "handler-stop", description = "Stop an event handler")
 public class HandlersStopCommand extends HandlersSupport {
 
     @Argument(index = 0, name = "handler", description = "The ID of the event handler", required = false, multiValued = false)

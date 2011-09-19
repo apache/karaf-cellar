@@ -23,10 +23,8 @@ import java.util.List;
 /**
  * Handlers command.
  */
-@Command(scope = "cluster", name = "handlers", description = "Starts the handler of the specified nodes")
+@Command(scope = "cluster", name = "handlers", description = "Starts an event handler")
 public class HandlersStartCommand extends HandlersSupport {
-
-    private static final String OUTPUT_FORMAT = "%-20s %-7s %s";
 
     @Argument(index = 0, name = "handler-start", description = "The ID of the event handler", required = false, multiValued = false)
     String handler;

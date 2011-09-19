@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Producer start command.
  */
-@Command(scope = "cluster", name = "producer-start", description = "Start producer")
+@Command(scope = "cluster", name = "producer-start", description = "Start an event producer")
 public class ProducerStartCommand extends ProducerSupport {
 
     @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)

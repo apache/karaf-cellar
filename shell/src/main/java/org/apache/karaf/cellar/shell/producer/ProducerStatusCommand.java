@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Producer start command.
  */
-@Command(scope = "cluster", name = "producer-start", description = "Give current producer status of the node(s)")
+@Command(scope = "cluster", name = "producer-start", description = "Status of an event producer")
 public class ProducerStatusCommand extends ProducerSupport {
 
     @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
