@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Handlers status command.
  */
-@Command(scope = "cluster", name = "handler-status", description = "Give the status of a given handler")
+@Command(scope = "cluster", name = "handler-status", description = "Status of a given event handler")
 public class HandlersStatusCommand extends HandlersSupport {
 
     @Argument(index = 0, name = "handler-start", description = "The ID of the event handler", required = false, multiValued = false)
