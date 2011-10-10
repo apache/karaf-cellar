@@ -125,6 +125,20 @@ public class FeaturesSupport extends CellarSupport {
         }
     }
 
+    /**
+     * Removes a {@code Repository} to the distributed list of repositories.
+     *
+     * @param repository
+     */
+    public void removeRepository(Repository repository, Group group) {
+        String groupName = group.getName();
+        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+
+        if (featuresService != null && repositories != null) {
+            URI uri = repository.getURI();
+            repositories.remove(uri.toString());
+        }
+    }
     public FeaturesService getFeaturesService() {
         return featuresService;
     }
