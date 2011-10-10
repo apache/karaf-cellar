@@ -98,7 +98,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                 for (Group group : groups) {
                     RemoteRepositoryEvent repositoryEvent = new RemoteRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
                     repositoryEvent.setSourceGroup(group);
-                    pushRepository(event.getRepository(), group);
+                    RepositoryEvent.EventType type = event.getType();
+
+                    if(RepositoryEvent.EventType.RepositoryAdded.equals(type)){
+                        pushRepository(event.getRepository(), group);
+                    } else {
+                        removeRepository(event.getRepository(),group);
+                    }
                     if (producerList != null && !producerList.isEmpty()) {
                         for (EventProducer producer : producerList) {
                             producer.produce(repositoryEvent);
