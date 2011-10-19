@@ -15,7 +15,7 @@
 -->
 <features name="org.apache.karaf.cellar.features-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
-    <repository>mvn:org.jclouds.karaf/feature/1.0.0/xml/features</repository>
+    <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
 
     <feature name='org.apache.karaf.cellar.features.hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
         <bundle>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
