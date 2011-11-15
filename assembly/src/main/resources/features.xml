@@ -58,7 +58,7 @@
 
     <feature name='cellar-cloud' description='Alias to org.apache.karaf.cellar.features.cloud feature' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
-        <feature version="${jclouds.version}">jclouds</feature>
+        <feature version="${jclouds.karaf.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
         <feature>jclouds-aws-s3</feature>
         <bundle dependency='true'>mvn:joda-time/joda-time/${joda-time.version}</bundle>
