@@ -74,12 +74,6 @@
             <artifactId>org.apache.karaf.cellar.core</artifactId>
         </dependency>
 
-        <!-- Spring DM -->
-        <dependency>
-            <groupId>org.springframework.osgi</groupId>
-            <artifactId>spring-osgi-core</artifactId>
-        </dependency>
-
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
