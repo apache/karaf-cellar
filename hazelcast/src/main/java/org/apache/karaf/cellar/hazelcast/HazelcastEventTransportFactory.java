@@ -39,6 +39,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
         if (pubsub) {
                 ITopic topic = instance.getTopic(Constants.TOPIC + Constants.SEPARATOR + name);
                 TopicProducer producer = new TopicProducer();
+                producer.setInstance(instance);
                 producer.setTopic(topic);
                 producer.setNode(getNode());
                 producer.init();
@@ -59,6 +60,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
                 ITopic topic = instance.getTopic(Constants.TOPIC + Constants.SEPARATOR + name);
                 TopicConsumer consumer = new TopicConsumer();
                 consumer.setTopic(topic);
+                consumer.setInstance(instance);
                 consumer.setNode(getNode());
                 consumer.setDispatcher(dispatcher);
                 consumer.init();

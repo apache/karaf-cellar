@@ -12,18 +12,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:osgi="http://www.springframework.org/schema/osgi"
-       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
-        http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+        xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0">
+
 
 
     <!-- Hazelcast hazelcast -->
-    <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-bean="instanceFactory"
+    <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-ref="instanceFactory"
           factory-method="buildInstance" destroy-method="shutdown"/>
 
 
@@ -31,7 +27,8 @@
           init-method="init" destroy-method="destroy">
         <property name="discoveryTask" ref="discoveryTask"/>
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
-        <osgix:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="bean-managed"
+        <property name="bundleContext" ref="blueprintBundleContext"/>
+        <cm:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="component-managed"
                                   update-method="createOrUpdate"/>
     </bean>
 
@@ -43,7 +40,7 @@
 
 
     <bean id="membershipListener" class="org.apache.karaf.cellar.hazelcast.CellarMembershipListener">
-        <constructor-arg index="0" ref="hazelcast"/>
+        <argument index="0" ref="hazelcast"/>
         <property name="synchronizers" ref="synchronizers"/>
         <property name="groupManager" ref="groupManager"/>
     </bean>
@@ -61,6 +58,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
+        <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
 
     <bean id="eventTransportFactory" class="org.apache.karaf.cellar.hazelcast.HazelcastEventTransportFactory">
@@ -71,30 +69,31 @@
 
     <bean id="cellarExtender" class="org.apache.karaf.cellar.hazelcast.CellarExtender"  init-method="init" destroy-method="destroy">
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
+        <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
 
     <bean id="combinedClassLoader" class="org.apache.karaf.cellar.core.utils.CombinedClassLoader" init-method="init" destroy-method="destroy"/>
 
 
     <!-- Hazelcast Cluster and Node -->
-    <bean id="node" factory-bean="clusterManager" factory-method="getNode"/>
+    <bean id="node" factory-ref="clusterManager" factory-method="getNode"/>
 
     <!-- The distributed topic -->
-    <bean id="eventTopic" factory-bean="hazelcast" factory-method="getTopic">
-        <constructor-arg value="org.apache.karaf.cellar.event.topic"/>
+    <bean id="eventTopic" factory-ref="hazelcast" factory-method="getTopic">
+        <argument value="org.apache.karaf.cellar.event.topic"/>
     </bean>
 
     <!-- Consumer -->
     <bean id="consumer" class="org.apache.karaf.cellar.hazelcast.TopicConsumer" init-method="init"
           destroy-method="destroy">
-        <property name="topic" ref="eventTopic"/>
+        <property name="instance" ref="hazelcast"/>
         <property name="dispatcher" ref="dispatcher"/>
         <property name="node" ref="node"/>
     </bean>
 
     <!-- Producer -->
-    <bean id="producer" class="org.apache.karaf.cellar.hazelcast.TopicProducer">
-        <property name="topic" ref="eventTopic"/>
+    <bean id="producer" class="org.apache.karaf.cellar.hazelcast.TopicProducer" init-method="init">
+        <property name="instance" ref="hazelcast"/>
         <property name="node" ref="node"/>
     </bean>
 
@@ -152,38 +151,38 @@
 
 
     <!-- Hazelcast Instance Service-->
-    <osgi:service ref="hazelcast" interface="com.hazelcast.core.HazelcastInstance"/>
+    <service ref="hazelcast" interface="com.hazelcast.core.HazelcastInstance"/>
 
-    <osgi:service ref="producer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
+    <service ref="producer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
 
-    <osgi:service ref="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
-    <osgi:service ref="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
-    <osgi:service ref="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
-    <osgi:service ref="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
-    <osgi:service ref="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
+    <service ref="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
+    <service ref="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
+    <service ref="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
+    <service ref="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
+    <service ref="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
 
     <!-- Event Handler Service -->
-    <osgi:service ref="consumerSwitchCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="consumerSwitchResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="producerSwitchCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="producerSwitchResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="manageHandlersCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="manageHandlersResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="manageGroupCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
-    <osgi:service ref="manageGroupResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="consumerSwitchCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="consumerSwitchResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="producerSwitchCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="producerSwitchResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="manageHandlersCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="manageHandlersResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="manageGroupCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+    <service ref="manageGroupResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
-    <osgi:reference id="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
-    <osgi:reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+    <reference id="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <osgi:list id="discoveryServices" cardinality="0..N"
+    <reference-list id="discoveryServices" availability="optional"
                interface="org.apache.karaf.cellar.core.discovery.DiscoveryService"/>
 
     <!-- Group Consumer & Producer Serices -->
-    <osgi:list id="groupEventProducers" cardinality="0..N" interface="org.apache.karaf.cellar.core.event.EventProducer"
-               filter="(type = group)"/>
-    <osgi:list id="groupEventConsumers" cardinality="0..N" interface="org.apache.karaf.cellar.core.event.EventConsumer"
-               filter="(type = group)"/>
+    <reference-list id="groupEventProducers" availability="optional" interface="org.apache.karaf.cellar.core.event.EventProducer"
+          filter="(type = group)"/>
+    <reference-list id="groupEventConsumers" availability="optional" interface="org.apache.karaf.cellar.core.event.EventConsumer"
+          filter="(type = group)"/>
 
-    <osgi:list id="synchronizers" cardinality="0..N" interface="org.apache.karaf.cellar.core.Synchronizer"/>
+    <reference-list id="synchronizers" availability="optional" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
-</beans>
+</blueprint>
