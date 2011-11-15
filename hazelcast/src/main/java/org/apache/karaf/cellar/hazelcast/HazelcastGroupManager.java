@@ -13,12 +13,20 @@
  */
 package org.apache.karaf.cellar.hazelcast;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
 import com.hazelcast.core.Member;
 import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
@@ -34,23 +42,11 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
-import org.springframework.osgi.context.BundleContextAware;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Hazelcast group manager.
  */
-public class HazelcastGroupManager implements GroupManager, BundleContextAware {
+public class HazelcastGroupManager implements GroupManager {
 
     private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
 

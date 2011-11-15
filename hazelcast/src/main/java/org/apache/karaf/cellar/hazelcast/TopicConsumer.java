@@ -44,6 +44,9 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
      * Initialization method.
      */
     public void init() {
+        if (topic == null) {
+            topic = instance.getTopic(Constants.TOPIC);
+        }
         start();
     }
 
