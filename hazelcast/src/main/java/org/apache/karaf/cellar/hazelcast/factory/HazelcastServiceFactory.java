@@ -27,7 +27,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.context.BundleContextAware;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A factory for a Hazelcast Instance, which integration with OSGi Service Registry and Config Admin.
  */
-public class HazelcastServiceFactory implements BundleContextAware {
+public class HazelcastServiceFactory  {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(HazelcastServiceFactory.class);
 

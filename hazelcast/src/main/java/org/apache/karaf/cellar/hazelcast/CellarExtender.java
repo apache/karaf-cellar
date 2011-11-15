@@ -16,9 +16,8 @@ package org.apache.karaf.cellar.hazelcast;
 
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
-import org.springframework.osgi.context.BundleContextAware;
 
-public class CellarExtender implements BundleContextAware {
+public class CellarExtender  {
 
     private HazelcastBundleListener hazelcastBundleListener;
     private BundleContext bundleContext;
@@ -35,7 +34,6 @@ public class CellarExtender implements BundleContextAware {
       bundleContext.removeBundleListener(hazelcastBundleListener);
     }
 
-    @Override
     public void setBundleContext(BundleContext bundleContext) {
      this.bundleContext = bundleContext;
     }
