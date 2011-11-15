@@ -17,25 +17,19 @@
 
     <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
 
-    <feature name='org.apache.karaf.cellar.features.hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
+    <feature name='hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
         <bundle>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
-    <feature name='hazelcast' description='Alias to org.apache.karaf.cellar.features.hazelcast feature' version='${hazelcast.version}' resolver='(obr)'>
-        <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast</feature>
-    </feature>
 
-    <feature name='org.apache.karaf.cellar.features.hazelcast.monitor' description='Hazelcast console' version='${hazelcast.version}' resolver='(obr)'>
+    <feature name='hazelcast-monitor' description='Hazelcast console' version='${hazelcast.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast</feature>
-        <feature>org.apache.karaf.features.standard.war</feature>
+        <feature>war</feature>
         <bundle>mvn:com.hazelcast/hazelcast-monitor/${hazelcast.version}/war</bundle>
     </feature>
-    <feature name='hazelcast-monitor' description='Alias to org.apache.karaf.cellar.features.hazelcast.monitor feature' version='${hazelcast.version}' resolver='(obr)'>
-        <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast.monitor</feature>
-    </feature>
 
-    <feature name='org.apache.karaf.cellar.features.core' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
-        <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast</feature>
-        <feature>org.apache.karaf.features.standard.spring-dm</feature>
+
+    <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
+        <feature version='${hazelcast.version}'>hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
@@ -55,20 +49,14 @@
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
         </configfile>
     </feature>
-    <feature name='cellar' description='Alias to org.apache.karaf.cellar.features.core feature' version='${project.version}' resolver='(obr)'>
-        <feature version='${project.version}'>org.apache.karaf.cellar.features.core</feature>
-    </feature>
 
-    <feature name='org.apache.karaf.cellar.features.obr' description='Karaf Cellar OBR support' version='${project.version}' resolver='(obr)'>
-        <feature>org.apache.karaf.features.standard.obr</feature>
-        <feature version='${project.version}'>org.apache.karaf.features.cellar</feature>
+    <feature name='cellar-obr' description='Alias to org.apache.karaf.cellar.features.obr feature' version='${project.version}' resolver='(obr)'>
+        <feature>obr</feature>
+        <feature version='${project.version}'>cellar</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
-    <feature name='cellar-obr' description='Alias to org.apache.karaf.cellar.features.obr feature' version='${project.version}' resolver='(obr)'>
-        <feature version='${project.version}'>org.apache.karaf.cellar.features.obr</feature>
-    </feature>
 
-    <feature name='org.apache.karaf.cellar.features.cloud' description='Karaf Cellar Cloud Feature' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-cloud' description='Alias to org.apache.karaf.cellar.features.cloud feature' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
@@ -76,18 +64,11 @@
         <bundle dependency='true'>mvn:joda-time/joda-time/${joda-time.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
-    <feature name='cellar-cloud' description='Alias to org.apache.karaf.cellar.features.cloud feature' version='${project.version}' resolver='(obr)'>
-        <feature version='${project.version}'>org.apache.karaf.cellar.features.cloud</feature>
-    </feature>
 
-    <feature name='org.apache.karaf.cellar.features.webconsole' description='Karaf Cellar Webconsole Plugin' version='${project.version}'
-             resolver='(obr)'>
+    <feature name='cellar-webconsole' description='Alias to org.apache.karaf.cellar.features.webconsole feature' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature>webconsole</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
-    </feature>
-    <feature name='cellar-webconsole' description='Alias to org.apache.karaf.cellar.features.webconsole feature' version='${project.version}' resolver='(obr)'>
-        <feature version='${project.version}'>org.apache.karaf.cellar.features.webconsole</feature>
     </feature>
 
 </features>
