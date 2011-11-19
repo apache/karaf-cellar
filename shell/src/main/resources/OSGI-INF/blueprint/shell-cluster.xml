@@ -127,7 +127,8 @@
                 <property name="executionContext" ref="executionContext"/>
             </action>
             <completers>
-                <ref component-id="otherGroupCompleter"/>
+                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
 
@@ -139,6 +140,7 @@
             </action>
             <completers>
                 <ref component-id="localGroupCompleter"/>
+                <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
 
@@ -150,6 +152,7 @@
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
+                <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
 
