@@ -13,25 +13,38 @@
  */
 package org.apache.karaf.cellar.core.discovery;
 
-import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DiscoveryTask implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTask.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(DiscoveryTask.class);
 
     private List<DiscoveryService> discoveryServices;
     private ConfigurationAdmin configurationAdmin;
 
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+    public void init() {
+        scheduler.scheduleWithFixedDelay(this, 10, 10, TimeUnit.SECONDS);
+    }
+
+    public void destroy() {
+        scheduler.shutdown();
+    }
+
+    @Override
     public void run() {
         LOGGER.trace("CELLAR DISCOVERY: Starting the discovery task.");
         if (configurationAdmin != null) {
