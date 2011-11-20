@@ -95,6 +95,11 @@
                                     <type>cfg</type>
                                     <classifier>instance</classifier>
                                 </artifact>
+                                <artifact>
+                                    <file>target/classes/hazelcast.xml</file>
+                                    <type>xml</type>
+                                    <classifier>hazelcast</classifier>
+                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>

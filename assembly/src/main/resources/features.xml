@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<features name="org.apache.karaf.cellar.features-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+<features name="cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
     <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.karaf.version}/xml/features</repository>
 
@@ -47,6 +47,9 @@
         </configfile>
         <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
+        </configfile>
+        <configfile finalname="/etc/hazelcast.xml">
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
         </configfile>
     </feature>
 
