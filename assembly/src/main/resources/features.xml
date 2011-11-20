@@ -29,7 +29,6 @@
 
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
-        <feature>spring-dm</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
@@ -48,11 +47,14 @@
         <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
         </configfile>
+        <configfile finalname="/etc/hazelcast.xml">
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
+        </configfile>
     </feature>
 
-    <feature name='cellar-obr' description='Karaf Cellar OBR support' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-obr' description='Alias to org.apache.karaf.cellar.features.obr feature' version='${project.version}' resolver='(obr)'>
         <feature>obr</feature>
-        <feature version="${project.version}">cellar</feature>
+        <feature version='${project.version}'>cellar</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
 
