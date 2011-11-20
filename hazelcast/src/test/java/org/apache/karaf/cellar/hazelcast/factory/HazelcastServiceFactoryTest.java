@@ -44,9 +44,9 @@ public class HazelcastServiceFactoryTest {
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.setUsername(GroupConfig.DEFAULT_GROUP_NAME);
         factory.setPassword(GroupConfig.DEFAULT_GROUP_PASSWORD);
-        factory.createOrUpdate(null);
+        factory.update(null);
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
-        HazelcastInstance factoryInstance = factory.buildInstance();
+        HazelcastInstance factoryInstance = factory.getInstance();
         Assert.assertEquals(true, factoryInstance.getCluster().getMembers().size() >= 2);
     }
 
