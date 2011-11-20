@@ -24,18 +24,22 @@ import org.apache.karaf.cellar.core.discovery.Discovery;
 import org.apache.karaf.cellar.core.discovery.DiscoveryTask;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -72,30 +76,25 @@ public class HazelcastServiceFactory  {
 
     private DiscoveryTask discoveryTask;
     private CombinedClassLoader combinedClassLoader;
+    private ConfigurationAdmin configurationAdmin;
 
     private BundleContext bundleContext;
 
     private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    private Semaphore semaphore = new Semaphore(1);
+    private HazelcastInstance instance;
 
-    /**
-     * Constructor
-     */
-    public HazelcastServiceFactory() {
-        try {
-            //Make sure that an the properties will be applied before an instance is created.
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.error("Failed to acquire initialization semaphore.", e);
-        }
-    }
 
     public void init() {
-        scheduler.scheduleAtFixedRate(discoveryTask, 0, 10, TimeUnit.SECONDS);
+        if (discoveryTask != null) {
+            scheduler.scheduleAtFixedRate(discoveryTask, 0, 10, TimeUnit.SECONDS);
+        }  else {
+            LOGGER.warn("Did not found a discovery task");
+        }
         if(combinedClassLoader != null) {
             combinedClassLoader.addBundle(bundleContext.getBundle());
         }
+        createInstance();
     }
 
     public void destroy() {
@@ -107,8 +106,7 @@ public class HazelcastServiceFactory  {
      *
      * @param properties
      */
-    public void createOrUpdate(Map properties) {
-        try {
+    public void update(Map properties) {
             Boolean updated = Boolean.FALSE;
             //We need it to properly instantiate Hazelcast.
             if(combinedClassLoader != null) {
@@ -194,17 +192,32 @@ public class HazelcastServiceFactory  {
             if (updated) {
                 updateMemberList();
             }
-        } finally {
-            //Release the semaphore so that an instance can be created.
-            // This is necessary becasue the execution order is random.
-            if (semaphore.availablePermits() == 0) {
-                semaphore.release(1);
+    }
+
+    public void createInstance() {
+        Configuration configuration = null;
+        Map configurationMap = new HashMap();
+        try {
+            configuration = configurationAdmin.getConfiguration("org.apache.karaf.cellar.instance");
+            Dictionary dictionary = configuration.getProperties();
+            if (dictionary != null && !dictionary.isEmpty()) {
+                Enumeration enumeration = dictionary.keys();
+
+                while (enumeration.hasMoreElements()) {
+                    String key = (String) enumeration.nextElement();
+                    String value = (String) dictionary.get(key);
+                    configurationMap.put(key, value);
+                }
             }
+            update(configurationMap);
+        } catch (IOException e) {
+           LOGGER.error("Could not read instnace configuration.",e);
         }
+
     }
 
     public void updateMemberList() {
-        HazelcastInstance instance = lookupInstance();
+        HazelcastInstance instance = getInstance();
         if (instance != null) {
             try {
                 instance.getConfig().setGroupConfig(buildGroupConfig());
@@ -222,16 +235,9 @@ public class HazelcastServiceFactory  {
      *
      * @return
      */
-    public HazelcastInstance lookupInstance() {
-        HazelcastInstance instance = null;
-        try {
-            if (bundleContext != null) {
-                ServiceReference reference = bundleContext.getServiceReference("com.hazelcast.core.HazelcastInstance");
-                instance = (HazelcastInstance) bundleContext.getService(reference);
-                bundleContext.ungetService(reference);
-            }
-        } catch (Exception ex) {
-            LOGGER.warn("No Hazelcast instance found in service registry.");
+    public HazelcastInstance getInstance() {
+        if (instance == null) {
+           this.instance = buildInstance();
         }
         return instance;
     }
@@ -241,14 +247,9 @@ public class HazelcastServiceFactory  {
      *
      * @return
      */
-    public HazelcastInstance buildInstance() {
+    private HazelcastInstance buildInstance() {
         if(combinedClassLoader != null) {
             Thread.currentThread().setContextClassLoader(combinedClassLoader);
-        }
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException e) {
-            LOGGER.error("Failed to acquire instance semaphore", e);
         }
         return Hazelcast.newHazelcastInstance(buildConfig());
     }
@@ -444,5 +445,13 @@ public class HazelcastServiceFactory  {
 
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 }
