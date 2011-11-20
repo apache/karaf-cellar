@@ -22,19 +22,16 @@
     <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-ref="instanceFactory"
           factory-method="getInstance" destroy-method="shutdown"/>
 
-
     <bean id="instanceFactory" class="org.apache.karaf.cellar.hazelcast.factory.HazelcastServiceFactory"
           init-method="init" destroy-method="destroy">
-        <property name="discoveryTask" ref="discoveryTask"/>
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
-        <property name="configurationAdmin" ref="configurationAdmin"/>
         <cm:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="component-managed"
                                   update-method="update"/>
     </bean>
 
     <!-- Discovery Task -->
-    <bean id="discoveryTask" class="org.apache.karaf.cellar.core.discovery.DiscoveryTask">
+    <bean id="discoveryTask" class="org.apache.karaf.cellar.core.discovery.DiscoveryTask" init-method="init" destroy-method="destroy">
         <property name="discoveryServices" ref="discoveryServices"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>

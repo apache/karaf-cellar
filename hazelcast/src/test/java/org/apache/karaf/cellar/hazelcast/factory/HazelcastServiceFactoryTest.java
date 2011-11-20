@@ -38,8 +38,8 @@ public class HazelcastServiceFactoryTest {
     @Test
     public void testDefaultInstance() throws InterruptedException {
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
-        factory.setUsername(GroupConfig.DEFAULT_GROUP_NAME);
-        factory.setPassword(GroupConfig.DEFAULT_GROUP_PASSWORD);
+        factory.init();
+        factory.getInstance();
         factory.update(null);
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
         HazelcastInstance factoryInstance = factory.getInstance();
