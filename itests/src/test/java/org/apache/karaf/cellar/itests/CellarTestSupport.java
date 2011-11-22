@@ -48,6 +48,7 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 public class CellarTestSupport {
 
     static final Long DEFAULT_TIMEOUT = 20000L;
+    static final Long SERVICE_TIMEOUT = 30000L;
     static final String GROUP_ID = "org.apache.karaf";
     static final String ARTIFACT_ID = "apache-karaf";
 
@@ -203,7 +204,7 @@ public class CellarTestSupport {
     }
 
     protected <T> T getOsgiService(Class<T> type) {
-        return getOsgiService(type, null, DEFAULT_TIMEOUT);
+        return getOsgiService(type, null, SERVICE_TIMEOUT);
     }
 
     protected <T> T getOsgiService(Class<T> type, String filter, long timeout) {
