@@ -13,7 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<features name="cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+<features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
     <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.karaf.version}/xml/features</repository>
 
