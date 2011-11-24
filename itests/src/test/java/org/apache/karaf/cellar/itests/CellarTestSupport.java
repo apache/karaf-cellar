@@ -115,6 +115,7 @@ public class CellarTestSupport {
      * Destorys the child node.
      */
     protected void destroyCellarChild(String name) {
+        System.err.println(executeCommand("admin:connect " + name+" features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
         System.err.println(executeCommand("admin:destroy " + name));
     }
