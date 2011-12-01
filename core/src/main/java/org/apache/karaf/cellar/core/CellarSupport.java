@@ -58,14 +58,18 @@ public class CellarSupport {
                     String propertyName = group + Configurations.SEPARATOR + category + Configurations.SEPARATOR + listType + Configurations.SEPARATOR + type.name().toLowerCase();
                     String propertyValue = dictionary.get(propertyName);
                     if (propertyValue != null) {
+                        propertyValue = propertyValue.replaceAll("\n","");
                         String[] itemList = propertyValue.split(Configurations.DELIMETER);
 
                         if (itemList != null && itemList.length > 0) {
                             if (result == null) {
                                 result = new HashSet<String>();
                             }
-                            for (String item : itemList)
-                                result.add(item);
+                            for (String item : itemList) {
+                                if (item != null) {
+                                    result.add(item.trim());
+                                }
+                            }
                         }
                     }
                 }
@@ -146,11 +150,12 @@ public class CellarSupport {
             }
         }
 
-        //If any blackList item matcheds, then false is returned.
+        //If any blackList item matched, then false is returned.
         if (blackList != null && !blackList.isEmpty()) {
             for (String blackListItem : blackList) {
-                if (wildCardMatch(event, blackListItem))
+                if (wildCardMatch(event, blackListItem)) {
                     result = false;
+                }
             }
         }
 
