@@ -167,11 +167,15 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     }
 
     public void stop() {
-        instance.shutdown();
+        if (instance != null && instance.getLifecycleService().isRunning()) {
+            instance.getLifecycleService().shutdown();
+        }
     }
 
     public void restart() {
-        instance.restart();
+        if (instance != null && instance.getLifecycleService().isRunning()) {
+            instance.getLifecycleService().restart();
+        }
     }
 
     public ConfigurationAdmin getConfigurationAdmin() {
