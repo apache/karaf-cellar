@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.karaf.cellar.hazelcast.factory;
 
 import java.util.ArrayList;
@@ -30,15 +43,15 @@ public class HazelcastConfigurationManager {
     public static final String TCPIP_ENABLED="tcpIpEnabled";
     public static final String TCPIP_MEMBERS="tcpIpMembers";
 
-    private String username = GroupConfig.DEFAULT_GROUP_NAME;
-    private String password = GroupConfig.DEFAULT_GROUP_PASSWORD;
+    private String username = "cellar";
+    private String password = "pass";
 
     private boolean multicastEnabled = MulticastConfig.DEFAULT_ENABLED;
     private String multicastGroup = MulticastConfig.DEFAULT_MULTICAST_GROUP;
     private int multicastPort = MulticastConfig.DEFAULT_MULTICAST_PORT;
     private int multicastTimeoutSeconds = MulticastConfig.DEFAULT_MULTICAST_TIMEOUT_SECONDS;
 
-    private boolean tcpIpEnabled = true;
+    private boolean tcpIpEnabled = false;
     private String tcpIpMembers = "";
     private Set<String> tcpIpMemberSet = new LinkedHashSet<String>();
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
@@ -57,6 +70,7 @@ public class HazelcastConfigurationManager {
                 if (properties.containsKey(USERNAME)) {
                     String newUsername = (String) properties.get(USERNAME);
                     if (username != null && newUsername != null && !username.endsWith(newUsername)) {
+                        LOGGER.info("Hazelcast username has been changed from {} to {}", username, newUsername);
                         this.username = newUsername;
                         updated = Boolean.TRUE;
                     }
@@ -65,20 +79,25 @@ public class HazelcastConfigurationManager {
                 if (properties.containsKey(PASSWORD)) {
                     String newPassword = (String) properties.get(PASSWORD);
                     if (password != null && !password.equals(newPassword)) {
+                        LOGGER.info("Hazelcast password has been changed from {} to {}", password, newPassword);
                         this.password = newPassword;
                         updated = Boolean.TRUE;
                     }
                 }
 
-                Boolean newMulticastEnabled = Boolean.parseBoolean((String) properties.get(MULTICAST_ENABLED));
-                if (multicastEnabled != newMulticastEnabled) {
-                    this.multicastEnabled = newMulticastEnabled;
-                    updated = Boolean.TRUE;
+                if (properties.containsKey(MULTICAST_ENABLED)) {
+                    Boolean newMulticastEnabled = Boolean.parseBoolean((String) properties.get(MULTICAST_ENABLED));
+                    if (multicastEnabled != newMulticastEnabled) {
+                        LOGGER.info("Hazelcast multicastEnabled has been changed from {} to {}", multicastEnabled, newMulticastEnabled);
+                        this.multicastEnabled = newMulticastEnabled;
+                        updated = Boolean.TRUE;
+                    }
                 }
 
                 if (properties.containsKey(MULTICAST_GROUP)) {
                     String newMulticastGroup = (String) properties.get(MULTICAST_GROUP);
                     if (multicastGroup != null && newMulticastGroup != null && !multicastGroup.endsWith(newMulticastGroup)) {
+                        LOGGER.info("Hazelcast multicastGroup has been changed from {} to {}", multicastGroup, newMulticastGroup);
                         this.multicastGroup = newMulticastGroup;
                         updated = Boolean.TRUE;
                     }
@@ -89,6 +108,7 @@ public class HazelcastConfigurationManager {
                     try {
                         int newMulticastPort = Integer.parseInt((String) properties.get(MULTICAST_PORT));
                         if (multicastPort != 0 && multicastPort != newMulticastPort) {
+                            LOGGER.info("Hazelcast multicastPort has been changed from {} to {}", multicastPort, newMulticastPort);
                             this.multicastPort = newMulticastPort;
                             updated = Boolean.TRUE;
                         }
@@ -101,6 +121,7 @@ public class HazelcastConfigurationManager {
                     try {
                         int newMulticastTimeoutSeconds = Integer.parseInt((String) properties.get(MULTICAST_TIMEOUT_IN_SECONDS));
                         if (multicastTimeoutSeconds != 0 && multicastTimeoutSeconds != newMulticastTimeoutSeconds) {
+                            LOGGER.info("Hazelcast multicastTimeoutSeconds has been changed from {} to {}", multicastTimeoutSeconds, newMulticastTimeoutSeconds);
                             this.multicastTimeoutSeconds = newMulticastTimeoutSeconds;
                             updated = Boolean.TRUE;
                         }
@@ -112,21 +133,29 @@ public class HazelcastConfigurationManager {
                 if (properties.containsKey(TCPIP_ENABLED)) {
                     Boolean newTcpIpEnabled = Boolean.parseBoolean((String) properties.get(TCPIP_ENABLED));
                     if (tcpIpEnabled != newTcpIpEnabled) {
+                        LOGGER.info("Hazelcast tcpIpEnabled has been changed from {} to {}", tcpIpEnabled, newTcpIpEnabled);
                         this.tcpIpEnabled = newTcpIpEnabled;
                         updated = Boolean.TRUE;
                     }
                 }
 
-                Set<String> newTcpIpMemberSet = createSetFromString((String) properties.get(TCPIP_MEMBERS));
-                if (tcpIpMemberSet != null && newTcpIpMemberSet != null && !collectionEquals(tcpIpMemberSet, newTcpIpMemberSet)) {
-                    tcpIpMemberSet = newTcpIpMemberSet;
-                    updated = Boolean.TRUE;
+                if (properties.containsKey(TCPIP_MEMBERS)) {
+                    Set<String> newTcpIpMemberSet = createSetFromString((String) properties.get(TCPIP_MEMBERS));
+                    if (!collectionEquals(tcpIpMemberSet, newTcpIpMemberSet)) {
+                        LOGGER.info("Hazelcast tcpIpMemberSet has been changed from {} to {}", tcpIpMemberSet, newTcpIpMemberSet);
+                        tcpIpMemberSet = newTcpIpMemberSet;
+                        updated = Boolean.TRUE;
+                    }
                 }
 
-                Set<String> newDiscoveredMemberSet = createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
-                if (discoveredMemberSet != null && newDiscoveredMemberSet != null && !collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
-                    discoveredMemberSet = newDiscoveredMemberSet;
-                    updated = Boolean.TRUE;
+
+                if (properties.containsKey(TCPIP_MEMBERS)) {
+                    Set<String> newDiscoveredMemberSet = createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
+                    if (!collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
+                        LOGGER.info("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
+                        discoveredMemberSet = newDiscoveredMemberSet;
+                        updated = Boolean.TRUE;
+                    }
                 }
             }
 
@@ -200,7 +229,9 @@ public class HazelcastConfigurationManager {
             if (items != null && items.length > 0) {
 
                 for (String item : items) {
-                    result.add(item);
+                    if(item != null && item.length() > 0) {
+                     result.add(item.trim());
+                    }
                 }
             }
         }
@@ -214,7 +245,7 @@ public class HazelcastConfigurationManager {
      * @param col2
      * @return
      */
-    private boolean collectionEquals(Collection col1, Collection col2) {
+    public boolean collectionEquals(Collection col1, Collection col2) {
         return collectionSubset(col1, col2) && collectionSubset(col2, col1);
     }
 

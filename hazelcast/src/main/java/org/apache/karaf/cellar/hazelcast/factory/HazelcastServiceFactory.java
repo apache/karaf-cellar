@@ -53,11 +53,13 @@ public class HazelcastServiceFactory  {
     }
 
     public void update(Map properties) throws InterruptedException {
+        LOGGER.info("Instance configuration updated. Checking if instance requires restarting.");
         if(configurationManager.isUpdated(properties)) {
             instnaceLatch.await();
             Config updatedConfig = configurationManager.getHazelcastConfig();
             instance.getConfig().setNetworkConfig(updatedConfig.getNetworkConfig());
             instance.getConfig().setGroupConfig(updatedConfig.getGroupConfig());
+            LOGGER.info("Restaring Hazelcast instance.");
             instance.getLifecycleService().restart();
         }
     }
