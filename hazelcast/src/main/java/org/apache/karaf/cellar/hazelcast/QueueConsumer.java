@@ -76,6 +76,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
      * Destruction method.
      */
     public void destroy() {
+        isConsuming = false;
         if (queue != null) {
             queue.removeItemListener(this);
         }
