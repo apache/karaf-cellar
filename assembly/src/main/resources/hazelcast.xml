@@ -3,8 +3,8 @@
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
-        <name>dev</name>
-        <password>dev-pass</password>
+        <name>cellar</name>
+        <password>pass</password>
     </group>
     <network>
         <port auto-increment="true">5701</port>
