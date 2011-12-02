@@ -25,7 +25,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
+import EDU.oswego.cs.dl.util.concurrent.Sync;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.ops4j.pax.exam.MavenUtils;
@@ -47,12 +55,18 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 
 public class CellarTestSupport {
 
+    static final Long COMMAND_TIMEOUT = 10000L;
     static final Long DEFAULT_TIMEOUT = 20000L;
     static final Long SERVICE_TIMEOUT = 30000L;
     static final String GROUP_ID = "org.apache.karaf";
     static final String ARTIFACT_ID = "apache-karaf";
 
+    static final String INSTANCE_STARTED = "Started";
+    static final String INSTANCE_STARTING = "Starting";
+
     static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features","3.0.0-SNAPSHOT");
+
+    ExecutorService executor = Executors.newCachedThreadPool();
 
     @Inject
     protected BundleContext bundleContext;
@@ -99,16 +113,35 @@ public class CellarTestSupport {
     }
 
     protected void unInstallCellar() {
-        executeCommand("features:uninstall cellar");
+        System.err.println(executeCommand("features:uninstall cellar"));
     }
 
     /**
      * Creates a child instance that runs cellar.
      */
     protected void createCellarChild(String name) {
-        System.err.println(executeCommand("admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar -r " +
-                getFreePort(1100)+ " -rs " + getFreePort(44445) + " -s " + getFreePort(8102) + " " + name));
+        int instances = 0;
+        System.err.println(executeCommand("admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar "+name));
         System.err.println(executeCommand("admin:start " + name));
+
+        //Wait till the node is listed as Starting
+        System.err.print("Waiting for " + name + " to start ");
+        for (int i = 0; i < 5 && instances == 0; i++) {
+            String response = executeCommand("admin:list | grep " + name + " | grep -c " + INSTANCE_STARTED, COMMAND_TIMEOUT, true);
+            instances = Integer.parseInt(response.trim());
+            System.err.print(".");
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                //Ignore
+            }
+        }
+
+        if(instances > 0) {
+            System.err.println(".Started!");
+        } else {
+            System.err.println(".Timed Out!");
+        }
     }
 
     /**
@@ -118,6 +151,21 @@ public class CellarTestSupport {
         System.err.println(executeCommand("admin:connect " + name+" features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
         System.err.println(executeCommand("admin:destroy " + name));
+    }
+
+    /**
+     * Returns the node id of a specific child instance.
+     * @param name
+     * @return
+     */
+    protected String getNodeIdOfChild(String name) {
+        String nodeId = null;
+        String nodesList = executeCommand("admin:connect " + name+" cluster:nodes-list | grep \\\\*");
+        String[] tokens = nodesList.split(" ");
+        if(tokens != null && tokens.length > 0) {
+            nodeId = tokens[tokens.length - 1].trim().replaceAll("\n","");
+        }
+        return nodeId;
     }
 
     /**
@@ -133,43 +181,91 @@ public class CellarTestSupport {
 
     /**
      * Executes a shell command and returns output as a String.
-     *
+     * Commands have a default timeout of 10 seconds.
      * @param command
      * @return
      */
-    protected String executeCommand(String command) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
-        CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
+    protected String executeCommand(final String command) {
+       return executeCommand(command,COMMAND_TIMEOUT,false);
+    }
+
+     /**
+     * Executes a shell command and returns output as a String.
+     * Commands have a default timeout of 10 seconds.
+     * @param command The command to execute.
+     * @param timeout The amount of time in millis to wait for the command to execute.
+     * @param silent  Specifies if the command should be displayed in the screen.
+     * @return
+     */
+    protected String executeCommand(final String command, final Long timeout, final Boolean silent) {
+        String response;
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        final CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
+        final CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
+        FutureTask<String> commandFuture = new FutureTask<String>(
+                new Callable<String>() {
+                    public String call() {
+                        try {
+                            if (!silent) {
+                                System.err.println(command);
+                            }
+                            commandSession.execute(command);
+                        } catch (Exception e) {
+                            e.printStackTrace(System.err);
+                        }
+                        printStream.flush();
+                        return byteArrayOutputStream.toString();
+                    }
+                });
+
         try {
-            System.err.println(command);
-            commandSession.execute(command);
+            executor.submit(commandFuture);
+            response =  commandFuture.get(timeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace(System.err);
+            response = "SHELL COMMAND TIMED OUT: ";
         }
-        return byteArrayOutputStream.toString();
+
+        return response;
     }
 
     /**
      * Executes multiple commands inside a Single Session.
+     * Commands have a default timeout of 10 seconds.
      * @param commands
      * @return
      */
-    protected String executeCommands(String ...commands) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
-        CommandSession commandSession = commandProcessor.createSession(System.in, printStream, printStream);
+    protected String executeCommands(final String ...commands) {
+        String response;
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        final CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
+        final CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
+        FutureTask<String> commandFuture = new FutureTask<String>(
+                new Callable<String>() {
+                    public String call() {
+                        try {
+                            for(String command:commands) {
+                             System.err.println(command);
+                             commandSession.execute(command);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace(System.err);
+                        }
+                        return byteArrayOutputStream.toString();
+                    }
+                });
+
         try {
-            for (String cmd : commands) {
-                System.err.println(cmd);
-                commandSession.execute(cmd);
-            }
+            executor.submit(commandFuture);
+            response =  commandFuture.get(COMMAND_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace(System.err);
+            response = "SHELL COMMAND TIMED OUT: ";
         }
-        return byteArrayOutputStream.toString();
+
+        return response;
     }
 
     protected Bundle getInstalledBundle(String symbolicName) {
