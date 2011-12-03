@@ -71,6 +71,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
      */
     public void pull(Group group) {
         if (group != null) {
+            LOGGER.info("CELLAR FEATURES: Pulling features from group {}.",group.getName());
             String groupName = group.getName();
             List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
@@ -133,6 +134,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
+            LOGGER.info("CELLAR FEATURES: Pulling features from group {}.",groupName);
             //List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
