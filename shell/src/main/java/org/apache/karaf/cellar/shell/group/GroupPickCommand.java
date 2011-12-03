@@ -21,8 +21,6 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -47,7 +45,7 @@ public class GroupPickCommand extends GroupSupport  {
         Group sourceGroup = groupManager.findGroupByName(sourceGroupName);
         if(sourceGroup != null) {
             List<String> eligibleMembers = new LinkedList<String>();
-            Set<Node> groupMembers = sourceGroup.getMembers();
+            Set<Node> groupMembers = sourceGroup.getNodes();
 
             for(Node node:groupMembers) {
                 Set<Group> nodeGroups = groupManager.listGroups(node);

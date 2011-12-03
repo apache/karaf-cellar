@@ -77,8 +77,8 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
             Group g = groupManager.findGroupByName(name);
             List<String> nodes = new ArrayList<String>();
 
-            if (g.getMembers() != null && !g.getMembers().isEmpty()) {
-                for (Node n : g.getMembers()) {
+            if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                for (Node n : g.getNodes()) {
                     nodes.add(n.getId());
                 }
                 ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
@@ -132,7 +132,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
 
         for (Group group : allGroups) {
             StringBuffer members = new StringBuffer();
-            for (Node node : group.getMembers()) {
+            for (Node node : group.getNodes()) {
                 members.append(node.getId());
                 members.append(" ");
             }

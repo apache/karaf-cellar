@@ -199,7 +199,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
                 jw.key("name");
                 jw.value(g.getName());
 
-                Set<Node> members = g.getMembers();
+                Set<Node> members = g.getNodes();
                 jw.key("members");
                 jw.array();
                 if (nodes != null) {
