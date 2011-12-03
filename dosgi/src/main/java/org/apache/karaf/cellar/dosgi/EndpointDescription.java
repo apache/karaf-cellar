@@ -13,6 +13,8 @@
  */
 package org.apache.karaf.cellar.dosgi;
 
+import org.apache.karaf.cellar.core.MultiNode;
+import org.apache.karaf.cellar.core.Node;
 import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
@@ -28,11 +30,11 @@ import java.util.Set;
 /**
  * Description of an endpoint.
  */
-public class EndpointDescription implements Serializable {
+public class EndpointDescription implements MultiNode {
 
     //Id is {package}-{version}.
     private final String id;
-    private final Set<String> nodes = new LinkedHashSet<String>();
+    private final Set<Node> nodes = new LinkedHashSet<Node>();
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
     /**
@@ -41,7 +43,7 @@ public class EndpointDescription implements Serializable {
      * @param id
      * @param node
      */
-    public EndpointDescription(String id,String node) {
+    public EndpointDescription(String id, Node node) {
         this.id = id;
         this.nodes.add(node);
         properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
@@ -86,9 +88,17 @@ public class EndpointDescription implements Serializable {
         return id;
     }
 
-    public Set<String> getNodes() {
+    public Set<Node> getNodes() {
         return nodes;
     }
+
+     public void setNodes(Set<Node> nodes) {
+         if(nodes != null) {
+             for(Node node:nodes) {
+                 this.nodes.add(node);
+             }
+         }
+     }
 
     public Map<String, Object> getProperties() {
         return properties;
