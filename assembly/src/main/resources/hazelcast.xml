@@ -77,6 +77,7 @@
         -->
         <backing-map-ref>default</backing-map-ref>
     </queue>
+
     <map name="default">
         <!--
             Number of backups. If 1 is set as the backup-count for example,
@@ -136,23 +137,15 @@
             hz.HIGHER_HITS   ; entry with the higher hits wins.
             hz.LATEST_UPDATE ; entry with the latest update wins.
         -->
-        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <merge-policy>CELLAR_MERGE_POLICY</merge-policy>
     </map>
-    <!-- Add your own semaphore configurations here:
-        <semaphore name="default">
-            <initial-permits>10</initial-permits>
-            <semaphore-factory enabled="true">
-                <class-name>com.acme.MySemaphoreFactory</class-name>
-            </semaphore-factory>
-        </semaphore>
-    -->
 
-    <!-- Add your own map merge policy implementations here:
+
+        <!-- Cellar MERGE POLICY -->
     	<merge-policies>
-           	<map-merge-policy name="MY_MERGE_POLICY">
-            	<class-name>com.acme.MyOwnMergePolicy</class-name>
+           	<map-merge-policy name="CELLAR_MERGE_POLICY">
+            	<class-name>org.apache.karaf.cellar.hazelcast.merge.CellarMergePolicy</class-name>
         	</map-merge-policy>
     	</merge-policies>
-    -->
 
 </hazelcast>

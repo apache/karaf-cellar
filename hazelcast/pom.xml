@@ -36,8 +36,10 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <osgi.ignore>com.hazelcast.merge</osgi.ignore>
         <osgi.import>
             !org.apache.karaf.cellar.hazelcast*,
+            !com.hazelcast.merge,
             com.hazelcast*,
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.karaf.cellar.bundle;version="${project.version}",
@@ -46,6 +48,7 @@
             org.apache.karaf.cellar.features;version="${project.version}",
             org.apache.karaf.cellar.utils.ping;version="${project.version}",
             org.apache.karaf.features;version="[2,4)",
+            org.osgi.framework;version="[1.5,2)",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
@@ -62,6 +65,7 @@
             org.apache.karaf.cellar.core.event.EventProducer,
             org.apache.karaf.cellar.core.event.EventProducer;type=group
         </osgi.export.service>
+        <osgi.fragment.host>hazelcast</osgi.fragment.host>
     </properties>
 
     <dependencies>
