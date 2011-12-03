@@ -24,7 +24,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import com.hazelcast.core.Cluster;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.hazelcast.core.Member;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
@@ -41,16 +44,21 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import org.osgi.service.cm.ConfigurationEvent;
+import org.osgi.service.cm.ConfigurationListener;
 import org.slf4j.Logger;
 
 /**
  * Hazelcast group manager.
+ * The role of this class is to provide means of creating groups, setting nodes to groups etc.
+ * Keep in sync the distributed group configuration with the locally persisted.
  */
-public class HazelcastGroupManager implements GroupManager {
+public class HazelcastGroupManager implements GroupManager, EntryListener, ConfigurationListener {
 
-    private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastClusterManager.class);
+    private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastGroupManager.class);
 
     private static final String GROUPS = "org.apache.karaf.cellar.groups";
+    private static final String GROUPS_CONFIG = "org.apache.karaf.cellar.groups.config";
     private static final String DEFAULT_GROUP = "default";
 
     private Map<String, ServiceRegistration> producerRegistrations = new HashMap<String, ServiceRegistration>();
@@ -68,6 +76,9 @@ public class HazelcastGroupManager implements GroupManager {
     private CombinedClassLoader combinedClassLoader;
 
     public void init() {
+        //Create a listener for group configuration.
+        IMap groupConfiguration = instance.getMap(GROUPS_CONFIG);
+        groupConfiguration.addEntryListener(this,true);
         //Add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
@@ -223,7 +234,7 @@ public class HazelcastGroupManager implements GroupManager {
 
             if (groups != null && !groups.isEmpty()) {
                 for (Group group : groups.values()) {
-                    if (group.getMembers().contains(node)) {
+                    if (group.getNodes().contains(node)) {
                         names.add(group.getName());
                     }
                 }
@@ -234,11 +245,16 @@ public class HazelcastGroupManager implements GroupManager {
         return names;
     }
 
+    /**
+     * Registers a {@link Group}.
+     * @param group
+     */
     @Override
     public void registerGroup(Group group) {
         String groupName = group.getName();
         createGroup(groupName);
 
+        LOGGER.info("Registering group {}.",groupName);
         Properties serviceProperties = new Properties();
         serviceProperties.put("type", "group");
         serviceProperties.put("name", groupName);
@@ -384,8 +400,9 @@ public class HazelcastGroupManager implements GroupManager {
     }
 
     /**
-     * Copies the setup of a {@link Group}.
-     *
+     * Copies the configuration of a {@link Group}.
+     * <b>1.</b> Updates configuration admin from Hazelcast using source config.
+     * <b>2.</b> Creates target configuration both on Hazelcast and configuration admin.
      * @param sourceGroupName
      * @param targetGroupName
      */
@@ -393,24 +410,37 @@ public class HazelcastGroupManager implements GroupManager {
         try {
             Configuration conf = configurationAdmin.getConfiguration(Configurations.GROUP);
             if (conf != null) {
-                Dictionary dictionary = conf.getProperties();
-                if (dictionary != null) {
-                    Dictionary updatedProperties = new Properties();
-                    Enumeration keyEnumeration = dictionary.keys();
-                    while (keyEnumeration.hasMoreElements()) {
-                        String key = (String) keyEnumeration.nextElement();
-                        String value = (String) dictionary.get(key);
 
-                        if (key.startsWith(sourceGroupName)) {
-                            String newKey = key.replace(sourceGroupName, targetGroupName);
-                            updatedProperties.put(newKey, value);
-                        }
-                        updatedProperties.put(key, value);
-                    }
-
-
-                    conf.update(updatedProperties);
+                //Get configuration from config admin.
+                Dictionary configAdminProperties = conf.getProperties();
+                if(configAdminProperties == null) {
+                    configAdminProperties = new Properties();
                 }
+                //Get configuration from Hazelcast
+                Map<String,String> sourceGropConfig = instance.getMap(GROUPS_CONFIG);
+
+                //Update local configuration from cluster.
+                for(Map.Entry<String,String> parentEntry:sourceGropConfig.entrySet()) {
+                    configAdminProperties.put(parentEntry.getKey(),parentEntry.getValue());
+                }
+
+
+
+                Dictionary updatedProperties = new Properties();
+                Enumeration keyEnumeration = configAdminProperties.keys();
+                while (keyEnumeration.hasMoreElements()) {
+                    String key = (String) keyEnumeration.nextElement();
+                    String value = (String) configAdminProperties.get(key);
+
+                    if (key.startsWith(sourceGroupName)) {
+                        String newKey = key.replace(sourceGroupName, targetGroupName);
+                        updatedProperties.put(newKey, value);
+                        sourceGropConfig.put(key, value);
+                    }
+                    updatedProperties.put(key, value);
+                }
+
+                conf.update(updatedProperties);
             }
 
         } catch (IOException e) {
@@ -458,6 +488,83 @@ public class HazelcastGroupManager implements GroupManager {
     }
 
 
+    @Override
+    public void configurationEvent(ConfigurationEvent configurationEvent) {
+        String pid = configurationEvent.getPid();
+        if(pid.equals(GROUPS)) {
+            LOGGER.info("Local group configuration has been updated, updating distributed group configuration");
+            Map groupConfiguration = instance.getMap(GROUPS_CONFIG);
+
+            try {
+                Configuration conf = configurationAdmin.getConfiguration(GROUPS);
+                Dictionary properties = conf.getProperties();
+                Enumeration keyEnumeration = properties.keys();
+                while (keyEnumeration.hasMoreElements()) {
+                   Object key = keyEnumeration.nextElement();
+                   Object value = properties.get(key);
+                   if(!groupConfiguration.containsKey(key) || groupConfiguration.get(key) == null || !groupConfiguration.get(key).equals(value)) {
+                      groupConfiguration.put(key,value);
+                   }
+                }
+            } catch (Exception e) {
+                LOGGER.warn("Failed to update group configuration");
+            }
+        }
+    }
+
+    /**
+     * Invoked when an entry is added.
+     *
+     * @param entryEvent entry event
+     */
+    @Override
+    public void entryAdded(EntryEvent entryEvent) {
+         entryUpdated(entryEvent);
+    }
+
+    /**
+     * Invoked when an entry is removed.
+     *
+     * @param entryEvent entry event
+     */
+    @Override
+    public void entryRemoved(EntryEvent entryEvent) {
+         entryUpdated(entryEvent);
+    }
+
+    /**
+     * Invoked when an entry is updated.
+     *
+     * @param entryEvent entry event
+     */
+    @Override
+    public void entryUpdated(EntryEvent entryEvent) {
+        LOGGER.info("Distributed Group configuration has been updated, updating local configuration.");
+        try {
+            Configuration conf = configurationAdmin.getConfiguration(GROUPS);
+            Dictionary props = conf.getProperties();
+            Object key = entryEvent.getKey();
+            Object value = entryEvent.getValue();
+            if (props.get(key) == null || !props.get(key).equals(value)) {
+                props.put(key, value);
+                conf.update(props);
+            }
+        } catch (Exception ex) {
+          LOGGER.warn("Error while updating local group configuration", ex);
+        }
+    }
+
+    /**
+     * Invoked when an entry is evicted.
+     *
+     * @param entryEvent entry event
+     */
+    @Override
+    public void entryEvicted(EntryEvent entryEvent) {
+        entryUpdated(entryEvent);
+    }
+
+
     public HazelcastInstance getInstance() {
         return instance;
     }
@@ -497,4 +604,5 @@ public class HazelcastGroupManager implements GroupManager {
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }
