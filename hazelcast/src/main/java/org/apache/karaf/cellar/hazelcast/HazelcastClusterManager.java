@@ -14,16 +14,11 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.Cluster;
-import com.hazelcast.core.IQueue;
-import com.hazelcast.core.ITopic;
 import com.hazelcast.core.IdGenerator;
 import com.hazelcast.core.Member;
 import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
-import org.apache.karaf.cellar.core.event.EventConsumer;
-import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -149,7 +144,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
 
     @Override
     public Set<Node> listNodesByGroup(Group group) {
-        return group.getMembers();
+        return group.getNodes();
     }
 
     /**

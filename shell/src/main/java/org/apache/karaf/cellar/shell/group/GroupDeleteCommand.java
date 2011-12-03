@@ -49,8 +49,8 @@ public class GroupDeleteCommand extends GroupSupport {
             }
             List<String> nodes = new LinkedList<String>();
 
-            if (g.getMembers() != null && !g.getMembers().isEmpty()) {
-                for (Node n : g.getMembers()) {
+            if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                for (Node n : g.getNodes()) {
                     nodes.add(n.getId());
                 }
                 doExecute(ManageGroupAction.QUIT, group, nodes);

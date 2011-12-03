@@ -202,7 +202,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             Collection<Group> groupCollection = groupMap.values();
             if (groupCollection != null && !groupCollection.isEmpty()) {
                 for (Group group : groupCollection) {
-                    if (group.getMembers().contains(node)) {
+                    if (group.getNodes().contains(node)) {
                         result.add(group);
                     }
                 }
@@ -282,7 +282,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             consumerRegistrations.put(groupName, consumerRegistration);
         }
 
-        group.getMembers().add(getNode());
+        group.getNodes().add(getNode());
         listGroups().put(groupName, group);
 
         //Add group to configuration
@@ -347,7 +347,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void unRegisterGroup(Group group) {
         String groupName = group.getName();
         //1. Remove local node from group.
-        group.getMembers().remove(getNode());
+        group.getNodes().remove(getNode());
         listGroups().put(groupName, group);
 
         //2. Unregister group consumers

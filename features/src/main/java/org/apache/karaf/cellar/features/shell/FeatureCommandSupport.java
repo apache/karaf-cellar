@@ -18,7 +18,6 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleContext;
@@ -53,7 +52,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Group group = groupManager.findGroupByName(groupName);
-            if (group == null || group.getMembers().isEmpty()) {
+            if (group == null || group.getNodes().isEmpty()) {
                 FeatureInfo info = new FeatureInfo(feature, version);
                 Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
                 //1st check the existing configuration
