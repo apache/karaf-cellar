@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.osgi.framework.BundleContext;
@@ -45,10 +46,10 @@ public class ExportServiceListener implements ServiceListener {
 
     private final Map<String,EventConsumer> consumers = new HashMap<String,EventConsumer>();
 
-    private String nodeId;
+    private Node node;
 
     public void init() {
-        nodeId = clusterManager.getNode().getId();
+        node = clusterManager.getNode();
         remoteEndpoints = clusterManager.getMap(Constants.REMOTE_ENDPOINTS);
         bundleContext.addServiceListener(this);
 
@@ -124,9 +125,9 @@ public class ExportServiceListener implements ServiceListener {
 
                     if (remoteEndpoints.containsKey(endpointId)) {
                         endpoint = remoteEndpoints.get(endpointId);
-                        endpoint.getNodes().add(nodeId);
+                        endpoint.getNodes().add(node);
                     } else {
-                        endpoint = new EndpointDescription(endpointId,nodeId);
+                        endpoint = new EndpointDescription(endpointId,node);
                     }
 
                     remoteEndpoints.put(endpointId, endpoint);
@@ -169,7 +170,7 @@ public class ExportServiceListener implements ServiceListener {
                     String endpointId = iface + Constants.SEPARATOR + version.toString();
 
                     EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
-                    endpointDescription.getNodes().remove(nodeId);
+                    endpointDescription.getNodes().remove(node);
                     //If the endpoint is used for export from other nodes too, then put it back.
                     if(endpointDescription.getNodes().size() > 0) {
                         remoteEndpoints.put(endpointId,endpointDescription);
