@@ -27,7 +27,7 @@ Here is a short list of features:
       instances and join the cluster. There is no configuration required to join the cluster, the discovery is made
       behind the scene. You can use multicast or unicast for discovery.
     * Cluster group: a Karaf node could be part of one or more cluster group. In Cellar, you can define cluster group
-      depending of your requirements. The resources will be sync between members of the same group.
+      depending of your requirements. The resources will be sync between nodes of the same group.
     * Distributed Configuration Admin: Cellar distributes the configuration data. The distribution is event driven and
       filtered by group. You can tune the configuration replication using blacklist/whitelist on the configuration
       ID (PID).

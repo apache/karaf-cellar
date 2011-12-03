@@ -24,7 +24,7 @@ public class LocalGroupsCompleter extends GroupCompleterSupport {
     @Override
     protected boolean acceptsGroup(Group group) {
         Node node = groupManager.getNode();
-        if (group.getMembers().contains(node))
+        if (group.getNodes().contains(node))
             return true;
         else return false;
     }
