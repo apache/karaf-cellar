@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ public class DiscoveryTask implements Runnable {
             try {
                 Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
                 Dictionary properties = configuration.getProperties();
-                String newMemberText = buildMemberList(members);
+                String newMemberText = CellarUtils.createStringFromSet(members,true);
                 String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
                 if (newMemberText != null && !newMemberText.isEmpty() && !newMemberText.equals(memberText)) {
                     properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
@@ -69,24 +70,6 @@ public class DiscoveryTask implements Runnable {
             }
             }
         }
-    }
-
-    /**
-     * Creates a comma delimited list of members.
-     *
-     * @param members
-     * @return
-     */
-    private String buildMemberList(Set<String> members) {
-        StringBuilder builder = new StringBuilder();
-        Iterator<String> memberIterator = members.iterator();
-        while (memberIterator.hasNext()) {
-            builder.append(memberIterator.next());
-            if (memberIterator.hasNext()) {
-                builder.append(",");
-            }
-        }
-        return builder.toString();
     }
 
     public List<DiscoveryService> getDiscoveryServices() {
