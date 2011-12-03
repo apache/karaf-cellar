@@ -19,6 +19,7 @@ package org.apache.karaf.cellar.hazelcast;
 public class Constants {
 
     public static final String SEPARATOR = ".";
+    public static final String CONFIG = "config";
     public static final String TOPIC = "org.apache.karaf.cellar.event.topic";
     public static final String QUEUE = "org.apache.karaf.cellar.event.queue";
 
