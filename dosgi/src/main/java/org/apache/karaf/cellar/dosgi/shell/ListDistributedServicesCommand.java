@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.dosgi.shell;
 
 import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.dosgi.Constants;
 import org.apache.karaf.cellar.dosgi.EndpointDescription;
@@ -37,9 +38,9 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                 for (Map.Entry<String, EndpointDescription> entry : remoteEndpoints.entrySet()) {
                     EndpointDescription endpointDescription = entry.getValue();
                     String serviceClass = endpointDescription.getServiceClass();
-                    Set<String> nodes = endpointDescription.getNodes();
-                    for (String nodeId : nodes) {
-                        System.out.println(String.format(LIST_FORMAT, serviceClass, nodeId));
+                    Set<Node> nodes = endpointDescription.getNodes();
+                    for (Node node : nodes) {
+                        System.out.println(String.format(LIST_FORMAT, serviceClass, node.getId()));
                         serviceClass = "";
                     }
                 }

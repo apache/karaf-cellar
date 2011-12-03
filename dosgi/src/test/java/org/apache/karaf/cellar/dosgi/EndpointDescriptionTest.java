@@ -31,8 +31,9 @@ public class EndpointDescriptionTest {
         //This is a dummy test for testing the behaviour of matches method.
         String testEndpointFilter = String.format(filterPattern,objectClass);
         String endpointId = objectClass+Constants.SEPARATOR+"1.0.0";
-        EndpointDescription endpointDescription1 = new EndpointDescription(endpointId,frameworkUUID1);
-        EndpointDescription endpointDescription2 = new EndpointDescription(endpointId,frameworkUUID2);
+
+        EndpointDescription endpointDescription1 = new EndpointDescription(endpointId,null);
+        EndpointDescription endpointDescription2 = new EndpointDescription(endpointId,null);
         Assert.assertTrue(endpointDescription1.matches(testEndpointFilter));
         Assert.assertTrue(endpointDescription2.matches(testEndpointFilter));
 
