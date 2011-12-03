@@ -154,10 +154,16 @@
     <service ref="producer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
 
     <service ref="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
-    <service ref="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <service ref="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <service ref="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
     <service ref="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
+
+    <service ref="groupManager">
+        <interfaces>
+            <value>org.apache.karaf.cellar.core.GroupManager</value>
+            <value>org.osgi.service.cm.ConfigurationListener</value>
+        </interfaces>
+    </service>
 
     <!-- Event Handler Service -->
     <service ref="consumerSwitchCommandHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
