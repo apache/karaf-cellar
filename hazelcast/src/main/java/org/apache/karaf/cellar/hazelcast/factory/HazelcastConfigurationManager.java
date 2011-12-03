@@ -25,6 +25,7 @@ import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.karaf.cellar.core.discovery.Discovery;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,8 +141,8 @@ public class HazelcastConfigurationManager {
                 }
 
                 if (properties.containsKey(TCPIP_MEMBERS)) {
-                    Set<String> newTcpIpMemberSet = createSetFromString((String) properties.get(TCPIP_MEMBERS));
-                    if (!collectionEquals(tcpIpMemberSet, newTcpIpMemberSet)) {
+                    Set<String> newTcpIpMemberSet = CellarUtils.createSetFromString((String) properties.get(TCPIP_MEMBERS));
+                    if (!CellarUtils.collectionEquals(tcpIpMemberSet, newTcpIpMemberSet)) {
                         LOGGER.info("Hazelcast tcpIpMemberSet has been changed from {} to {}", tcpIpMemberSet, newTcpIpMemberSet);
                         tcpIpMemberSet = newTcpIpMemberSet;
                         updated = Boolean.TRUE;
@@ -150,8 +151,8 @@ public class HazelcastConfigurationManager {
 
 
                 if (properties.containsKey(TCPIP_MEMBERS)) {
-                    Set<String> newDiscoveredMemberSet = createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
-                    if (!collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
+                    Set<String> newDiscoveredMemberSet = CellarUtils.createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
+                    if (!CellarUtils.collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
                         LOGGER.info("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
                         discoveredMemberSet = newDiscoveredMemberSet;
                         updated = Boolean.TRUE;
@@ -216,60 +217,4 @@ public class HazelcastConfigurationManager {
         return tcpIpConfig;
     }
 
-    /**
-     * Converts a comma delimited String to a Set of Strings.
-     *
-     * @param text
-     * @return
-     */
-    private Set<String> createSetFromString(String text) {
-        Set<String> result = new LinkedHashSet<String>();
-        if (text != null) {
-            String[] items = text.split(",");
-            if (items != null && items.length > 0) {
-
-                for (String item : items) {
-                    if(item != null && item.length() > 0) {
-                     result.add(item.trim());
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-        /**
-     * Returns true if both {@link java.util.Collection}s contain exactly the same items (order doesn't matter).
-     *
-     * @param col1
-     * @param col2
-     * @return
-     */
-    public boolean collectionEquals(Collection col1, Collection col2) {
-        return collectionSubset(col1, col2) && collectionSubset(col2, col1);
-    }
-
-    /**
-     * Returns true if one {@link Collection} contains all items of the others
-     *
-     * @param source
-     * @param target
-     * @return
-     */
-    private boolean collectionSubset(Collection source, Collection target) {
-        if (source == null && target == null) {
-            return true;
-        } else if (source == null || target == null) {
-            return false;
-        } else if (source.isEmpty() && target.isEmpty()) {
-            return true;
-        } else {
-            for (Object item : source) {
-                if (!target.contains(item)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
 }
