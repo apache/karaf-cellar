@@ -88,14 +88,15 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * @param targetGroupName
      */
     public void joinGroup(String targetGroupName) {
+        LOGGER.info("CELLAR GROUP: Joining group {}.",targetGroupName);
         Node node = clusterManager.getNode();
         Map<String, Group> groups = groupManager.listGroups();
         if (groups != null && !groups.isEmpty()) {
             Group targetGroup = groups.get(targetGroupName);
             if (targetGroup == null) {
                 groupManager.registerGroup(targetGroupName);
-            } else if (!targetGroup.getMembers().contains(node)) {
-                targetGroup.getMembers().add(node);
+            } else if (!targetGroup.getNodes().contains(node)) {
+                targetGroup.getNodes().add(node);
                 groupManager.listGroups().put(targetGroupName, targetGroup);
                 groupManager.registerGroup(targetGroup);
             }
@@ -108,12 +109,13 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * @param targetGroupName
      */
     public void quitGroup(String targetGroupName) {
+        LOGGER.info("CELLAR GROUP: Quiting group {}.",targetGroupName);
         Node node = clusterManager.getNode();
         Map<String, Group> groups = groupManager.listGroups();
         if (groups != null && !groups.isEmpty()) {
             Group targetGroup = groups.get(targetGroupName);
-            if (targetGroup.getMembers().contains(node)) {
-                targetGroup.getMembers().remove(node);
+            if (targetGroup.getNodes().contains(node)) {
+                targetGroup.getNodes().remove(node);
                 groupManager.unRegisterGroup(targetGroup);
             }
         }
@@ -123,6 +125,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * Removes {@link Node} from ALL {@link Group}s.
      */
     public void purgeGroups() {
+        LOGGER.info("CELLAR GROUP: Purging all groups from node.");
         Node node = clusterManager.getNode();
         Set<String> groupNames = groupManager.listGroupNames(node);
         if (groupNames != null && !groupNames.isEmpty()) {

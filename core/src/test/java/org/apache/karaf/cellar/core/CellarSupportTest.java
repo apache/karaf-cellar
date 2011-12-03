@@ -53,7 +53,15 @@ public class CellarSupportTest {
         assertEquals("Shell should not be allowed",expectedResult,result);
 
         expectedResult = true;
-        result = support.isAllowed(defaultGroup,"config","org.apache.karaf.myshell", EventType.INBOUND);
-        assertEquals("MyShell should be allowed",expectedResult,result);
+        result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.group", EventType.INBOUND);
+        assertEquals("Group config should be allowed",expectedResult,result);
+
+        expectedResult = false;
+        result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.node", EventType.INBOUND);
+        assertEquals("Node config should be allowed",expectedResult,result);
+
+        expectedResult = false;
+        result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.instance", EventType.INBOUND);
+        assertEquals("Instance config should be allowed",expectedResult,result);
     }
 }

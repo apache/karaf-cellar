@@ -44,7 +44,7 @@
         <joda-time.version>1.6.2</joda-time.version>
         <junit.version>4.7</junit.version>
         <junit.bundle.version>4.7_3</junit.bundle.version>
-        <karaf.version>3.0.0-SNAPSHOT</karaf.version>
+        <karaf.version>2.2.4</karaf.version>
         <osgi.version>4.2.0</osgi.version>
         <pax.exam.version>2.3.0.M1</pax.exam.version>
         <pax.exam.karaf.version>0.4.0</pax.exam.karaf.version>
@@ -508,10 +508,12 @@
                         <Bundle-Activator>${osgi.bundle.activator}</Bundle-Activator>
                         <Export-Package>${osgi.export}</Export-Package>
                         <Import-Package>${osgi.import}</Import-Package>
+                        <Ignore-Package>${osgi.ignore}</Ignore-Package>
                         <DynamicImport-Package>${osgi.dynamic.import}</DynamicImport-Package>
                         <Private-Package>${osgi.private}</Private-Package>
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
                         <Export-Service>${osgi.export.service}</Export-Service>
+                        <Fragment-Host>${osgi.fragment.host}</Fragment-Host>
                     </instructions>
                     <supportedProjectTypes>
                         <supportedProjectType>jar</supportedProjectType>

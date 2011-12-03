@@ -20,10 +20,10 @@ import java.util.Set;
 /**
  * Cellar group.
  */
-public class Group implements Serializable {
+public class Group implements MultiNode {
 
     private String name;
-    private Set<Node> members = new HashSet<Node>();
+    private Set<Node> nodes = new HashSet<Node>();
 
     /**
      * Constructor
@@ -42,12 +42,12 @@ public class Group implements Serializable {
         this.name = name;
     }
 
-    public Set<Node> getMembers() {
-        return members;
+    public Set<Node> getNodes() {
+        return nodes;
     }
 
-    public void setMembers(Set<Node> members) {
-        this.members = members;
+    public void setNodes(Set<Node> nodes) {
+        this.nodes = nodes;
     }
 
     @Override
