@@ -41,7 +41,12 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
     public void bundleChanged(BundleEvent event) {
         try {
             if (event != null && event.getBundle() != null) {
-                Set<Group> groups = groupManager.listLocalGroups();
+                Set<Group> groups = null;
+                try {
+                   groups = groupManager.listLocalGroups();
+                }catch (Exception ex) {
+                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling?");
+                }
 
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
