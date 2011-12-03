@@ -84,17 +84,14 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         assertEquals("Expected 10 greets", 10, countGreetsFromNode(greetOutput, node1));
         System.err.println(executeCommand("cluster:group-set service-grp "+node2));
         Thread.sleep(10000);
-        //TODO: We shouldn't need this one. Sync should occur upon joining the group.
-        System.err.println(executeCommand("cluster:features-install service-grp greeter-service"));
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:group-list"));
         System.err.println(executeCommand("admin:connect child2  osgi:list -t 0"));
         System.err.println(executeCommand("cluster:list-services"));
         greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
-        //TODO: Assertion fails here. Another bug needs fixing.
-        //assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node1));
-        //assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node2));
+        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node1));
+        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node2));
     }
 
     public int countGreetsFromNode(String output, String nodeId) {

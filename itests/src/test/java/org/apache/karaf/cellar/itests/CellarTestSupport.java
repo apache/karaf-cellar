@@ -66,6 +66,8 @@ public class CellarTestSupport {
 
     static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features","3.0.0-SNAPSHOT");
 
+    static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
+
     ExecutorService executor = Executors.newCachedThreadPool();
 
     @Inject
@@ -120,8 +122,16 @@ public class CellarTestSupport {
      * Creates a child instance that runs cellar.
      */
     protected void createCellarChild(String name) {
+        createCellarChild(name, false, 0);
+    }
+
+    protected void createCellarChild(String name, boolean debug, int port) {
         int instances = 0;
-        System.err.println(executeCommand("admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar "+name));
+        String createCommad = "admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar ";
+        if(debug && port > 0) {
+            createCommad = createCommad + String.format(DEBUG_OPTS,port);
+        }
+        System.err.println(executeCommand(createCommad+" "+name));
         System.err.println(executeCommand("admin:start " + name));
 
         //Wait till the node is listed as Starting
@@ -142,6 +152,7 @@ public class CellarTestSupport {
         } else {
             System.err.println(".Timed Out!");
         }
+
     }
 
     /**
@@ -149,7 +160,7 @@ public class CellarTestSupport {
      */
     protected void destroyCellarChild(String name) {
         System.err.println(executeCommand("admin:stop " + name));
-        System.err.println(executeCommand("admin:destroy " + name));
+        //System.err.println(executeCommand("admin:destroy " + name));
     }
 
     /**
@@ -159,7 +170,7 @@ public class CellarTestSupport {
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name+" cluster:nodes-list | grep \\\\*");
+        String nodesList = executeCommand("admin:connect " + name+" cluster:nodes-list | grep \\\\*",COMMAND_TIMEOUT,true);
         String[] tokens = nodesList.split(" ");
         if(tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n","");
