@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<features name="dosgi-greeter" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${camel.version}/xml/features</repository>
+
+    <feature name='cellar-sample-camel-producer' description='Cellar Camel Sample Application - Producer' version='${project.version}' resolver='(obr)'>
+        <feature version="${project.version}">cellar</feature>
+        <feature version="${camel.version}">camel</feature>
+        <feature version="${camel.version}">camel-blueprint</feature>
+        <bundle>mvn:org.apache.camel/camel-hazelcast/${camel.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar.samples.camel.hazelcast/producer/${project.version}</bundle>
+    </feature>
+
+    <feature name='cellar-sample-camel-consumer' description='Cellar Camel Sample Application - Consumer' version='${project.version}' resolver='(obr)'>
+        <feature version="${project.version}">cellar</feature>
+        <feature version="${camel.version}">camel</feature>
+        <feature version="${camel.version}">camel-blueprint</feature>
+        <bundle>mvn:org.apache.camel/camel-hazelcast/${camel.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar.samples.camel.hazelcast/consumer/${project.version}</bundle>
+    </feature>
+
+</features>
+

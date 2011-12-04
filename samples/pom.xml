@@ -36,6 +36,7 @@
     <modules>
         <module>dosgi-greeter</module>
         <module>hazelcast-app</module>
+        <module>camel-hazelcast-app</module>
     </modules>
 
 </project>
