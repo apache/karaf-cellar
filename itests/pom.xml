@@ -25,6 +25,7 @@
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
         <version>2.2.3-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.apache.karaf.cellar</groupId>
