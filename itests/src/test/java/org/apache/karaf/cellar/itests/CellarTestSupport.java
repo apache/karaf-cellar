@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import EDU.oswego.cs.dl.util.concurrent.Sync;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
+import org.fusesource.jansi.Ansi;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
@@ -176,6 +177,8 @@ public class CellarTestSupport {
         if(tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n","");
         }
+        //As of Karaf 2.2.5 grep will add the reset character at the end of the match.
+        nodeId = nodeId.replaceAll("\\u001B\\[m","");
         return nodeId;
     }
 
