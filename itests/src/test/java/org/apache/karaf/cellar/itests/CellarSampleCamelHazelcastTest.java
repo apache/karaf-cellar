@@ -77,13 +77,13 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:group-list"));
         System.err.println(executeCommand("admin:connect child2  osgi:list -t 0"));
 
-        Thread.sleep(10000);
+        Thread.sleep(20000);
         String output1 = executeCommand("admin:connect child1  log:display | grep \"Hallo Cellar\"");
         System.err.println(output1);
         String output2 = executeCommand("admin:connect child2  log:display | grep \"Hallo Cellar\"");
         System.err.println(output2);
-        assertTrue("Expected at least lines",2 <= countOutputEntires(output1));
-        assertTrue("Expected at least lines",2 <= countOutputEntires(output2));
+        assertTrue("Expected at least 1 lines",1 <= countOutputEntires(output1));
+        assertTrue("Expected at least 1 lines",1 <= countOutputEntires(output2));
     }
 
     public int countOutputEntires(String output) {
