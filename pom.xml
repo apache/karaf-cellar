@@ -67,8 +67,8 @@
         <module>management</module>
         <module>webconsole</module>
         <module>assembly</module>
-        <module>itests</module>
         <module>samples</module>
+        <module>itests</module>
     </modules>
 
     <scm>
