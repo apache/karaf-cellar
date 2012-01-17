@@ -47,8 +47,6 @@ public class CellarChildNodesTest extends CellarTestSupport {
         Set<Node> nodes =clusterManager.listNodes();
         System.err.println(executeCommand("cluster:nodes-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
-
-
     }
 
     @After
@@ -61,10 +59,10 @@ public class CellarChildNodesTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }

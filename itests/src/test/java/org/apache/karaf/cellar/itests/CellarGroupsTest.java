@@ -66,7 +66,6 @@ public class CellarGroupsTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:group-list"));
         groups = groupManager.listAllGroups();
         assertEquals("There should be a single cellar group", 1 , groups.size());
-
     }
 
     @After
@@ -79,10 +78,10 @@ public class CellarGroupsTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }
