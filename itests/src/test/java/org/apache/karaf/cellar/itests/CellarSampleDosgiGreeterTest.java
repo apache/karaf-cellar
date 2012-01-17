@@ -50,7 +50,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);
         assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features"));
+        System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/2.2.3-SNAPSHOT/xml/features"));
 
         System.err.println(executeCommand("admin:list"));
 
@@ -71,14 +71,12 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:group-set client-grp "+localNode.getId()));
         System.err.println(executeCommand("cluster:group-set service-grp "+node1));
         System.err.println(executeCommand("cluster:group-list"));
-
+        
+        System.err.println(executeCommand("cluster:features-install client-grp greeter-client"));
+        Thread.sleep(10000);
         System.err.println(executeCommand("cluster:features-install service-grp greeter-service"));
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:list-services"));
-        System.err.println(executeCommand("cluster:features-install client-grp greeter-client"));
-        Thread.sleep(10000);
-        System.err.println(executeCommand("features:list"));
-        System.err.println(executeCommand("osgi:list"));
         String greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
         assertEquals("Expected 10 greets", 10, countGreetsFromNode(greetOutput, node1));
@@ -120,6 +118,6 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR), debugConfiguration("5005", true)};
     }
 }
