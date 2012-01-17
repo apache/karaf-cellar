@@ -31,7 +31,7 @@
     <groupId>org.apache.karaf.cellar.samples</groupId>
     <artifactId>camel-hazelcast-app</artifactId>
     <packaging>pom</packaging>
-    <name>Apache Karaf :: Cellar :: Samples :: </name>
+    <name>Apache Karaf :: Cellar :: Samples :: Camel Hazelcast Application</name>
 
     <properties>
         <camel.version>2.9.0</camel.version>

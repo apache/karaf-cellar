@@ -36,8 +36,8 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
 public class CellarFeaturesTest extends CellarTestSupport {
 
-    private static final String UNINSTALLED="[uninstalled]";
-    private static final String INSTALLED="[installed  ]";
+    private static final String UNINSTALLED = "[uninstalled]";
+    private static final String INSTALLED = "[installed  ]";
 
     @Test
     public void testCellarFeaturesModule() throws InterruptedException {
@@ -49,45 +49,45 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         System.err.println(executeCommand("admin:list"));
 
-        String httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        String eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(UNINSTALLED));
 
         //Test feature sync - install
         System.err.println(executeCommand("features:install eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(INSTALLED));
 
         //Test feature sync - uninstall
         System.err.println(executeCommand("features:uninstall eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install
         System.err.println(executeCommand("cluster:features-install default eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(INSTALLED));
 
         //Test feature command - uninstall
         System.err.println(executeCommand("cluster:features-uninstall default eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install - before a node joins
         System.err.println(executeCommand("cluster:features-install testgroup eventadmin"));
         System.err.println(executeCommand("cluster:group-set testgroup "+getNodeIdOfChild("child1")));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeaturesStatus);
+        assertTrue(eventadminFeaturesStatus.startsWith(INSTALLED));
 
 
         Node localNode = clusterManager.getNode();
