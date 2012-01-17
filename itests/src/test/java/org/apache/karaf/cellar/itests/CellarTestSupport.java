@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.itests;
 
 import java.io.ByteArrayOutputStream;
@@ -64,7 +63,7 @@ public class CellarTestSupport {
     static final String INSTANCE_STARTED = "Started";
     static final String INSTANCE_STARTING = "Starting";
 
-    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features","3.0.0-SNAPSHOT");
+    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features","2.2.3-SNAPSHOT");
 
     static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
 
@@ -398,13 +397,11 @@ public class CellarTestSupport {
         return false;
     }
 
-
-    /*
+    /**
      * Provides an iterable collection of references, even if the original array is null
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
         return references != null ? Arrays.asList(references) : Collections.<ServiceReference>emptyList();
     }
-
 
 }
