@@ -63,9 +63,9 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         System.err.println("Child1:"+node1);
         System.err.println("Child2:"+node2);
 
-        System.err.println(executeCommand("cluster:group-set producer-grp "+localNode.getId()));
-        System.err.println(executeCommand("cluster:group-set consumer-grp "+node1));
-        System.err.println(executeCommand("cluster:group-set consumer-grp "+node2));
+        System.err.println(executeCommand("cluster:group-set producer-grp " + localNode.getId()));
+        System.err.println(executeCommand("cluster:group-set consumer-grp " + node1));
+        System.err.println(executeCommand("cluster:group-set consumer-grp " + node2));
         System.err.println(executeCommand("cluster:group-list"));
 
         System.err.println(executeCommand("cluster:features-install consumer-grp cellar-sample-camel-consumer"));
@@ -82,8 +82,8 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         System.err.println(output1);
         String output2 = executeCommand("admin:connect child2  log:display | grep \"Hallo Cellar\"");
         System.err.println(output2);
-        assertTrue("Expected at least 1 lines",1 <= countOutputEntires(output1));
-        assertTrue("Expected at least 1 lines",1 <= countOutputEntires(output2));
+        assertTrue("Expected at least 1 lines", 1 <= countOutputEntires(output1));
+        assertTrue("Expected at least 1 lines", 1 <= countOutputEntires(output2));
     }
 
     public int countOutputEntires(String output) {
@@ -102,10 +102,10 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }

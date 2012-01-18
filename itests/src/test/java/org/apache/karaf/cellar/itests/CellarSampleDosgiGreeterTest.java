@@ -38,9 +38,6 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
 public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
 
-    private static final String UNINSTALLED="[uninstalled]";
-    private static final String INSTALLED="[installed  ]";
-
     @Test
     public void testDosgiGreeter() throws InterruptedException {
         installCellar();
@@ -64,12 +61,12 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         String node1 = getNodeIdOfChild("child1");
         String node2 = getNodeIdOfChild("child2");
 
-        System.err.println("Child1:"+node1);
-        System.err.println("Child2:"+node2);
+        System.err.println("Child1: " + node1);
+        System.err.println("Child2: " + node2);
 
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("cluster:group-set client-grp "+localNode.getId()));
-        System.err.println(executeCommand("cluster:group-set service-grp "+node1));
+        System.err.println(executeCommand("cluster:group-set client-grp " + localNode.getId()));
+        System.err.println(executeCommand("cluster:group-set service-grp " + node1));
         System.err.println(executeCommand("cluster:group-list"));
 
         System.err.println(executeCommand("cluster:features-install client-grp greeter-client"));
@@ -81,11 +78,11 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         String greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
         assertEquals("Expected 10 greets", 10, countGreetsFromNode(greetOutput, node1));
-        System.err.println(executeCommand("cluster:group-set service-grp "+node2));
+        System.err.println(executeCommand("cluster:group-set service-grp " + node2));
         Thread.sleep(10000);
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("admin:connect child2  osgi:list -t 0"));
+        System.err.println(executeCommand("admin:connect child2 osgi:list -t 0"));
         System.err.println(executeCommand("cluster:list-services"));
         greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
@@ -115,10 +112,10 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR),debugConfiguration("5005",true)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }
