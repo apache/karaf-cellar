@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.itests;
 
 import org.apache.karaf.cellar.core.ClusterManager;
@@ -47,4 +46,5 @@ public class CellarInstallationTest extends CellarTestSupport {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder()};
     }
+
 }

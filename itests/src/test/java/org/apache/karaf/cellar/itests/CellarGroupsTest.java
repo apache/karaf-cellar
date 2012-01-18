@@ -53,7 +53,7 @@ public class CellarGroupsTest extends CellarTestSupport {
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
 
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("cluster:group-set testgroup "+localNode.getId()));
+        System.err.println(executeCommand("cluster:group-set testgroup " + localNode.getId()));
         System.err.println(executeCommand("cluster:group-list"));
 
         GroupManager groupManager = getOsgiService(GroupManager.class);
@@ -66,7 +66,6 @@ public class CellarGroupsTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:group-list"));
         groups = groupManager.listAllGroups();
         assertEquals("There should be a single cellar group", 1 , groups.size());
-
     }
 
     @After
@@ -79,10 +78,10 @@ public class CellarGroupsTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }

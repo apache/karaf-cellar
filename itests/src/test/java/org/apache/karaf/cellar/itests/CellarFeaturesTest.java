@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.itests;
 
-import java.util.Set;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
@@ -26,10 +25,10 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
+import java.util.Set;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.debugConfiguration;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
 
@@ -37,8 +36,8 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
 public class CellarFeaturesTest extends CellarTestSupport {
 
-    private static final String UNINSTALLED="[uninstalled]";
-    private static final String INSTALLED="[installed  ]";
+    private static final String UNINSTALLED = "[uninstalled]";
+    private static final String INSTALLED = "[installed  ]";
 
     @Test
     public void testCellarFeaturesModule() throws InterruptedException {
@@ -84,19 +83,16 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         //Test feature command - install - before a node joins
         System.err.println(executeCommand("cluster:features-install testgroup eventadmin"));
-        System.err.println(executeCommand("cluster:group-set testgroup "+getNodeIdOfChild("child1")));
+        System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
         Thread.sleep(5000);
         httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(httpFeatureStatus);
         assertTrue(httpFeatureStatus.startsWith(INSTALLED));
 
-
         Node localNode = clusterManager.getNode();
         Set<Node> nodes =clusterManager.listNodes();
         System.err.println(executeCommand("cluster:nodes-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
-
-
     }
 
     @After
@@ -109,10 +105,10 @@ public class CellarFeaturesTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }

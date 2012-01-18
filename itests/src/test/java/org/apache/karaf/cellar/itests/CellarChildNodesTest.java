@@ -26,7 +26,6 @@ import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 
-
 import static org.junit.Assert.*;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
@@ -47,8 +46,6 @@ public class CellarChildNodesTest extends CellarTestSupport {
         Set<Node> nodes =clusterManager.listNodes();
         System.err.println(executeCommand("cluster:nodes-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
-
-
     }
 
     @After
@@ -61,10 +58,10 @@ public class CellarChildNodesTest extends CellarTestSupport {
         }
     }
 
-
     @Configuration
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
     }
+
 }

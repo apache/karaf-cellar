@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.itests;
 
 import java.io.ByteArrayOutputStream;
@@ -81,7 +80,6 @@ public class CellarTestSupport {
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
         probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*,org.apache.felix.service.*;status=provisional");
-
         return probe;
     }
 
@@ -157,22 +155,20 @@ public class CellarTestSupport {
     }
 
     /**
-     * Destorys the child node.
+     * Destroys the child node.
      */
     protected void destroyCellarChild(String name) {
-        System.err.println(executeCommand("admin:connect " + name+" features:uninstall cellar"));
+        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
         //System.err.println(executeCommand("admin:destroy " + name));
     }
 
     /**
      * Returns the node id of a specific child instance.
-     * @param name
-     * @return
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name+" cluster:nodes-list | grep \\\\*",COMMAND_TIMEOUT,true);
+        String nodesList = executeCommand("admin:connect " + name + " cluster:nodes-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
         if(tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n","");
@@ -182,11 +178,6 @@ public class CellarTestSupport {
         return nodeId;
     }
 
-    /**
-     * Create an {@link org.ops4j.pax.exam.Option} for using a .
-     *
-     * @return
-     */
     protected Option cellarDistributionConfiguration() {
         return karafDistributionConfiguration().frameworkUrl(
                 maven().groupId(GROUP_ID).artifactId(ARTIFACT_ID).versionAsInProject().type("tar.gz"))
@@ -200,7 +191,7 @@ public class CellarTestSupport {
      * @return
      */
     protected String executeCommand(final String command) {
-       return executeCommand(command,COMMAND_TIMEOUT,false);
+       return executeCommand(command, COMMAND_TIMEOUT, false);
     }
 
      /**
@@ -294,8 +285,8 @@ public class CellarTestSupport {
         throw new RuntimeException("Bundle " + symbolicName + " does not exist");
     }
 
-    /*
-    * Explode the dictionary into a ,-delimited list of key=value pairs
+    /**
+    * Explodes the dictionary into a ,-delimited list of key=value pairs
     */
     private static String explode(Dictionary dictionary) {
         Enumeration keys = dictionary.keys();
@@ -398,10 +389,8 @@ public class CellarTestSupport {
                 }
             }
         }
-
         return false;
     }
-
 
     /*
      * Provides an iterable collection of references, even if the original array is null
@@ -409,6 +398,5 @@ public class CellarTestSupport {
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
         return references != null ? Arrays.asList(references) : Collections.<ServiceReference>emptyList();
     }
-
 
 }
