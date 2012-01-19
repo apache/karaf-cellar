@@ -11,7 +11,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
 
 import java.io.Serializable;
@@ -21,31 +20,31 @@ public class BundleState implements Serializable {
     private static final long serialVersionUID = 5933673686648413918L;
 
     private String location;
-	private int status;
-	private byte[] data;
+    private int status;
+    private byte[] data;
 
-	public String getLocation() {
-		return location;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public byte[] getData() {
-		return data;
-	}
+    public byte[] getData() {
+        return data;
+    }
 
-	public void setData(byte[] data) {
-		this.data = data.clone();
-	}
+    public void setData(byte[] data) {
+        this.data = data.clone();
+    }
 
 }

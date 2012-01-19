@@ -17,26 +17,26 @@
 -->
 
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://camel.apache.org/schema/blueprint"
-       xsi:schemaLocation="
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:camel="http://camel.apache.org/schema/blueprint"
+           xsi:schemaLocation="
        http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
        http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
 
-  <camelContext id="blueprintContext" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
-    <route id="timerToLog">
-      <from uri="timer:foo?period=5000"/>
-      <setBody>
-          <constant>Hallo Cellar</constant>
-      </setBody>
-      <to uri="hazelcast:seda:yet.another.queue"/>
-    </route>
-  </camelContext>
+    <camelContext id="blueprintContext" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
+        <route id="timerToLog">
+            <from uri="timer:foo?period=5000"/>
+            <setBody>
+                <constant>Hallo Cellar</constant>
+            </setBody>
+            <to uri="hazelcast:seda:yet.another.queue"/>
+        </route>
+    </camelContext>
 
-  <bean id="hazelcast" class="org.apache.camel.component.hazelcast.HazelcastComponent">
-      <property name="hazelcastInstance" ref="hazelcastInstance"/>
-  </bean>
+    <bean id="hazelcast" class="org.apache.camel.component.hazelcast.HazelcastComponent">
+        <property name="hazelcastInstance" ref="hazelcastInstance"/>
+    </bean>
 
-  <reference id="hazelcastInstance" availability="optional" interface="com.hazelcast.core.HazelcastInstance"/>
+    <reference id="hazelcastInstance" availability="optional" interface="com.hazelcast.core.HazelcastInstance"/>
 
 </blueprint>

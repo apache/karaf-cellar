@@ -17,55 +17,49 @@ import org.apache.karaf.cellar.core.event.Event;
 
 public class RemoteBundleEvent extends Event {
 
-	private String symbolicName;
-	private String version;
-	private String location;
-	private int type;
+    private String symbolicName;
+    private String version;
+    private String location;
+    private int type;
 
-	/**
-	 * Constructor
-	 * @param symbolicName
-	 * @param version
-	 * @param location
-	 */
-	public RemoteBundleEvent(String symbolicName,String version, String location, int type) {
-		super(symbolicName+"/"+version);
-		this.symbolicName=symbolicName;
-		this.version=version;
-		this.location=location;
-		this.type=type;
-	}
+    public RemoteBundleEvent(String symbolicName, String version, String location, int type) {
+        super(symbolicName + "/" + version);
+        this.symbolicName = symbolicName;
+        this.version = version;
+        this.location = location;
+        this.type = type;
+    }
 
-	public String getSymbolicName() {
-		return symbolicName;
-	}
+    public String getSymbolicName() {
+        return symbolicName;
+    }
 
-	public void setSymbolicName(String symbolicName) {
-		this.symbolicName = symbolicName;
-	}
+    public void setSymbolicName(String symbolicName) {
+        this.symbolicName = symbolicName;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public String getLocation() {
-		return location;
-	}
+    public String getLocation() {
+        return location;
+    }
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	public int getType() {
-		return type;
-	}
+    public int getType() {
+        return type;
+    }
 
-	public void setType(int type) {
-		this.type = type;
-	}
+    public void setType(int type) {
+        this.type = type;
+    }
 
 }
