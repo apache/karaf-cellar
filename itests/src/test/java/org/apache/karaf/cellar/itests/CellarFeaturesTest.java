@@ -49,48 +49,48 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         System.err.println(executeCommand("admin:list"));
 
-        String httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        String eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
 
         //Test feature sync - install
         System.err.println(executeCommand("features:install eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
 
         //Test feature sync - uninstall
         System.err.println(executeCommand("features:uninstall eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install
         System.err.println(executeCommand("cluster:features-install default eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
 
         //Test feature command - uninstall
         System.err.println(executeCommand("cluster:features-uninstall default eventadmin"));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(UNINSTALLED));
+        eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install - before a node joins
         System.err.println(executeCommand("cluster:features-install testgroup eventadmin"));
         System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
         Thread.sleep(5000);
-        httpFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
-        System.err.println(httpFeatureStatus);
-        assertTrue(httpFeatureStatus.startsWith(INSTALLED));
+        eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
+        System.err.println(eventadminFeatureStatus);
+        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
 
         Node localNode = clusterManager.getNode();
-        Set<Node> nodes =clusterManager.listNodes();
+        Set<Node> nodes = clusterManager.listNodes();
         System.err.println(executeCommand("cluster:nodes-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
     }
@@ -108,7 +108,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR)};
     }
 
 }

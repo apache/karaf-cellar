@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.config;
 
-
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;

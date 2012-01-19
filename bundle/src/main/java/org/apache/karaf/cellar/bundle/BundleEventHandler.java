@@ -11,7 +11,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.Configurations;
@@ -30,18 +29,19 @@ import java.util.Map;
 
 public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
 
-	private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
 
-	public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
 
-	private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
+    private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     private Node node;
 
-	/**
-	 * Handles remote bundle events.
-	 * @param event
-	 */
-	public void handle(RemoteBundleEvent event) {
+    /**
+     * Handles remote bundle events.
+     *
+     * @param event
+     */
+    public void handle(RemoteBundleEvent event) {
 
         if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
             return;
@@ -52,39 +52,39 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 
         Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-		try {
-             //Check if the pid is marked as local.
+        try {
+            //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
-				BundleState state = new BundleState();
-				state.setLocation(event.getLocation());
-				state.setStatus(event.getType());
+                BundleState state = new BundleState();
+                state.setLocation(event.getLocation());
+                state.setStatus(event.getType());
 
-				if(event.getType() == BundleEvent.INSTALLED) {
-					installBundleFromLocation(event.getLocation());
-					bundleTable.put(event.getId(),state);
+                if (event.getType() == BundleEvent.INSTALLED) {
+                    installBundleFromLocation(event.getLocation());
+                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
-				} else if(event.getType() == BundleEvent.UNINSTALLED) {
-					uninstallBundle(event.getSymbolicName(), event.getVersion());
-					bundleTable.remove(event.getId());
+                } else if (event.getType() == BundleEvent.UNINSTALLED) {
+                    uninstallBundle(event.getSymbolicName(), event.getVersion());
+                    bundleTable.remove(event.getId());
                     LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
-				} else if(event.getType() == BundleEvent.STARTED) {
-					startBundle(event.getSymbolicName(),event.getVersion());
-					bundleTable.put(event.getId(),state);
+                } else if (event.getType() == BundleEvent.STARTED) {
+                    startBundle(event.getSymbolicName(), event.getVersion());
+                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
-				} else if(event.getType() == BundleEvent.STOPPED) {
-					stopBundle(event.getSymbolicName(), event.getVersion());
-					state.setStatus(BundleEvent.INSTALLED);
-					bundleTable.put(event.getId(),state);
+                } else if (event.getType() == BundleEvent.STOPPED) {
+                    stopBundle(event.getSymbolicName(), event.getVersion());
+                    state.setStatus(BundleEvent.INSTALLED);
+                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: stopping {}/{}", event.getSymbolicName(), event.getVersion());
-				} else if(event.getType() == BundleEvent.UPDATED) {
-					updateBundle(event.getSymbolicName(), event.getVersion());
+                } else if (event.getType() == BundleEvent.UPDATED) {
+                    updateBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: updating {}/{}", event.getSymbolicName(), event.getVersion());
-				}
-			} else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getSymbolicName());
-		} catch (BundleException e) {
-			LOGGER.error("CELLAR BUNDLE: failed to install bundle {}/{}.", new Object[]{ event.getSymbolicName(), event.getVersion() }, e);
-		}
-	}
+                }
+            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getSymbolicName());
+        } catch (BundleException e) {
+            LOGGER.error("CELLAR BUNDLE: failed to install bundle {}/{}.", new Object[]{event.getSymbolicName(), event.getVersion()}, e);
+        }
+    }
 
     /**
      * Initialization Method.

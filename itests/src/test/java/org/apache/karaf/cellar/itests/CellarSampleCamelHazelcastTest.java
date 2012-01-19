@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.itests;
 
 import java.util.Set;
+
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
@@ -60,8 +61,8 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         String node1 = getNodeIdOfChild("child1");
         String node2 = getNodeIdOfChild("child2");
 
-        System.err.println("Child1:"+node1);
-        System.err.println("Child2:"+node2);
+        System.err.println("Child1:" + node1);
+        System.err.println("Child2:" + node2);
 
         System.err.println(executeCommand("cluster:group-set producer-grp " + localNode.getId()));
         System.err.println(executeCommand("cluster:group-set consumer-grp " + node1));
@@ -87,8 +88,8 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
     }
 
     public int countOutputEntires(String output) {
-      String[] lines = output.split("\n");
-      return lines.length;
+        String[] lines = output.split("\n");
+        return lines.length;
     }
 
     @After
@@ -105,7 +106,7 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR)};
     }
 
 }

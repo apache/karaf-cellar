@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.itests;
 
 import java.util.Set;
+
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
@@ -86,15 +87,15 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:list-services"));
         greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
-        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node1));
-        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node2));
+        assertEquals("Expected 5 greets", 5, countGreetsFromNode(greetOutput, node1));
+        assertEquals("Expected 5 greets", 5, countGreetsFromNode(greetOutput, node2));
     }
 
     public int countGreetsFromNode(String output, String nodeId) {
-      int count = 0;
-      String[] greets = output.split("\n");
-        for(String greet:greets) {
-            if(greet.contains(nodeId)) {
+        int count = 0;
+        String[] greets = output.split("\n");
+        for (String greet : greets) {
+            if (greet.contains(nodeId)) {
                 count++;
             }
         }
@@ -115,7 +116,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR)};
     }
 
 }

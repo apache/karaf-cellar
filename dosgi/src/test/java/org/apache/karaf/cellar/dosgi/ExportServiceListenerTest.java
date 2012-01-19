@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.dosgi;
 
 import org.junit.After;
@@ -23,13 +22,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * @author: iocanel
- */
 public class ExportServiceListenerTest {
 
     private ExportServiceListener listener = new ExportServiceListener();
-
 
     @Before
     public void setUp() throws Exception {
@@ -60,4 +55,5 @@ public class ExportServiceListenerTest {
         Assert.assertTrue(result.contains("java.util.List"));
         Assert.assertTrue(result.contains("java.io.Serializable"));
     }
+
 }

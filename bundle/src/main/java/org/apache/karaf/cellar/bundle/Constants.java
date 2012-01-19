@@ -11,14 +11,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.apache.karaf.cellar.bundle;
 
 public class Constants {
 
     public static final String CATEGORY = "bundle";
-	public static final String BUNDLE_MAP = "org.apache.karaf.cellar.bundle.map";
+    public static final String BUNDLE_MAP = "org.apache.karaf.cellar.bundle.map";
 
-    private Constants(){}
+    private Constants() {
+    }
 
 }
