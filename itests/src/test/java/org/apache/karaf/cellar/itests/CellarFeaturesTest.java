@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.itests;
 
 import java.util.Set;
+
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
@@ -83,7 +84,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         //Test feature command - install - before a node joins
         System.err.println(executeCommand("cluster:features-install testgroup eventadmin"));
-        System.err.println(executeCommand("cluster:group-set testgroup "+getNodeIdOfChild("child1")));
+        System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
         Thread.sleep(5000);
         eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeaturesStatus);
@@ -91,7 +92,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
 
         Node localNode = clusterManager.getNode();
-        Set<Node> nodes =clusterManager.listNodes();
+        Set<Node> nodes = clusterManager.listNodes();
         System.err.println(executeCommand("cluster:nodes-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
     }
@@ -109,7 +110,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
     @Configuration
     public Option[] config() {
         return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(),logLevel(LogLevelOption.LogLevel.ERROR)};
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR)};
     }
 
 }

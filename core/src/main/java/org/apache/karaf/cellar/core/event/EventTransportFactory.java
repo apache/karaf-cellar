@@ -11,19 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
-import org.apache.karaf.cellar.core.event.EventConsumer;
-import org.apache.karaf.cellar.core.event.EventProducer;
-
-/**
- * @author: iocanel
- */
 public interface EventTransportFactory {
 
     /**
      * Returns an Event Producer that produces {@link Event}s for a specific {@link org.apache.karaf.cellar.core.Group}.
+     *
      * @param name
      * @param pubsub
      * @return
@@ -32,6 +26,7 @@ public interface EventTransportFactory {
 
     /**
      * Returns an Event Consumer that consumes {@link Event}s for a specific {@link org.apache.karaf.cellar.core.Group}.
+     *
      * @param name
      * @param pubsub
      * @return
