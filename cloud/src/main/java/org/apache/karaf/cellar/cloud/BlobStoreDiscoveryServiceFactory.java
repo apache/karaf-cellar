@@ -40,11 +40,6 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
     private final BundleContext bundleContext;
 
-    /**
-     * Constructor
-     *
-     * @param bundleContext
-     */
     public BlobStoreDiscoveryServiceFactory(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }

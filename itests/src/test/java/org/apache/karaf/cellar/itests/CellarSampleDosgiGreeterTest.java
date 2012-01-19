@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.itests;
 
 import java.util.Set;
+
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
@@ -38,8 +39,8 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
 public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
 
-    private static final String UNINSTALLED="[uninstalled]";
-    private static final String INSTALLED="[installed  ]";
+    private static final String UNINSTALLED = "[uninstalled]";
+    private static final String INSTALLED = "[installed  ]";
 
     @Test
     public void testDosgiGreeter() throws InterruptedException {
@@ -64,14 +65,14 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         String node1 = getNodeIdOfChild("child1");
         String node2 = getNodeIdOfChild("child2");
 
-        System.err.println("Child1:"+node1);
-        System.err.println("Child2:"+node2);
+        System.err.println("Child1:" + node1);
+        System.err.println("Child2:" + node2);
 
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("cluster:group-set client-grp "+localNode.getId()));
-        System.err.println(executeCommand("cluster:group-set service-grp "+node1));
+        System.err.println(executeCommand("cluster:group-set client-grp " + localNode.getId()));
+        System.err.println(executeCommand("cluster:group-set service-grp " + node1));
         System.err.println(executeCommand("cluster:group-list"));
-        
+
         System.err.println(executeCommand("cluster:features-install client-grp greeter-client"));
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:features-install service-grp greeter-service"));
@@ -80,7 +81,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         String greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
         assertEquals("Expected 10 greets", 10, countGreetsFromNode(greetOutput, node1));
-        System.err.println(executeCommand("cluster:group-set service-grp "+node2));
+        System.err.println(executeCommand("cluster:group-set service-grp " + node2));
         Thread.sleep(10000);
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:group-list"));
@@ -88,15 +89,15 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:list-services"));
         greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);
-        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node1));
-        assertEquals("Expected 5 greets",5, countGreetsFromNode(greetOutput, node2));
+        assertEquals("Expected 5 greets", 5, countGreetsFromNode(greetOutput, node1));
+        assertEquals("Expected 5 greets", 5, countGreetsFromNode(greetOutput, node2));
     }
 
     public int countGreetsFromNode(String output, String nodeId) {
-      int count = 0;
-      String[] greets = output.split("\n");
-        for(String greet:greets) {
-            if(greet.contains(nodeId)) {
+        int count = 0;
+        String[] greets = output.split("\n");
+        for (String greet : greets) {
+            if (greet.contains(nodeId)) {
                 count++;
             }
         }

@@ -61,7 +61,7 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
 
         System.err.println("Child1:" + node1);
         System.err.println("Child2:" + node2);
-        
+
         System.err.println(executeCommand("cluster:group-set producer-grp " + localNode.getId()));
         System.err.println(executeCommand("cluster:group-set consumer-grp " + node1));
         System.err.println(executeCommand("cluster:group-set consumer-grp " + node2));

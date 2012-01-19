@@ -25,126 +25,132 @@ import java.util.Properties;
 
 public class BundleSupport extends CellarSupport {
 
-	protected BundleContext bundleContext;
-
-	/**
-	 * Reads a {@code Dictionary} object and creates a property object out of it.
-	 *
-	 * @param dictionary
-	 * @return
-	 */
-	public Properties dictionaryToProperties(Dictionary dictionary) {
-		Properties properties = new Properties();
-		if (dictionary != null && dictionary.keys() != null) {
-
-			Enumeration keys = dictionary.keys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
-				if (key != null && dictionary.get(key) != null) {
-					properties.put(key, dictionary.get(key));
-				}
-			}
-		}
-		return properties;
-	}
-
-	/**
-	 * Installs a bundle using its location.
-	 */
-	public void installBundleFromLocation(String location) throws BundleException {
-	   getBundleContext().installBundle(location);
-	}
-
-	/**
-	 * Uninstalls a bundle using its Symbolic name and version.
-	 * @param symbolicName
-	 * @param version
-	 * @throws BundleException
-	 */
-	public void uninstallBundle(String symbolicName, String version) throws BundleException {
-	   Bundle[] bundles = getBundleContext().getBundles();
-	   if(bundles != null) {
-		   for(Bundle bundle:bundles) {
-			   if(bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
-				   bundle.uninstall();
-			   }
-		   }
-	   }
-	}
+    protected BundleContext bundleContext;
 
     /**
-	 * Starts a bundle using its Symbolic name and version.
-	 * @param symbolicName
-	 * @param version
-	 * @throws BundleException
-	 */
-	public void startBundle(String symbolicName, String version) throws BundleException {
-	   Bundle[] bundles = getBundleContext().getBundles();
-	   if(bundles != null) {
-		   for(Bundle bundle:bundles) {
-			   if(bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
-				   bundle.start();
-			   }
-		   }
-	   }
-	}
+     * Reads a {@code Dictionary} object and creates a property object out of it.
+     *
+     * @param dictionary
+     * @return
+     */
+    public Properties dictionaryToProperties(Dictionary dictionary) {
+        Properties properties = new Properties();
+        if (dictionary != null && dictionary.keys() != null) {
 
-	/**
-	 * Stops a bundle using its Symbolic name and version.
-	 * @param symbolicName
-	 * @param version
-	 * @throws BundleException
-	 */
-	public void stopBundle(String symbolicName, String version) throws BundleException {
-	   Bundle[] bundles = getBundleContext().getBundles();
-	   if(bundles != null) {
-		   for(Bundle bundle:bundles) {
-			   if(bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
-				   bundle.stop();
-			   }
-		   }
-	   }
-	}
+            Enumeration keys = dictionary.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                if (key != null && dictionary.get(key) != null) {
+                    properties.put(key, dictionary.get(key));
+                }
+            }
+        }
+        return properties;
+    }
 
-	/**
-	 * Updates a bundle using its Symbolic name and version.
-	 * @param symbolicName
-	 * @param version
-	 * @throws BundleException
-	 */
-	public void updateBundle(String symbolicName, String version) throws BundleException {
-	   Bundle[] bundles = getBundleContext().getBundles();
-	   if(bundles != null) {
-		   for(Bundle bundle:bundles) {
-			   if(bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
-				   bundle.update();
-			   }
-		   }
-	   }
-	}
+    /**
+     * Installs a bundle using its location.
+     */
+    public void installBundleFromLocation(String location) throws BundleException {
+        getBundleContext().installBundle(location);
+    }
 
-	/**
-	 * Returns the {@link BundleContext}.
-	 * @return
-	 */
-	public BundleContext getBundleContext() {
-		return this.bundleContext;
-	}
+    /**
+     * Uninstalls a bundle using its Symbolic name and version.
+     *
+     * @param symbolicName
+     * @param version
+     * @throws BundleException
+     */
+    public void uninstallBundle(String symbolicName, String version) throws BundleException {
+        Bundle[] bundles = getBundleContext().getBundles();
+        if (bundles != null) {
+            for (Bundle bundle : bundles) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                    bundle.uninstall();
+                }
+            }
+        }
+    }
 
-	/**
-	 * Sets the {@link BundleContext}.
-	 * @param bundleContext
-	 */
-	public void setBundleContext(BundleContext bundleContext) {
-		this.bundleContext = bundleContext;
-	}
+    /**
+     * Starts a bundle using its Symbolic name and version.
+     *
+     * @param symbolicName
+     * @param version
+     * @throws BundleException
+     */
+    public void startBundle(String symbolicName, String version) throws BundleException {
+        Bundle[] bundles = getBundleContext().getBundles();
+        if (bundles != null) {
+            for (Bundle bundle : bundles) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                    bundle.start();
+                }
+            }
+        }
+    }
 
-	public ConfigurationAdmin getConfigurationAdmin() {
-		return configurationAdmin;
-	}
+    /**
+     * Stops a bundle using its Symbolic name and version.
+     *
+     * @param symbolicName
+     * @param version
+     * @throws BundleException
+     */
+    public void stopBundle(String symbolicName, String version) throws BundleException {
+        Bundle[] bundles = getBundleContext().getBundles();
+        if (bundles != null) {
+            for (Bundle bundle : bundles) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                    bundle.stop();
+                }
+            }
+        }
+    }
 
-	public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
-		this.configurationAdmin = configurationAdmin;
-	}
+    /**
+     * Updates a bundle using its Symbolic name and version.
+     *
+     * @param symbolicName
+     * @param version
+     * @throws BundleException
+     */
+    public void updateBundle(String symbolicName, String version) throws BundleException {
+        Bundle[] bundles = getBundleContext().getBundles();
+        if (bundles != null) {
+            for (Bundle bundle : bundles) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                    bundle.update();
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the {@link BundleContext}.
+     *
+     * @return
+     */
+    public BundleContext getBundleContext() {
+        return this.bundleContext;
+    }
+
+    /**
+     * Sets the {@link BundleContext}.
+     *
+     * @param bundleContext
+     */
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
+    }
 
 }

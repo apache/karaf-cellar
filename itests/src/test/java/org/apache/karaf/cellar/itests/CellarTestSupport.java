@@ -32,6 +32,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
+
 import EDU.oswego.cs.dl.util.concurrent.Sync;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
@@ -63,7 +64,7 @@ public class CellarTestSupport {
     static final String INSTANCE_STARTED = "Started";
     static final String INSTANCE_STARTING = "Starting";
 
-    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features","2.2.3-SNAPSHOT");
+    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "2.2.3-SNAPSHOT");
 
     static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
 
@@ -86,9 +87,10 @@ public class CellarTestSupport {
     /**
      * This method configures Hazelcast TcpIp discovery for a given number of memebers.
      * This configuration is required, when working with karaf instances.
+     *
      * @param members
      */
-    protected void configureLocalDiscovery (int members) {
+    protected void configureLocalDiscovery(int members) {
         StringBuilder membersBuilder = new StringBuilder();
         membersBuilder.append("config:propset tcpIpMembers ");
         membersBuilder.append("localhost:5701");
@@ -100,7 +102,7 @@ public class CellarTestSupport {
         String propsetCmd = membersBuilder.toString();
         String updateCmd = "config:update";
 
-        executeCommands(editCmd,propsetCmd,updateCmd);
+        executeCommands(editCmd, propsetCmd, updateCmd);
     }
 
     /**
@@ -127,10 +129,10 @@ public class CellarTestSupport {
     protected void createCellarChild(String name, boolean debug, int port) {
         int instances = 0;
         String createCommad = "admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar ";
-        if(debug && port > 0) {
-            createCommad = createCommad + String.format(DEBUG_OPTS,port);
+        if (debug && port > 0) {
+            createCommad = createCommad + String.format(DEBUG_OPTS, port);
         }
-        System.err.println(executeCommand(createCommad+" "+name));
+        System.err.println(executeCommand(createCommad + " " + name));
         System.err.println(executeCommand("admin:start " + name));
 
         //Wait till the node is listed as Starting
@@ -146,7 +148,7 @@ public class CellarTestSupport {
             }
         }
 
-        if(instances > 0) {
+        if (instances > 0) {
             System.err.println(".Started!");
         } else {
             System.err.println(".Timed Out!");
@@ -164,15 +166,16 @@ public class CellarTestSupport {
 
     /**
      * Returns the node id of a specific child instance.
+     *
      * @param name
      * @return
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name+" cluster:nodes-list | grep \\\\*",COMMAND_TIMEOUT,true);
+        String nodesList = executeCommand("admin:connect " + name + " cluster:nodes-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
-        if(tokens != null && tokens.length > 0) {
-            nodeId = tokens[tokens.length - 1].trim().replaceAll("\n","");
+        if (tokens != null && tokens.length > 0) {
+            nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");
         }
         return nodeId;
     }
@@ -191,16 +194,18 @@ public class CellarTestSupport {
     /**
      * Executes a shell command and returns output as a String.
      * Commands have a default timeout of 10 seconds.
+     *
      * @param command
      * @return
      */
     protected String executeCommand(final String command) {
-       return executeCommand(command,COMMAND_TIMEOUT,false);
+        return executeCommand(command, COMMAND_TIMEOUT, false);
     }
 
-     /**
+    /**
      * Executes a shell command and returns output as a String.
      * Commands have a default timeout of 10 seconds.
+     *
      * @param command The command to execute.
      * @param timeout The amount of time in millis to wait for the command to execute.
      * @param silent  Specifies if the command should be displayed in the screen.
@@ -230,7 +235,7 @@ public class CellarTestSupport {
 
         try {
             executor.submit(commandFuture);
-            response =  commandFuture.get(timeout, TimeUnit.MILLISECONDS);
+            response = commandFuture.get(timeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace(System.err);
             response = "SHELL COMMAND TIMED OUT: ";
@@ -242,10 +247,11 @@ public class CellarTestSupport {
     /**
      * Executes multiple commands inside a Single Session.
      * Commands have a default timeout of 10 seconds.
+     *
      * @param commands
      * @return
      */
-    protected String executeCommands(final String ...commands) {
+    protected String executeCommands(final String... commands) {
         String response;
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final PrintStream printStream = new PrintStream(byteArrayOutputStream);
@@ -255,9 +261,9 @@ public class CellarTestSupport {
                 new Callable<String>() {
                     public String call() {
                         try {
-                            for(String command:commands) {
-                             System.err.println(command);
-                             commandSession.execute(command);
+                            for (String command : commands) {
+                                System.err.println(command);
+                                commandSession.execute(command);
                             }
                         } catch (Exception e) {
                             e.printStackTrace(System.err);
@@ -268,7 +274,7 @@ public class CellarTestSupport {
 
         try {
             executor.submit(commandFuture);
-            response =  commandFuture.get(COMMAND_TIMEOUT, TimeUnit.MILLISECONDS);
+            response = commandFuture.get(COMMAND_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             e.printStackTrace(System.err);
             response = "SHELL COMMAND TIMED OUT: ";
@@ -356,6 +362,7 @@ public class CellarTestSupport {
 
     /**
      * Finds a free port starting from the give port numner.
+     *
      * @return
      */
     protected int getFreePort(int port) {
@@ -367,6 +374,7 @@ public class CellarTestSupport {
 
     /**
      * Returns true if port is available for use.
+     *
      * @param port
      * @return
      */
