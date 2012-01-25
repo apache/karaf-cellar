@@ -44,8 +44,8 @@ public class ConfigurationSupport extends CellarSupport {
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
                 if (key != null && dictionary.get(key) != null) {
-                    String value = (String) dictionary.get(key);
-                    properties.put(key, dictionary.get(key));
+                    String value = String.valueOf(dictionary.get(key));
+                    properties.put(key, value);
                 }
             }
         }
@@ -64,9 +64,9 @@ public class ConfigurationSupport extends CellarSupport {
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             if (key != null && dictionary.get(key) != null) {
-                String value = (String) dictionary.get(key);
+                String value = String.valueOf(dictionary.get(key));
                 value = convertStrings(value, HOME, RELATIVE_HOME);
-                properties.put(key, dictionary.get(key));
+                properties.put(key, value);
             }
         }
         return properties;
@@ -84,9 +84,9 @@ public class ConfigurationSupport extends CellarSupport {
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             if (key != null && dictionary.get(key) != null) {
-                String value = (String) dictionary.get(key);
+                String value = String.valueOf(dictionary.get(key));
                 value = convertStrings(value, RELATIVE_HOME, HOME);
-                properties.put(key, dictionary.get(key));
+                properties.put(key, value);
             }
         }
         return properties;
@@ -113,7 +113,7 @@ public class ConfigurationSupport extends CellarSupport {
             while (enumaration.hasMoreElements()) {
                 String key = (String) enumaration.nextElement();
                 if (!isPropertyFiltered(key)) {
-                    String value = (String) dictionary.get(key);
+                    String value = String.valueOf(dictionary.get(key));
                     result.put(key, value);
                 }
             }
