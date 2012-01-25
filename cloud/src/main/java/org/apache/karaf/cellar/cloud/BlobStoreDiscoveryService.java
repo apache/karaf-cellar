@@ -184,7 +184,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             if (blobStore.blobExists(container, name)) {
                 blob = blobStore.getBlob(container, name);
             } else {
-                blob = blobStore.newBlob(name);
+                blob = blobStore.blobBuilder(name).build();
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
