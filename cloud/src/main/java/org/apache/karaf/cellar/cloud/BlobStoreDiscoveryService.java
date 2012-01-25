@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
+import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -184,7 +185,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             if (blobStore.blobExists(container, name)) {
                 blob = blobStore.getBlob(container, name);
             } else {
-                blob = blobStore.newBlob(name);
+                blob = blobStore.blobBuilder(name).build();
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
