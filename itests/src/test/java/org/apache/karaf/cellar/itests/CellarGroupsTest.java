@@ -48,7 +48,7 @@ public class CellarGroupsTest extends CellarTestSupport {
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);
         assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("cluster:nodes-list"));
+        System.err.println(executeCommand("cluster:node-list"));
         Node localNode = clusterManager.getNode();
         Set<Node> nodes = clusterManager.listNodes();
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());

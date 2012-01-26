@@ -37,7 +37,7 @@ public class CellarInstallationTest extends CellarTestSupport {
         assertNotNull(clusterManager);
         Thread.sleep(20000);
         System.err.println(executeCommand("osgi:list"));
-        System.err.println(executeCommand("cluster:nodes-list"));
+        System.err.println(executeCommand("cluster:node-list"));
     }
 
     @Configuration

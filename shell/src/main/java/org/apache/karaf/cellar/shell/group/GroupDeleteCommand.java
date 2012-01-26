@@ -22,21 +22,12 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Group delete command.
- */
-@Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group")
+@Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group.")
 public class GroupDeleteCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
     String group;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();

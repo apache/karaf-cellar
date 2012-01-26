@@ -21,19 +21,16 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.Arrays;
 import java.util.HashSet;
 
-/**
- * Ping command.
- */
-@Command(scope = "cluster", name = "node-ping", description = "Ping a node in the cluster")
+@Command(scope = "cluster", name = "node-ping", description = "Ping a cluster node.")
 public class NodePingCommand extends ClusterCommandSupport {
 
-    @Argument(index = 0, name = "node", description = "The ID of the node to ping", required = true, multiValued = false)
+    @Argument(index = 0, name = "node", description = "The node ID to ping.", required = true, multiValued = false)
     String nodeId;
 
-    @Argument(index = 1, name = "iterations", description = "The number of iterations to perform", required = false, multiValued = false)
+    @Argument(index = 1, name = "iterations", description = "The number of iterations to perform.", required = false, multiValued = false)
     Integer iterations = 10;
 
-    @Argument(index = 2, name = "interval", description = "The time in millis to wait between iterations", required = false, multiValued = false)
+    @Argument(index = 2, name = "interval", description = "The time in millis to wait between iterations.", required = false, multiValued = false)
     Long interval = 1000L;
 
     @Override

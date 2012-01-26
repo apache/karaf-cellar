@@ -21,16 +21,16 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
 
-@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle from a cluster group")
+@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle assigned to a cluster group.")
 public class UninstallBundleCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "name", description = "The bundle symbolic name", required = true, multiValued = false)
+    @Argument(index = 1, name = "name", description = "The bundle symbolic name.", required = true, multiValued = false)
     String name;
 
-    @Argument(index = 2, name = "version", description = "The bundle version", required = true, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The bundle version.", required = true, multiValued = false)
     String version;
     
     @Override

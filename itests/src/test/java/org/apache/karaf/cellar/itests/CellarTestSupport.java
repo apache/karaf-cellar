@@ -172,7 +172,7 @@ public class CellarTestSupport {
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name + " cluster:nodes-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
         if (tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");

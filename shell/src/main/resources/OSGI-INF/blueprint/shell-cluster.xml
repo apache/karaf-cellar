@@ -17,7 +17,7 @@
 
     <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/nodes-list">
+        <command name="cluster/node-list">
             <action class="org.apache.karaf.cellar.shell.NodesListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
             </action>

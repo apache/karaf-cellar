@@ -23,19 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Abstract consumer command support.
- */
 public abstract class ConsumerSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %s";
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     protected Object doExecute(List<String> nodes, SwitchStatus status) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);

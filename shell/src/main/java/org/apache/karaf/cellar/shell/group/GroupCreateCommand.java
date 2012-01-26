@@ -16,21 +16,12 @@ package org.apache.karaf.cellar.shell.group;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-/**
- * Group create command.
- */
-@Command(scope = "cluster", name = "group-create", description = "Create a cluster group")
+@Command(scope = "cluster", name = "group-create", description = "Create a cluster group.")
 public class GroupCreateCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
     String group;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return groupManager.createGroup(group);
