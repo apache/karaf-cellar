@@ -49,6 +49,12 @@
         <property name="executionContext" ref="executionContext"/>
         <property name="groupManager" ref="groupManager"/>
     </bean>
+    
+    <bean id="cellarBundleMBean" class="org.apache.karaf.cellar.management.internal.CellarBundleMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="eventTransportFactory" ref="eventTransportFactory"/>
+        <property name="groupManager" ref="groupManager"/>
+    </bean>
 
     <bean id="mbeanRegister" class="org.apache.karaf.management.MBeanRegistrer">
         <property name="mbeans">
@@ -57,6 +63,7 @@
                 <entry value="org.apache.karaf.cellar:type=node,name=${karaf.name}" key-ref="cellarNodeMBean"/>
                 <entry value="org.apache.karaf.cellar:type=config,name=${karaf.name}" key-ref="cellarConfigMBean"/>
                 <entry value="org.apache.karaf.cellar:type=features,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
+                <entry value="org.apache.karaf.cellar:type=bundle,name=${karaf.name}" key-ref="cellarBundleMBean"/>
                 <entry value="org.apache.karaf.cellar:type=group,name=${karaf.name}" key-ref="cellarGroupMBean"/>
             </map>
         </property>
