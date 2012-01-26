@@ -66,6 +66,7 @@
     * [KARAF-949] - Upgrade Cellar to use Jclouds 1.1.1
     * [KARAF-1011] - Cellar Hazlecast should not use SpringDM
     * [KARAF-1012] - Upgrade cellar to use jclouds 1.2.1
+    * [KARAF-1171] - Consolidate Cellar shell commands naming
 
 ** New Feature
     * [KARAF-823] - Add DOSGi support for Cellar
