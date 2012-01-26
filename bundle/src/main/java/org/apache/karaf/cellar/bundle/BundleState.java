@@ -21,7 +21,6 @@ public class BundleState implements Serializable {
 
     private String location;
     private int status;
-    private byte[] data;
 
     public String getLocation() {
         return location;
@@ -37,14 +36,6 @@ public class BundleState implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data.clone();
     }
 
 }

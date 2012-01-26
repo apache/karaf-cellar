@@ -40,6 +40,13 @@ public class InstallBundleCommand extends CellarCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " does't exist");
+            return null;
+        }
+        
         // get the name and version in the location MANIFEST
         JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
         Manifest manifest = jarInputStream.getManifest();
@@ -54,8 +61,7 @@ public class InstallBundleCommand extends CellarCommandSupport {
         state.setStatus(BundleEvent.INSTALLED);
         bundles.put(name + "/" + version, state);
         
-        // send the event
-        Group group = groupManager.findGroupByName(groupName);
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
         event.setForce(true);

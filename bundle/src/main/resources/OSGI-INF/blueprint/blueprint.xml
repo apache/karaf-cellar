@@ -47,6 +47,7 @@
             <entry key="managed" value="true"/>
          </service-properties>
     </service>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>

@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class LocalBundleListener extends BundleSupport implements BundleListener {
@@ -59,6 +61,18 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                             RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
                             remoteBundleEvent.setSourceGroup(group);
                             remoteBundleEvent.setSourceNode(node);
+                            
+                            // update the cluster map
+                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                            BundleState state = bundles.get(symbolicName + "/" + version);
+                            if (state == null) {
+                                state = new BundleState();
+                            }
+                            state.setStatus(event.getBundle().getState());
+                            state.setLocation(event.getBundle().getLocation());
+                            bundles.put(symbolicName + "/" + version, state);
+
+                            // broadcast the event
                             if (producerList != null && !producerList.isEmpty()) {
                                 for (EventProducer producer : producerList) {
                                     producer.produce(remoteBundleEvent);

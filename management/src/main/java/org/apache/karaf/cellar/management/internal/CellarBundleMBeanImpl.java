@@ -37,7 +37,7 @@ import java.util.jar.Manifest;
  * Implementation of the Cellar bundle MBean.
  */
 public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundleMBean {
-    
+
     private ClusterManager clusterManager;
     private EventTransportFactory eventTransportFactory;
     private GroupManager groupManager;
@@ -45,7 +45,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     public CellarBundleMBeanImpl() throws NotCompliantMBeanException {
         super(CellarBundleMBean.class);
     }
-    
+
     public ClusterManager getClusterManager() {
         return this.clusterManager;
     }
@@ -65,12 +65,18 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     public GroupManager getGroupManager() {
         return this.groupManager;
     }
-    
+
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
     }
-    
+
     public void install(String groupName, String location) throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
         // get the name and version in the location MANIFEST
         JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
         Manifest manifest = jarInputStream.getManifest();
@@ -85,49 +91,106 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         state.setStatus(BundleEvent.INSTALLED);
         bundles.put(name + "/" + version, state);
 
-        // send the event
-        Group group = groupManager.findGroupByName(groupName);
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
     }
-    
+
     public void uninstall(String groupName, String symbolicName, String version) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
+
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // update the cluster map
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            bundles.remove(symbolicName + "/" + version);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.UNINSTALLED);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);        
+        producer.produce(event);
     }
-    
+
     public void start(String groupName, String symbolicName, String version) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
+
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // update the cluster map
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = bundles.get(symbolicName + "/" + version);
+            if (state == null) {
+                throw new IllegalStateException("Bundle " + symbolicName + "/" + version + " not found in cluster group " + groupName);
+            }
+            state.setStatus(BundleEvent.STARTED);
+            bundles.put(symbolicName + "/" + version, state);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.STARTED);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);        
+        producer.produce(event);
     }
-    
+
     public void stop(String groupName, String symbolicName, String version) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
+
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // update the cluster map
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = bundles.get(symbolicName + "/" + version);
+            if (state == null) {
+                throw new IllegalStateException("Bundle " + symbolicName + "/" + version + " not found in cluster group " + groupName);
+            }
+            state.setStatus(BundleEvent.STOPPED);
+            bundles.put(symbolicName + "/" + version, state);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.STOPPED);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);        
+        producer.produce(event);
     }
-    
+
     public TabularData getBundles(String groupName) throws Exception {
         CompositeType compositeType = new CompositeType("Bundle", "Karaf Cellar bundle",
-                new String[]{ "name", "version", "status", "location"},
-                new String[]{ "Name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle"},
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
+                new String[]{"name", "version", "status", "location"},
+                new String[]{"Name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
         TabularType tableType = new TabularType("Bundles", "Table of all KarafCellar bundles", compositeType,
-                new String[]{ "name", "version" });
+                new String[]{"name", "version"});
         TabularData table = new TabularDataSupport(tableType);
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -140,14 +203,14 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String version = tokens[1];
                 BundleState state = bundles.get(bundle);
                 CompositeData data = new CompositeDataSupport(compositeType,
-                        new String[]{ "name", "version", "status", "location"},
-                        new Object[]{ name, version, state.getStatus(), state.getLocation()});
+                        new String[]{"name", "version", "status", "location"},
+                        new Object[]{name, version, state.getStatus(), state.getLocation()});
                 table.put(data);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-        
+
         return table;
     }
 

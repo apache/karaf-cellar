@@ -84,9 +84,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             try {
                                 if (state.getStatus() == BundleEvent.INSTALLED) {
                                     installBundleFromLocation(state.getLocation());
-                                    startBundle(symbolicName, version);
                                 } else if (state.getStatus() == BundleEvent.STARTED) {
                                     installBundleFromLocation(state.getLocation());
+                                    startBundle(symbolicName, version);
                                 }
                             } catch (BundleException e) {
                                 LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
@@ -128,9 +128,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     RemoteBundleEvent event = null;
                     if (existingState == null) {
                         event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
-                    } else if (bundleState.getStatus() == BundleEvent.STARTED) {
-                        event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
+                        // update the cluster map
+                        bundleTable.put(id, bundleState);
                     }
+
+                    // broadcast the event
                     if (producerList != null && !producerList.isEmpty() && event != null) {
                         for (EventProducer producer : producerList) {
                             producer.produce(event);
