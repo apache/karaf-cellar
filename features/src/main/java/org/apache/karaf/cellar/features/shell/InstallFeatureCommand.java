@@ -20,19 +20,16 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.features.FeatureEvent;
 
-/**
- * Install feature command.
- */
-@Command(scope = "cluster", name = "features-install", description = "Installs a feature to the cluster group")
+@Command(scope = "cluster", name = "feature-install", description = "Install a feature assigned to a cluster group.")
 public class InstallFeatureCommand extends FeatureCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "feature", description = "The name of the feature", required = true, multiValued = false)
+    @Argument(index = 1, name = "feature", description = "The feature name.", required = true, multiValued = false)
     String feature;
 
-    @Argument(index = 2, name = "version", description = "The version of the feature", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The feature version.", required = false, multiValued = false)
     String version;
 
     @Override

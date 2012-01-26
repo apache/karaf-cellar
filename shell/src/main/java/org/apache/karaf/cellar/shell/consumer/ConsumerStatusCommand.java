@@ -18,21 +18,12 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-/**
- * Consumer status command.
- */
-@Command(scope = "cluster", name = "consumer-status", description = "Status of an event consumer")
+@Command(scope = "cluster", name = "consumer-status", description = "Status of an event consumer.")
 public class ConsumerStatusCommand extends ConsumerSupport {
 
-    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return doExecute(nodes, null);

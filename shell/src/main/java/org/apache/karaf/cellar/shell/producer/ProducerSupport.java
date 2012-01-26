@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Producer command support.
- */
 public abstract class ProducerSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %s";

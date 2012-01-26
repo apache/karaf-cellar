@@ -23,12 +23,12 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-list", description = "List the bundles that are assigned to a cluster group")
+@Command(scope = "cluster", name = "bundle-list", description = "List the bundles assigned to a cluster group.")
 public class ListBundleCommand extends CellarCommandSupport {
     
     protected static final String OUTPUT_FORMAT = "%-50s %-20s %-15s %-20s";
 
-    @Argument(index = 0, name = "group", description = "The name of the cluster group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
     
     @Override

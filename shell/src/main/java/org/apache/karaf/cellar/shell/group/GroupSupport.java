@@ -25,9 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Group command support.
- */
 public abstract class GroupSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%1s %-20s %s";

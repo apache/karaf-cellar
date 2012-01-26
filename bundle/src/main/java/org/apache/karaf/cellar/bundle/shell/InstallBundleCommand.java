@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-@Command(scope = "cluster", name = "bundle-install", description = "Install a bundle to a cluster group")
+@Command(scope = "cluster", name = "bundle-install", description = "Install a bundle assigned to a cluster group.")
 public class InstallBundleCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
     
-    @Argument(index = 1, name = "location", description = "The bundle location", required = true, multiValued = false)
+    @Argument(index = 1, name = "location", description = "The bundle location.", required = true, multiValued = false)
     String location;
 
     @Override

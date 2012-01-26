@@ -21,15 +21,12 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.Map;
 
-/**
- * List group features command.
- */
-@Command(scope = "cluster", name = "features-list", description = "List the features that are assigned to a cluster group")
+@Command(scope = "cluster", name = "feature-list", description = "List the features assigned to a cluster group.")
 public class ListGroupFeatures extends FeatureCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %20s %-4s ";
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
     @Override
@@ -40,7 +37,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
 
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             if (features != null && !features.isEmpty()) {
-                System.out.println(String.format("Features for group:" + groupName));
+                System.out.println(String.format("Features for group: " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "Name", "Version", "Status"));
                 for (FeatureInfo info : features.keySet()) {
                     String name = info.getName();
@@ -50,10 +47,9 @@ public class ListGroupFeatures extends FeatureCommandSupport {
                         version = "";
                     System.out.println(String.format(OUTPUT_FORMAT, name, version, status));
                 }
-            } else System.err.print("No features found for group:" + groupName);
+            } else System.err.print("No features found for group: " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-
         }
         return null;
     }

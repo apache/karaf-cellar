@@ -13,31 +13,20 @@
  */
 package org.apache.karaf.cellar.shell.handler;
 
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-/**
- * Handlers status command.
- */
-@Command(scope = "cluster", name = "handler-status", description = "Status of an event handlers")
+@Command(scope = "cluster", name = "handler-status", description = "Status of an event handler.")
 public class HandlersStatusCommand extends HandlersSupport {
 
-    @Argument(index = 0, name = "handler-start", description = "The ID of the event handler", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler", description = "The event handler ID.", required = false, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return doExecute(handler, nodes, null);

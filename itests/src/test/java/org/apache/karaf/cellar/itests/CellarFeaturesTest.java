@@ -69,21 +69,21 @@ public class CellarFeaturesTest extends CellarTestSupport {
         assertTrue(eventadminFeaturesStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install
-        System.err.println(executeCommand("cluster:features-install default eventadmin"));
+        System.err.println(executeCommand("cluster:feature-install default eventadmin"));
         Thread.sleep(5000);
         eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeaturesStatus);
         assertTrue(eventadminFeaturesStatus.startsWith(INSTALLED));
 
         //Test feature command - uninstall
-        System.err.println(executeCommand("cluster:features-uninstall default eventadmin"));
+        System.err.println(executeCommand("cluster:feature-uninstall default eventadmin"));
         Thread.sleep(5000);
         eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeaturesStatus);
         assertTrue(eventadminFeaturesStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install - before a node joins
-        System.err.println(executeCommand("cluster:features-install testgroup eventadmin"));
+        System.err.println(executeCommand("cluster:feature-install testgroup eventadmin"));
         System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
         Thread.sleep(5000);
         eventadminFeaturesStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
@@ -93,7 +93,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         Node localNode = clusterManager.getNode();
         Set<Node> nodes = clusterManager.listNodes();
-        System.err.println(executeCommand("cluster:nodes-list"));
+        System.err.println(executeCommand("cluster:node-list"));
         assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
     }
 
