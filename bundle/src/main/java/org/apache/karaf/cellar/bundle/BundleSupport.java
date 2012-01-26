@@ -51,8 +51,8 @@ public class BundleSupport extends CellarSupport {
     /**
      * Installs a bundle using its location.
      */
-    public Bundle installBundleFromLocation(String location) throws BundleException {
-        return getBundleContext().installBundle(location);
+    public void installBundleFromLocation(String location) throws BundleException {
+        getBundleContext().installBundle(location);
     }
 
     /**
@@ -80,17 +80,15 @@ public class BundleSupport extends CellarSupport {
      * @param version
      * @throws BundleException
      */
-    public Bundle startBundle(String symbolicName, String version) throws BundleException {
+    public void startBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
                 if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
                     bundle.start();
-                    return bundle;
                 }
             }
         }
-        return null;
     }
 
     /**
@@ -100,17 +98,15 @@ public class BundleSupport extends CellarSupport {
      * @param version
      * @throws BundleException
      */
-    public Bundle stopBundle(String symbolicName, String version) throws BundleException {
+    public void stopBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
                 if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
                     bundle.stop();
-                    return bundle;
                 }
             }
         }
-        return null;
     }
 
     /**

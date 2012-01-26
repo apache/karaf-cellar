@@ -15,11 +15,16 @@ package org.apache.karaf.cellar.bundle.shell;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.cellar.bundle.BundleState;
+import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
+
+import java.util.Map;
 
 @Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle assigned to a cluster group.")
 public class UninstallBundleCommand extends CellarCommandSupport {
@@ -32,10 +37,32 @@ public class UninstallBundleCommand extends CellarCommandSupport {
 
     @Argument(index = 2, name = "version", description = "The bundle version.", required = true, multiValued = false)
     String version;
-    
+
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
+
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist");
+            return null;
+        }
+
+        // update the cluster map
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = bundles.get(name + "/" + version);
+            if (state == null) {
+                System.err.println("Bundle " + name + "/" + version + " not found in cluster group " + groupName);
+                return null;
+            }
+            bundles.remove(name + "/" + version);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+
+        // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, null, BundleEvent.UNINSTALLED);
         event.setForce(true);
@@ -44,5 +71,5 @@ public class UninstallBundleCommand extends CellarCommandSupport {
 
         return null;
     }
-    
+
 }
