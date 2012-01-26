@@ -15,6 +15,72 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.2.3
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
+ representing an update to Apache Karaf Cellar 2.2.2. It contains bug fixes
+ identified in the prior release, and introduces new features like bundle cluster 
+ group support.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-669] - Dependency artifacts should be available on the Maven central repo
+    * [KARAF-830] - Cellar features fails to install when obr feature is installed
+    * [KARAF-839] - NPE when pinging Cellar nodes which does not exist.
+    * [KARAF-841] - Cellar shell commands are not available on Equinox
+    * [KARAF-842] - Cellar's hazelcast instance cannot be reused outside cellar
+    * [KARAF-856] - Cellar discovery task can erase preconfigured node IPs
+    * [KARAF-859] - URLs deleted via features:removeurl are coming back on a karaf instance restart (when cellar is also being used)
+    * [KARAF-865] - Fixes For Cellar 2.2.3 Trunk
+    * [KARAF-943] - cluster:features-uninstall raise a NPE
+    * [KARAF-1034] - Cellar feature does not always cleanly uninstall
+    * [KARAF-1076] - Cellar group configuration is not properly read when it contains whitespaces
+    * [KARAF-1083] - Cellar should blacklist pax logging from syncing
+    * [KARAF-1147] - ClassCastException using cellar when update configuration fields.
+
+** Dependency upgrade
+    * [KARAF-862] - Upgrade to Hazelcast 1.9.4
+    * [KARAF-1155] - Upgrade to Apache POM 10
+    * [KARAF-1156] - Upgrade to Hazelcast 1.9.4.6
+    * [KARAF-1170] - Upgrade to jclouds 1.3.1
+
+
+** Improvement
+    * [KARAF-777] - Extend Cellar support range for Karaf version
+    * [KARAF-821] - Error in console when uninstalling cellar feature
+    * [KARAF-825] - Cellar event handler registry should leverage blueprint reference listeners
+    * [KARAF-843] - Cellar's event transport factory should not cache producers and consumers
+    * [KARAF-844] - Fix dynamic imports from Cellar Hazelcast bundle
+    * [KARAF-851] - Upgrade Maven plugins in use
+    * [KARAF-861] - Cellar should support cluster group for bundles
+    * [KARAF-863] - Cellar commands naming consistency
+    * [KARAF-877] - improvements to Cellar OBR support docs
+    * [KARAF-949] - Upgrade Cellar to use Jclouds 1.1.1
+    * [KARAF-1011] - Cellar Hazlecast should not use SpringDM
+    * [KARAF-1012] - Upgrade cellar to use jclouds 1.2.1
+
+** New Feature
+    * [KARAF-823] - Add DOSGi support for Cellar
+    * [KARAF-831] - Add a shell command that will batch move nodes from one cellar group to an other
+    * [KARAF-837] - Add Samples for Cellar project
+    * [KARAF-850] - Cellar should provide full access to hazelcast configuration
+    * [KARAF-857] - Add OBR broadcast in Cellar
+    * [KARAF-1026] - Cellar needs integration tests with pax-exam-karaf
+    * [KARAF-1081] - Cellar should provide a Hazelcast merge policy.
+    * [KARAF-1084] - Provide a cellar sample that demostrates combining cellar with camel hazelcast
+
+** Task
+    * [KARAF-887] - Refer PrinceXML website in the manual
+
+
                     Apache Karaf Cellar 2.2.2
                     =========================
 
@@ -22,7 +88,7 @@
   --------
 
  This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
- representing an update to Apache Karaf Cellar 2.2.1. It contains bug fixes
+ representing an update to Apache Karaf Cellar 2.2.2. It contains bug fixes
  identified in the prior release, and introduces new features like bundle
  replication, JMX MBeans, and clouding support.
 
