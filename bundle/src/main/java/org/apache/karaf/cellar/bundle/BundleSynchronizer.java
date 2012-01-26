@@ -77,7 +77,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 String[] tokens = id.split("/");
                 String symbolicName = tokens[0];
                 String version = tokens[1];
-                if (tokens != null && tokens.length > 2) {
+                if (tokens != null && tokens.length == 2) {
                     if (state != null) {
                         String bundleLocation = state.getLocation();
                         if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {

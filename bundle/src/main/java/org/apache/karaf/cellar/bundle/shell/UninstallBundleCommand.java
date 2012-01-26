@@ -11,41 +11,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.features.shell;
+package org.apache.karaf.cellar.bundle.shell;
 
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.event.EventProducer;
-import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.features.FeatureEvent;
+import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
+import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.osgi.framework.BundleEvent;
 
-/**
- * Install feature command.
- */
-@Command(scope = "cluster", name = "features-install", description = "Installs a feature to the cluster group")
-public class InstallFeatureCommand extends FeatureCommandSupport {
+@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle from a cluster group")
+public class UninstallBundleCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "feature", description = "The name of the feature", required = true, multiValued = false)
-    String feature;
+    @Argument(index = 1, name = "name", description = "The bundle symbolic name", required = true, multiValued = false)
+    String name;
 
-    @Argument(index = 2, name = "version", description = "The version of the feature", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The bundle version", required = true, multiValued = false)
     String version;
-
+    
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
+        RemoteBundleEvent event = new RemoteBundleEvent(name, version, null, BundleEvent.UNINSTALLED);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
 
-        updateFeatureStatus(groupName, feature, version, true);
         return null;
     }
-
+    
 }

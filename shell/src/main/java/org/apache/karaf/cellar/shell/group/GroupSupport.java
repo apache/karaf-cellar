@@ -34,6 +34,7 @@ public abstract class GroupSupport extends ClusterCommandSupport {
 
     /**
      * Executes the command.
+     *
      * @param action
      * @param group
      * @param nodes
@@ -41,19 +42,20 @@ public abstract class GroupSupport extends ClusterCommandSupport {
      * @throws Exception
      */
     protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes) throws Exception {
-     return doExecute(action,group,nodes,true);
+        return doExecute(action, group, nodes, true);
     }
 
     /**
      * Executes the command.
+     *
      * @param action
      * @param group
      * @param nodes
-     * @param supressOutput
+     * @param suppressOutput
      * @return
      * @throws Exception
      */
-    protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes,Boolean supressOutput) throws Exception {
+    protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes, Boolean suppressOutput) throws Exception {
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);
 
@@ -73,28 +75,28 @@ public abstract class GroupSupport extends ClusterCommandSupport {
         }
 
         Map<Node, ManageGroupResult> results = executionContext.execute(command);
-        if(!supressOutput) {
-        if (results == null || results.isEmpty()) {
-            System.out.println("No result received within given timeout");
-        } else {
-            System.out.println(String.format(OUTPUT_FORMAT, " ", "Node", "Group"));
-            for (Node node : results.keySet()) {
-                ManageGroupResult result = results.get(node);
-                if (result != null && result.getGroups() != null) {
-                    for (Group g : result.getGroups()) {
-                        if (g.getNodes() != null && !g.getNodes().isEmpty()) {
-                            for (Node memeber : g.getNodes()) {
-                                String name = g.getName();
-                                String mark = " ";
-                                if (memeber.equals(clusterManager.getNode()))
-                                    mark = "*";
-                                System.out.println(String.format(OUTPUT_FORMAT, mark, memeber.getId(), name));
-                            }
-                        } else System.out.println(String.format(OUTPUT_FORMAT, "", "", g.getName()));
+        if (!suppressOutput) {
+            if (results == null || results.isEmpty()) {
+                System.out.println("No result received within given timeout");
+            } else {
+                System.out.println(String.format(OUTPUT_FORMAT, " ", "Node", "Group"));
+                for (Node node : results.keySet()) {
+                    ManageGroupResult result = results.get(node);
+                    if (result != null && result.getGroups() != null) {
+                        for (Group g : result.getGroups()) {
+                            if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                                for (Node memeber : g.getNodes()) {
+                                    String name = g.getName();
+                                    String mark = " ";
+                                    if (memeber.equals(clusterManager.getNode()))
+                                        mark = "*";
+                                    System.out.println(String.format(OUTPUT_FORMAT, mark, memeber.getId(), name));
+                                }
+                            } else System.out.println(String.format(OUTPUT_FORMAT, "", "", g.getName()));
+                        }
                     }
                 }
             }
-        }
         }
         return null;
     }

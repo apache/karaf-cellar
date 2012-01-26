@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.slf4j.Logger;
@@ -43,11 +44,11 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      */
     public void handle(RemoteBundleEvent event) {
 
-        if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
-            return;
-
         Group group = event.getSourceGroup();
-        String groupName = group.getName();
+        String groupName = "";
+        if (group != null) {
+            groupName = group.getName();
+        }
         String bundleLocation = event.getLocation();
 
         Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
@@ -56,12 +57,15 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
                 BundleState state = new BundleState();
-                state.setLocation(event.getLocation());
                 state.setStatus(event.getType());
 
                 if (event.getType() == BundleEvent.INSTALLED) {
                     LOGGER.debug("CELLAR BUNDLE: installing bundle {} from {}", event.getId(), event.getLocation());
-                    installBundleFromLocation(event.getLocation());
+                    Bundle bundle = installBundleFromLocation(event.getLocation());
+                    state.setLocation(event.getLocation());
+                    event.setSymbolicName(bundle.getSymbolicName());
+                    event.setVersion(bundle.getVersion().toString());
+                    event.setId(bundle.getSymbolicName() + "/" + bundle.getVersion());
                     bundleTable.put(event.getId(), state);
                 } else if (event.getType() == BundleEvent.UNINSTALLED) {
                     LOGGER.debug("CELLAR BUNDLE: un-installing bundle {}/{}", event.getSymbolicName(), event.getVersion());
@@ -69,12 +73,14 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
                     bundleTable.remove(event.getId());
                 } else if (event.getType() == BundleEvent.STARTED) {
                     LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{}", event.getSymbolicName(), event.getVersion());
-                    startBundle(event.getSymbolicName(), event.getVersion());
+                    Bundle bundle = startBundle(event.getSymbolicName(), event.getVersion());
+                    state.setLocation(bundle.getLocation());
                     bundleTable.put(event.getId(), state);
                 } else if (event.getType() == BundleEvent.STOPPED) {
                     LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{}", event.getSymbolicName(), event.getVersion());
-                    stopBundle(event.getSymbolicName(), event.getVersion());
+                    Bundle bundle = stopBundle(event.getSymbolicName(), event.getVersion());
                     state.setStatus(BundleEvent.INSTALLED);
+                    state.setLocation(bundle.getLocation());
                     bundleTable.put(event.getId(), state);
                 } else if (event.getType() == BundleEvent.UPDATED) {
                     LOGGER.debug("CELLAR BUNDLE: updating bundle {}/{}", event.getSymbolicName(), event.getVersion());
