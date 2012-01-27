@@ -67,9 +67,7 @@
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
-	<!-- Exclude the itests only for the release
         <module>itests</module>
-        -->
     </modules>
 
     <scm>
@@ -371,7 +369,7 @@
                         <useReleaseProfile>false</useReleaseProfile>
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
-                        <arguments>-Prelease,deploy,manual</arguments>
+                        <arguments>-DskipTests -Prelease,deploy,manual</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
