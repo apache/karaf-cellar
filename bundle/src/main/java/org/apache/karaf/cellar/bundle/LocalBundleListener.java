@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class LocalBundleListener extends BundleSupport implements BundleListener {
@@ -45,34 +47,43 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                 try {
                     groups = groupManager.listLocalGroups();
                 } catch (Exception ex) {
-                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling?");
+                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling ?");
                 }
 
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
 
                         String symbolicName = event.getBundle().getSymbolicName();
+                        String version = event.getBundle().getVersion().toString();
+                        String bundleLocation = event.getBundle().getLocation();
+                        int type = event.getType();
+                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                            remoteBundleEvent.setSourceGroup(group);
+                            remoteBundleEvent.setSourceNode(node);
+                            
+                            // update the cluster map
+                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                            BundleState state = bundles.get(symbolicName + "/" + version);
+                            if (state == null) {
+                                state = new BundleState();
+                            }
+                            state.setStatus(event.getBundle().getState());
+                            state.setLocation(event.getBundle().getLocation());
+                            bundles.put(symbolicName + "/" + version, state);
 
-                        if (symbolicName != null) {
-                            String version = event.getBundle().getVersion().toString();
-                            String bundleLocation = event.getBundle().getLocation();
-                            int type = event.getType();
-                            if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-                                RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                                remoteBundleEvent.setSourceGroup(group);
-                                remoteBundleEvent.setSourceNode(node);
-                                if (producerList != null && !producerList.isEmpty()) {
-                                    for (EventProducer producer : producerList) {
-                                        producer.produce(remoteBundleEvent);
-                                    }
+                            // broadcast the event
+                            if (producerList != null && !producerList.isEmpty()) {
+                                for (EventProducer producer : producerList) {
+                                    producer.produce(remoteBundleEvent);
                                 }
-                            } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", symbolicName);
-                        } else LOGGER.debug("CELLAR BUNDLE: artifact is not a bundle");
+                            }
+                        } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
                     }
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("CELLAR BUNDLE: error handling bundle {} event", event.getBundle().getSymbolicName(), ex);
+            LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", ex);
         }
     }
 
@@ -83,7 +94,6 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
         if (clusterManager != null) {
             node = clusterManager.getNode();
         }
-        getBundleContext().addBundleListener(this);
     }
 
     /**

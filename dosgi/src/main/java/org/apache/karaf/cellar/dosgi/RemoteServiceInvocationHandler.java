@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Handler for the remote service invocation.
+ * Handler on a remote service invocation.
  */
 public class RemoteServiceInvocationHandler implements InvocationHandler {
 

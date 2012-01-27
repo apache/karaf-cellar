@@ -45,7 +45,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.debug("CELLAR OBR: sync is disabled for group {}", group.getName());
+                } else LOGGER.warn("CELLAR OBR: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -55,7 +55,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     }
 
     /**
-     * Pull the OBR URLS_DISTRIBUTED_SET_NAME from the cluster.
+     * Pull the OBR URL from the cluster.
      *
      * @param group the cluster group.
      */
@@ -69,10 +69,10 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 if (urls != null && !urls.isEmpty()) {
                     for (String url : urls) {
                         try {
-                            LOGGER.debug("CELLAR OBR: adding repository URL {}", url);
                             obrService.addRepository(url);
+                            LOGGER.debug("CELLAR OBR: add OBR repository URL {}", url);
                         } catch (Exception e) {
-                            LOGGER.error("CELLAR OBR: failed to add repository URL {}", url, e);
+                            LOGGER.error("CELLAR OBR: unable to add the OBR repository URL {}", url, e);
                         }
                     }
                 }

@@ -14,10 +14,9 @@
 package org.apache.karaf.cellar.obr;
 
 import org.apache.karaf.cellar.core.event.Event;
-import org.apache.karaf.cellar.core.event.EventType;
 
 /**
- * OBR bundle cluster event.
+ * OBR Bundle cluster event.
  */
 public class ObrBundleEvent extends Event {
 

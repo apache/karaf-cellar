@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -131,7 +130,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
         } else {
-            LOGGER.debug("CELLAR CLOUD: could not find the IP address of the current node in the blob store.");
+            LOGGER.debug("CELLAR CLOUD: unable to find the IP address of the current node in the blob store");
         }
     }
 
@@ -153,9 +152,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             ois = new ObjectInputStream(is);
             result = ois.readObject();
         } catch (IOException e) {
-            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
+            LOGGER.error("CELLAR CLOUD: failed to read blob", e);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
+            LOGGER.error("CELLAR CLOUD: failed to read blob", e);
         } finally {
             if (ois != null) {
                 try {
@@ -196,7 +195,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 blob.setPayload(baos.toByteArray());
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
-                LOGGER.error("CELLAR CLOUD: error while writing blob", e);
+                LOGGER.error("CELLAR CLOUD: failed to write blob", e);
             } finally {
                 if (oos != null) {
                     try {
@@ -223,7 +222,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
-            LOGGER.error("CELLAR CLOUD: can't determine IP address for current node", ex);
+            LOGGER.error("CELLAR CLOUD: unable to determine IP address for current node", ex);
             return null;
         }
     }

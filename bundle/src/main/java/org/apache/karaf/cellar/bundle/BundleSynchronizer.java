@@ -77,21 +77,21 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 String[] tokens = id.split("/");
                 String symbolicName = tokens[0];
                 String version = tokens[1];
-                if (tokens != null && tokens.length > 2) {
+                if (tokens != null && tokens.length == 2) {
                     if (state != null) {
                         String bundleLocation = state.getLocation();
                         if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
                             try {
                                 if (state.getStatus() == BundleEvent.INSTALLED) {
                                     installBundleFromLocation(state.getLocation());
-                                    startBundle(symbolicName, version);
                                 } else if (state.getStatus() == BundleEvent.STARTED) {
                                     installBundleFromLocation(state.getLocation());
+                                    startBundle(symbolicName, version);
                                 }
                             } catch (BundleException e) {
-                                LOGGER.error("CELLAR BUNDLE: error while pulling bundle", e);
+                                LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                             }
-                        } LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
+                        } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Publishses local configuration to the cluster.
+     * Publishes local configuration to the cluster.
      */
     public void push(Group group) {
 
@@ -128,9 +128,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     RemoteBundleEvent event = null;
                     if (existingState == null) {
                         event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
-                    } else if (bundleState.getStatus() == BundleEvent.STARTED) {
-                        event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
+                        // update the cluster map
+                        bundleTable.put(id, bundleState);
                     }
+
+                    // broadcast the event
                     if (producerList != null && !producerList.isEmpty() && event != null) {
                         for (EventProducer producer : producerList) {
                             producer.produce(event);
@@ -141,7 +143,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
     }
 
-    @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
@@ -155,7 +156,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 result = Boolean.parseBoolean(propertyValue);
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR BUNDLE: error while checking if sync is enabled", e);
+            LOGGER.error("CELLAR BUNDLE: failed to check if sync is enabled", e);
         }
         return result;
     }

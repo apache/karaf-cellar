@@ -61,7 +61,7 @@ public class DiscoveryTask implements Runnable {
                 Dictionary properties = configuration.getProperties();
                 String newMemberText = CellarUtils.createStringFromSet(members,true);
                 String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
-                if (newMemberText != null && !newMemberText.isEmpty() && !newMemberText.equals(memberText)) {
+                if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
                     properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
                     configuration.update(properties);
                 }

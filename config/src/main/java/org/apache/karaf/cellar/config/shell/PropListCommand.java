@@ -25,15 +25,15 @@ import java.util.Properties;
 /**
  * Config properties list cluster command.
  */
-@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs that are assigned to a group")
+@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs assigned to a cluster group.")
 public class PropListCommand extends CellarCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %s";
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "pid", description = "The PID of the configuration", required = true, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The configuration PID.", required = true, multiValued = false)
     String pid;
 
     @Override

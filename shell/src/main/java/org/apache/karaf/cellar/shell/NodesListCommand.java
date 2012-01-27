@@ -18,10 +18,7 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.Set;
 
-/**
- * List nodes command.
- */
-@Command(scope = "cluster", name = "nodes-list", description = "Lists the nodes in the cluster")
+@Command(scope = "cluster", name = "node-list", description = "List the cluster nodes.")
 public class NodesListCommand extends ClusterCommandSupport {
 
     private static final String LIST_FORMAT = "%1s %4s %-20s %5s %s";

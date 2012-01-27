@@ -3,7 +3,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Bundle activator that start a Hazelcast topic.
+ * Bundle activator that use the Hazelcast instance OSGi service.
  */
 public class Activator implements BundleActivator {
 
@@ -40,7 +40,7 @@ public class Activator implements BundleActivator {
         HazelcastInstance instance = (HazelcastInstance) context.getService(reference);
         context.ungetService(reference);
         try {
-            IdGenerator idGenerator = instance.getIdGenerator("cellar-sample-generator");
+            IdGenerator idGenerator = instance.getIdGenerator("cellar-smaple-generator");
             Long id = idGenerator.newId();
             topic = instance.getTopic("cellar-sample-topic");
             topic.addMessageListener(messageListener);

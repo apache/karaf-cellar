@@ -20,10 +20,8 @@ import javax.management.openmbean.TabularData;
  */
 public interface CellarNodeMBean {
 
-    // Operations
     long pingNode(String nodeId) throws Exception;
 
-    // Attributes
     TabularData getNodes() throws Exception;
 
 }

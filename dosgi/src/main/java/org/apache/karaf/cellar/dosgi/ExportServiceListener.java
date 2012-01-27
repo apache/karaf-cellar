@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Listener for service export.
+ * Listener on the export service action.
  */
 public class ExportServiceListener implements ServiceListener {
 
@@ -56,16 +56,16 @@ public class ExportServiceListener implements ServiceListener {
         //Lookup for already exported services.
         ServiceReference[] references = null;
         try {
-            String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES+")";
+            String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
             references = bundleContext.getServiceReferences(null, filter);
 
-        if (references != null) {
-            for (ServiceReference reference : references) {
-                exportService(reference);
+            if (references != null) {
+                for (ServiceReference reference : references) {
+                    exportService(reference);
+                }
             }
-        }
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("CELLAR DOSGI: error exporting existing remote services", e);
+            LOGGER.error("CELLAR DOSGI: unable to export existing remote services", e);
         }
     }
 
@@ -77,7 +77,6 @@ public class ExportServiceListener implements ServiceListener {
             }
             consumers.clear();
     }
-
 
     @Override
     public void serviceChanged(ServiceEvent event) {
@@ -110,7 +109,7 @@ public class ExportServiceListener implements ServiceListener {
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: Exporting remote service");
+                LOGGER.debug("CELLAR DOSGI: exporting remote service");
                 String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 

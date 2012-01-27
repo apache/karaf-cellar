@@ -56,7 +56,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                 FeatureInfo info = new FeatureInfo(feature, version);
                 Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
                 //1st check the existing configuration
-                if (version == null || version.isEmpty()) {
+                if (version == null || (version.trim().length() < 1)) {
                     for (FeatureInfo f : features.keySet()) {
                         if (f.getName().equals(feature)) {
                             version = f.getVersion();
@@ -77,7 +77,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                     LOGGER.error("Error while browsing features", e);
                 }
 
-                if (info.getVersion() != null && !info.getVersion().isEmpty()) {
+                if (info.getVersion() != null && (info.getVersion().trim().length() > 0)) {
                     features.put(info, status);
                     result = Boolean.TRUE;
                 }

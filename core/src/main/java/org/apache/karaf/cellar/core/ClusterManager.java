@@ -13,6 +13,9 @@
  */
 package org.apache.karaf.cellar.core;
 
+import org.apache.karaf.cellar.core.event.EventConsumer;
+import org.apache.karaf.cellar.core.event.EventProducer;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

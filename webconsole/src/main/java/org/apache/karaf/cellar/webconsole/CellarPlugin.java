@@ -68,6 +68,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         this.LOGGER.info("{} plugin activated", LABEL);
     }
 
+
     public void stop() {
         this.LOGGER.info("{} plugin deactivated", LABEL);
         super.deactivate();

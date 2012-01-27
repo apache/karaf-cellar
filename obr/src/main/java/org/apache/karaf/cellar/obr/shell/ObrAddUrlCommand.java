@@ -26,16 +26,13 @@ import org.apache.karaf.cellar.obr.ObrUrlEvent;
 
 import java.util.Set;
 
-/**
- * cluster:obr-addurl command.
- */
-@Command(scope = "cluster", name = "obr-addurl", description = "Register a repository URLS_DISTRIBUTED_SET_NAME in the distributed OBR service")
+@Command(scope = "cluster", name = "obr-add-url", description = "Register a repository URL in the distributed OBR service.")
 public class ObrAddUrlCommand extends ObrCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "url", description = "The repository URLS_DISTRIBUTED_SET_NAME to register in the OBR service", required = true, multiValued = false)
+    @Argument(index = 1, name = "url", description = "The repository URL to register in the OBR service.", required = true, multiValued = false)
     String url;
 
     public Object doExecute() throws Exception {
@@ -47,16 +44,16 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
-        // push the OBR URLS_DISTRIBUTED_SET_NAME in the distributed set
+        // push the OBR URL in the distributed set
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.add(url);
         // push the bundles in the OBR distributed set
         Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
-        synchronized(obrService) {
+        synchronized (obrService) {
             Repository repository = obrService.addRepository(url);
             Resource[] resources = repository.getResources();
             for (Resource resource : resources) {
-                ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(),resource.getSymbolicName(), resource.getVersion().toString());
+                ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
                 bundles.add(info);
             }
             obrService.removeRepository(url);

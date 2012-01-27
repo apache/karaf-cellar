@@ -54,8 +54,8 @@ public class ClusteredExecutionContext implements ExecutionContext {
             producer.produce(command);
             return command.getResult();
         } else {
-            throw new ProducerNotFoundException("Command producer not found");
-        }
+        throw new ProducerNotFoundException("Command producer not found");
+    }
     }
 
     public Producer getProducer() {

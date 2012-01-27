@@ -16,11 +16,10 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- * Cellar MBean describing the core attributes and operation that you can do on Cellar.
+ *  Cellar MBean describing the core attributes and operation that you can do on Cellar.
  */
 public interface CellarMBean {
 
-    // Operations
     TabularData consumerStatus() throws Exception;
     void consumerStart(String nodeId) throws Exception;
     void consumerStop(String nodeId) throws Exception;

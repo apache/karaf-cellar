@@ -16,15 +16,15 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- * MBean interface describing the operations and attributes on a Cellar feature.
+ *  MBean interface describing the operations and attributes on a Cellar feature.
  */
 public interface CellarFeaturesMBean {
 
-    // operations
     void install(String group, String name) throws Exception;
     void install(String group, String name, String version) throws Exception;
     void uninstall(String group, String name) throws Exception;
     void uninstall(String group, String name, String version) throws Exception;
+
     TabularData getFeatures(String group) throws Exception;
 
 }

@@ -41,31 +41,31 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
         instance.getCluster().addMembershipListener(this);
     }
 
-    @Override
     public void memberAdded(MembershipEvent membershipEvent) {
         Member member = membershipEvent.getMember();
         try {
             Member local = instance.getCluster().getLocalMember();
 
-            if (local.equals(member) && synchronizers != null && !synchronizers.isEmpty()) {
-                Set<Group> groups = groupManager.listLocalGroups();
-                if (groups != null && !groups.isEmpty()) {
-                    for (Group group : groups) {
-                        for (Synchronizer synchronizer : synchronizers) {
-                            if (synchronizer.isSyncEnabled(group)) {
-                                synchronizer.pull(group);
-                                synchronizer.push(group);
+            if (local.equals(member)) {
+                if (synchronizers != null && !synchronizers.isEmpty()) {
+                    Set<Group> groups = groupManager.listLocalGroups();
+                    if (groups != null && !groups.isEmpty()) {
+                        for (Group group : groups) {
+                            for (Synchronizer synchronizer : synchronizers) {
+                                if (synchronizer.isSyncEnabled(group)) {
+                                    synchronizer.pull(group);
+                                    synchronizer.push(group);
+                                }
                             }
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Error while calling memberAdded", e);
+            LOGGER.warn("CELLAR HAZELCAST: error while calling memberAdded", e);
         }
     }
 
-    @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
 
     }

@@ -19,21 +19,12 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-/**
- * Group list command.
- */
-@Command(scope = "cluster", name = "group-list", description = "List the cluster groups")
+@Command(scope = "cluster", name = "group-list", description = "List cluster groups.")
 public class GroupListCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return doExecute(ManageGroupAction.LIST, null, nodes,false);

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>2.2.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -44,6 +44,7 @@
             org.apache.karaf.management*;version="[2,4)",
             org.apache.karaf.features*;version="[2,4)",
             org.apache.karaf.cellar*;version="${project.version}",
+            org.apache.karaf.cellar.bundle*;version="${project.version}",
             org.apache.karaf.cellar.config*;version="${project.version}",
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.karaf.cellar.features*;version="${project.version}",
@@ -57,8 +58,10 @@
     </properties>
 
     <dependencies>
-
-        <!-- Karaf Cellar dependencies -->
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.bundle</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.config</artifactId>

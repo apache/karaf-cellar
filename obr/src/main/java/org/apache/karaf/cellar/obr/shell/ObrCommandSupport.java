@@ -30,5 +30,4 @@ public abstract class ObrCommandSupport extends CellarCommandSupport {
 
     public abstract Object doExecute() throws Exception;
 
-
 }

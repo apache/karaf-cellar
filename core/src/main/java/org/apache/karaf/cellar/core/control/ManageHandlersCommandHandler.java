@@ -83,5 +83,4 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     public Switch getSwitch() {
         return commandSwitch;
     }
-
 }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>2.2.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -41,8 +41,8 @@
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
             org.apache.karaf.shell.console;version="[2.2,4)",
-            org.apache.karaf.shell.console.completer;version="[2.2,4)",
             org.apache.karaf.shell.console.commands;version="[2.2,4)",
+            org.apache.karaf.shell.console.completer;version="[2.2,4)",
             *
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
@@ -52,7 +52,6 @@
     </properties>
 
     <dependencies>
-
         <!-- Internal Dependencies -->
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>

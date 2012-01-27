@@ -33,13 +33,12 @@ import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Listener for the service import.
+ * Listener on the import service.
  */
 public class ImportServiceListener implements ListenerHook, Runnable {
 
@@ -79,7 +78,6 @@ public class ImportServiceListener implements ListenerHook, Runnable {
         producers.clear();
     }
 
-
     public void run() {
         for (ListenerInfo listener : pendingListeners) {
             checkListener(listener);
@@ -100,7 +98,6 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                 pendingListeners.add(listenerInfo);
                 // Make sure we only import remote services
                 checkListener(listenerInfo);
-
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -156,7 +153,6 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                     matches.add(endpointDescription);
                 }
             }
-
             for (EndpointDescription endpoint : matches) {
                 importService(endpoint, listenerInfo);
             }
@@ -191,13 +187,14 @@ public class ImportServiceListener implements ListenerHook, Runnable {
         producers.put(endpoint.getId(), requestProducer);
         consumers.put(endpoint.getId(), resultConsumer);
 
-        ExecutionContext executionContext = new ClusteredExecutionContext(requestProducer, commandStore);
+        ExecutionContext executionContext = new ClusteredExecutionContext(requestProducer,commandStore);
 
         RemoteServiceFactory remoteServiceFactory = new RemoteServiceFactory(endpoint, clusterManager, executionContext);
         ServiceRegistration registration = listenerInfo.getBundleContext().registerService(endpoint.getServiceClass(),
                 remoteServiceFactory,
                 new Hashtable<String, Object>(endpoint.getProperties()));
         registrations.put(endpoint, registration);
+
         pendingListeners.remove(listenerInfo);
     }
 

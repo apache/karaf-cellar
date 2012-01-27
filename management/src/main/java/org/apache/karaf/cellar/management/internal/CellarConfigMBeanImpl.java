@@ -21,14 +21,20 @@ import org.apache.karaf.cellar.management.CellarConfigMBean;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * Implementation of the Cellar Config MBean allowing to manipulate Cellar config admin layer.
+ *  Implementation of the Cellar Config MBean allowing to manipulate Cellar config admin layer.
  */
 public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfigMBean {
 
     private ClusterManager clusterManager;
+
+    public CellarConfigMBeanImpl() throws NotCompliantMBeanException {
+        super(CellarConfigMBean.class);
+    }
 
     public ClusterManager getClusterManager() {
         return this.clusterManager;
@@ -38,37 +44,31 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         this.clusterManager = clusterManager;
     }
 
-    public CellarConfigMBeanImpl() throws NotCompliantMBeanException {
-        super(CellarConfigMBean.class);
-    }
-
     public String[] listConfig(String group) throws Exception {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            ArrayType arrayType = new ArrayType(1, SimpleType.STRING);
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-            return configurationTable.keySet().toArray(new String[configurationTable.keySet().size()]);
+            Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            return config.keySet().toArray(new String[config.keySet().size()]);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 
     public TabularData listProperties(String group, String pid) throws Exception {
-
-        CompositeType compositeType = new CompositeType("Property", "Cellar Config Property",
+        CompositeType compositeType = new CompositeType("Property", "Karaf Cellar Config property",
                 new String[]{ "key", "value" },
                 new String[]{ "Property key", "Property value" },
                 new OpenType[]{ SimpleType.STRING, SimpleType.STRING });
-        TabularType tableType = new TabularType("Properties", "Table of all properties in the Config PID",
+        TabularType tableType = new TabularType("Properties", "Table of all properties in the config PID",
                 compositeType, new String[]{ "key" });
         TabularData table = new TabularDataSupport(tableType);
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-            Properties properties = configurationTable.get(pid);
+            Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            Properties properties = config.get(pid);
             if (properties != null) {
                 Enumeration propertyNames = properties.propertyNames();
                 while (propertyNames.hasMoreElements()) {
@@ -90,13 +90,13 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-            Properties properties = configurationTable.get(pid);
+            Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+            Properties properties = config.get(pid);
             if (properties == null) {
                 properties = new Properties();
             }
             properties.put(key, value);
-            configurationTable.put(pid, properties);
+            config.put(pid, properties);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

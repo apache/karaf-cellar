@@ -22,7 +22,7 @@
     </feature>
 
     <feature name='hazelcast-monitor' description='Hazelcast console' version='${hazelcast.version}' resolver='(obr)'>
-        <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast</feature>
+        <feature version='${hazelcast.version}'>hazelcast</feature>
         <feature>war</feature>
         <bundle>mvn:com.hazelcast/hazelcast-monitor/${hazelcast.version}/war</bundle>
     </feature>
@@ -58,7 +58,7 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
 
-    <feature name='cellar-cloud' description='Alias to org.apache.karaf.cellar.features.cloud feature' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-cloud' description='Karaf Cellar Cloud Feature' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
@@ -67,7 +67,8 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
 
-    <feature name='cellar-webconsole' description='Alias to org.apache.karaf.cellar.features.webconsole feature' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-webconsole' description='Karaf Cellar Webconsole Plugin' version='${project.version}'
+             resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature>webconsole</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>

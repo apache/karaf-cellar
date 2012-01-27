@@ -104,6 +104,7 @@ public class CellarSupport {
         return result;
     }
 
+
     /**
      * Lists the BlackList for the specified feature.
      *
@@ -125,6 +126,7 @@ public class CellarSupport {
         }
         return result;
     }
+
 
     /**
      * Returns true if the specified event is allowed.

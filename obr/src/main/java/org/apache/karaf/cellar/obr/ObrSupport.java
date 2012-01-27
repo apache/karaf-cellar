@@ -29,20 +29,20 @@ public class ObrSupport extends CellarSupport {
 
     public void destroy() { }
 
-    public RepositoryAdmin getObrService() {
-        return this.obrService;
-    }
-
-    public void setObrService(RepositoryAdmin obrService) {
-        this.obrService = obrService;
-    }
-
     public BundleContext getBundleContext() {
         return this.bundleContext;
     }
 
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+    }
+
+    public RepositoryAdmin getObrService() {
+        return this.obrService;
+    }
+
+    public void setObrService(RepositoryAdmin obrService) {
+        this.obrService = obrService;
     }
 
 }

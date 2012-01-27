@@ -25,10 +25,13 @@ import org.apache.karaf.cellar.utils.ping.Ping;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Implementation of the Cellar Node MBean to manipulate Cellar cluster nodes.
+ * Implementation of the Cellar node MBean.
  */
 public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBean {
 

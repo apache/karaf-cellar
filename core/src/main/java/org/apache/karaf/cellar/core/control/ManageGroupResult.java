@@ -46,5 +46,4 @@ public class ManageGroupResult extends Result {
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
-
 }

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  Bundles event handler.
+ * OBR bundles event handler.
  */
 public class ObrBundleEventHandler extends ObrSupport implements EventHandler<ObrBundleEvent> {
 
@@ -49,18 +49,18 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
         super.destroy();
     }
 
-    protected String[] getTarget(String bundle) {
+    private String[] getTarget(String bundle) {
         String[] target;
         int idx = bundle.indexOf(VERSION_DELIM);
         if (idx > 0) {
-            target = new String[]{ bundle.substring(0, idx), bundle.substring(idx+1) };
+            target = new String[]{ bundle.substring(0, idx), bundle.substring(idx + 1) };
         } else {
             target = new String[]{ bundle, null };
         }
         return target;
     }
 
-    public Resource selectNewestVersion(Resource[] resources) {
+    private Resource selectNewestVersion(Resource[] resources) {
         int idx = -1;
         Version v = null;
         for (int i = 0; (resources != null) && (i < resources.length); i++) {
@@ -78,7 +78,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
         return (idx < 0) ? null : resources[idx];
     }
 
-    protected Resource[] searchRepository(String targetId, String targetVersion) throws InvalidSyntaxException {
+    private Resource[] searchRepository(String targetId, String targetVersion) throws InvalidSyntaxException {
         try {
             Bundle bundle = getBundleContext().getBundle(Long.parseLong(targetId));
             targetId = bundle.getSymbolicName();
@@ -86,8 +86,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
             // it was not a number, so ignore.
         }
 
-        // the target ID may be a bundle name or a bundle symbolic name,
-        // so create
+        // the target ID may be a bundle name or bundle symbolic name, so create
         StringBuffer sb = new StringBuffer("(|(presentationname=");
         sb.append(targetId);
         sb.append(")(symbolicname=");
@@ -103,7 +102,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
     }
 
     /**
-     * Process an OBR bundle event.
+     * Handle an OBR bundle event.
      *
      * @param event the OBR bundle event.
      */
@@ -131,9 +130,9 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
                     Reason[] reqs = resolver.getUnsatisfiedRequirements();
                     if (reqs != null && reqs.length > 0) {
                         LOGGER.warn("CELLAR OBR: unsatisfied requirement(s): ");
-                        for (int reqIdx = 0; reqIdx < reqs.length; reqIdx++) {
-                            LOGGER.warn("  {}", reqs[reqIdx].getRequirement().getFilter());
-                            LOGGER.warn("    {}", reqs[reqIdx].getResource().getPresentationName());
+                        for (Reason reason : reqs) {
+                            LOGGER.warn("CELLAR OBR:    {}", reason.getRequirement().getFilter());
+                            LOGGER.warn("CELLAR OBR:      {}", reason.getResource().getPresentationName());
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }

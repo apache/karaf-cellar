@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Call handler for remote service.
+ * Handler on a remote service call.
  */
 public class RemoteServiceCallHandler extends CellarSupport implements EventHandler<RemoteServiceCall> {
 
@@ -59,7 +59,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                 }
 
             } catch (InvalidSyntaxException e) {
-                LOGGER.error("CELLAR DOSGI: could not lookup service", e);
+                LOGGER.error("CELLAR DOSGI: unable to lookup service", e);
             }
 
             if (targetService != null) {
@@ -100,7 +100,6 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
             }
         }
     }
-
 
     @Override
     public Class<RemoteServiceCall> getType() {

@@ -22,8 +22,8 @@ Initial Setup
 -------------
 
 1) Install J2SE 6.0 SDK (or later), which can be downloaded from
-   http://www.oracle.com/technetwork/java/javase/downloads/index-jdk6-jsp-142662.html.
-   Use version of "JDK 6.0 Update 24" (or later).
+   http://www.oracle.com/technetwork/java/javase/downloads.
+   Use version of "JDK 6.0 Update 26" (or later).
 
 2) Make sure that your JAVA_HOME environment variable is set to the newly installed
    JDK location, and that your PATH includes %JAVA_HOME%\bin (windows) or

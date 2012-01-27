@@ -44,7 +44,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
     private Node node;
 
     /**
-     * Handles
+     * Handles a
      *
      * @param event
      */
@@ -72,12 +72,12 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         if (!dictionariesEqual(dictionary, existingConfiguration)) {
                             conf.update(preparePull(dictionary));
                         }
-                        LOGGER.debug("CELLAR CONFIG: pulling configuration with PID {}", pid);
+                        LOGGER.debug("CELLAR CONFIG: local configuration updated");
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
                 }
-            } else LOGGER.warn("CELLAR CONFIG: configuration with pid {} is marked as BLOCKED INBOUND", pid);
+            } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
         }
     }
 
@@ -96,6 +96,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
     public void destroy() {
 
     }
+
 
     public Switch getSwitch() {
         return eventSwitch;

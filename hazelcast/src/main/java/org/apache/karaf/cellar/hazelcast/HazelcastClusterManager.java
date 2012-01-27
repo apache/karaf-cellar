@@ -67,8 +67,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
      */
     public Set getSet(String setName) {
         return instance.getSet(setName);
-    }
-
+    }    
 
     /**
      * Returns the list of Hazelcast Nodes.
@@ -142,7 +141,6 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return null;
     }
 
-    @Override
     public Set<Node> listNodesByGroup(Group group) {
         return group.getNodes();
     }
@@ -184,10 +182,11 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     }
 
     public CombinedClassLoader getCombinedClassLoader() {
-        return combinedClassLoader;
+        return this.combinedClassLoader;
     }
 
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }

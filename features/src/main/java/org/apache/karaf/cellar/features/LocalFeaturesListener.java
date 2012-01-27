@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;

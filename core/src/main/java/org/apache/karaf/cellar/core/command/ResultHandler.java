@@ -23,7 +23,7 @@ import org.apache.karaf.cellar.core.event.EventHandler;
  */
 public class ResultHandler<R extends Result> implements EventHandler<R> {
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.command.result.handler";
+    public static final String SWITCH_ID = " org.apache.karaf.cellar.command.result.handler";
 
     private Switch handlerSwitch = new BasicSwitch(SWITCH_ID);
     private CommandStore commandStore;

@@ -35,7 +35,7 @@ public class HazelcastServiceFactory  {
     private HazelcastConfigurationManager configurationManager = new HazelcastConfigurationManager();
 
     private CountDownLatch initializationLatch = new CountDownLatch(1);
-    private CountDownLatch instanceLatch = new CountDownLatch(1);
+    private CountDownLatch instnaceLatch = new CountDownLatch(1);
     private HazelcastInstance instance;
 
 
@@ -55,7 +55,7 @@ public class HazelcastServiceFactory  {
     public void update(Map properties) throws InterruptedException {
         LOGGER.info("Instance configuration updated. Checking if instance requires restarting.");
         if(configurationManager.isUpdated(properties)) {
-            instanceLatch.await();
+            instnaceLatch.await();
             Config updatedConfig = configurationManager.getHazelcastConfig();
             instance.getConfig().setNetworkConfig(updatedConfig.getNetworkConfig());
             instance.getConfig().setGroupConfig(updatedConfig.getGroupConfig());
@@ -73,7 +73,7 @@ public class HazelcastServiceFactory  {
         if (instance == null) {
                 initializationLatch.await();
                 this.instance = buildInstance();
-            instanceLatch.countDown();
+                instnaceLatch.countDown();
         }
         return instance;
     }

@@ -48,7 +48,6 @@ public class BundleSupport extends CellarSupport {
         return properties;
     }
 
-
     /**
      * Installs a bundle using its location.
      */

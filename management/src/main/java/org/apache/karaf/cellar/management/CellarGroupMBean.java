@@ -16,17 +16,15 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- * Cellar Group MBean to manipule Cellar cluster group.
+ *  Cellar group MBean to manipulate Cellar cluster group.
  */
 public interface CellarGroupMBean {
 
-    // Operations
     void create(String name) throws Exception;
     void delete(String name) throws Exception;
     void join(String name, String nodeId) throws Exception;
     void quit(String name, String nodeId) throws Exception;
 
-    // Attributes
     TabularData getGroups() throws Exception;
 
 }

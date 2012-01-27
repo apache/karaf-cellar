@@ -32,6 +32,7 @@ public class HazelcastServiceFactoryTest {
 
     @Before
     public void setUp() throws Exception {
+
     }
 
     @After

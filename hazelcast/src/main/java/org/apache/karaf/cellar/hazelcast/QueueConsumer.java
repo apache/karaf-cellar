@@ -95,14 +95,14 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
                 try {
                         e = getQueue().poll(10, TimeUnit.SECONDS);
                 } catch (InterruptedException e1) {
-                    LOGGER.warn("Consume task interrupted");
+                    LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
                 }
                 if (e != null) {
                     consume(e);
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("Error while consuming from queue",ex);
+            LOGGER.error("CELLAR HAZELCAST: error while consuming from queue",ex);
         }
         finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -126,7 +126,6 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         isConsuming = true;
         executorService.execute(this);
     }
-
 
     @Override
     public void stop() {

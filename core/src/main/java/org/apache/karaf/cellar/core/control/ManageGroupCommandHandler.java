@@ -29,7 +29,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.managegroup.switch";
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
-
     @Override
     public ManageGroupResult execute(ManageGroupCommand command) {
 
@@ -76,7 +75,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
         } else groups = groupManager.listAllGroups();
 
         for (Group g : groups) {
-            if (g.getName() != null && !g.getName().isEmpty()) {
+            if (g.getName() != null && (g.getName().trim().length() > 0)) {
                 result.getGroups().add(g);
             }
         }
@@ -120,6 +119,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             }
         }
     }
+
 
     /**
      * Removes {@link Node} from ALL {@link Group}s.

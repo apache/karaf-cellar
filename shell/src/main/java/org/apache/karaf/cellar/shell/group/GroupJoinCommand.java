@@ -19,24 +19,15 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-/**
- * Group join command.
- */
-@Command(scope = "cluster", name = "group-join", description = "Join node(s) to a cluster group")
+@Command(scope = "cluster", name = "group-join", description = "Join a cluster group.")
 public class GroupJoinCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
     String group;
 
-    @Argument(index = 1, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return doExecute(ManageGroupAction.JOIN, group, nodes,false);

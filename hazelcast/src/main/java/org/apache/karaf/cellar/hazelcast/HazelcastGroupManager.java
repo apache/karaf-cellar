@@ -96,7 +96,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("Error reading group configuration");
+            LOGGER.error("CELLAR HAZELCAST: error reading group configuration", e);
         }
         registerGroup(DEFAULT_GROUP);
     }
@@ -121,7 +121,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         return node;
     }
 
-    @Override
     public Group createGroup(String groupName) {
         Group group = listGroups().get(groupName);
         if (group == null) {
@@ -134,7 +133,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         return group;
     }
 
-    @Override
     public void deleteGroup(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -147,7 +145,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Set<Group> listLocalGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -158,7 +155,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Set<Group> listAllGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -169,7 +165,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Group findGroupByName(String groupName) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -180,7 +175,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Map<String, Group> listGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -191,7 +185,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Set<Group> listGroups(Node node) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -213,7 +206,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Set<String> listGroupNames() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -224,7 +216,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
-    @Override
     public Set<String> listGroupNames(Node node) {
         Set<String> names = new HashSet<String>();
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -245,11 +236,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         return names;
     }
 
-    /**
-     * Registers a {@link Group}.
-     * @param group
-     */
-    @Override
     public void registerGroup(Group group) {
         String groupName = group.getName();
         createGroup(groupName);
@@ -288,26 +274,22 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         //Add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
-            if (configuration != null) {
-                Dictionary<String, String> properties = configuration.getProperties();
-                if (properties != null) {
-                    String groups = properties.get(Configurations.GROUPS_KEY);
-                    if (groups == null || groups.isEmpty()) {
-                        groups = groupName;
-                    } else {
+            Dictionary<String, String> properties = configuration.getProperties();
+            String groups = properties.get(Configurations.GROUPS_KEY);
+            if (groups == null || (groups.trim().length() < 1)) {
+                groups = groupName;
+            } else {
 
                         Set<String> groupNamesSet = convertStringToSet(groups);
                         groupNamesSet.add(groupName);
                         groups = convertSetToString(groupNamesSet);
                     }
 
-                    if (groups == null || groups.isEmpty()) {
-                        groups = groupName;
-                    }
-                    properties.put(Configurations.GROUPS_KEY, groups);
-                    configuration.update(properties);
-                }
+            if (groups == null || (groups.trim().length() < 1)) {
+                groups = groupName;
             }
+            properties.put(Configurations.GROUPS_KEY, groups);
+            configuration.update(properties);
         } catch (IOException e) {
             LOGGER.error("Error reading group configuration {}", group);
         }
@@ -326,11 +308,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 }
             }
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("Error looking up for Synchronizers", e);
+            LOGGER.error("Error looking up for synchronizers.", e);
         }
     }
 
-    @Override
     public void registerGroup(String groupName) {
         Group group = listGroups().get(groupName);
         if (group == null) {
@@ -339,7 +320,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         registerGroup(group);
     }
 
-    @Override
     public void unRegisterGroup(String groupName) {
         unRegisterGroup(listGroups().get(groupName));
     }
@@ -383,7 +363,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             Dictionary<String, String> properties = configuration.getProperties();
             String groups = properties.get(Configurations.GROUPS_KEY);
-            if (groups == null || groups.isEmpty()) {
+            if (groups == null || (groups.trim().length() < 1)) {
                 groups = "";
             } else if (groups.contains(groupName)) {
 
@@ -444,7 +424,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             }
 
         } catch (IOException e) {
-            LOGGER.error("Error reading group configuration ", e);
+            LOGGER.error("Error reading group configuration.", e);
         }
     }
 
@@ -488,7 +468,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
 
-    @Override
     public void configurationEvent(ConfigurationEvent configurationEvent) {
         String pid = configurationEvent.getPid();
         if(pid.equals(GROUPS)) {
@@ -517,7 +496,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      *
      * @param entryEvent entry event
      */
-    @Override
     public void entryAdded(EntryEvent entryEvent) {
          entryUpdated(entryEvent);
     }
@@ -527,7 +505,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      *
      * @param entryEvent entry event
      */
-    @Override
     public void entryRemoved(EntryEvent entryEvent) {
          entryUpdated(entryEvent);
     }
@@ -537,7 +514,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      *
      * @param entryEvent entry event
      */
-    @Override
     public void entryUpdated(EntryEvent entryEvent) {
         LOGGER.info("Distributed Group configuration has been updated, updating local configuration.");
         try {
@@ -559,7 +535,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      *
      * @param entryEvent entry event
      */
-    @Override
     public void entryEvicted(EntryEvent entryEvent) {
         entryUpdated(entryEvent);
     }
@@ -604,5 +579,4 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
-
 }

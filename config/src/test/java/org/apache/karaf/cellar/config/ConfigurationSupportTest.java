@@ -62,7 +62,7 @@ public class ConfigurationSupportTest {
         Dictionary result = null;
         Dictionary source = new Properties();
         Dictionary expectedResult = new Properties();
-        
+
         source.put("key1", "value1");
         source.put("key2", 1);
         source.put("key3", Boolean.FALSE);
@@ -74,7 +74,7 @@ public class ConfigurationSupportTest {
         expectedResult.put("key4", "12");
 
         result = support.preparePull(source);
-        
+
         Assert.assertEquals(expectedResult, result);
     }
 
@@ -83,12 +83,12 @@ public class ConfigurationSupportTest {
         Dictionary result = null;
         Dictionary source = new Properties();
         Dictionary expectedResult = new Properties();
-
+        
         source.put("key1", "value1");
         source.put("key2", 1);
         source.put("key3", Boolean.FALSE);
         source.put("key4", 12L);
-
+        
         expectedResult.put("key1", "value1");
         expectedResult.put("key2", "1");
         expectedResult.put("key3", "false");

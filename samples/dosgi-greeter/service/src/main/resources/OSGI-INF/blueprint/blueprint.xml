@@ -29,7 +29,6 @@
     <!-- OSGi Services  & References -->
     <service ref="greeterImpl" interface="org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter">
         <service-properties>
-            <!-- This property turn the Greeter service as a "cluster aware" service -->
             <entry key="service.exported.interfaces" value="*"/>
         </service-properties>
     </service>

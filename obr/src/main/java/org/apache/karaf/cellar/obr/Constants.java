@@ -14,12 +14,12 @@
 package org.apache.karaf.cellar.obr;
 
 /**
- * OBR constants
+ * Cellar OBR constants
  */
 public class Constants {
 
-    public static final String BUNDLES_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.bundle";
-    public static final String URLS_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.url";
+    public static final String BUNDLES_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.bundles";
+    public static final String URLS_DISTRIBUTED_SET_NAME = "org.apache.karaf.cellar.obr.urls";
 
     public static final String BUNDLES_CONFIG_CATEGORY = "obr.bundles";
     public static final String URLS_CONFIG_CATEGORY = "obr.urls";

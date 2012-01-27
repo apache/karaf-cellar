@@ -55,7 +55,7 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
                 featuresService.removeRepository(new URI(uri));
             }
         } catch (Exception e) {
-            LOGGER.error("CELLAR FEATURES: failed to add/remove repository URL {}", uri, e);
+            LOGGER.error("CELLAR FEATURES: failed to add/remove repository URI {}", uri, e);
         }
     }
 

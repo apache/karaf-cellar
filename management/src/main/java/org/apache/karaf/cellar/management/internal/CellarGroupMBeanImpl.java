@@ -25,16 +25,22 @@ import org.apache.karaf.cellar.management.CellarGroupMBean;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
- * Implementation of the Cellar Group MBean;
+ *  Implementation of the Cellar group MBean.
  */
 public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMBean {
 
     private ClusterManager clusterManager;
     private ExecutionContext executionContext;
     private GroupManager groupManager;
+
+    public CellarGroupMBeanImpl() throws NotCompliantMBeanException {
+        super(CellarGroupMBean.class);
+    }
 
     public ClusterManager getClusterManager() {
         return this.clusterManager;
@@ -60,10 +66,6 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         this.groupManager = groupManager;
     }
 
-    public CellarGroupMBeanImpl() throws NotCompliantMBeanException {
-        super(CellarGroupMBean.class);
-    }
-
     public void create(String name) throws Exception {
         groupManager.createGroup(name);
     }
@@ -73,7 +75,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Group g = groupManager.findGroupByName(name);
-            List<String> nodes = new LinkedList<String>();
+            List<String> nodes = new ArrayList<String>();
 
             if (g.getNodes() != null && !g.getNodes().isEmpty()) {
                 for (Node n : g.getNodes()) {

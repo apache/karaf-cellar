@@ -25,10 +25,10 @@ import java.util.Set;
 /**
  * cluster:obr-list command.
  */
-@Command(scope = "cluster", name = "obr-list", description = "List available bundles in the OBR of all nodes of the same cluster group.")
+@Command(scope = "cluster", name = "obr-list", description = "List available bundles in the OBR of all nodes assigned to a cluster group.")
 public class ObrListCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
     public Object doExecute() {

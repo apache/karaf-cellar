@@ -39,7 +39,6 @@ public class ConfigurationSupport extends CellarSupport {
     public Properties dictionaryToProperties(Dictionary dictionary) {
         Properties properties = new Properties();
         if (dictionary != null && dictionary.keys() != null) {
-
             Enumeration keys = dictionary.keys();
             while (keys.hasMoreElements()) {
                 String key = (String) keys.nextElement();
@@ -100,7 +99,7 @@ public class ConfigurationSupport extends CellarSupport {
      */
     public String convertStrings(String value, String absolute, String relative) {
         String result = value;
-        if (absolute != null && !absolute.isEmpty() && value.contains(absolute)) {
+        if (absolute != null && (absolute.trim().length() > 0) && value.contains(absolute)) {
             result = value.replace(absolute, relative);
         }
         return result;

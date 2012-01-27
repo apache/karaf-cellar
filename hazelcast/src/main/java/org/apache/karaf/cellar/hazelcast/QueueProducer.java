@@ -80,7 +80,7 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
             try {
                 queue.put(event);
             } catch (InterruptedException e) {
-                LOGGER.error("Queue producer interrupted",e);
+                LOGGER.error("CELLAR HAZELCAST: queue producer interrupted", e);
             }
         }
     }

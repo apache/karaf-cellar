@@ -23,10 +23,12 @@ public class HazelcastBundleListener implements SynchronousBundleListener {
     private BundleContext bundleContext;
     private CombinedClassLoader combinedClassLoader;
 
+
     public HazelcastBundleListener(BundleContext bundleContext, CombinedClassLoader combinedClassLoader) {
         this.bundleContext = bundleContext;
         this.combinedClassLoader = combinedClassLoader;
     }
+
 
     public void scanExistingBundles() {
         Bundle[] bundles = bundleContext.getBundles();

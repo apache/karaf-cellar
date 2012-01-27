@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FeaturesEventHandler extends FeaturesSupport implements EventHandler<RemoteFeaturesEvent> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesEventHandler.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.features.handler";
 
@@ -72,7 +72,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
+                LOGGER.error("CELLAR FEATURES: failed to handle event", e);
             }
         } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
     }

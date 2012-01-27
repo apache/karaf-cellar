@@ -23,6 +23,7 @@ import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.cellar.management.CellarFeaturesMBean;
+import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeatureEvent;
 
 import javax.management.NotCompliantMBeanException;
@@ -31,13 +32,17 @@ import javax.management.openmbean.*;
 import java.util.Map;
 
 /**
- * Implementation of the CellarFeaturesMBean to manipulate Cellar features.
+ * Implementation of the Cellar features MBean to manipulate Cellar features.
  */
 public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeaturesMBean {
 
     private ClusterManager clusterManager;
     private EventTransportFactory eventTransportFactory;
     private GroupManager groupManager;
+
+    public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
+        super(CellarFeaturesMBean.class);
+    }
 
     public ClusterManager getClusterManager() {
         return this.clusterManager;
@@ -61,10 +66,6 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
     public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
         this.eventTransportFactory = eventTransportFactory;
-    }
-
-    public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
-        super(CellarFeaturesMBean.class);
     }
 
     public void install(String groupName, String name, String version) throws Exception {
@@ -94,15 +95,13 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     public TabularData getFeatures(String group) throws Exception {
-        CompositeType featuresType = new CompositeType("Feature", "Karaf Cellar feature",
-                new String[]{"name", "version", "installed"},
-                new String[]{"Name of the feature", "Version of the feature", "Whether the feature is installed or not"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN});
-
-        TabularType tabularType = new TabularType("Features", "Table of all Karaf Cellar features",
-                featuresType, new String[]{"name", "version"});
-
-        TabularData table = new TabularDataSupport(tabularType);
+        CompositeType compositeType = new CompositeType("Feature", "Karaf Cellar feature",
+                new String[]{ "name", "version", "installed" },
+                new String[]{ "Name of the feature", "Version of the feature", "Whether the feature is installed or not"},
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN });
+        TabularType tableType = new TabularType("Features", "Table of all Karaf Cellar features",
+                compositeType, new String[]{ "name", "version" });
+        TabularData table = new TabularDataSupport(tableType);
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -111,9 +110,9 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             if (allFeatures != null && !allFeatures.isEmpty()) {
                 for (FeatureInfo feature : allFeatures.keySet()) {
                     boolean installed = allFeatures.get(feature);
-                    CompositeData data = new CompositeDataSupport(featuresType,
-                            new String[]{"name", "version", "installed"},
-                            new Object[]{feature.getName(), feature.getVersion(), installed});
+                    CompositeData data = new CompositeDataSupport(compositeType,
+                            new String[]{ "name", "version", "installed" },
+                            new Object[]{ feature.getName(), feature.getVersion(), installed });
                     table.put(data);
                 }
             }

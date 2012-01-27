@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import EDU.oswego.cs.dl.util.concurrent.Sync;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
-import org.fusesource.jansi.Ansi;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.ProbeBuilder;
@@ -65,7 +64,7 @@ public class CellarTestSupport {
     static final String INSTANCE_STARTED = "Started";
     static final String INSTANCE_STARTING = "Starting";
 
-    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "3.0.0-SNAPSHOT");
+    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "2.2.3-SNAPSHOT");
 
     static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
 
@@ -81,6 +80,7 @@ public class CellarTestSupport {
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
         probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*,org.apache.felix.service.*;status=provisional");
+
         return probe;
     }
 
@@ -157,28 +157,34 @@ public class CellarTestSupport {
     }
 
     /**
-     * Destroys the child node.
+     * Destorys the child node.
      */
     protected void destroyCellarChild(String name) {
-        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
+        //System.err.println(executeCommand("admin:destroy " + name));
     }
 
     /**
      * Returns the node id of a specific child instance.
+     *
+     * @param name
+     * @return
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name + " cluster:nodes-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
         if (tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");
         }
-        //As of Karaf 2.2.5 grep will add the reset character at the end of the match.
-        nodeId = nodeId.replaceAll("\\u001B\\[m", "");
         return nodeId;
     }
 
+    /**
+     * Create an {@link org.ops4j.pax.exam.Option} for using a .
+     *
+     * @return
+     */
     protected Option cellarDistributionConfiguration() {
         return karafDistributionConfiguration().frameworkUrl(
                 maven().groupId(GROUP_ID).artifactId(ARTIFACT_ID).versionAsInProject().type("tar.gz"))
@@ -289,9 +295,9 @@ public class CellarTestSupport {
         throw new RuntimeException("Bundle " + symbolicName + " does not exist");
     }
 
-    /**
-     * Explodes the dictionary into a ,-delimited list of key=value pairs
-     */
+    /*
+    * Explode the dictionary into a ,-delimited list of key=value pairs
+    */
     private static String explode(Dictionary dictionary) {
         Enumeration keys = dictionary.keys();
         StringBuffer result = new StringBuffer();
@@ -395,10 +401,11 @@ public class CellarTestSupport {
                 }
             }
         }
+
         return false;
     }
 
-    /*
+    /**
      * Provides an iterable collection of references, even if the original array is null
      */
     private static Collection<ServiceReference> asCollection(ServiceReference[] references) {

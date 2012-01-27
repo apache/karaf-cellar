@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Handlers command support.
- */
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %-7s %s";

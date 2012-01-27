@@ -15,9 +15,6 @@ package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.Command;
 
-/**
- * Ping.
- */
 public class Ping extends Command<Pong> {
 
     public Ping(String id) {
