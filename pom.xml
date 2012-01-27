@@ -67,7 +67,9 @@
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
+	<!-- Exclude the itests only for the release
         <module>itests</module>
+        -->
     </modules>
 
     <scm>
