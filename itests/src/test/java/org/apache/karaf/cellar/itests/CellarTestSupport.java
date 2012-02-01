@@ -109,9 +109,9 @@ public class CellarTestSupport {
      * Installs the Cellar feature
      */
     protected void installCellar() {
-        System.err.println(executeCommand("feature:add-url " + CELLAR_FEATURE_URL));
-        System.err.println(executeCommand("feature:list-url"));
-        System.err.println(executeCommand("feature:list"));
+        System.err.println(executeCommand("features:addurl " + CELLAR_FEATURE_URL));
+        System.err.println(executeCommand("features:listurl"));
+        System.err.println(executeCommand("features:list"));
         executeCommand("features:install cellar");
     }
 
@@ -160,7 +160,7 @@ public class CellarTestSupport {
      * Destroys the child node.
      */
     protected void destroyCellarChild(String name) {
-        System.err.println(executeCommand("admin:connect " + name + " feature:uninstall cellar"));
+        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
     }
 
