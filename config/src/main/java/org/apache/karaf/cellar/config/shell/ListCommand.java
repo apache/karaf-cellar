@@ -24,12 +24,12 @@ import java.util.Properties;
 /**
  * List cluster config command.
  */
-@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs that are assigned to a group")
+@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs assigned to a cluster group.")
 public class ListCommand extends ConfigCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s";
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
     @Override

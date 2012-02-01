@@ -56,7 +56,7 @@
                 <entry value="org.apache.karaf.cellar:type=core,name=${karaf.name}" key-ref="cellarMBean"/>
                 <entry value="org.apache.karaf.cellar:type=node,name=${karaf.name}" key-ref="cellarNodeMBean"/>
                 <entry value="org.apache.karaf.cellar:type=config,name=${karaf.name}" key-ref="cellarConfigMBean"/>
-                <entry value="org.apache.karaf.cellar:type=features,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
+                <entry value="org.apache.karaf.cellar:type=feature,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
                 <entry value="org.apache.karaf.cellar:type=group,name=${karaf.name}" key-ref="cellarGroupMBean"/>
             </map>
         </property>

@@ -25,34 +25,14 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Group command support.
- */
 public abstract class GroupSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%1s %-20s %s";
 
-    /**
-     * Executes the command.
-     * @param action
-     * @param group
-     * @param nodes
-     * @return
-     * @throws Exception
-     */
     protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes) throws Exception {
      return doExecute(action,group,nodes,true);
     }
 
-    /**
-     * Executes the command.
-     * @param action
-     * @param group
-     * @param nodes
-     * @param supressOutput
-     * @return
-     * @throws Exception
-     */
     protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes,Boolean supressOutput) throws Exception {
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);

@@ -52,7 +52,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
 
         System.err.println(executeCommand("admin:list"));
 
-        System.err.println(executeCommand("cluster:nodes-list"));
+        System.err.println(executeCommand("cluster:node-list"));
         Node localNode = clusterManager.getNode();
         Set<Node> nodes = clusterManager.listNodes();
         assertTrue("There should be at least 3 cellar nodes running", 3 <= nodes.size());
@@ -70,11 +70,11 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:group-set service-grp " + node1));
         System.err.println(executeCommand("cluster:group-list"));
 
-        System.err.println(executeCommand("cluster:features-install client-grp greeter-client"));
+        System.err.println(executeCommand("cluster:feature-install client-grp greeter-client"));
         Thread.sleep(10000);
-        System.err.println(executeCommand("cluster:features-install service-grp greeter-service"));
+        System.err.println(executeCommand("cluster:feature-install service-grp greeter-service"));
         Thread.sleep(10000);
-        System.err.println(executeCommand("cluster:list-services"));
+        System.err.println(executeCommand("cluster:service-list"));
 
         String greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);

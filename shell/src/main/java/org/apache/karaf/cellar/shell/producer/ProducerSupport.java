@@ -23,19 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Producer command support.
- */
 public abstract class ProducerSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %s";
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     protected Object doExecute(List<String> nodes, SwitchStatus status) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);

@@ -20,25 +20,22 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.features.FeatureEvent;
 
-/**
- * Uninstall feature command.
- */
-@Command(scope = "cluster", name = "features-uninstall", description = "Uninstall a feature from the cluster group")
+@Command(scope = "cluster", name = "feature-uninstall", description = "Uninstall a feature assigned to a cluster group.")
 public class UninstallFeatureCommand extends FeatureCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The name of the group", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "feature", description = "The name of the feature", required = true, multiValued = false)
+    @Argument(index = 1, name = "feature", description = "The feature name.", required = true, multiValued = false)
     String feature;
 
-    @Argument(index = 2, name = "version", description = "The version of the feature", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The feature version.", required = false, multiValued = false)
     String version;
 
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
+        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setForce(true);
         event.setSourceGroup(group);

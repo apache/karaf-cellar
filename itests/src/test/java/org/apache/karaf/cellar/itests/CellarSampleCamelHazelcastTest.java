@@ -47,11 +47,11 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);
         assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/camel-hazelcast-app/3.0.0-SNAPSHOT/xml/features"));
+        System.err.println(executeCommand("feature:add-url mvn:org.apache.karaf.cellar.samples/camel-hazelcast-app/3.0.0-SNAPSHOT/xml/features"));
 
         System.err.println(executeCommand("admin:list"));
 
-        System.err.println(executeCommand("cluster:nodes-list"));
+        System.err.println(executeCommand("cluster:node-list"));
         Node localNode = clusterManager.getNode();
         Set<Node> nodes = clusterManager.listNodes();
         assertTrue("There should be at least 3 cellar nodes running", 3 <= nodes.size());
@@ -61,18 +61,18 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         String node1 = getNodeIdOfChild("child1");
         String node2 = getNodeIdOfChild("child2");
 
-        System.err.println("Child1:" + node1);
-        System.err.println("Child2:" + node2);
+        System.err.println("Child1: " + node1);
+        System.err.println("Child2: " + node2);
 
         System.err.println(executeCommand("cluster:group-set producer-grp " + localNode.getId()));
         System.err.println(executeCommand("cluster:group-set consumer-grp " + node1));
         System.err.println(executeCommand("cluster:group-set consumer-grp " + node2));
         System.err.println(executeCommand("cluster:group-list"));
 
-        System.err.println(executeCommand("cluster:features-install consumer-grp cellar-sample-camel-consumer"));
-        System.err.println(executeCommand("cluster:features-install producer-grp cellar-sample-camel-producer"));
+        System.err.println(executeCommand("cluster:feature-install consumer-grp cellar-sample-camel-consumer"));
+        System.err.println(executeCommand("cluster:feature-install producer-grp cellar-sample-camel-producer"));
         Thread.sleep(10000);
-        System.err.println(executeCommand("features:list"));
+        System.err.println(executeCommand("feature:list"));
         System.err.println(executeCommand("osgi:list"));
 
         System.err.println(executeCommand("cluster:group-list"));

@@ -38,7 +38,7 @@
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-listurl">
+        <command name="cluster/obr-list-url">
             <action class="org.apache.karaf.cellar.obr.shell.ObrListUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -49,7 +49,7 @@
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-addurl">
+        <command name="cluster/obr-add-url">
             <action class="org.apache.karaf.cellar.obr.shell.ObrAddUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -61,7 +61,7 @@
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-removeurl">
+        <command name="cluster/obr-remove-url">
             <action class="org.apache.karaf.cellar.obr.shell.ObrRemoveUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>

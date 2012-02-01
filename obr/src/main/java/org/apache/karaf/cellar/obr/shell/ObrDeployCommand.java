@@ -25,16 +25,16 @@ import org.apache.karaf.cellar.obr.ObrBundleEvent;
 /**
  * Deploy a bundle from the OBR.
  */
-@Command(scope = "cluster", name = "obr-deploy", description = "Deploy a bundle from the OBR on a cluster group")
+@Command(scope = "cluster", name = "obr-deploy", description = "Deploy a bundle from the OBR on a cluster group.")
 public class ObrDeployCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group where to deploy the bundle from the OBR", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name="bundleId", description = "The bundle ID (symbolicname,version in the OBR) to deploy", required = true, multiValued = false)
+    @Argument(index = 1, name="bundleId", description = "The bundle ID (symbolicname,version in the OBR) to deploy.", required = true, multiValued = false)
     String bundleId;
 
-    @Option(name = "-s", aliases = { "--start" }, description = "Start the deployed bundles", required = false, multiValued = false)
+    @Option(name = "-s", aliases = { "--start" }, description = "Start the deployed bundles.", required = false, multiValued = false)
     boolean start = false;
 
     @Override

@@ -16,9 +16,6 @@ package org.apache.karaf.cellar.shell;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
-/**
- * Abstract Cluster command.
- */
 public abstract class ClusterCommandSupport extends CellarCommandSupport {
 
     protected ExecutionContext executionContext;

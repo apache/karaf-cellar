@@ -19,21 +19,12 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-/**
- * Producer stop command.
- */
-@Command(scope = "cluster", name = "producer-stop", description = "Stop an event producer")
+@Command(scope = "cluster", name = "producer-stop", description = "Stop an event producer.")
 public class ProducerStopCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The ID of the node(s)", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected Object doExecute() throws Exception {
         return doExecute(nodes, SwitchStatus.OFF);
