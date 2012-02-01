@@ -52,13 +52,19 @@
         </configfile>
     </feature>
 
-    <feature name='cellar-obr' description='Alias to org.apache.karaf.cellar.features.obr feature' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-obr' description='OBR support in Cellar clusters' version='${project.version}' resolver='(obr)'>
         <feature>obr</feature>
         <feature version='${project.version}'>cellar</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
 
-    <feature name='cellar-cloud' description='Karaf Cellar Cloud Feature' version='${project.version}' resolver='(obr)'>
+    <feature name='cellar-event' description='OSGi events broadcasting in Cellar clusters' version='${project.version}' resolver='(obr)'>
+        <feature>eventadmin</feature>
+        <feature version='${project.version}'>cellar</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.event/${project.version}</bundle>
+    </feature>
+
+    <feature name='cellar-cloud' description='Cloud blobstore support in Cellar clusters' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
@@ -67,8 +73,7 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
 
-    <feature name='cellar-webconsole' description='Karaf Cellar Webconsole Plugin' version='${project.version}'
-             resolver='(obr)'>
+    <feature name='cellar-webconsole' description='Karaf WebConsole plug for Cellar' version='${project.version}' resolver='(obr)'>
         <feature version="${project.version}">cellar</feature>
         <feature>webconsole</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
