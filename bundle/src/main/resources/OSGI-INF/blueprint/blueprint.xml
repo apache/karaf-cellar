@@ -48,10 +48,13 @@
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
+    <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
     <reference-list id="groupEventProducers" member-type="service-object"
                     interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
