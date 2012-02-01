@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class LocalBundleListener extends BundleSupport implements BundleListener {
@@ -45,29 +47,39 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                 try {
                     groups = groupManager.listLocalGroups();
                 } catch (Exception ex) {
-                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling?");
+                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling ?");
                 }
 
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
 
                         String symbolicName = event.getBundle().getSymbolicName();
+                        String version = event.getBundle().getVersion().toString();
+                        String bundleLocation = event.getBundle().getLocation();
+                        int type = event.getType();
 
-                        if (symbolicName != null) {
-                            String version = event.getBundle().getVersion().toString();
-                            String bundleLocation = event.getBundle().getLocation();
-                            int type = event.getType();
-                            if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-                                RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                                remoteBundleEvent.setSourceGroup(group);
-                                remoteBundleEvent.setSourceNode(node);
-                                if (producerList != null && !producerList.isEmpty()) {
-                                    for (EventProducer producer : producerList) {
-                                        producer.produce(remoteBundleEvent);
-                                    }
+                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                            remoteBundleEvent.setSourceGroup(group);
+                            remoteBundleEvent.setSourceNode(node);
+
+                            // update the cluster map
+                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                            BundleState state = bundles.get(symbolicName + "/" + version);
+                            if (state == null) {
+                                state = new BundleState();
+                            }
+                            state.setStatus(type);
+                            state.setLocation(event.getBundle().getLocation());
+                            bundles.put(symbolicName + "/" + version, state);
+
+                            // broadcast the cluster event
+                            if (producerList != null && !producerList.isEmpty()) {
+                                for (EventProducer producer : producerList) {
+                                    producer.produce(remoteBundleEvent);
                                 }
-                            } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", symbolicName);
-                        } else LOGGER.debug("CELLAR BUNDLE: artifact is not a bundle");
+                            }
+                        } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", symbolicName);
                     }
                 }
             }

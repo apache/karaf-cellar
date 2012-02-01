@@ -43,38 +43,20 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      */
     public void handle(RemoteBundleEvent event) {
 
-        if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
-            return;
-
-        Group group = event.getSourceGroup();
-        String groupName = group.getName();
-        String bundleLocation = event.getLocation();
-
-        Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-
         try {
             //Check if the pid is marked as local.
-            if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
-                BundleState state = new BundleState();
-                state.setLocation(event.getLocation());
-                state.setStatus(event.getType());
-
+            if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
                 if (event.getType() == BundleEvent.INSTALLED) {
                     installBundleFromLocation(event.getLocation());
-                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == BundleEvent.UNINSTALLED) {
                     uninstallBundle(event.getSymbolicName(), event.getVersion());
-                    bundleTable.remove(event.getId());
                     LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == BundleEvent.STARTED) {
                     startBundle(event.getSymbolicName(), event.getVersion());
-                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == BundleEvent.STOPPED) {
                     stopBundle(event.getSymbolicName(), event.getVersion());
-                    state.setStatus(BundleEvent.INSTALLED);
-                    bundleTable.put(event.getId(), state);
                     LOGGER.debug("CELLAR BUNDLE: stopping {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == BundleEvent.UPDATED) {
                     updateBundle(event.getSymbolicName(), event.getVersion());
