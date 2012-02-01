@@ -109,9 +109,9 @@ public class CellarTestSupport {
      * Installs the Cellar feature
      */
     protected void installCellar() {
-        System.err.println(executeCommand("features:addurl " + CELLAR_FEATURE_URL));
-        System.err.println(executeCommand("features:listurl"));
-        System.err.println(executeCommand("features:list"));
+        System.err.println(executeCommand("feature:add-url " + CELLAR_FEATURE_URL));
+        System.err.println(executeCommand("feature:list-url"));
+        System.err.println(executeCommand("feature:list"));
         executeCommand("features:install cellar");
     }
 
@@ -160,7 +160,7 @@ public class CellarTestSupport {
      * Destroys the child node.
      */
     protected void destroyCellarChild(String name) {
-        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
+        System.err.println(executeCommand("admin:connect " + name + " feature:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
     }
 
@@ -169,7 +169,7 @@ public class CellarTestSupport {
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name + " cluster:nodes-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
         if (tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");

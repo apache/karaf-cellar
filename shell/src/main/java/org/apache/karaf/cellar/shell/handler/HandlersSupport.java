@@ -22,19 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Handlers command support.
- */
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-20s %-7s %s";
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
     protected Object doExecute(String handlerName, List<String> nodes, Boolean status) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);

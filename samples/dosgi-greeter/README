@@ -16,7 +16,7 @@ Installation
 
    Node A Shell:
    -------------
-   karaf@root> features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features
+   karaf@root> feature:add-url mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features
    karaf@root> cluster:group-set greeter-exporter-group 192.168.1.1:5702
    Node                 Group
    * 192.168.1.101:5701   greeter-exporter-group
@@ -24,8 +24,8 @@ Installation
    karaf@root> cluster:group-set greeter-importer-group 192.168.1.1:5701
    Node                 Group
    * 192.168.1.101:5701   greeter-importer-group
-   karaf@root> cluster:features-install greeter-exporter-group greeter-service
-   karaf@root> cluster:features-install greeter-importer-group greeter-client
+   karaf@root> cluster:feature-install greeter-exporter-group greeter-service
+   karaf@root> cluster:feature-install greeter-importer-group greeter-client
 
 3. Executing the greet (Pass a greet message and the number of iterations).
    karaf@root> dosgi-greeter:greet Halo 2

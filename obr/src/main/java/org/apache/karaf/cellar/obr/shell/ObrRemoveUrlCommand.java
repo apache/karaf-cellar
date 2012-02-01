@@ -29,13 +29,13 @@ import java.util.Set;
 /**
  * cluster:obr-removeurl command
  */
-@Command(scope = "cluster", name = "obr-removeurl", description = "Remove a repository URLS_DISTRIBUTED_SET_NAME from the distributed OBR service")
+@Command(scope = "cluster", name = "obr-remove-url", description = "Remove a repository URL from the distributed OBR service.")
 public class ObrRemoveUrlCommand extends ObrCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "url", description = "The repository URLS_DISTRIBUTED_SET_NAME to add in the OBR service", required = true, multiValued = false)
+    @Argument(index = 1, name = "url", description = "The repository URL to remove from the OBR service.", required = true, multiValued = false)
     String url;
 
     public Object doExecute() throws Exception {

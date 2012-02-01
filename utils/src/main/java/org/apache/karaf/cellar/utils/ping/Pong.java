@@ -15,9 +15,6 @@ package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.Result;
 
-/**
- * Pong result.
- */
 public class Pong extends Result {
 
     public Pong(String id) {

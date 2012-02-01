@@ -24,10 +24,10 @@ import java.util.Set;
 /**
  * cluster:obr-list command
  */
-@Command(scope = "cluster", name = "obr-listurl", description = "List repository URLs defined in the distributed OBR service for the given group")
+@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service for the given cluster group.")
 public class ObrListUrlCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "Cluster group name", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
     public Object doExecute() throws Exception {

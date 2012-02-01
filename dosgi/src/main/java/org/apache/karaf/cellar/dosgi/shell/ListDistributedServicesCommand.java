@@ -22,7 +22,7 @@ import org.apache.karaf.cellar.dosgi.EndpointDescription;
 import java.util.Map;
 import java.util.Set;
 
-@Command(scope = "cluster", name = "list-services", description = "List the distributed services")
+@Command(scope = "cluster", name = "service-list", description = "List the cluster distributed services.")
 public class ListDistributedServicesCommand extends CellarCommandSupport {
 
     private static final String LIST_FORMAT = "%-80s %-20s";
