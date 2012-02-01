@@ -64,7 +64,7 @@ public class CellarTestSupport {
     static final String INSTANCE_STARTED = "Started";
     static final String INSTANCE_STARTING = "Starting";
 
-    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "2.2.3-SNAPSHOT");
+    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "2.2.4-SNAPSHOT");
 
     static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
 
@@ -160,6 +160,7 @@ public class CellarTestSupport {
      * Destorys the child node.
      */
     protected void destroyCellarChild(String name) {
+        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
         System.err.println(executeCommand("admin:stop " + name));
         //System.err.println(executeCommand("admin:destroy " + name));
     }

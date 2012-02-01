@@ -59,6 +59,7 @@
         <module>bundle</module>
         <module>obr</module>
         <module>dosgi</module>
+        <module>event</module>
         <module>shell</module>
         <module>hazelcast</module>
         <module>utils</module>
