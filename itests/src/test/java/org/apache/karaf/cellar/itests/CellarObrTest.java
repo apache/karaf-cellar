@@ -30,16 +30,16 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 
 @RunWith(JUnit4TestRunner.class)
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
-public class CellarEventTest extends CellarTestSupport {
+public class CellarObrTest extends CellarTestSupport {
 
     @Test
-    public void testCellarEventFeatureInstall() throws Exception {
+    public void testCellarObrFeatureInstall() throws Exception {
         installCellar();
         Thread.sleep(DEFAULT_TIMEOUT);
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);
         assertNotNull(clusterManager);
-        
-        System.err.println(executeCommand("features:install cellar-event"));
+
+        System.err.println(executeCommand("features:install cellar-obr"));
     }
 
     @After
