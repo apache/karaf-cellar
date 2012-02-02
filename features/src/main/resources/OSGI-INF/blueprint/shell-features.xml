@@ -16,7 +16,7 @@
 
     <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/features-install">
+        <command name="cluster/feature-install">
             <action class="org.apache.karaf.cellar.features.shell.InstallFeatureCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -28,7 +28,7 @@
                 <ref component-id="allFeatureCompleter"/>
             </completers>
         </command>
-        <command name="cluster/features-uninstall">
+        <command name="cluster/feature-uninstall">
             <action class="org.apache.karaf.cellar.features.shell.UninstallFeatureCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -40,7 +40,7 @@
                 <ref component-id="allFeatureCompleter"/>
             </completers>
         </command>
-        <command name="cluster/features-list">
+        <command name="cluster/feature-list">
             <action class="org.apache.karaf.cellar.features.shell.ListGroupFeatures">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="featuresService" ref="featuresService"/>

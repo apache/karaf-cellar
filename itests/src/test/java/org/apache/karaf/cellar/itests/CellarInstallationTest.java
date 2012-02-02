@@ -40,11 +40,4 @@ public class CellarInstallationTest extends CellarTestSupport {
         System.err.println(executeCommand("cluster:node-list"));
     }
 
-
-    @Configuration
-    public Option[] config() {
-        return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder()};
-    }
-
 }
