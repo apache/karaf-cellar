@@ -13,44 +13,28 @@
  */
 package org.apache.karaf.cellar.itests;
 
+import org.apache.felix.service.command.CommandProcessor;
+import org.apache.felix.service.command.CommandSession;
+import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.MavenUtils;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ProbeBuilder;
+import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
+
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import javax.inject.Inject;
+import java.util.*;
+import java.util.concurrent.*;
 
-import EDU.oswego.cs.dl.util.concurrent.Sync;
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
-import org.ops4j.pax.exam.MavenUtils;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.ProbeBuilder;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-
-
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 
 public class CellarTestSupport {
@@ -63,8 +47,6 @@ public class CellarTestSupport {
 
     static final String INSTANCE_STARTED = "Started";
     static final String INSTANCE_STARTING = "Starting";
-
-    static final String CELLAR_FEATURE_URL = String.format("mvn:org.apache.karaf.cellar/apache-karaf-cellar/%s/xml/features", "2.2.4-SNAPSHOT");
 
     static final String DEBUG_OPTS = " --java-opts \"-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=%s\"";
 
@@ -109,7 +91,7 @@ public class CellarTestSupport {
      * Installs the Cellar feature
      */
     protected void installCellar() {
-        System.err.println(executeCommand("features:addurl " + CELLAR_FEATURE_URL));
+        System.err.println(executeCommand("features:addurl " + System.getProperty("cellar.feature.url")));
         System.err.println(executeCommand("features:listurl"));
         System.err.println(executeCommand("features:list"));
         executeCommand("features:install cellar");
@@ -128,11 +110,11 @@ public class CellarTestSupport {
 
     protected void createCellarChild(String name, boolean debug, int port) {
         int instances = 0;
-        String createCommad = "admin:create --featureURL " + CELLAR_FEATURE_URL + " --feature cellar ";
+        String createCommand = "admin:create --featureURL " + System.getProperty("cellar.feature.url") + " --feature cellar ";
         if (debug && port > 0) {
-            createCommad = createCommad + String.format(DEBUG_OPTS, port);
+            createCommand = createCommand + String.format(DEBUG_OPTS, port);
         }
-        System.err.println(executeCommand(createCommad + " " + name));
+        System.err.println(executeCommand(createCommand + " " + name));
         System.err.println(executeCommand("admin:start " + name));
 
         //Wait till the node is listed as Starting
@@ -190,6 +172,13 @@ public class CellarTestSupport {
         return karafDistributionConfiguration().frameworkUrl(
                 maven().groupId(GROUP_ID).artifactId(ARTIFACT_ID).versionAsInProject().type("tar.gz"))
                 .karafVersion(MavenUtils.getArtifactVersion(GROUP_ID, ARTIFACT_ID)).name("Apache Karaf").unpackDirectory(new File("target/paxexam/"));
+    }
+
+    @Configuration
+    public Option[] config() {
+        return new Option[]{
+                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR),
+                editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL())};
     }
 
     /**
