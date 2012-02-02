@@ -89,10 +89,4 @@ public class CellarConfigurationTest extends CellarTestSupport {
         }
     }
 
-    @Configuration
-    public Option[] config() {
-        return new Option[]{
-                cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR)};
-    }
-
 }
