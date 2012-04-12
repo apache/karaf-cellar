@@ -13,15 +13,14 @@
  */
 package org.apache.karaf.cellar.hazelcast.factory;
 
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CountDownLatch;
 
 /**
  * A factory for a Hazelcast Instance, which integration with OSGi Service Registry and Config Admin.
@@ -35,7 +34,7 @@ public class HazelcastServiceFactory  {
     private HazelcastConfigurationManager configurationManager = new HazelcastConfigurationManager();
 
     private CountDownLatch initializationLatch = new CountDownLatch(1);
-    private CountDownLatch instnaceLatch = new CountDownLatch(1);
+    private CountDownLatch instanceLatch = new CountDownLatch(1);
     private HazelcastInstance instance;
 
 
@@ -52,18 +51,6 @@ public class HazelcastServiceFactory  {
         }
     }
 
-    public void update(Map properties) throws InterruptedException {
-        LOGGER.info("Instance configuration updated. Checking if instance requires restarting.");
-        if(configurationManager.isUpdated(properties)) {
-            instnaceLatch.await();
-            Config updatedConfig = configurationManager.getHazelcastConfig();
-            instance.getConfig().setNetworkConfig(updatedConfig.getNetworkConfig());
-            instance.getConfig().setGroupConfig(updatedConfig.getGroupConfig());
-            LOGGER.info("Restaring Hazelcast instance.");
-            instance.getLifecycleService().restart();
-        }
-    }
-
     /**
      * Returs a Hazelcast instance from service registry.
      *
@@ -73,7 +60,7 @@ public class HazelcastServiceFactory  {
         if (instance == null) {
                 initializationLatch.await();
                 this.instance = buildInstance();
-                instnaceLatch.countDown();
+                instanceLatch.countDown();
         }
         return instance;
     }
@@ -105,4 +92,5 @@ public class HazelcastServiceFactory  {
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }

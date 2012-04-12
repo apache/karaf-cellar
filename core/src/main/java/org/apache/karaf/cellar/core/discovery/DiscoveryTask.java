@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -48,6 +49,7 @@ public class DiscoveryTask implements Runnable {
     @Override
     public void run() {
         LOGGER.trace("CELLAR DISCOVERY: Starting the discovery task.");
+
         if (configurationAdmin != null) {
             Set<String> members = new LinkedHashSet<String>();
             if (discoveryServices != null && !discoveryServices.isEmpty()) {
@@ -56,18 +58,18 @@ public class DiscoveryTask implements Runnable {
                     Set<String> discovered = service.discoverMembers();
                     members.addAll(discovered);
                 }
-            try {
-                Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
-                Dictionary properties = configuration.getProperties();
-                String newMemberText = CellarUtils.createStringFromSet(members,true);
-                String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
-                if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
-                    properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
-                    configuration.update(properties);
+                try {
+                    Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
+                    Dictionary properties = configuration.getProperties();
+                    String newMemberText = CellarUtils.createStringFromSet(members, true);
+                    String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
+                    if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
+                        properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
+                        configuration.update(properties);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Failed to update member list", e);
                 }
-            } catch (IOException e) {
-                LOGGER.error("Failed to update member list", e);
-            }
             }
         }
     }

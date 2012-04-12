@@ -15,7 +15,7 @@ package org.apache.karaf.cellar.core.discovery;
 
 public class Discovery {
 
-    public static final String PID = "org.apache.karaf.cellar.instance";
+    public static final String PID = "org.apache.karaf.cellar.discovery";
     public static final String MEMBERS_PROPERTY_NAME = "tcpIpMembers";
     public static final String DISCOVERED_MEMBERS_PROPERTY_NAME = "discoveredMembers";
 
