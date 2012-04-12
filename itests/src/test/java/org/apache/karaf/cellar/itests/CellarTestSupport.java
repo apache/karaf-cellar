@@ -73,6 +73,7 @@ public class CellarTestSupport {
      * @param members
      */
     protected void configureLocalDiscovery(int members) {
+        // TODO use the hazelcast config
         StringBuilder membersBuilder = new StringBuilder();
         membersBuilder.append("config:propset tcpIpMembers ");
         membersBuilder.append("localhost:5701");

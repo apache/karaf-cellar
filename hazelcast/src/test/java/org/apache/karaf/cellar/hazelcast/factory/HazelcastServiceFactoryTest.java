@@ -45,15 +45,7 @@ public class HazelcastServiceFactoryTest {
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.init();
         factory.getInstance();
-        factory.update(null);
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
-
-        // define the username and password as in the hazelcast-default.xml provided by Hazelcast
-        // without this, "cellar" instance is not in the same cluster as the Hazelcast default one
-        Properties properties = new Properties();
-        properties.put(HazelcastConfigurationManager.USERNAME, "dev");
-        properties.put(HazelcastConfigurationManager.PASSWORD, "dev-pass");
-        factory.update(properties);
 
         HazelcastInstance factoryInstance = factory.getInstance();
         Assert.assertEquals(true, factoryInstance.getCluster().getMembers().size() >= 2);
