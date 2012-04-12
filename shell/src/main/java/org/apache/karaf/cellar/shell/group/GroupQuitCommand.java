@@ -22,7 +22,7 @@ import java.util.List;
 @Command(scope = "cluster", name = "group-quit", description = "Quit a cluster group.")
 public class GroupQuitCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String group;
 
     @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
@@ -30,7 +30,7 @@ public class GroupQuitCommand extends GroupSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.QUIT, group, nodes,false);
+        return doExecute(ManageGroupAction.QUIT, group, nodes, false);
     }
 
 }
