@@ -22,7 +22,7 @@ import java.util.List;
 @Command(scope = "cluster", name = "group-quit", description = "Quit node(s) from a cluster group.")
 public class GroupQuitCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String group;
 
     @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
