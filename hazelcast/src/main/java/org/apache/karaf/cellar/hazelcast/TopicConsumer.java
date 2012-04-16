@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
+import com.hazelcast.core.Message;
 import com.hazelcast.core.MessageListener;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
@@ -69,6 +70,10 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         }
     }
 
+    private void consume(Message<E> message) {
+        consume(message.getMessageObject());
+    }
+
     @Override
     public void start() {
         isConsuming = true;
@@ -94,7 +99,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         return isConsuming;
     }
 
-    public void onMessage(E message) {
+    public void onMessage(Message<E> message) {
         consume(message);
     }
 
