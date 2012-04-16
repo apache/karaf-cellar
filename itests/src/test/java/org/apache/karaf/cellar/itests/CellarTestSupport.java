@@ -66,7 +66,7 @@ public class CellarTestSupport {
     }
 
     /**
-     * This method configures Hazelcast TcpIp discovery for a given number of memebers.
+     * This method configures Hazelcast TcpIp discovery for a given number of members.
      * This configuration is required, when working with karaf instances.
      *
      * @param members
@@ -79,7 +79,7 @@ public class CellarTestSupport {
             membersBuilder.append(",").append("localhost:").append(String.valueOf(5701 + i));
         }
 
-        String editCmd = "config:edit org.apache.karaf.cellar.instance";
+        String editCmd = "config:edit org.apache.karaf.cellar.discovery";
         String propsetCmd = membersBuilder.toString();
         String updateCmd = "config:update";
 
@@ -90,14 +90,14 @@ public class CellarTestSupport {
      * Installs the Cellar feature
      */
     protected void installCellar() {
-        System.err.println(executeCommand("features:addurl " + System.getProperty("cellar.feature.url")));
-        System.err.println(executeCommand("features:listurl"));
-        System.err.println(executeCommand("features:list"));
-        executeCommand("features:install cellar");
+        System.err.println(executeCommand("feature:url-add " + System.getProperty("cellar.feature.url")));
+        System.err.println(executeCommand("feature:url-list"));
+        System.err.println(executeCommand("feature:list"));
+        executeCommand("feature:install cellar");
     }
 
     protected void unInstallCellar() {
-        System.err.println(executeCommand("features:uninstall cellar"));
+        System.err.println(executeCommand("feature:uninstall cellar"));
     }
 
     /**
@@ -109,17 +109,17 @@ public class CellarTestSupport {
 
     protected void createCellarChild(String name, boolean debug, int port) {
         int instances = 0;
-        String createCommand = "admin:create --featureURL " + System.getProperty("cellar.feature.url") + " --feature cellar ";
+        String createCommand = "instance:create --featureURL " + System.getProperty("cellar.feature.url") + " --feature cellar ";
         if (debug && port > 0) {
             createCommand = createCommand + String.format(DEBUG_OPTS, port);
         }
         System.err.println(executeCommand(createCommand + " " + name));
-        System.err.println(executeCommand("admin:start " + name));
+        System.err.println(executeCommand("instance:start " + name));
 
         //Wait till the node is listed as Starting
         System.err.print("Waiting for " + name + " to start ");
         for (int i = 0; i < 5 && instances == 0; i++) {
-            String response = executeCommand("admin:list | grep " + name + " | grep -c " + INSTANCE_STARTED, COMMAND_TIMEOUT, true);
+            String response = executeCommand("instance:list | grep " + name + " | grep -c " + INSTANCE_STARTED, COMMAND_TIMEOUT, true);
             instances = Integer.parseInt(response.trim());
             System.err.print(".");
             try {
@@ -141,8 +141,8 @@ public class CellarTestSupport {
      * Destroys the child node.
      */
     protected void destroyCellarChild(String name) {
-        System.err.println(executeCommand("admin:connect " + name + " features:uninstall cellar"));
-        System.err.println(executeCommand("admin:stop " + name));
+        System.err.println(executeCommand("instance:connect " + name + " feature:uninstall cellar"));
+        System.err.println(executeCommand("instance:stop " + name));
     }
 
     /**
@@ -150,7 +150,7 @@ public class CellarTestSupport {
      */
     protected String getNodeIdOfChild(String name) {
         String nodeId = null;
-        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        String nodesList = executeCommand("instance:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
         String[] tokens = nodesList.split(" ");
         if (tokens != null && tokens.length > 0) {
             nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");
