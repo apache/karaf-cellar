@@ -83,7 +83,7 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
                 service.setValidityPeriod(Integer.parseInt(validity));
                 service.init();
 
-                newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), service, serviceProperties);
+                newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), service, (Dictionary) serviceProperties);
             }
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);

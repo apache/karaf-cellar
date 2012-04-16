@@ -15,8 +15,8 @@ package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.utils.ping.Ping;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.Arrays;
 import java.util.HashSet;

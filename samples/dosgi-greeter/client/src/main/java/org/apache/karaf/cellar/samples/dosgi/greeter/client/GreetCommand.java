@@ -13,9 +13,9 @@
  */
 package org.apache.karaf.cellar.samples.dosgi.greeter.client;
 
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 @Command(scope = "dosgi-greeter", name = "greet", description = "Starts the greet client")

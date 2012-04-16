@@ -16,9 +16,9 @@ package org.apache.karaf.cellar.features.shell;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.features.FeatureEvent;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 @Command(scope = "cluster", name = "feature-install", description = "Install a feature assigned to a cluster group.")
 public class InstallFeatureCommand extends FeatureCommandSupport {

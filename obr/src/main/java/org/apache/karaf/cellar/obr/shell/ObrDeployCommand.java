@@ -13,18 +13,15 @@
  */
 package org.apache.karaf.cellar.obr.shell;
 
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleEvent;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 
-/**
- * Deploy a bundle from the OBR.
- */
 @Command(scope = "cluster", name = "obr-deploy", description = "Deploy a bundle from the OBR on a cluster group.")
 public class ObrDeployCommand extends CellarCommandSupport {
 

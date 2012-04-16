@@ -13,8 +13,8 @@
  */
 package org.apache.karaf.cellar.shell.group;
 
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 @Command(scope = "cluster", name = "group-create", description = "Create a cluster group.")
 public class GroupCreateCommand extends GroupSupport {

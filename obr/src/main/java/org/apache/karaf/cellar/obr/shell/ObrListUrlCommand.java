@@ -13,17 +13,14 @@
  */
 package org.apache.karaf.cellar.obr.shell;
 
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.Set;
 
-/**
- * cluster:obr-list command
- */
 @Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service for the given cluster group.")
 public class ObrListUrlCommand extends CellarCommandSupport {
 

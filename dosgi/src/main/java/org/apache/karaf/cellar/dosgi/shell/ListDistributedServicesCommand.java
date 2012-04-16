@@ -13,11 +13,11 @@
  */
 package org.apache.karaf.cellar.dosgi.shell;
 
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.dosgi.Constants;
 import org.apache.karaf.cellar.dosgi.EndpointDescription;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.Map;
 import java.util.Set;
