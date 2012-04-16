@@ -35,6 +35,8 @@ public class HazelcastConfigurationManager {
 
     private String xmlConfigLocation = System.getProperty("karaf.home") + "/etc/hazelcast.xml";
 
+    private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
+
      /**
      * Builds a Hazelcast {@link com.hazelcast.config.Config}
      *
@@ -43,7 +45,34 @@ public class HazelcastConfigurationManager {
     public Config getHazelcastConfig() {
         System.setProperty("hazelcast.config", xmlConfigLocation);
         Config config = new XmlConfigBuilder().build();
+        if (discoveredMemberSet != null) {
+            TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
+            tcpIpConfig.getMembers().addAll(discoveredMemberSet);
+        }
         return config;
     }
+
+    /**
+     * Update Hazelcast config with discovered members.
+     *
+     * @param properties the map containing the discovered members.
+     * @return true if the config has been updated, false else.
+     */
+    public boolean isUpdated(Map properties) {
+        Boolean updated = Boolean.FALSE;
+        if (properties != null) {
+            if (properties.containsKey(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME)) {
+                Set<String> newDiscoveredMemberSet = CellarUtils.createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
+                if (!CellarUtils.collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
+                    LOGGER.info("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
+                    discoveredMemberSet = newDiscoveredMemberSet;
+                    updated = Boolean.TRUE;
+                }
+            }
+        }
+        return updated;
+    }
+
+
 
 }
