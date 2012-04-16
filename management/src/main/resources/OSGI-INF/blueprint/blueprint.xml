@@ -20,10 +20,6 @@
     <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
 
-    <reference id="mbeanServer" interface="javax.management.MBeanServer">
-        <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
-    </reference>
-
     <bean id="cellarMBean" class="org.apache.karaf.cellar.management.internal.CellarMBeanImpl">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="executionContext" ref="executionContext"/>
@@ -50,16 +46,34 @@
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
-    <bean id="mbeanRegister" class="org.apache.karaf.management.MBeanRegistrer">
-        <property name="mbeans">
-            <map>
-                <entry value="org.apache.karaf.cellar:type=core,name=${karaf.name}" key-ref="cellarMBean"/>
-                <entry value="org.apache.karaf.cellar:type=node,name=${karaf.name}" key-ref="cellarNodeMBean"/>
-                <entry value="org.apache.karaf.cellar:type=config,name=${karaf.name}" key-ref="cellarConfigMBean"/>
-                <entry value="org.apache.karaf.cellar:type=feature,name=${karaf.name}" key-ref="cellarFeaturesMBean"/>
-                <entry value="org.apache.karaf.cellar:type=group,name=${karaf.name}" key-ref="cellarGroupMBean"/>
-            </map>
-        </property>
-    </bean>
+    <service ref="cellarMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=core,name=${karaf.name}"/>
+        </service-properties>
+    </service>
+
+    <service ref="cellarNodeMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=node,name=${karaf.name}"/>
+        </service-properties>
+    </service>
+
+    <service ref="cellarConfigMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=config,name=${karaf.name}"/>
+        </service-properties>
+    </service>
+
+    <service ref="cellarFeaturesMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=feature,name=${karaf.name}"/>
+        </service-properties>
+    </service>
+
+    <service ref="cellarGroupMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=group,name=${karaf.name}"/>
+        </service-properties>
+    </service>
 
 </blueprint>
