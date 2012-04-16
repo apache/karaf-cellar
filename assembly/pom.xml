@@ -91,11 +91,6 @@
                                     <classifier>node</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/classes/instance.cfg</file>
-                                    <type>cfg</type>
-                                    <classifier>instance</classifier>
-                                </artifact>
-                                <artifact>
                                     <file>target/classes/hazelcast.xml</file>
                                     <type>xml</type>
                                     <classifier>hazelcast</classifier>
