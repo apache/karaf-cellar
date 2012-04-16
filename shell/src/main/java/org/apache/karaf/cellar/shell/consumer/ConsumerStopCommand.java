@@ -14,8 +14,8 @@
 package org.apache.karaf.cellar.shell.consumer;
 
 import org.apache.karaf.cellar.core.control.SwitchStatus;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 

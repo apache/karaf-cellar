@@ -13,18 +13,15 @@
  */
 package org.apache.karaf.cellar.obr.shell;
 
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.Set;
 
-/**
- * cluster:obr-list command.
- */
 @Command(scope = "cluster", name = "obr-list", description = "List available bundles in the OBR of all nodes assigned to a cluster group.")
 public class ObrListCommand extends CellarCommandSupport {
 

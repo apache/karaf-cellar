@@ -15,20 +15,17 @@ package org.apache.karaf.cellar.obr.shell;
 
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.Resource;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
 import org.apache.karaf.cellar.obr.ObrUrlEvent;
+import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.shell.commands.Command;
 
 import java.util.Set;
 
-/**
- * cluster:obr-addurl command.
- */
 @Command(scope = "cluster", name = "obr-add-url", description = "Register a repository URL in the distributed OBR service.")
 public class ObrAddUrlCommand extends ObrCommandSupport {
 
