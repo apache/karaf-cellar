@@ -26,7 +26,7 @@
           init-method="init" destroy-method="destroy">
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
-        <cm:managed-properties persistent-id="org.apache.karaf.cellar.instance" update-strategy="component-managed"
+        <cm:managed-properties persistent-id="org.apache.karaf.cellar.discovery" update-strategy="component-managed"
                                   update-method="update"/>
     </bean>
 

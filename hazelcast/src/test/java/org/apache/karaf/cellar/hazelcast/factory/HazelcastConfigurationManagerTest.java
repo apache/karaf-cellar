@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.hazelcast.factory;
 
+import org.apache.karaf.cellar.core.discovery.Discovery;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,7 @@ public class HazelcastConfigurationManagerTest {
     public void testIsUpdatedWithEmptyTcpMembers()  {
         HazelcastConfigurationManager cm = new HazelcastConfigurationManager();
         Properties p = new Properties();
-        p.put(HazelcastConfigurationManager.TCPIP_MEMBERS,"");
+        p.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME ,"");
         Assert.assertFalse(cm.isUpdated(p));
     }
 
