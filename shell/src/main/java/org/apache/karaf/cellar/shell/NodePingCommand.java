@@ -24,6 +24,8 @@ import java.util.HashSet;
 @Command(scope = "cluster", name = "node-ping", description = "Ping a cluster node.")
 public class NodePingCommand extends ClusterCommandSupport {
 
+    private static Long TIMEOUT = 5000L;
+
     @Argument(index = 0, name = "node", description = "The node ID to ping.", required = true, multiValued = false)
     String nodeId;
 
@@ -48,7 +50,11 @@ public class NodePingCommand extends ClusterCommandSupport {
             executionContext.execute(ping);
             Long stop = System.currentTimeMillis();
             Long delay = stop - start;
-            System.out.println(String.format("PING %s %s %sms", i, node.getId(), delay));
+            if (delay > TIMEOUT) {
+                System.err.println(String.format("TIMEOUT %s %s %sms", i, node.getId(), delay));
+            } else {
+                System.out.println(String.format("PING %s %s %sms", i, node.getId(), delay));
+            }
             Thread.sleep(interval);
         }
         return null;
