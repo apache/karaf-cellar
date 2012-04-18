@@ -76,10 +76,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     private CombinedClassLoader combinedClassLoader;
 
     public void init() {
-        //Create a listener for group configuration.
+        // create a listener for group configuration.
         IMap groupConfiguration = instance.getMap(GROUPS_CONFIG);
-        groupConfiguration.addEntryListener(this,true);
-        //Add group to configuration
+        groupConfiguration.addEntryListener(this, true);
+        // add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             if (configuration != null) {
@@ -102,7 +102,16 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     public void destroy() {
-        for(Map.Entry<String,EventConsumer> consumerEntry:groupConsumer.entrySet()) {
+        // update the group
+        Node local = this.getNode();
+        Set<Group> groups = this.listGroups(local);
+        for (Group group : groups) {
+            String groupName = group.getName();
+            group.getNodes().remove(local);
+            listGroups().put(groupName, group);
+        }
+        // shutdown the group consumer/producers
+        for (Map.Entry<String,EventConsumer> consumerEntry : groupConsumer.entrySet()) {
             EventConsumer consumer = consumerEntry.getValue();
             consumer.stop();
         }

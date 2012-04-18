@@ -73,7 +73,6 @@
     <bean id="combinedClassLoader" class="org.apache.karaf.cellar.core.utils.CombinedClassLoader" init-method="init"
           destroy-method="destroy"/>
 
-
     <!-- Hazelcast Cluster and Node -->
     <bean id="node" factory-ref="clusterManager" factory-method="getNode"/>
 
