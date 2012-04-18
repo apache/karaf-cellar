@@ -67,7 +67,7 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
     }
 
     public void memberRemoved(MembershipEvent membershipEvent) {
-
+        // nothing to do
     }
 
     public GroupManager getGroupManager() {
