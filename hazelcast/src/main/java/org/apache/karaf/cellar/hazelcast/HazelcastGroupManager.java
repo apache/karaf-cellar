@@ -102,6 +102,15 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     public void destroy() {
+        // update the group
+        Node local = this.getNode();
+        Set<Group> groups = this.listGroups(local);
+        for (Group group : groups) {
+            String groupName = group.getName();
+            group.getNodes().remove(local);
+            listGroups().put(groupName, group);
+        }
+        // shutdown the group consumer/producers
         for(Map.Entry<String,EventConsumer> consumerEntry:groupConsumer.entrySet()) {
             EventConsumer consumer = consumerEntry.getValue();
             consumer.stop();
