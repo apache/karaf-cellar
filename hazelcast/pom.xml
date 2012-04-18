@@ -65,7 +65,7 @@
             org.apache.karaf.cellar.core.event.EventProducer,
             org.apache.karaf.cellar.core.event.EventProducer;type=group
         </osgi.export.service>
-        <osgi.fragment.host>hazelcast</osgi.fragment.host>
+        <osgi.fragment.host>com.hazelcast</osgi.fragment.host>
     </properties>
 
     <dependencies>
