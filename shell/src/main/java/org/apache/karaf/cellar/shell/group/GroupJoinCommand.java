@@ -30,7 +30,7 @@ public class GroupJoinCommand extends GroupSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.JOIN, group, nodes,false);
+        return doExecute(ManageGroupAction.JOIN, group, null, nodes,false);
     }
 
 }
