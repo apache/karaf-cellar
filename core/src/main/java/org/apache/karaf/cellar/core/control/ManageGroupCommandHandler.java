@@ -29,7 +29,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.managegroup.switch";
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
-
     @Override
     public ManageGroupResult execute(ManageGroupCommand command) {
 
@@ -50,7 +49,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             purgeGroups();
             joinGroup(Configurations.DEFAULT_GROUP_NAME);
         } else if (ManageGroupAction.SET.equals(action)) {
-            purgeGroups();
+            quitGroup(command.getSourceGroup().getName());
             joinGroup(targetGroupName);
         }
 
