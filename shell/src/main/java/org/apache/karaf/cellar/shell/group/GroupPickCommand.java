@@ -42,7 +42,6 @@ public class GroupPickCommand extends GroupSupport {
         if (sourceGroup != null) {
             Set<Node> groupMembers = sourceGroup.getNodes();
 
-            int i = 0;
             for (Node node : groupMembers) {
                 List<String> recipient = new LinkedList<String>();
                 recipient.add(node.getId());
