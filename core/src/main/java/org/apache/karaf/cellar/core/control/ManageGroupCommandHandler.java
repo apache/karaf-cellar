@@ -49,7 +49,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             purgeGroups();
             joinGroup(Configurations.DEFAULT_GROUP_NAME);
         } else if (ManageGroupAction.SET.equals(action)) {
-            purgeGroups();
+            quitGroup(command.getSourceGroup().getName());
             joinGroup(targetGroupName);
         }
 

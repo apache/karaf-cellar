@@ -44,7 +44,7 @@ public class GroupDeleteCommand extends GroupSupport {
                 for (Node n : g.getNodes()) {
                     nodes.add(n.getId());
                 }
-                doExecute(ManageGroupAction.QUIT, group, nodes);
+                doExecute(ManageGroupAction.QUIT, group, null, nodes);
             }
 
             groupManager.deleteGroup(group);

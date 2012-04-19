@@ -38,8 +38,8 @@ public abstract class GroupSupport extends ClusterCommandSupport {
      * @return
      * @throws Exception
      */
-    protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes) throws Exception {
-        return doExecute(action, group, nodes, true);
+    protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodes) throws Exception {
+        return doExecute(action, group, source, nodes, true);
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class GroupSupport extends ClusterCommandSupport {
      * @return
      * @throws Exception
      */
-    protected Object doExecute(ManageGroupAction action, String group, Collection<String> nodes, Boolean suppressOutput) throws Exception {
+    protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodes, Boolean suppressOutput) throws Exception {
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);
 
@@ -69,6 +69,10 @@ public abstract class GroupSupport extends ClusterCommandSupport {
 
         if (group != null) {
             command.setGroupName(group);
+        }
+
+        if (source != null) {
+            command.setSourceGroup(source);
         }
 
         Map<Node, ManageGroupResult> results = executionContext.execute(command);

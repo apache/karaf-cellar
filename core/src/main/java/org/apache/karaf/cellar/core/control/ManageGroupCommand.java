@@ -23,7 +23,6 @@ public class ManageGroupCommand extends Command<ManageGroupResult> {
     private ManageGroupAction action;
     private String groupName;
 
-
     public ManageGroupCommand(String id) {
         super(id);
     }

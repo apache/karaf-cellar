@@ -40,31 +40,16 @@ public class GroupPickCommand extends GroupSupport {
     protected Object doExecute() throws Exception {
         Group sourceGroup = groupManager.findGroupByName(sourceGroupName);
         if (sourceGroup != null) {
-            List<String> eligibleMembers = new LinkedList<String>();
             Set<Node> groupMembers = sourceGroup.getNodes();
 
+            int i = 0;
             for (Node node : groupMembers) {
-                Set<Group> nodeGroups = groupManager.listGroups(node);
-                //If the node only belongs to the source group then it is eligible.
-                if (nodeGroups != null && nodeGroups.size() == 1) {
-                    eligibleMembers.add(node.getId());
-                }
-            }
-
-            if (eligibleMembers.size() == 0) {
-                System.out.println("Could not find eligible members from transfer in group: " + sourceGroupName);
-            } else if (eligibleMembers.size() < count) {
-                System.out.println("There are fewer(" + eligibleMembers.size() + ") eligible members for transfer in group: " + sourceGroupName);
-            }
-
-            //TODO: The loop should not be necessary since the method already accepts a list. However this is breaks for some reason.
-            for (String eligible : eligibleMembers) {
                 List<String> recipient = new LinkedList<String>();
-                recipient.add(eligible);
-                doExecute(ManageGroupAction.SET, targetGroupName, recipient);
+                recipient.add(node.getId());
+                doExecute(ManageGroupAction.SET, targetGroupName, sourceGroup, recipient);
             }
 
-            doExecute(ManageGroupAction.LIST, null, new ArrayList(), false);
+            doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
 
         } else System.err.println("Cannot find source group with name: " + sourceGroupName);
         return null;
