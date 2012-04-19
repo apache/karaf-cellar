@@ -42,10 +42,14 @@ public class GroupPickCommand extends GroupSupport {
         if (sourceGroup != null) {
             Set<Node> groupMembers = sourceGroup.getNodes();
 
+            int i = 0;
             for (Node node : groupMembers) {
+                if (i >= count)
+                    break;
                 List<String> recipient = new LinkedList<String>();
                 recipient.add(node.getId());
                 doExecute(ManageGroupAction.SET, targetGroupName, sourceGroup, recipient);
+                i++;
             }
 
             doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
