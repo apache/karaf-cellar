@@ -38,17 +38,12 @@
             org.apache.karaf.cellar.management*;version="${project.version}"
         </osgi.export>
         <osgi.import>
-            !org.apache.karaf.cellar.management*,
             javax.management,
             javax.management.loading,
+            javax.management.openmbean,
             org.apache.karaf.features*;version="[3,4)",
             org.apache.karaf.cellar*;version="${project.version}",
-            org.apache.karaf.cellar.config*;version="${project.version}",
-            org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.features*;version="${project.version}",
-            org.apache.karaf.cellar.hazelcast*;version="${project.version}",
-            org.apache.karaf.cellar.utils*;version="${project.version}",
-            *
+            org.osgi*
         </osgi.import>
         <osgi.private>
             org.apache.karaf.cellar.management.internal
