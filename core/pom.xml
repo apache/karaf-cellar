@@ -35,9 +35,9 @@
 
     <properties>
         <osgi.import>
-            !org.apache.karaf.cellar.core*,
             org.apache.karaf.shell.console*;version="[2,4)",
-            *
+            org.osgi*,
+            org.slf4j;resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
         <osgi.export>
