@@ -34,8 +34,13 @@
     <name>Apache Karaf :: Cellar :: Samples :: Camel Hazelcast Application :: Producer</name>
 
     <properties>
+        <osgi.export>
+
+        </osgi.export>
         <osgi.import>
-            *
+            com.hazelcast.core,
+            org.apache.camel.component.hazelcast,
+            org.osgi*
         </osgi.import>
     </properties>
 
