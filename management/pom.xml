@@ -41,8 +41,8 @@
             javax.management,
             javax.management.loading,
             javax.management.openmbean,
-            org.apache.karaf.management*;version="[2,4)",
-            org.apache.karaf.features*;version="[2,4)",
+            org.apache.karaf.management*;version="[2.2,3)",
+            org.apache.karaf.features*;version="[2.2,3)",
             org.apache.karaf.cellar*;version="${project.version}",
             org.osgi.service.blueprint
         </osgi.import>
