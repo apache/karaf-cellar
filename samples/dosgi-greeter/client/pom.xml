@@ -36,9 +36,10 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
-            !org.apache.karaf.cellar.samples.dosgi.greeter.client*,
             org.apache.karaf.cellar.samples.dosgi.greeter.api,
-            *
+            org.apache.karaf.shell.commands;version="[3,4)",
+            org.apache.karaf.shell.console;version="[3,4)",
+            org.osgi*
         </osgi.import>
         <osgi.export>
             org.apache.karaf.cellar.samples.dosgi.greeter.client*;version="${project.version}"

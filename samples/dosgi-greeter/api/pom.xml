@@ -36,8 +36,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
-            !org.apache.karaf.cellar.samples.dosgi.greeter.api*,
-            *
+
         </osgi.import>
         <osgi.export>
             org.apache.karaf.cellar.samples.dosgi.greeter.api*;version="${project.version}"
