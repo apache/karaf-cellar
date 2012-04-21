@@ -35,7 +35,7 @@
 
     <properties>
         <osgi.import>
-            org.apache.karaf.shell.console*;version="[2,4)",
+            org.apache.karaf.shell.console*;version="[2.2,3)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>
