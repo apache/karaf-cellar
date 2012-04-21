@@ -36,8 +36,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
-            com.hazelcast*,
-            *
+            com.hazelcast.core,
+            org.osgi*,
+            org.slf4j;resolution:=optional
         </osgi.import>
         <osgi.export>
             org.apache.karaf.cellar.samples.hazelcast*;version="${project.version}"
