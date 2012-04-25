@@ -19,7 +19,7 @@ import org.apache.felix.gogo.commands.Command;
 @Command(scope = "cluster", name = "group-create", description = "Create a cluster group.")
 public class GroupCreateCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String group;
 
     @Override
