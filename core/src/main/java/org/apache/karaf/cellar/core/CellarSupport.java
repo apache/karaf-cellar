@@ -172,10 +172,10 @@ public class CellarSupport {
      * @return
      */
     protected boolean wildCardMatch(String item, String pattern) {
-        String[] cards = pattern.split("\\*");
         if (pattern == null || pattern.isEmpty()) {
             return false;
         }
+        String[] cards = pattern.split("\\*");
         // Iterate over the cards.
         for (String card : cards) {
             int idx = item.indexOf(card);
