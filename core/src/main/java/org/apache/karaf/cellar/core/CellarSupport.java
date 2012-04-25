@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Cellar support.
@@ -172,22 +174,13 @@ public class CellarSupport {
      * @return
      */
     protected boolean wildCardMatch(String item, String pattern) {
-        if (pattern == null || pattern.isEmpty()) {
-            return false;
-        }
-        String[] cards = pattern.split("\\*");
-        // Iterate over the cards.
-        for (String card : cards) {
-            int idx = item.indexOf(card);
-            // Card not detected in the text.
-            if (idx == -1) {
-                return false;
-            }
+        // update the pattern to have a valid regex pattern
+        pattern = pattern.replace("*", ".*");
+        // use the regex
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(item);
 
-            // Move ahead, towards the right of the text.
-            item = item.substring(idx + card.length());
-        }
-        return true;
+        return m.matches();
     }
 
 
