@@ -35,7 +35,11 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
+        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
         event.setForce(true);
         event.setSourceGroup(group);

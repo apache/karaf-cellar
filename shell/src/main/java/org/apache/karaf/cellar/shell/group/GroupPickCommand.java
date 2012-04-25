@@ -39,22 +39,30 @@ public class GroupPickCommand extends GroupSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group sourceGroup = groupManager.findGroupByName(sourceGroupName);
-        if (sourceGroup != null) {
-            Set<Node> groupMembers = sourceGroup.getNodes();
+        if (sourceGroup == null) {
+            System.err.println("Source cluster group " + sourceGroupName + " doesn't exist.");
+            return null;
+        }
+        Group targetGroup = groupManager.findGroupByName(targetGroupName);
+        if (targetGroup == null) {
+            System.err.println("Target cluster group " + targetGroupName + " doesn't exist.");
+            return null;
+        }
 
-            int i = 0;
-            for (Node node : groupMembers) {
-                if (i >= count)
-                    break;
-                List<String> recipients = new LinkedList<String>();
-                recipients.add(node.getId());
-                doExecute(ManageGroupAction.SET, targetGroupName, sourceGroup, recipients);
-                i++;
-            }
+        Set<Node> groupMembers = sourceGroup.getNodes();
 
-            doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
+        int i = 0;
+        for (Node node : groupMembers) {
+            if (i >= count)
+                break;
+            List<String> recipients = new LinkedList<String>();
+            recipients.add(node.getId());
+            doExecute(ManageGroupAction.SET, targetGroupName, sourceGroup, recipients);
+            i++;
+        }
 
-        } else System.err.println("Cannot find source group with name: " + sourceGroupName);
+        doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
+
         return null;
     }
 

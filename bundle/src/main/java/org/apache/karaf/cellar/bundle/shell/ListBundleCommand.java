@@ -35,12 +35,10 @@ public class ListBundleCommand extends CellarCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist");
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
             return null;
         }
-
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {

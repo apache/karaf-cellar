@@ -35,6 +35,10 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setForce(true);
