@@ -16,8 +16,10 @@ package org.apache.karaf.cellar.obr.shell;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
+import org.apache.karaf.jaas.modules.GroupPrincipal;
 
 import java.util.Set;
 
@@ -31,6 +33,11 @@ public class ObrListUrlCommand extends CellarCommandSupport {
     String groupName;
 
     public Object doExecute() throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         // get the URLs from the distribution set
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         if (urls != null) {

@@ -41,12 +41,11 @@ public class InstallBundleCommand extends CellarCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-        
         if (group == null) {
             System.err.println("Cluster group " + groupName + " does't exist");
             return null;
         }
-        
+
         // get the name and version in the location MANIFEST
         JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
         Manifest manifest = jarInputStream.getManifest();

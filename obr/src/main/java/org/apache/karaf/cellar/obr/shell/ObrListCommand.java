@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.obr.shell;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
@@ -32,8 +33,12 @@ public class ObrListCommand extends CellarCommandSupport {
     String groupName;
 
     public Object doExecute() {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
