@@ -28,6 +28,7 @@
         <command name="cluster/config-proplist">
             <action class="org.apache.karaf.cellar.config.shell.PropListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>

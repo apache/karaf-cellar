@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.core.Configurations;
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -38,22 +39,31 @@ public class PropListCommand extends CellarCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        // check if the group exist
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist");
+            return null;
+        }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-            if (configurationTable != null && !configurationTable.isEmpty()) {
-                System.out.println(String.format("Property list for configuration PID " + pid + " for group " + groupName));
-                System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
-                Properties properties = configurationTable.get(pid);
-                if (properties != null && !properties.isEmpty())
+            if (configurationMap != null && !configurationMap.isEmpty()) {
+                Properties properties = configurationMap.get(pid);
+                if (properties == null || properties.isEmpty()) {
+                    System.err.println("No configuration PID found for group " + groupName);
+                } else {
+                    System.out.println(String.format("Property list for configuration PID " + pid + " for group " + groupName));
+                    System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
                     for (Object key : properties.keySet()) {
                         String value = properties.getProperty((String) key);
                         System.out.println(String.format(OUTPUT_FORMAT, key, value));
                     }
-            } else System.err.print("No configuration PID found for group " + groupName);
+                }
+            } else System.err.println("No configuration PID found for group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
