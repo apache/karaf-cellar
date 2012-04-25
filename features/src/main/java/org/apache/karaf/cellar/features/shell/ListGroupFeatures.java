@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.felix.gogo.commands.Argument;
@@ -31,6 +32,11 @@ public class ListGroupFeatures extends FeatureCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -47,7 +53,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
                         version = "";
                     System.out.println(String.format(OUTPUT_FORMAT, name, version, status));
                 }
-            } else System.err.print("No features found for group: " + groupName);
+            } else System.err.print("No features found for cluster group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

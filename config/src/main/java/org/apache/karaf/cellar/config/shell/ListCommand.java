@@ -17,6 +17,7 @@ import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.cellar.core.Group;
 
 import java.util.Map;
 import java.util.Properties;
@@ -34,6 +35,11 @@ public class ListCommand extends ConfigCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());

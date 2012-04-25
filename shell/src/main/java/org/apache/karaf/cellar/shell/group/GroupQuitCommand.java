@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.shell.group;
 
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -23,14 +24,19 @@ import java.util.List;
 public class GroupQuitCommand extends GroupSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
-    String group;
+    String groupName;
 
     @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
     List<String> nodes;
 
     @Override
     protected Object doExecute() throws Exception {
-        return doExecute(ManageGroupAction.QUIT, group, null, nodes, false);
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
+        return doExecute(ManageGroupAction.QUIT, groupName, null, nodes, false);
     }
 
 }

@@ -42,16 +42,21 @@ public class PropSetCommand extends ConfigCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (configurationTable != null) {
-            Properties properties = configurationTable.get(pid);
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
+        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (configurationMap != null) {
+            Properties properties = configurationMap.get(pid);
             if (properties == null) {
                 properties = new Properties();
             }
             properties.put(key, value);
-            configurationTable.put(pid, properties);
+            configurationMap.put(pid, properties);
         } else {
-            System.out.println("Group " + groupName + " doesn't exist");
+            System.out.println("Configuration distributed map not found for cluster group " + groupName);
         }
         return null;
     }

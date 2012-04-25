@@ -25,29 +25,33 @@ import java.util.List;
 @Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group.")
 public class GroupDeleteCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = false, multiValued = false)
-    String group;
+    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    String groupName;
 
     @Override
     protected Object doExecute() throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            Group g = groupManager.findGroupByName(group);
-            if (g == null) {
-                System.out.println("Group " + group + " doesn't exist");
+            if (group == null) {
+                System.out.println("Group " + groupName + " doesn't exist");
                 return null;
             }
             List<String> nodes = new LinkedList<String>();
 
-            if (g.getNodes() != null && !g.getNodes().isEmpty()) {
-                for (Node n : g.getNodes()) {
+            if (group.getNodes() != null && !group.getNodes().isEmpty()) {
+                for (Node n : group.getNodes()) {
                     nodes.add(n.getId());
                 }
-                doExecute(ManageGroupAction.QUIT, group, null, nodes);
+                doExecute(ManageGroupAction.QUIT, groupName, null, nodes);
             }
 
-            groupManager.deleteGroup(group);
+            groupManager.deleteGroup(groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

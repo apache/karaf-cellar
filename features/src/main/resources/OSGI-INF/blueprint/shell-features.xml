@@ -43,6 +43,7 @@
         <command name="cluster/feature-list">
             <action class="org.apache.karaf.cellar.features.shell.ListGroupFeatures">
                 <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
                 <property name="featuresService" ref="featuresService"/>
             </action>
             <completers>

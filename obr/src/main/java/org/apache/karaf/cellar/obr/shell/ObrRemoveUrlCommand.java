@@ -38,6 +38,10 @@ public class ObrRemoveUrlCommand extends ObrCommandSupport {
     public Object doExecute() throws Exception {
         // find the group for the given name
         Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
