@@ -79,14 +79,8 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
 
         TabularData table = new TabularDataSupport(tableType);
 
-        ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
-        Set<Node> recipientList = new HashSet<Node>();
-        recipientList.add(clusterManager.getNode());
-        command.setDestination(recipientList);
-        command.setAction(ManageGroupAction.LIST);
-
-        Map<Node, ManageGroupResult> results = executionContext.execute(command);
-        for (Node node : results.keySet()) {
+        Set<Node> nodes = clusterManager.listNodes();
+        for (Node node : nodes) {
             CompositeData data = new CompositeDataSupport(nodeType,
                     new String[]{ "id", "hostname", "port" },
                     new Object[]{ node.getId(), node.getHost(), node.getPort() });
