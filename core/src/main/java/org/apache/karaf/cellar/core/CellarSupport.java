@@ -168,6 +168,9 @@ public class CellarSupport {
      * @return
      */
     protected boolean wildCardMatch(String item, String pattern) {
+        if (pattern == null || pattern.isEmpty()) {
+            return false;
+        }
         String[] cards = pattern.split("\\*");
         // Iterate over the cards.
         for (String card : cards) {
