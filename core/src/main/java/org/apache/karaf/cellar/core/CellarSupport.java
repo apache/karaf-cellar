@@ -37,11 +37,12 @@ public class CellarSupport {
     protected ConfigurationAdmin configurationAdmin;
 
     /**
-     * Lists the BlackList for the specified feature.
+     * Lists the BlackList/WhiteList for the specified category..
      *
-     * @param category
-     * @param group
-     * @return
+     * @param listType whitelist or blacklist.
+     * @param category  the lookup category.
+     * @param group the target group name.
+     * @return the corresponding list entries.
      */
     public Set<String> getListEntries(String listType, String group, String category, EventType type) {
         Set<String> result = null;
@@ -145,8 +146,9 @@ public class CellarSupport {
         if (whiteList != null && !whiteList.isEmpty()) {
             result = false;
             for (String whiteListItem : whiteList) {
-                if (wildCardMatch(event, whiteListItem))
+                if (wildCardMatch(event, whiteListItem)) {
                     result = true;
+                }
             }
         }
 
@@ -171,6 +173,9 @@ public class CellarSupport {
      */
     protected boolean wildCardMatch(String item, String pattern) {
         String[] cards = pattern.split("\\*");
+        if (pattern == null || pattern.isEmpty()) {
+            return false;
+        }
         // Iterate over the cards.
         for (String card : cards) {
             int idx = item.indexOf(card);
