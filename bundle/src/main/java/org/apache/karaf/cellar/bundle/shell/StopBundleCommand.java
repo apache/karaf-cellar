@@ -41,12 +41,10 @@ public class StopBundleCommand extends CellarCommandSupport {
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
-
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist");
+            System.err.println("Cluster group " + groupName + " doesn't exist.");
             return null;
         }
-
         // update the cluster map
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
