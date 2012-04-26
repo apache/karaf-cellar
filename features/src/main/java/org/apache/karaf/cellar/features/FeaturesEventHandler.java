@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.FeatureEvent;
@@ -50,31 +51,33 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
     public void handle(RemoteFeaturesEvent event) {
         String name = event.getName();
         String version = event.getVersion();
-        if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
-            FeatureEvent.EventType type = event.getType();
-            Boolean isInstalled = isInstalled(name, version);
-            try {
-                if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
-                    if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
-                        featuresService.installFeature(name, version);
-                    } else {
-                        LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
-                        featuresService.installFeature(name);
+        if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
+            if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
+                FeatureEvent.EventType type = event.getType();
+                Boolean isInstalled = isInstalled(name, version);
+                try {
+                    if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
+                        if (version != null) {
+                            LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
+                            featuresService.installFeature(name, version);
+                        } else {
+                            LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
+                            featuresService.installFeature(name);
+                        }
+                    } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
+                        if (version != null) {
+                            LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
+                            featuresService.uninstallFeature(name, version);
+                        } else {
+                            LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                            featuresService.uninstallFeature(name);
+                        }
                     }
-                } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
-                    if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
-                        featuresService.uninstallFeature(name, version);
-                    } else {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
-                        featuresService.uninstallFeature(name);
-                    }
+                } catch (Exception e) {
+                    LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
                 }
-            } catch (Exception e) {
-                LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
-            }
-        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
+        }
     }
 
     public Class<RemoteFeaturesEvent> getType() {
