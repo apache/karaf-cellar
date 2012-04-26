@@ -42,12 +42,7 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist.");
             return null;
         }
-        // create an event and produce it
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
-        event.setForce(true);
-        event.setSourceGroup(group);
-        producer.produce(event);
+
         // push the OBR URL in the distributed set
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.add(url);
@@ -62,6 +57,13 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
             }
             obrService.removeRepository(url);
         }
+
+        // create an cluster event and produce it
+        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
+        ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
+        event.setForce(true);
+        event.setSourceGroup(group);
+        producer.produce(event);
         return null;
     }
 

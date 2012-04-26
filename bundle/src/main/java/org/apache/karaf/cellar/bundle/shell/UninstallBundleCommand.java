@@ -61,7 +61,7 @@ public class UninstallBundleCommand extends CellarCommandSupport {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
-        // broadcast the event
+        // broadcast the cluster event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, null, BundleEvent.UNINSTALLED);
         event.setForce(true);

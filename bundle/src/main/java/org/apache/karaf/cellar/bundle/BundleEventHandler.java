@@ -38,8 +38,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      * @param event
      */
     public void handle(RemoteBundleEvent event) {
-
-
+        // TODO check the switch to see if the handler is enabled
         try {
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
