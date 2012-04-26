@@ -72,7 +72,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                             state.setLocation(event.getBundle().getLocation());
                             bundles.put(symbolicName + "/" + version, state);
 
-                            // broadcast the event
+                            // broadcast the cluster event
                             if (producerList != null && !producerList.isEmpty()) {
                                 for (EventProducer producer : producerList) {
                                     producer.produce(remoteBundleEvent);

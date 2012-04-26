@@ -46,6 +46,7 @@ public class ObrDeployCommand extends CellarCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist.");
             return null;
         }
+
         // create an event and produce it
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         int type = 0;
