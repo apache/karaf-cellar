@@ -39,7 +39,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -48,7 +48,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
 
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             if (features != null && !features.isEmpty()) {
-                System.out.println("Features on cluster group " + groupName);
+                System.out.println("Features for cluster group " + groupName);
                 System.out.println(String.format(HEADER_FORMAT, "Status", "Version", "Name"));
                 for (FeatureInfo info : features.keySet()) {
                     String name = info.getName();
