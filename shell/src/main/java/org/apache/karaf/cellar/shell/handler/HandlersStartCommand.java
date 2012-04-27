@@ -21,7 +21,7 @@ import java.util.List;
 @Command(scope = "cluster", name = "handler-start", description = "Start an event handler.")
 public class HandlersStartCommand extends HandlersSupport {
 
-    @Argument(index = 0, name = "handler", description = "The event handler ID.", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler", description = "The event handler ID.", required = true, multiValued = false)
     String handler;
 
     @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
