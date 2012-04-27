@@ -48,6 +48,7 @@ public class UninstallBundleCommand extends CellarCommandSupport {
         // update the cluster map
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        String location;
         try {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             BundleState state = bundles.get(name + "/" + version);
@@ -55,6 +56,7 @@ public class UninstallBundleCommand extends CellarCommandSupport {
                 System.err.println("Bundle " + name + "/" + version + " not found in cluster group " + groupName);
                 return null;
             }
+            location = state.getLocation();
             bundles.remove(name + "/" + version);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -62,7 +64,7 @@ public class UninstallBundleCommand extends CellarCommandSupport {
 
         // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        RemoteBundleEvent event = new RemoteBundleEvent(name, version, null, BundleEvent.UNINSTALLED);
+        RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.UNINSTALLED);
         event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
