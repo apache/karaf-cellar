@@ -44,7 +44,7 @@ public class ListBundleCommand extends CellarCommandSupport {
         try {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             if (bundles != null && !bundles.isEmpty()) {
-                System.out.println(String.format("Bundles for cluster group: " + groupName));
+                System.out.println(String.format("Bundles for cluster group " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "Name", "Version", "Status", "Location"));
                 for (String bundle : bundles.keySet()) {
                     String[] tokens = bundle.split("/");
