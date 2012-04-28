@@ -24,11 +24,15 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumes messages from the distributed {@code ITopic} and calls the {@code EventDispatcher}.
  */
 public class TopicConsumer<E extends Event> implements EventConsumer<E>, MessageListener<E> {
+
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(TopicConsumer.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.topic.consumer";
 
@@ -67,6 +71,10 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         //Check if event has a specified destination.
         if ((event.getDestination() == null || event.getDestination().contains(node)) && (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce())) {
             dispatcher.dispatch(event);
+        } else {
+            if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, cluster event is not consumed", SWITCH_ID);
+            }
         }
     }
 

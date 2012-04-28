@@ -66,7 +66,6 @@ public class StartBundleCommand extends CellarCommandSupport {
         // broadcast the event
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.STARTED);
-        event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
 

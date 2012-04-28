@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.features.RepositoryEvent;
 import org.slf4j.Logger;
@@ -44,9 +45,14 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     }
 
     public void handle(RemoteRepositoryEvent event) {
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
         String uri = event.getId();
         RepositoryEvent.EventType type = event.getType();
         try {
+            // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                 LOGGER.debug("CELLAR FEATURES: adding repository URI {}", uri);
                 featuresService.addRepository(new URI(uri));

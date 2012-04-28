@@ -65,10 +65,10 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
      */
     public void init() {
         if (queue != null) {
-            queue.addItemListener(this,true);
+            queue.addItemListener(this, true);
         } else {
             queue = instance.getQueue(Constants.QUEUE);
-            queue.addItemListener(this,true);
+            queue.addItemListener(this, true);
         }
         executorService.execute(this);
     }
@@ -89,12 +89,12 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             while (isConsuming) {
-                if(combinedClassLoader != null) {
+                if (combinedClassLoader != null) {
                     Thread.currentThread().setContextClassLoader(combinedClassLoader);
                 } else Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 E e = null;
                 try {
-                        e = getQueue().poll(10, TimeUnit.SECONDS);
+                    e = getQueue().poll(10, TimeUnit.SECONDS);
                 } catch (InterruptedException e1) {
                     LOGGER.warn("Consume task interrupted");
                 }
@@ -103,9 +103,8 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("Error while consuming from queue",ex);
-        }
-        finally {
+            LOGGER.error("Error while consuming from queue", ex);
+        } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
@@ -116,14 +115,17 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
      * @param event
      */
     public void consume(E event) {
-        if (event != null  && (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce())) {
-                dispatcher.dispatch(event);
+        if (event != null && (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce())) {
+            dispatcher.dispatch(event);
+        } else {
+            if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, cluster event is not consumed", SWITCH_ID);
+            }
         }
     }
 
     @Override
-    public void start()
-    {
+    public void start() {
         isConsuming = true;
         executorService.execute(this);
     }
@@ -131,7 +133,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
 
     @Override
     public void stop() {
-      isConsuming = false;
+        isConsuming = false;
     }
 
     public Boolean isConsuming() {

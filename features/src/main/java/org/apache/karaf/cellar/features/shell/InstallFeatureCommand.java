@@ -41,7 +41,6 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
         }
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
-        event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
 

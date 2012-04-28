@@ -71,7 +71,6 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         Group group = groupManager.findGroupByName(groupName);
         EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
-        event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
     }
@@ -84,7 +83,6 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         Group group = groupManager.findGroupByName(groupName);
         EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
-        event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
     }

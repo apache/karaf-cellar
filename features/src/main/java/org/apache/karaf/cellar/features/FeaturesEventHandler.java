@@ -49,35 +49,37 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
      * @param event
      */
     public void handle(RemoteFeaturesEvent event) {
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
         String name = event.getName();
         String version = event.getVersion();
-        if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
-            if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
-                FeatureEvent.EventType type = event.getType();
-                Boolean isInstalled = isInstalled(name, version);
-                try {
-                    if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
-                        if (version != null) {
-                            LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
-                            featuresService.installFeature(name, version);
-                        } else {
-                            LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
-                            featuresService.installFeature(name);
-                        }
-                    } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
-                        if (version != null) {
-                            LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
-                            featuresService.uninstallFeature(name, version);
-                        } else {
-                            LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
-                            featuresService.uninstallFeature(name);
-                        }
+        if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
+            FeatureEvent.EventType type = event.getType();
+            Boolean isInstalled = isInstalled(name, version);
+            try {
+                if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
+                    if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
+                        featuresService.installFeature(name, version);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
+                        featuresService.installFeature(name);
                     }
-                } catch (Exception e) {
-                    LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
+                } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
+                    if (version != null) {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
+                        featuresService.uninstallFeature(name, version);
+                    } else {
+                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                        featuresService.uninstallFeature(name);
+                    }
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
-        }
+            } catch (Exception e) {
+                LOGGER.error("CELLAR FEATURES: failed to handle feature event", e);
+            }
+        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
     }
 
     public Class<RemoteFeaturesEvent> getType() {
