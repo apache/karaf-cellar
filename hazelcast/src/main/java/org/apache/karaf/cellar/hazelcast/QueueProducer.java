@@ -80,7 +80,11 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
             try {
                 queue.put(event);
             } catch (InterruptedException e) {
-                LOGGER.error("Queue producer interrupted",e);
+                LOGGER.error("Queue producer interrupted", e);
+            }
+        } else {
+            if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, don't produce the cluster event", SWITCH_ID);
             }
         }
     }

@@ -53,6 +53,11 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
             return;
 
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR CONFIG: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
+
         Group group = event.getSourceGroup();
         String groupName = group.getName();
 
