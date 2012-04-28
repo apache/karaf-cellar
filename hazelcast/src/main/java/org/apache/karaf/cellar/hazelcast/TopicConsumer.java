@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TopicConsumer<E extends Event> implements EventConsumer<E>, MessageListener<E> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(QueueConsumer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(TopicConsumer.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.topic.consumer";
 

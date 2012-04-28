@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TopicProducer<E extends Event> implements EventProducer<E> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(QueueProducer.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(TopicProducer.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.topic.producer";
 
