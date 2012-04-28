@@ -82,6 +82,10 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
             } catch (InterruptedException e) {
                 LOGGER.error("CELLAR HAZELCAST: queue producer interrupted", e);
             }
+        } else {
+            if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, don't produce the event", SWITCH_ID);
+            }
         }
     }
 

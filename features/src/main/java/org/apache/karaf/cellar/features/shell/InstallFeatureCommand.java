@@ -39,13 +39,14 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
-        event.setForce(true);
         event.setSourceGroup(group);
         producer.produce(event);
 
         updateFeatureStatus(groupName, feature, version, true);
+
         return null;
     }
 

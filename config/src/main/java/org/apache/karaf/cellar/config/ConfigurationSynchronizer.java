@@ -56,7 +56,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR CONFIG: sync is disabled for group {}", group.getName());
+                } else LOGGER.warn("CELLAR CONFIG: sync is disabled for cluster group {}", group.getName());
             }
         }
     }

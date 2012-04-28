@@ -22,11 +22,15 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Produces {@code Event}s into the distributed {@code ITopic}.
  */
 public class TopicProducer<E extends Event> implements EventProducer<E> {
+
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(QueueProducer.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.topic.producer";
 
@@ -60,6 +64,10 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
         if (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
             event.setSourceNode(node);
             topic.publish(event);
+        } else {
+            if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, don't produce the event", SWITCH_ID);
+            }
         }
     }
 

@@ -39,6 +39,7 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
         EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setForce(true);
@@ -46,6 +47,7 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
         producer.produce(event);
 
         updateFeatureStatus(groupName, feature, version, true);
+
         return null;
     }
 
