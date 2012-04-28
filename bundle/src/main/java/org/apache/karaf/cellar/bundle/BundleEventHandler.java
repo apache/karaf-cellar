@@ -13,9 +13,9 @@
  */
 package org.apache.karaf.cellar.bundle;
 
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.BundleEvent;
@@ -30,7 +30,6 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
-    private Node node;
 
     /**
      * Handles remote bundle events.
@@ -38,7 +37,10 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      * @param event
      */
     public void handle(RemoteBundleEvent event) {
-        // TODO check the switch to see if the handler is enabled
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
         try {
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
@@ -71,9 +73,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      * Initialization Method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**

@@ -55,7 +55,6 @@ public class ListCommand extends ConfigCommandSupport {
             } else System.err.println("No configuration PID found for group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
-
         }
         return null;
     }

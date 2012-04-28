@@ -42,6 +42,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());

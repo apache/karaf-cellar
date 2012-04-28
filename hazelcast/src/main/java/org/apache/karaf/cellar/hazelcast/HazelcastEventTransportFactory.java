@@ -61,7 +61,6 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
                 consumer.init();
                 return consumer;
         } else {
-
                 IQueue queue = instance.getQueue(Constants.QUEUE + Constants.SEPARATOR + name);
                 QueueConsumer consumer = new QueueConsumer(combinedClassLoader);
                 consumer.setQueue(queue);

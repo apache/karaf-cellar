@@ -49,6 +49,11 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
      * @param event
      */
     public void handle(RemoteFeaturesEvent event) {
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
+
         String name = event.getName();
         String version = event.getVersion();
         if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
