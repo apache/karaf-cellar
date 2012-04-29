@@ -25,7 +25,6 @@ public abstract class CellarCommandSupport extends OsgiCommandSupport {
 
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
-    protected EventTransportFactory eventTransportFactory;
 
 
     public ClusterManager getClusterManager() {
@@ -44,11 +43,4 @@ public abstract class CellarCommandSupport extends OsgiCommandSupport {
         this.groupManager = groupManager;
     }
 
-    public EventTransportFactory getEventTransportFactory() {
-        return eventTransportFactory;
-    }
-
-    public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
-        this.eventTransportFactory = eventTransportFactory;
-    }
 }

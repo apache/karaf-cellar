@@ -33,6 +33,7 @@ public class ObrListUrlCommand extends CellarCommandSupport {
     String groupName;
 
     public Object doExecute() throws Exception {
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             System.err.println("Cluster group " + groupName + " doesn't exist.");
@@ -45,6 +46,7 @@ public class ObrListUrlCommand extends CellarCommandSupport {
                 System.out.println(url);
             }
         }
+
         return null;
     }
 

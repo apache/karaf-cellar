@@ -18,6 +18,7 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
@@ -38,23 +39,31 @@ public class ObrDeployCommand extends CellarCommandSupport {
     @Option(name = "-s", aliases = { "--start" }, description = "Start the deployed bundles.", required = false, multiValued = false)
     boolean start = false;
 
+    private EventProducer eventProducer;
+
     @Override
     protected Object doExecute() throws Exception {
-        // find the group for the given name
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
+            return null;
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF for this node");
             return null;
         }
 
         // create an event and produce it
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         int type = 0;
         if (start) type = Constants.BUNDLE_START_EVENT_TYPE;
         ObrBundleEvent event = new ObrBundleEvent(bundleId, type);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
+
         return null;
     }
 

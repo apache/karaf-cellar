@@ -34,6 +34,7 @@ public class ListBundleCommand extends CellarCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             System.err.println("Cluster group " + groupName + " doesn't exist.");

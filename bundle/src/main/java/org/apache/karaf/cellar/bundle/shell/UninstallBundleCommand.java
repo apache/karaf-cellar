@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
@@ -38,11 +39,20 @@ public class UninstallBundleCommand extends CellarCommandSupport {
     @Argument(index = 2, name = "version", description = "The bundle version.", required = true, multiValued = false)
     String version;
 
+    private EventProducer eventProducer;
+
     @Override
     protected Object doExecute() throws Exception {
+        // check if cluster group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             System.err.println("Cluster group " + groupName + " doesn't exist");
+            return null;
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF for this node");
             return null;
         }
 
@@ -64,12 +74,19 @@ public class UninstallBundleCommand extends CellarCommandSupport {
         }
 
         // broadcast the cluster event
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.UNINSTALLED);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
 
         return null;
+    }
+
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

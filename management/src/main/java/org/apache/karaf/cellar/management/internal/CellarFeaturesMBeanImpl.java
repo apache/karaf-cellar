@@ -17,6 +17,7 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.features.Constants;
@@ -37,8 +38,8 @@ import java.util.Map;
 public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeaturesMBean {
 
     private ClusterManager clusterManager;
-    private EventTransportFactory eventTransportFactory;
     private GroupManager groupManager;
+    private EventProducer eventProducer;
 
     public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
         super(CellarFeaturesMBean.class);
@@ -60,20 +61,32 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.groupManager = groupManager;
     }
 
-    public EventTransportFactory getEventTransportFactory() {
-        return eventTransportFactory;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
-        this.eventTransportFactory = eventTransportFactory;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
     public void install(String groupName, String name, String version) throws Exception {
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
+        // TODO update the distributed resource
+
+        // broadcast the cluster event
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public void install(String groupName, String name) throws Exception {
@@ -81,11 +94,20 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     public void uninstall(String groupName, String name, String version) throws Exception {
+        // check if cluster group exists
         Group group = groupManager.findGroupByName(groupName);
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName,true);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public void uninstall(String groupName, String name) throws Exception {
@@ -117,7 +139,6 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-
         return table;
     }
 

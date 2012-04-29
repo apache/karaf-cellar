@@ -19,6 +19,7 @@ import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
@@ -35,11 +36,19 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
     @Argument(index = 1, name = "url", description = "The repository URL to register in the OBR service.", required = true, multiValued = false)
     String url;
 
+    private EventProducer eventProducer;
+
     public Object doExecute() throws Exception {
-        // find group for the given name
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             System.err.println("Cluster group " + groupName + " doesn't exist.");
+            return null;
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF for this node");
             return null;
         }
 
@@ -59,12 +68,20 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
         }
 
         // create an cluster event and produce it
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
+
         return null;
+    }
+
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

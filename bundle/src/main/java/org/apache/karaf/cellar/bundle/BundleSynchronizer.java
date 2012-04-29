@@ -133,6 +133,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     }
 
                     // broadcast the event
+                    // TODO use the local producer and check its status
                     if (producerList != null && !producerList.isEmpty() && event != null) {
                         for (EventProducer producer : producerList) {
                             producer.produce(event);
