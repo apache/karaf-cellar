@@ -20,7 +20,6 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -31,7 +30,7 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrDeployCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -42,7 +41,7 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrListUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -53,7 +52,7 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrAddUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
                 <property name="obrService" ref="repositoryAdmin"/>
             </action>
             <completers>
@@ -65,7 +64,7 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrRemoveUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
                 <property name="obrService" ref="repositoryAdmin"/>
             </action>
             <completers>

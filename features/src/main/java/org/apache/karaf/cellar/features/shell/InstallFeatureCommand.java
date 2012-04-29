@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.felix.gogo.commands.Argument;
@@ -32,22 +33,40 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
     @Argument(index = 2, name = "version", description = "The feature version.", required = false, multiValued = false)
     String version;
 
+    private EventProducer eventProducer;
+
     @Override
     protected Object doExecute() throws Exception {
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
 
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
-        event.setSourceGroup(group);
-        producer.produce(event);
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF for this node");
+            return null;
+        }
 
+        // update the distributed resource
         updateFeatureStatus(groupName, feature, version, true);
 
+        // broadcast the cluster event
+        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
+        event.setSourceGroup(group);
+        eventProducer.produce(event);
+
         return null;
+    }
+
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

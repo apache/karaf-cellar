@@ -73,6 +73,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                             bundles.put(symbolicName + "/" + version, state);
 
                             // broadcast the cluster event
+                            // TODO use the local producer and check its status
                             if (producerList != null && !producerList.isEmpty()) {
                                 for (EventProducer producer : producerList) {
                                     producer.produce(remoteBundleEvent);

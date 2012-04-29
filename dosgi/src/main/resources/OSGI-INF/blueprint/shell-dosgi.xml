@@ -19,7 +19,6 @@
         <command name="cluster/service-list">
             <action class="org.apache.karaf.cellar.dosgi.shell.ListDistributedServicesCommand">
                 <property name="clusterManager" ref="clusterManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
             </action>
         </command>
     </command-bundle>

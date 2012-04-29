@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.management.CellarBundleMBean;
@@ -39,8 +40,8 @@ import java.util.jar.Manifest;
 public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundleMBean {
 
     private ClusterManager clusterManager;
-    private EventTransportFactory eventTransportFactory;
     private GroupManager groupManager;
+    private EventProducer eventProducer;
 
     public CellarBundleMBeanImpl() throws NotCompliantMBeanException {
         super(CellarBundleMBean.class);
@@ -54,14 +55,6 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         this.clusterManager = clusterManager;
     }
 
-    public EventTransportFactory getEventTransportFactory() {
-        return this.eventTransportFactory;
-    }
-
-    public void setEventTransportFactory(EventTransportFactory eventTransportFactory) {
-        this.eventTransportFactory = eventTransportFactory;
-    }
-
     public GroupManager getGroupManager() {
         return this.groupManager;
     }
@@ -70,11 +63,24 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         this.groupManager = groupManager;
     }
 
-    public void install(String groupName, String location) throws Exception {
-        Group group = groupManager.findGroupByName(groupName);
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
 
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
+
+    public void install(String groupName, String location) throws Exception {
+        // check if cluster group exists
+        Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
         // get the name and version in the location MANIFEST
@@ -92,17 +98,21 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         bundles.put(name + "/" + version, state);
 
         // broadcast the event
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public void uninstall(String groupName, String symbolicName, String version) throws Exception {
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
-
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
         // update the cluster map
@@ -116,17 +126,21 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.UNINSTALLED);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public void start(String groupName, String symbolicName, String version) throws Exception {
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
-
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
         // update the cluster map
@@ -145,17 +159,21 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.STARTED);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public void stop(String groupName, String symbolicName, String version) throws Exception {
+        // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
-
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
         // update the cluster map
@@ -174,11 +192,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        EventProducer producer = eventTransportFactory.getEventProducer(groupName, true);
         RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, null, BundleEvent.STOPPED);
         event.setForce(true);
         event.setSourceGroup(group);
-        producer.produce(event);
+        eventProducer.produce(event);
     }
 
     public TabularData getBundles(String groupName) throws Exception {
@@ -207,7 +224,6 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-
         return table;
     }
 
