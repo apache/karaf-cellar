@@ -49,7 +49,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             purgeGroups();
             joinGroup(Configurations.DEFAULT_GROUP_NAME);
         } else if (ManageGroupAction.SET.equals(action)) {
-            quitGroup(command.getSourceGroup().getName());
+            if (command.getSourceGroup() != null) {
+                quitGroup(command.getSourceGroup().getName());
+            }
             joinGroup(targetGroupName);
         }
 
