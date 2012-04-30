@@ -33,7 +33,7 @@ public class GroupSetCommand extends GroupSupport {
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
         return doExecute(ManageGroupAction.SET, groupName, null, nodes,false);
