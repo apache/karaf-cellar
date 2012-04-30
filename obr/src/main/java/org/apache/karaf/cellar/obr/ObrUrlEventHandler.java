@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.obr;
 
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.slf4j.Logger;
@@ -48,6 +49,19 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
      */
     @Override
     public void handle(ObrUrlEvent obrUrlEvent) {
+
+        // check if the handler is ON
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR OBR: {} switch is OFF, cluster event not handled", SWITCH_ID);
+            return;
+        }
+
+        // check if the group is local
+        if (!groupManager.isLocalGroup(obrUrlEvent.getSourceGroup().getName())) {
+            LOGGER.warn("CELLAR OBR: node is not part of the event cluster group");
+            return;
+        }
+
         String url = obrUrlEvent.getUrl();
         String groupName = obrUrlEvent.getSourceGroup().getName();
         try {

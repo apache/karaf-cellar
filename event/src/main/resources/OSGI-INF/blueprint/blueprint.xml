@@ -15,22 +15,13 @@
   -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <!-- Cluster Configuration Listener -->
+    <!-- Local Event Listener -->
     <bean id="localEventListener" class="org.apache.karaf.cellar.event.LocalEventListener" init-method="init" destroy-method="destroy">
-        <property name="producerList" ref="groupEventProducers"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="eventProducer" ref="eventProducer"/>
     </bean>
-
-    <!-- Event Handler -->
-    <bean id="remoteEventHandler" class="org.apache.karaf.cellar.event.RemoteEventHandler" init-method="init" destroy-method="destroy">
-        <property name="configurationAdmin" ref="configurationAdmin"/>
-        <property name="clusterManager" ref="clusterManager"/>
-        <property name="eventAdmin" ref="eventAdmin"/>
-    </bean>
-
-    <!-- OSGi Service & References -->
     <service ref="localEventListener">
         <interfaces>
             <value>org.osgi.service.event.EventHandler</value>
@@ -44,18 +35,24 @@
         </service-properties>
     </service>
 
+    <!-- Cluster Event Handler -->
+    <bean id="remoteEventHandler" class="org.apache.karaf.cellar.event.RemoteEventHandler" init-method="init" destroy-method="destroy">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="eventAdmin" ref="eventAdmin"/>
+    </bean>
     <service ref="remoteEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
 
+    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
     <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
-    <reference-list id="groupEventProducers" member-type="service-object"
-        interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
 </blueprint>

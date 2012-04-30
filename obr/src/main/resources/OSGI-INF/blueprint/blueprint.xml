@@ -22,6 +22,11 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
+    <service ref="obrBundleEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
+        <service-properties>
+            <entry key="managed" value="true"/>
+        </service-properties>
+    </service>
 
     <!-- OBR URL Synchronizer -->
     <bean id="obrUrlSynchronizer" class="org.apache.karaf.cellar.obr.ObrUrlSynchronizer"
@@ -29,9 +34,9 @@
         <property name="obrService" ref="repositoryAdmin"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
-        <property name="producerList" ref="groupEventProducers"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
+    <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
     <!-- OBR URL Event Handler -->
     <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"
@@ -41,30 +46,17 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
-
-    <!-- OBR Bundle Event Handler OSGi service -->
-    <service ref="obrBundleEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
-        <service-properties>
-            <entry key="managed" value="true"/>
-        </service-properties>
-    </service>
-
-    <!-- OBR OSGi service -->
-    <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
     <service ref="obrUrlEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
 
-    <!-- service references -->
+    <!-- Cluster Core Services -->
     <reference id="repositoryAdmin" interface="org.apache.felix.bundlerepository.RepositoryAdmin"/>
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
-    <reference-list id="groupEventProducers" member-type="service-object"
-                    interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
 </blueprint>

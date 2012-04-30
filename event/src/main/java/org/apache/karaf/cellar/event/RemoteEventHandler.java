@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.event;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
@@ -32,11 +33,21 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.handler";
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    private Node node;
-
     public void handle(RemoteEvent event) {
+
+        // check if the handler is ON
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR EVENT: {} is OFF, cluster event not handled", SWITCH_ID);
+            return;
+        }
+
+        // check if the group is a local one
+        if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
+            LOGGER.warn("CELLAR EVENT: node is not part of the event cluster group");
+            return;
+        }
+
         try {
-            // check if the pid is marked as local
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getTopicName(), EventType.INBOUND)) {
                 Map<String, Serializable> properties = event.getProperties();
                 properties.put(Constants.EVENT_PROCESSED_KEY, Constants.EVENT_PROCESSED_VALUE);
@@ -53,9 +64,7 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
      * Initialization method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**
