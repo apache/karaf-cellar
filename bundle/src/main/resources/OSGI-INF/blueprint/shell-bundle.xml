@@ -19,7 +19,6 @@
             <action class="org.apache.karaf.cellar.bundle.shell.ListBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -29,7 +28,7 @@
             <action class="org.apache.karaf.cellar.bundle.shell.InstallBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -39,7 +38,7 @@
             <action class="org.apache.karaf.cellar.bundle.shell.UninstallBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -51,7 +50,7 @@
             <action class="org.apache.karaf.cellar.bundle.shell.StartBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
@@ -63,7 +62,7 @@
             <action class="org.apache.karaf.cellar.bundle.shell.StopBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventTransportFactory" ref="eventTransportFactory"/>
+                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
