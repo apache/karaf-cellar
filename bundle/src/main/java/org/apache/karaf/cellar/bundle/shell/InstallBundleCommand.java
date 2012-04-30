@@ -23,9 +23,11 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 import org.osgi.framework.BundleEvent;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -33,11 +35,14 @@ import java.util.jar.Manifest;
 @Command(scope = "cluster", name = "bundle-install", description = "Install a bundle assigned to a cluster group.")
 public class InstallBundleCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "location", description = "The bundle location.", required = true, multiValued = false)
-    String location;
+    @Argument(index = 1, name = "urls", description = "Bundle URLs separated by whitespace", required = true, multiValued = true)
+    List<String> urls;
+
+    @Option(name = "-s", aliases = {"--start"}, description = "Start the bundle after installation", required = false, multiValued = false)
+    boolean start;
 
     private EventProducer eventProducer;
 
@@ -56,24 +61,30 @@ public class InstallBundleCommand extends CellarCommandSupport {
             return null;
         }
 
-        // get the name and version in the location MANIFEST
-        JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
-        Manifest manifest = jarInputStream.getManifest();
-        String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
-        String version = manifest.getMainAttributes().getValue("Bundle-Version");
-        jarInputStream.close();
+        for (String url : urls) {
+            // get the name and version in the location MANIFEST
+            JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream());
+            Manifest manifest = jarInputStream.getManifest();
+            String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+            String version = manifest.getMainAttributes().getValue("Bundle-Version");
+            jarInputStream.close();
 
-        // populate the cluster map
-        Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-        BundleState state = new BundleState();
-        state.setLocation(location);
-        state.setStatus(BundleEvent.INSTALLED);
-        bundles.put(name + "/" + version, state);
+            // populate the cluster map
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = new BundleState();
+            state.setLocation(url);
+            if (start) {
+                state.setStatus(BundleEvent.STARTED);
+            } else {
+                state.setStatus(BundleEvent.INSTALLED);
+            }
+            bundles.put(name + "/" + version, state);
 
-        // broadcast the event
-        RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
-        event.setSourceGroup(group);
-        eventProducer.produce(event);
+            // broadcast the event
+            RemoteBundleEvent event = new RemoteBundleEvent(name, version, url, BundleEvent.INSTALLED);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
+        }
 
         return null;
     }
