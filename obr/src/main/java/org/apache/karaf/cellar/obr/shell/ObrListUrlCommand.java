@@ -29,11 +29,13 @@ public class ObrListUrlCommand extends CellarCommandSupport {
     String groupName;
 
     public Object doExecute() throws Exception {
+        // cehck if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
         // get the URLs from the distribution set
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         if (urls != null) {
@@ -41,6 +43,7 @@ public class ObrListUrlCommand extends CellarCommandSupport {
                 System.out.println(url);
             }
         }
+
         return null;
     }
 

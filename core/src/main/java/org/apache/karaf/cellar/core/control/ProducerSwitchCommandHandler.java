@@ -39,7 +39,7 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
             producer.getSwitch().turnOn();
             return new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
         }
-        //Turn on the switch
+        //Turn off the switch
         else if (command.getStatus().equals(SwitchStatus.OFF)) {
             producer.getSwitch().turnOff();
             return new ProducerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
