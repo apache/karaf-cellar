@@ -41,8 +41,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
 
-    private List<EventProducer> producerList;
-
     /**
      * Initialization method
      */
@@ -71,7 +69,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
      */
     public void pull(Group group) {
         if (group != null) {
-            LOGGER.info("CELLAR FEATURES: Pulling features from group {}.",group.getName());
             String groupName = group.getName();
             List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
             Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
@@ -93,7 +90,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                //Retrieve remote feautre status.
+                // retrieve remote feature status.
                 if (features != null && !features.isEmpty()) {
                     for (FeatureInfo info : features.keySet()) {
                         String name = info.getName();
@@ -129,7 +126,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     }
 
     /**
-     * Pushes features to the cluster.
+     * Push features to the cluster.
      */
     public void push(Group group) {
         if (group != null) {
@@ -191,15 +188,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
         return result;
     }
-
-    public List<EventProducer> getProducerList() {
-        return producerList;
-    }
-
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
-    }
-
 
     public ClusterManager getCollectionManager() {
         return clusterManager;

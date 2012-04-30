@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.config;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.InvalidSyntaxException;
@@ -26,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -38,9 +38,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalConfigurationListener.class);
 
-    private List<EventProducer> producerList;
-
-    private Node node;
+    private EventProducer eventProducer;
 
     /**
      * Handle local configuration events.
@@ -49,23 +47,30 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
      * @param event
      */
     public void configurationEvent(ConfigurationEvent event) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR CONFIG: cluster event producer is OFF");
+            return;
+        }
+
         String pid = event.getPid();
 
         Set<Group> groups = groupManager.listLocalGroups();
 
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                //Check if the pid is allowed for outbound.
+                // check if the pid is allowed for outbound.
                 if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+
+                    // update the distributed map
+                    push(pid, group);
+
+                    // broadcast the cluster event
                     RemoteConfigurationEvent configurationEvent = new RemoteConfigurationEvent(pid);
                     configurationEvent.setSourceGroup(group);
-                    configurationEvent.setSourceNode(node);
-                    push(pid, group);
-                    if (producerList != null && !producerList.isEmpty()) {
-                        for (EventProducer producer : producerList) {
-                            producer.produce(configurationEvent);
-                        }
-                    }
+                    configurationEvent.setSourceNode(clusterManager.getNode());
+                    eventProducer.produce(configurationEvent);
                 } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
             }
         }
@@ -76,10 +81,8 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
      *
      * @param pid
      */
-
     protected void push(String pid, Group group) {
         String groupName = group.getName();
-
         Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         try {
             Configuration[] configurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
@@ -98,9 +101,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
      * Initialization Method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**
@@ -110,12 +111,12 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

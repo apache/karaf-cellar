@@ -43,7 +43,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR BUNDLE: node is not part of the cluster event cluster group");
+            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
             return;
         }
 

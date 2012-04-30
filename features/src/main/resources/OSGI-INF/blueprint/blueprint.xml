@@ -17,56 +17,53 @@
     <!-- Cluster Configuration Listener -->
     <bean id="featuresListener" class="org.apache.karaf.cellar.features.LocalFeaturesListener" init-method="init"
           destroy-method="destroy">
-        <property name="featuresService" ref="featuresService"/>
-        <property name="producerList" ref="groupEventProducers"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
+        <property name="eventProducer" ref="eventProducer"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="featuresService" ref="featuresService"/>
     </bean>
+    <service ref="featuresListener" interface="org.apache.karaf.features.FeaturesListener"/>
 
     <!-- Features/Repositories Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.features.FeaturesSynchronizer"
           init-method="init" destroy-method="destroy">
-        <property name="featuresService" ref="featuresService"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
-        <property name="producerList" ref="groupEventProducers"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="featuresService" ref="featuresService"/>
     </bean>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
     <!-- Features Handler -->
     <bean id="featuresHandler" class="org.apache.karaf.cellar.features.FeaturesEventHandler"
           init-method="init" destroy-method="destroy">
-        <property name="featuresService" ref="featuresService"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
-    </bean>
-
-    <!-- Repository Handler -->
-    <bean id="repositoryHandler" class="org.apache.karaf.cellar.features.RepositoryEventHandler"
-          init-method="init" destroy-method="destroy">
         <property name="featuresService" ref="featuresService"/>
-        <property name="clusterManager" ref="clusterManager"/>
-        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
-
-    <!-- OSGi Services  & References -->
-    <service ref="featuresListener" interface="org.apache.karaf.features.FeaturesListener"/>
-    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
     <service ref="featuresHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
 
+    <!-- Repository Handler -->
+    <bean id="repositoryHandler" class="org.apache.karaf.cellar.features.RepositoryEventHandler"
+          init-method="init" destroy-method="destroy">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="featuresService" ref="featuresService"/>
+    </bean>
     <service ref="repositoryHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
+
+    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
-    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
     <reference id="featuresService" interface="org.apache.karaf.features.FeaturesService"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-    <reference-list id="groupEventProducers" member-type="service-object"
-                    interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
 </blueprint>

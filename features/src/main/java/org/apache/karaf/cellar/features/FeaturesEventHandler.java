@@ -49,9 +49,16 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
      * @param event
      */
     public void handle(RemoteFeaturesEvent event) {
+
         // check if the handler switch is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
+
+        // check if the group is local
+        if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
+            LOGGER.warn("CELLAR FEATURES: node is not part of the event cluster group");
             return;
         }
 

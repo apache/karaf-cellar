@@ -52,7 +52,7 @@ public class InstallBundleCommand extends CellarCommandSupport {
 
         // check if the producer is started
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF for this node");
+            System.err.println("Cluster event producer is OFF");
             return null;
         }
 

@@ -52,7 +52,7 @@ public class StopBundleCommand extends CellarCommandSupport {
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF for this node");
+            System.err.println("Cluster event producer is OFF");
             return null;
         }
 
