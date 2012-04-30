@@ -71,6 +71,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
     public TabularData handlerStatus() throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
+        command.setDestination(clusterManager.listNodes());
         command.setHandlerName(null);
         command.setStatus(null);
 
