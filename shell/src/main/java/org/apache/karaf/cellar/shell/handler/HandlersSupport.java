@@ -28,14 +28,16 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected Object doExecute(String handlerName, List<String> nodes, Boolean status) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
-        Set<Node> recipientList = clusterManager.listNodes(nodes);
 
-        //Set the recipient list
-        if (recipientList != null && !recipientList.isEmpty()) {
-            command.setDestination(recipientList);
+        Set<Node> recipientList;
+        if (nodes == null || nodes.isEmpty()) {
+            recipientList = clusterManager.listNodes();
+        } else {
+            recipientList = clusterManager.listNodes(nodes);
         }
 
-        command.setHandlesName(handlerName);
+        command.setDestination(recipientList);
+        command.setHandlerName(handlerName);
         command.setStatus(status);
 
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
