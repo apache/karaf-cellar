@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.config;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.InvalidSyntaxException;
@@ -38,12 +39,13 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationSynchronizer.class);
 
-    private List<EventProducer> producerList;
+    private EventProducer eventProducer;
 
     /**
      * Constructor
      */
     public ConfigurationSynchronizer() {
+
     }
 
     /**
@@ -69,7 +71,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Reads the configuration from the remote map.
+     * Gets the configuration from the distributed map.
      */
     public void pull(Group group) {
         if (group != null) {
@@ -104,9 +106,16 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Publishes local configuration to the cluster.
+     * Publish local configuration to the cluster.
      */
     public void push(Group group) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR CONFIG: cluster event producer is OFF");
+            return;
+        }
+
         if (group != null) {
             String groupName = group.getName();
             Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
@@ -119,7 +128,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     configs = configurationAdmin.listConfigurations(null);
                     for (Configuration conf : configs) {
                         String pid = conf.getPid();
-                        //Check if the pid is marked as local.
+                        // check if the pid is marked as local.
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
                             Properties source = dictionaryToProperties(preparePush(filterDictionary(conf.getProperties())));
                             Properties target = configurationTable.get(pid);
@@ -137,23 +146,14 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                     configurationTable.put(pid, target);
                                     if (requiresUpdate) {
                                         RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
-                                        if (producerList != null && !producerList.isEmpty()) {
-                                            for (EventProducer producer : producerList) {
-                                                producer.produce(event);
-                                            }
-                                        }
-
+                                        eventProducer.produce(event);
                                     }
                                     LOGGER.debug("CELLAR CONFIG: publishing configuration with PID {} to the distributed map", pid);
                                 }
                             } else {
                                 RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
                                 configurationTable.put(pid, source);
-                                if (producerList != null && !producerList.isEmpty()) {
-                                    for (EventProducer producer : producerList) {
-                                        producer.produce(event);
-                                    }
-                                }
+                                eventProducer.produce(event);
                                 LOGGER.debug("CELLAR CONFIG: publishing configuration with PID {} to the distributed map", pid);
                             }
                         }
@@ -188,12 +188,12 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         return result;
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

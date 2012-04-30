@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.event;
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.event.Event;
@@ -31,12 +32,17 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalEventListener.class);
 
-    private List<EventProducer> producerList;
-
-    private Node node;
+    private EventProducer eventProducer;
 
     @Override
     public void handleEvent(Event event) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR EVENT: cluster event producer is OFF");
+            return;
+        }
+
         try {
             if (event != null && event.getTopic() != null) {
                 Set<Group> groups = null;
@@ -60,18 +66,10 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                         String topicName = event.getTopic();
                         Map<String, Serializable> properties = getEventProperties(event);
                         if (isAllowed(group, Constants.CATEGORY, topicName, EventType.OUTBOUND)) {
+                            // broadcast the event
                             RemoteEvent remoteEvent = new RemoteEvent(topicName, properties);
                             remoteEvent.setSourceGroup(group);
-                            remoteEvent.setSourceNode(node);
-                            
-                            LOGGER.debug("CELLAR EVENT: broadcast event {}", topicName);
-
-                            // broadcast the event
-                            if (producerList != null && !producerList.isEmpty()) {
-                                for (EventProducer producer : producerList) {
-                                    producer.produce(remoteEvent);
-                                }
-                            }
+                            eventProducer.produce(remoteEvent);
                         } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }
                 }
@@ -85,9 +83,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
      * Initialization method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**
@@ -97,12 +93,12 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }
