@@ -44,6 +44,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
      */
     @Override
     public ManageHandlersResult execute(ManageHandlersCommand command) {
+
         ManageHandlersResult result = new ManageHandlersResult(command.getId());
 
         BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
@@ -53,13 +54,15 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
             if (references != null && references.length > 0) {
                 for (ServiceReference ref : references) {
                     EventHandler handler = (EventHandler) bundleContext.getService(ref);
-                    if (command.getHandlesName() != null && command.getHandlesName().equals(handler.getClass().getName())) {
 
-                        if (command.getStatus()) {
-                            handler.getSwitch().turnOn();
-                        } else handler.getSwitch().turnOff();
+                    if (command.getHandlerName() == null) {
+                        result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
+                    } else {
+                        if (command.getHandlerName().equals(handler.getClass().getName())) {
+                            result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
+                            break;
+                        }
                     }
-                    result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
                 }
             }
         } catch (InvalidSyntaxException e) {

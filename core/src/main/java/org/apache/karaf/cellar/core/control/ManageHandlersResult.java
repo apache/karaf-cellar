@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manage handlers result.
+ * Manage handler result.
  */
 public class ManageHandlersResult extends Result {
 
