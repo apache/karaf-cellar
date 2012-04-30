@@ -18,6 +18,7 @@ import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.Bundle;
@@ -109,6 +110,19 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
      */
     @Override
     public void handle(ObrBundleEvent event) {
+
+        // check if the handler is ON
+        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR OBR: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
+
+        // check if the group is local
+        if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
+            LOGGER.warn("CELLAR OBR: node is not part of the event cluster group");
+            return;
+        }
+
         String bundleId = event.getBundleId();
         try {
             if (isAllowed(event.getSourceGroup(), Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.INBOUND)) {

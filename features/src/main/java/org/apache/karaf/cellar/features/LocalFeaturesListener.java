@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features;
 
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
@@ -32,7 +33,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalFeaturesListener.class);
 
-    private List<EventProducer> producerList;
+    private EventProducer eventProducer;
 
     @Override
     public void init() {
@@ -50,6 +51,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
      * @param event
      */
     public void featureEvent(FeatureEvent event) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURES: cluster event producer is OFF");
+            return;
+        }
+
         if (event != null) {
             Set<Group> groups = groupManager.listLocalGroups();
 
@@ -63,22 +71,17 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
                         FeatureEvent.EventType type = event.getType();
 
-                        //Check the event type.
-                        //This is required because upon reception of the even the feature service considers the feature uninstalled.
+                        // update the distributed map
                         if (FeatureEvent.EventType.FeatureInstalled.equals(event.getType())) {
                             pushFeature(event.getFeature(), group, true);
                         } else {
                             pushFeature(event.getFeature(), group, false);
                         }
 
+                        // broadcast the event
                         RemoteFeaturesEvent featureEvent = new RemoteFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
-                        //TODO: Choose group producer.
-                        if (producerList != null && !producerList.isEmpty()) {
-                            for (EventProducer producer : producerList) {
-                                producer.produce(featureEvent);
-                            }
-                        }
+                        eventProducer.produce(featureEvent);
                     } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", name);
                 }
             }
@@ -91,6 +94,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
      * @param event
      */
     public void repositoryEvent(RepositoryEvent event) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURES: cluster event producer is OFF");
+            return;
+        }
+
         if (event != null && event.getRepository() != null) {
             Set<Group> groups = groupManager.listLocalGroups();
 
@@ -100,27 +110,24 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     repositoryEvent.setSourceGroup(group);
                     RepositoryEvent.EventType type = event.getType();
 
-                    if(RepositoryEvent.EventType.RepositoryAdded.equals(type)){
+                    // update the distributed map
+                    if (RepositoryEvent.EventType.RepositoryAdded.equals(type)){
                         pushRepository(event.getRepository(), group);
                     } else {
                         removeRepository(event.getRepository(),group);
                     }
-                    if (producerList != null && !producerList.isEmpty()) {
-                        for (EventProducer producer : producerList) {
-                            producer.produce(repositoryEvent);
-                        }
-                    }
+                    eventProducer.produce(repositoryEvent);
                 }
             }
         }
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

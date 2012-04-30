@@ -15,7 +15,7 @@
 
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <!-- Cluster Configuration Listener -->
+    <!-- Local Bundle Listener -->
     <bean id="bundleListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init"
           destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
@@ -25,7 +25,7 @@
         <property name="eventProducer" ref="eventProducer"/>
     </bean>
 
-    <!-- Configuration Synchronizer -->
+    <!-- Bundle Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.bundle.BundleSynchronizer"
           init-method="init" destroy-method="destroy" depends-on="eventHandler">
         <property name="configurationAdmin" ref="configurationAdmin"/>
@@ -34,7 +34,9 @@
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="eventProducer" ref="eventProducer"/>
     </bean>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
+    <!-- Cluster Event Handler -->
     <bean id="eventHandler" class="org.apache.karaf.cellar.bundle.BundleEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="configurationAdmin" ref="configurationAdmin"/>
@@ -42,15 +44,13 @@
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="groupManager" ref="groupManager"/>
     </bean>
-
-    <!-- OSGi Services  & References -->
     <service ref="eventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
-    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
+    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
