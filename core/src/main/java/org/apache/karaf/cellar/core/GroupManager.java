@@ -66,6 +66,14 @@ public interface GroupManager {
     public Set<Group> listLocalGroups();
 
     /**
+     * Check if the local node is part of the given group.
+     *
+     * @param groupName the group name.
+     * @return true if the local node is part of the group, false else.
+     */
+    public boolean isLocalGroup(String groupName);
+
+    /**
      * Returns the {@link Group}s of the specified {@link Node}.
      *
      * @return

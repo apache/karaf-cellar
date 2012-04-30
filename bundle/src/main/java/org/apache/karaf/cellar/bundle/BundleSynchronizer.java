@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.bundle;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.Bundle;
@@ -37,7 +38,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
-    private List<EventProducer> producerList;
+    private EventProducer eventProducer;
 
     /**
      * Registration method
@@ -62,14 +63,14 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Reads the configuration from the remote map.
+     * Get the bundle to install from the distributed map
      */
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> bundleDistributedMap = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            for (Map.Entry<String,BundleState> entry : bundleTable.entrySet()) {
+            for (Map.Entry<String,BundleState> entry : bundleDistributedMap.entrySet()) {
                 String id = entry.getKey();
                 BundleState state = entry.getValue();
 
@@ -99,9 +100,15 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Publishes local configuration to the cluster.
+     * Publishes local bundle to the cluster.
      */
     public void push(Group group) {
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF for this node");
+            return;
+        }
 
         if (group != null) {
             String groupName = group.getName();
@@ -126,19 +133,15 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                     BundleState existingState = bundleTable.get(id);
                     RemoteBundleEvent event = null;
+
                     if (existingState == null) {
+                        // update the distributed map
                         event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
-                        // update the cluster map
                         bundleTable.put(id, bundleState);
                     }
 
                     // broadcast the event
-                    // TODO use the local producer and check its status
-                    if (producerList != null && !producerList.isEmpty() && event != null) {
-                        for (EventProducer producer : producerList) {
-                            producer.produce(event);
-                        }
-                    }
+                    eventProducer.produce(event);
                 } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
             }
         }
@@ -162,12 +165,12 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         return result;
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }

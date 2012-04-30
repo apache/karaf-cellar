@@ -37,10 +37,18 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      * @param event
      */
     public void handle(RemoteBundleEvent event) {
+        // check if the handler switch is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
+
+        // check if the node is local
+        if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
+            LOGGER.warn("CELLAR BUNDLE: node is not part of the cluster event cluster group");
+            return;
+        }
+
         try {
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
