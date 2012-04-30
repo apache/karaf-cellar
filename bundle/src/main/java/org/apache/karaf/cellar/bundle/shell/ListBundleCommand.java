@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
@@ -27,17 +28,21 @@ import java.util.Map;
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles assigned to a cluster group.")
 public class ListBundleCommand extends CellarCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "%-50s %-20s %-15s %-20s";
+    protected static final String HEADER_FORMAT = " %-11s  %s";
+    protected static final String OUTPUT_FORMAT = "[%-11s] %s";
 
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
+
+    @Option(name = "-l", aliases = {}, description = "Show the locations", required = false, multiValued = false)
+    boolean showLoc;
 
     @Override
     protected Object doExecute() throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
 
@@ -47,7 +52,7 @@ public class ListBundleCommand extends CellarCommandSupport {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             if (bundles != null && !bundles.isEmpty()) {
                 System.out.println(String.format("Bundles for cluster group " + groupName));
-                System.out.println(String.format(OUTPUT_FORMAT, "Name", "Version", "Status", "Location"));
+                System.out.println(String.format(HEADER_FORMAT, "State", "Name"));
                 for (String bundle : bundles.keySet()) {
                     String[] tokens = bundle.split("/");
                     String name = tokens[0];
@@ -80,10 +85,14 @@ public class ListBundleCommand extends CellarCommandSupport {
                             status = "";
                             break;
                     }
-                    System.out.println(String.format(OUTPUT_FORMAT, name, version, status, state.getLocation()));
+                    if (showLoc) {
+                        System.out.println(String.format(OUTPUT_FORMAT, status, state.getLocation()));
+                    } else {
+                        System.out.println(String.format(OUTPUT_FORMAT, status, name + " (" + version + ")"));
+                    }
                 }
             } else {
-                System.err.println("No bundles found for cluster group: " + groupName);
+                System.err.println("No bundles found for cluster group " + groupName);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
