@@ -68,7 +68,9 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
     public TabularData handlerStatus() throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
-        command.setHandlesName(null);
+
+        command.setDestination(clusterManager.listNodes());
+        command.setHandlerName(null);
         command.setStatus(null);
 
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
@@ -104,7 +106,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         List<String> nodeIds = new ArrayList<String>();
         nodeIds.add(nodeId);
         Set<Node> nodes = clusterManager.listNodes(nodeIds);
-        command.setHandlesName(handlerId);
+        command.setHandlerName(handlerId);
         command.setDestination(nodes);
         command.setStatus(Boolean.TRUE);
     }
@@ -114,7 +116,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         List<String> nodeIds = new ArrayList<String>();
         nodeIds.add(nodeId);
         Set<Node> nodes = clusterManager.listNodes(nodeIds);
-        command.setHandlesName(handlerId);
+        command.setHandlerName(handlerId);
         command.setDestination(nodes);
         command.setStatus(Boolean.FALSE);
     }
