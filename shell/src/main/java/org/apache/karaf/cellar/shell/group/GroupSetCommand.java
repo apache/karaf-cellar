@@ -23,17 +23,17 @@ import java.util.List;
 @Command(scope = "cluster", name = "group-set", description = "Set the target nodes to a cluster group.")
 public class GroupSetCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
         return doExecute(ManageGroupAction.SET, groupName, null, nodes, false);
