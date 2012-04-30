@@ -20,7 +20,7 @@ import org.apache.karaf.cellar.core.command.Command;
  */
 public class ManageHandlersCommand extends Command<ManageHandlersResult> {
 
-    private String handlesName;
+    private String handlerName;
     private Boolean status = Boolean.TRUE;
 
     /**
@@ -32,12 +32,12 @@ public class ManageHandlersCommand extends Command<ManageHandlersResult> {
         super(id);
     }
 
-    public String getHandlesName() {
-        return handlesName;
+    public String getHandlerName() {
+        return handlerName;
     }
 
-    public void setHandlesName(String handlesName) {
-        this.handlesName = handlesName;
+    public void setHandlerName(String handlerName) {
+        this.handlerName = handlerName;
     }
 
     public Boolean getStatus() {

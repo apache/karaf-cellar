@@ -36,12 +36,12 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
         Set<Node> recipientList = clusterManager.listNodes(nodes);
 
-        //Set the recipient list
+        // set the recipient list
         if (recipientList != null && !recipientList.isEmpty()) {
             command.setDestination(recipientList);
         }
 
-        command.setHandlesName(handlerName);
+        command.setHandlerName(handlerName);
         command.setStatus(status);
 
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
