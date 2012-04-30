@@ -90,7 +90,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * Initialization Method.
      */
     public void init() {
-
+        bundleContext.addBundleListener(this);
     }
 
     /**
