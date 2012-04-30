@@ -17,11 +17,11 @@
 
     <!-- Cluster Configuration Listener -->
     <bean id="bundleListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init" destroy-method="destroy">
-        <property name="producerList" ref="groupEventProducers"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
+        <property name="eventProducer" ref="eventProducer"/>
     </bean>
 
     <!-- Configuration Synchronizer -->
@@ -30,7 +30,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
-        <property name="producerList" ref="groupEventProducers"/>
+        <property name="eventProducer" ref="eventProducer"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
 
@@ -38,6 +38,7 @@
           init-method="init" destroy-method="destroy">
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
     </bean>
 
@@ -52,9 +53,6 @@
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-    <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
-    <reference-list id="groupEventProducers" member-type="service-object"
-                    interface="org.apache.karaf.cellar.core.event.EventProducer" filter="(type=group)"/>
 
 </blueprint>
