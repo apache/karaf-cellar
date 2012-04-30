@@ -168,6 +168,17 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     @Override
+    public boolean isLocalGroup(String groupName) {
+        Set<Group> localGroups = this.listLocalGroups();
+        for (Group localGroup : localGroups) {
+            if (localGroup.getName().equals(groupName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public Set<Group> listAllGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {

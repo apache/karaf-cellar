@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.bundle;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.BundleEvent;
@@ -31,9 +32,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalBundleListener.class);
 
-    private List<EventProducer> producerList;
-
-    private Node node;
+    private EventProducer eventProducer;
 
     /**
      * Process {@link BundleEvent}s.
@@ -41,50 +40,48 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * @param event
      */
     public void bundleChanged(BundleEvent event) {
-        try {
-            if (event != null && event.getBundle() != null) {
-                Set<Group> groups = null;
-                try {
-                    groups = groupManager.listLocalGroups();
-                } catch (Exception ex) {
-                    LOGGER.warn("Failed to list local groups. Is Cellar uninstalling ?");
-                }
 
-                if (groups != null && !groups.isEmpty()) {
-                    for (Group group : groups) {
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF for this node");
+            return;
+        }
 
-                        String symbolicName = event.getBundle().getSymbolicName();
-                        String version = event.getBundle().getVersion().toString();
-                        String bundleLocation = event.getBundle().getLocation();
-                        int type = event.getType();
+        if (event != null && event.getBundle() != null) {
+            Set<Group> groups = null;
+            try {
+                groups = groupManager.listLocalGroups();
+            } catch (Exception ex) {
+                LOGGER.warn("Failed to list local groups. Is Cellar uninstalling ?");
+            }
 
-                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                            remoteBundleEvent.setSourceGroup(group);
-                            remoteBundleEvent.setSourceNode(node);
+            if (groups != null && !groups.isEmpty()) {
+                for (Group group : groups) {
 
-                            // update the cluster map
-                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
-                            BundleState state = bundles.get(symbolicName + "/" + version);
-                            if (state == null) {
-                                state = new BundleState();
-                            }
-                            state.setStatus(type);
-                            state.setLocation(event.getBundle().getLocation());
-                            bundles.put(symbolicName + "/" + version, state);
+                    String symbolicName = event.getBundle().getSymbolicName();
+                    String version = event.getBundle().getVersion().toString();
+                    String bundleLocation = event.getBundle().getLocation();
+                    int type = event.getType();
 
-                            // broadcast the cluster event
-                            if (producerList != null && !producerList.isEmpty()) {
-                                for (EventProducer producer : producerList) {
-                                    producer.produce(remoteBundleEvent);
-                                }
-                            }
-                        } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", symbolicName);
-                    }
+                    if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                        RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                        remoteBundleEvent.setSourceGroup(group);
+
+                        // update the cluster map
+                        Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                        BundleState state = bundles.get(symbolicName + "/" + version);
+                        if (state == null) {
+                            state = new BundleState();
+                        }
+                        state.setStatus(type);
+                        state.setLocation(event.getBundle().getLocation());
+                        bundles.put(symbolicName + "/" + version, state);
+
+                        // broadcast the cluster event
+                        eventProducer.produce(remoteBundleEvent);
+                    } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", symbolicName);
                 }
             }
-        } catch (Exception ex) {
-            LOGGER.error("CELLAR BUNDLE: error handling bundle {} event", event.getBundle().getSymbolicName(), ex);
         }
     }
 
@@ -92,9 +89,6 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * Initialization Method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
         getBundleContext().addBundleListener(this);
     }
 
@@ -105,12 +99,12 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
 
     }
 
-    public List<EventProducer> getProducerList() {
-        return producerList;
+    public EventProducer getEventProducer() {
+        return eventProducer;
     }
 
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }
