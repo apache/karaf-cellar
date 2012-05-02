@@ -50,7 +50,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
      */
     public void handle(RemoteConfigurationEvent event) {
 
-        if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
+        if (event == null || event.getSourceGroup() == null)
             return;
 
         // check if the handler is ON
@@ -70,27 +70,19 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
-            String pid = event.getId();
-            //Check if the pid is marked as local.
-            if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-                Properties dictionary = configurationTable.get(pid);
-                Configuration conf;
-                try {
-                    conf = configurationAdmin.getConfiguration(pid);
-                    //Update the configurationTable.
-                    if (conf != null && dictionary != null) {
-                        Dictionary existingConfiguration = filterDictionary(conf.getProperties());
-                        if (!dictionariesEqual(dictionary, existingConfiguration)) {
-                            conf.update(preparePull(dictionary));
-                        }
-                        LOGGER.debug("CELLAR CONFIG: local configuration updated");
-                    }
-                } catch (IOException ex) {
-                    LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
-                }
-            } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
-        }
+        String pid = event.getId();
+        //Check if the pid is marked as local.
+        if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
+            Properties dictionary = configurationTable.get(pid);
+            Configuration conf;
+            try {
+                // update the local configuration
+                conf = configurationAdmin.getConfiguration(pid);
+                conf.update(preparePull(dictionary));
+            } catch (IOException ex) {
+                LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
+            }
+        } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
     }
 
     /**

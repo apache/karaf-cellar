@@ -14,10 +14,13 @@
 package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.config.Constants;
+import org.apache.karaf.cellar.config.RemoteConfigurationEvent;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
+import org.apache.karaf.cellar.core.event.EventProducer;
 
 import java.util.Map;
 import java.util.Properties;
@@ -40,25 +43,49 @@ public class PropSetCommand extends ConfigCommandSupport {
     @Argument(index = 3, name = "value", description = "The property value.", required = true, multiValued = false)
     String value;
 
+    private EventProducer eventProducer;
+
     @Override
     protected Object doExecute() throws Exception {
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            System.err.println("Cluster event producer is OFF");
+            return null;
+        }
+
         Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         if (configurationMap != null) {
+            // update the distributed map
             Properties properties = configurationMap.get(pid);
             if (properties == null) {
                 properties = new Properties();
             }
             properties.put(key, value);
             configurationMap.put(pid, properties);
+
+            // broadcast the cluster event
+            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
         } else {
             System.out.println("Configuration distributed map not found for cluster group " + groupName);
         }
         return null;
+    }
+
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }
