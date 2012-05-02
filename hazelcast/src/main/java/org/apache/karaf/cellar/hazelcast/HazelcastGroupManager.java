@@ -490,7 +490,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void configurationEvent(ConfigurationEvent configurationEvent) {
         String pid = configurationEvent.getPid();
         if(pid.equals(GROUPS)) {
-            LOGGER.info("Local group configuration has been updated, updating distributed group configuration");
             Map groupConfiguration = instance.getMap(GROUPS_CONFIG);
 
             try {

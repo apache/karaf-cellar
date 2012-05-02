@@ -93,7 +93,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 //Mark the remote configuration event.
                                 conf.update(preparePull(dictionary));
                             }
-                            LOGGER.debug("CELLAR CONFIG: read from the distributed map");
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
@@ -130,7 +129,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         String pid = conf.getPid();
                         // check if the pid is marked as local.
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            Properties source = dictionaryToProperties(preparePush(filterDictionary(conf.getProperties())));
+                            Properties source = dictionaryToProperties(preparePush(conf.getProperties()));
                             Properties target = configurationTable.get(pid);
                             if (target != null) {
                                 boolean requiresUpdate = false;
@@ -154,7 +153,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 configurationTable.put(pid, source);
                                 eventProducer.produce(event);
                             }
-                            LOGGER.debug("CELLAR CONFIG: publishing PID {} to the distributed map", pid);
                         } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
                     }
                 } catch (IOException ex) {

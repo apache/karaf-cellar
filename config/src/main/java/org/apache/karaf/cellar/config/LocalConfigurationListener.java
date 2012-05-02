@@ -87,7 +87,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
         try {
             Configuration[] configurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
             for (Configuration configuration : configurations) {
-                Properties properties = dictionaryToProperties(preparePush(filterDictionary(configuration.getProperties())));
+                Properties properties = dictionaryToProperties(preparePush(configuration.getProperties()));
                 configurationTable.put(configuration.getPid(), properties);
             }
         } catch (IOException e) {
