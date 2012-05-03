@@ -15,7 +15,6 @@ package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -41,17 +40,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    private Node node;
-
-    /**
-     * Handles
-     *
-     * @param event
-     */
     public void handle(RemoteConfigurationEvent event) {
-
-        if (event == null || event.getSourceGroup() == null || node == null || node.equals(event.getSourceNode()))
-            return;
 
         // check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -72,19 +61,16 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
             String pid = event.getId();
-            //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
                 Properties dictionary = configurationTable.get(pid);
                 Configuration conf;
                 try {
                     conf = configurationAdmin.getConfiguration(pid);
-                    //Update the configurationTable.
                     if (conf != null && dictionary != null) {
-                        Dictionary existingConfiguration = filterDictionary(conf.getProperties());
-                        if (!dictionariesEqual(dictionary, existingConfiguration)) {
-                            conf.update(preparePull(dictionary));
+                        Dictionary existingConfiguration = conf.getProperties();
+                        if (!equals(dictionary, existingConfiguration)) {
+                            conf.update(dictionary);
                         }
-                        LOGGER.debug("CELLAR CONFIG: pulling configuration with PID {}", pid);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
@@ -97,9 +83,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
      * Initialization Method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**
