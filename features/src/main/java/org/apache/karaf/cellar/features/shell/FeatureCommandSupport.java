@@ -88,6 +88,38 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         return result;
     }
 
+    /**
+     * Check if a feature is present in the distributed map.
+     *
+     * @param groupName the target cluster group.
+     * @param feature   the target feature name.
+     * @param version   the target feature version.
+     * @return true if the feature exists in the distributed map, false else
+     */
+    public boolean featureExists(String groupName, String feature, String version) {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+
+            if (distributedFeatures == null)
+                return false;
+
+            for (FeatureInfo distributedFeature : distributedFeatures.keySet()) {
+                if (version == null) {
+                    if (distributedFeature.getName().equals(feature))
+                        return true;
+                } else {
+                    if (distributedFeature.getName().equals(feature) && distributedFeature.getVersion().equals(version))
+                        return true;
+                }
+            }
+
+            return false;
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
 
     public BundleContext getBundleContext() {
         return bundleContext;
