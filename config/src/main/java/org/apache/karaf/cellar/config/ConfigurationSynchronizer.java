@@ -83,20 +83,17 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
                 for (String pid : configurationTable.keySet()) {
-                    //Check if the pid is marked as local.
                     if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
-                        Properties dictionary = configurationTable.get(pid);
+                        Properties remoteDictionary = configurationTable.get(pid);
                         try {
+                            // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid);
-                            //Update the configuration.
-                            if (conf != null) {
-                                //Mark the remote configuration event.
-                                conf.update(preparePull(dictionary));
-                            }
+                            conf.update(remoteDictionary);
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
-                    } LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
+                    }
+                    LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -127,33 +124,19 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     configs = configurationAdmin.listConfigurations(null);
                     for (Configuration conf : configs) {
                         String pid = conf.getPid();
-                        // check if the pid is marked as local.
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            Properties source = dictionaryToProperties(preparePush(conf.getProperties()));
-                            Properties target = configurationTable.get(pid);
-                            if (target != null) {
-                                boolean requiresUpdate = false;
-                                if (source != null && source.keys() != null) {
-                                    Enumeration keys = source.keys();
-                                    while (keys.hasMoreElements()) {
-                                        String key = (String) keys.nextElement();
-                                        if (target.get(key) == null || target.get(key).equals(source.get(key))) {
-                                            requiresUpdate = true;
-                                            target.put(key, source.get(key));
-                                        }
-                                    }
-                                    configurationTable.put(pid, target);
-                                    if (requiresUpdate) {
-                                        RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
-                                        eventProducer.produce(event);
-                                    }
-                                }
-                            } else {
+                            Properties localDictionary = dictionaryToProperties(conf.getProperties());
+                            Properties remoteDictionary = configurationTable.get(pid);
+                            if (!this.equals(localDictionary, remoteDictionary)) {
+                                // update the distributed map
+                                configurationTable.put(pid, localDictionary);
+                                // broadcast the cluster event
                                 RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
-                                configurationTable.put(pid, source);
+                                event.setSourceGroup(group);
                                 eventProducer.produce(event);
                             }
-                        } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                        } else
+                            LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read from the distributed map (IO error)", ex);

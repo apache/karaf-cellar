@@ -533,7 +533,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * @param entryEvent entry event
      */
     public void entryUpdated(EntryEvent entryEvent) {
-        LOGGER.info("Distributed Group configuration has been updated, updating local configuration.");
         try {
             Configuration conf = configurationAdmin.getConfiguration(GROUPS);
             Dictionary props = conf.getProperties();

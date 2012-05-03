@@ -41,17 +41,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    private Node node;
-
-    /**
-     * Handles a
-     *
-     * @param event
-     */
     public void handle(RemoteConfigurationEvent event) {
-
-        if (event == null || event.getSourceGroup() == null)
-            return;
 
         // check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -73,12 +63,17 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         String pid = event.getId();
         //Check if the pid is marked as local.
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-            Properties dictionary = configurationTable.get(pid);
+            Properties remoteDictionary = configurationTable.get(pid);
             Configuration conf;
             try {
                 // update the local configuration
                 conf = configurationAdmin.getConfiguration(pid);
-                conf.update(preparePull(dictionary));
+                if (conf != null && remoteDictionary != null) {
+                    Dictionary localDictionary = conf.getProperties();
+                    if (!this.equals(localDictionary, remoteDictionary)) {
+                        conf.update(remoteDictionary);
+                    }
+                }
             } catch (IOException ex) {
                 LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
             }
@@ -89,9 +84,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
      * Initialization Method.
      */
     public void init() {
-        if (clusterManager != null) {
-            node = clusterManager.getNode();
-        }
+
     }
 
     /**
