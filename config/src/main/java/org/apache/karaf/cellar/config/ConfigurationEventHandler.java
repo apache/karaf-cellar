@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,24 +60,29 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (eventSwitch.getStatus().equals(SwitchStatus.ON)) {
-            String pid = event.getId();
-            if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-                Properties dictionary = configurationTable.get(pid);
-                Configuration conf;
-                try {
-                    conf = configurationAdmin.getConfiguration(pid);
-                    if (conf != null && dictionary != null) {
-                        Dictionary existingConfiguration = conf.getProperties();
-                        if (!equals(dictionary, existingConfiguration)) {
-                            conf.update(dictionary);
+        String pid = event.getId();
+
+        if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
+            Properties remoteDictionary = configurationTable.get(pid);
+            Configuration conf;
+            try {
+                conf = configurationAdmin.getConfiguration(pid);
+                if (conf != null) {
+                    if (event.getType() == ConfigurationEvent.CM_DELETED) {
+                        conf.delete();
+                    } else {
+                        if (remoteDictionary != null) {
+                            Dictionary existingConfiguration = conf.getProperties();
+                            if (!equals(remoteDictionary, existingConfiguration)) {
+                                conf.update(remoteDictionary);
+                            }
                         }
                     }
-                } catch (IOException ex) {
-                    LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
                 }
-            } else LOGGER.warn("CELLAR CONFIG: configuration with pid {} is marked as BLOCKED INBOUND", pid);
-        }
+            } catch (IOException ex) {
+                LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
+            }
+        } else LOGGER.warn("CELLAR CONFIG: configuration with pid {} is marked as BLOCKED INBOUND", pid);
     }
 
     /**

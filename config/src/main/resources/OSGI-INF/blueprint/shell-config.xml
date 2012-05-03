@@ -45,7 +45,16 @@
                 <ref component-id="allGroupCompleter"/>
             </completers>
         </command>
-
+        <command name="cluster/config-delete">
+            <action class="org.apache.karaf.cellar.config.shell.DeleteCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="eventProducer" ref="eventProducer"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupCompleter"/>
+            </completers>
+        </command>
     </command-bundle>
 
     <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
