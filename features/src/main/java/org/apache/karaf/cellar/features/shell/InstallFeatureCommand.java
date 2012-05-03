@@ -50,6 +50,14 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
+        // check if the feature exists in the map
+        if (!featureExists(groupName, feature, version)) {
+            if (version != null)
+                System.err.println("Feature " + feature + "/" + version + " doesn't exist for the cluster group " + groupName);
+            else System.err.println("Feature " + feature + " doesn't exist for the cluster group " + groupName);
+            return null;
+        }
+
         // update the distributed resource
         updateFeatureStatus(groupName, feature, version, true);
 
