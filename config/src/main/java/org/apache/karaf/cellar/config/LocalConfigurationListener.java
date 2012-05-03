@@ -27,10 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Local configuration listener.
@@ -63,40 +60,27 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
             for (Group group : groups) {
                 // check if the pid is allowed for outbound.
                 if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                    // update the distributed map
-                    push(pid, group);
 
+                    // update the distributed map if needed
+                    Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
+
+                    try {
+                        Configuration conf = configurationAdmin.getConfiguration(pid);
+                        Properties localDictionary = dictionaryToProperties(conf.getProperties());
+                        Dictionary remoteDictionary = configurationTable.get(pid);
+                        if (!equals(localDictionary, remoteDictionary)) {
+                            // update the distributed map
+                            configurationTable.put(pid, localDictionary);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
+                    }
                     // broadcast the cluster event
-                    RemoteConfigurationEvent configurationEvent = new RemoteConfigurationEvent(pid);
-                    configurationEvent.setSourceGroup(group);
-                    eventProducer.produce(configurationEvent);
-                } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
             }
         }
     }
 
-    /**
-     * Push configuration with pid to the table.
-     *
-     * @param pid
-     */
-
-    protected void push(String pid, Group group) {
-        String groupName = group.getName();
-
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        try {
-            Configuration[] configurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
-            for (Configuration configuration : configurations) {
-                Properties properties = dictionaryToProperties(preparePush(filterDictionary(configuration.getProperties())));
-                configurationTable.put(configuration.getPid(), properties);
-            }
-        } catch (IOException e) {
-            LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {}", pid, e);
-        } catch (InvalidSyntaxException e) {
-            LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {}", pid, e);
-        }
-    }
 
     /**
      * Initialization Method.

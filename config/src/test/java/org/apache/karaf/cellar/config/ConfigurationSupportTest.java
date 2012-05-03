@@ -27,76 +27,56 @@ public class ConfigurationSupportTest {
     ConfigurationSupport support = new ConfigurationSupport();
 
     @Test
-    public void testFilterDictionary() {
-        Dictionary result = null;
+    public void testEquals() throws Exception {
         Dictionary source = new Properties();
-        Dictionary expectedResult = new Properties();
-
-        source.put("key1", "value1");
-        source.put("key2", "value2");
-
-        expectedResult.put("key1", "value1");
-        expectedResult.put("key2", "value2");
-        result = support.filterDictionary(source);
-
-        source.put("service.pid", "value3");
-        result = support.filterDictionary(source);
-
-        Assert.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void testConvertStrings() throws Exception {
-        String absolutePath = "/somewehre/karaf/etc";
-        String home = "/somewehre/karaf";
-        String var = "${karaf.home}";
-
-        String expectedResult = "${karaf.home}/etc";
-
-        String result = support.convertStrings(absolutePath, home, var);
-        Assert.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void testPreparePull() throws Exception {
-        Dictionary result = null;
-        Dictionary source = new Properties();
-        Dictionary expectedResult = new Properties();
-        
-        source.put("key1", "value1");
-        source.put("key2", 1);
-        source.put("key3", Boolean.FALSE);
-        source.put("key4", 12L);
-
-        expectedResult.put("key1", "value1");
-        expectedResult.put("key2", "1");
-        expectedResult.put("key3", "false");
-        expectedResult.put("key4", "12");
-
-        result = support.preparePull(source);
-        
-        Assert.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void testPreparePush() throws Exception {
-        Dictionary result = null;
-        Dictionary source = new Properties();
-        Dictionary expectedResult = new Properties();
+        Dictionary target = new Properties();
 
         source.put("key1", "value1");
         source.put("key2", 1);
         source.put("key3", Boolean.FALSE);
         source.put("key4", 12L);
 
-        expectedResult.put("key1", "value1");
-        expectedResult.put("key2", "1");
-        expectedResult.put("key3", "false");
-        expectedResult.put("key4", "12");
+        target.put("key1", "value1");
+        target.put("key2", 1);
+        target.put("key3", Boolean.FALSE);
+        target.put("key4", 12L);
 
-        result = support.preparePush(source);
+        Assert.assertEquals(true, support.equals(source, target));
+    }
 
-        Assert.assertEquals(expectedResult, result);
+    @Test
+    public void testNotEquals() throws Exception {
+        Dictionary source = new Properties();
+        Dictionary target = new Properties();
+
+        source.put("key1", "value1");
+        source.put("key2", 2);
+        source.put("key3", Boolean.FALSE);
+        source.put("key4", 12L);
+
+        target.put("key1", "value1");
+        target.put("key2", 1);
+        target.put("key3", Boolean.FALSE);
+        target.put("key4", 12L);
+
+        Assert.assertEquals(false, support.equals(source, target));
+    }
+
+    @Test
+    public void testNotEqualsDueToSize() throws Exception {
+        Dictionary source = new Properties();
+        Dictionary target = new Properties();
+
+        source.put("key1", "value1");
+        source.put("key2", 2);
+        source.put("key3", Boolean.FALSE);
+
+        target.put("key1", "value1");
+        target.put("key2", 1);
+        target.put("key3", Boolean.FALSE);
+        target.put("key4", 12L);
+
+        Assert.assertEquals(false, support.equals(source, target));
     }
 
 }
