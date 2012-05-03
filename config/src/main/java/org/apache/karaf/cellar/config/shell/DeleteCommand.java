@@ -21,24 +21,19 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.osgi.service.cm.ConfigurationEvent;
 
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a configuration PID in a cluster group name.")
-public class PropSetCommand extends ConfigCommandSupport {
+@Command(scope = "cluster", name = "config-delete", description = "Delete a configuration from the cluster")
+public class DeleteCommand extends ConfigCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "pid", description = "The configuration PID.", required = true, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The configuration PID", required = true, multiValued = false)
     String pid;
-
-    @Argument(index = 2, name = "key", description = "The property key.", required = true, multiValued = false)
-    String key;
-
-    @Argument(index = 3, name = "value", description = "The property value.", required = true, multiValued = false)
-    String value;
 
     private EventProducer eventProducer;
 
@@ -60,29 +55,19 @@ public class PropSetCommand extends ConfigCommandSupport {
         Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         if (configurationMap != null) {
             // update the distributed map
-            Properties properties = configurationMap.get(pid);
-            if (properties == null) {
-                properties = new Properties();
-            }
-            properties.put(key, value);
-            configurationMap.put(pid, properties);
+            configurationMap.remove(pid);
 
-            // broadcast the cluster event
+            // broadcast a cluster event
             RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
             event.setSourceGroup(group);
+            event.setType(ConfigurationEvent.CM_DELETED);
             eventProducer.produce(event);
+
         } else {
             System.out.println("Configuration distributed map not found for cluster group " + groupName);
         }
+
         return null;
-    }
-
-    public EventProducer getEventProducer() {
-        return eventProducer;
-    }
-
-    public void setEventProducer(EventProducer eventProducer) {
-        this.eventProducer = eventProducer;
     }
 
 }
