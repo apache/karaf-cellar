@@ -35,27 +35,23 @@ public class ListCommand extends ConfigCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-            if (configurationTable != null && !configurationTable.isEmpty()) {
-                System.out.println(String.format("Configuration PIDs for group " + groupName));
-                System.out.println(String.format(OUTPUT_FORMAT, "PID"));
-                for (String pid : configurationTable.keySet()) {
-                    System.out.println(String.format(OUTPUT_FORMAT, pid));
-                }
-            } else System.err.println("No configuration PID found for group " + groupName);
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
+        if (configurationTable != null && !configurationTable.isEmpty()) {
+            System.out.println(String.format("Configuration PIDs for group " + groupName));
+            System.out.println(String.format(OUTPUT_FORMAT, "PID"));
+            for (String pid : configurationTable.keySet()) {
+                System.out.println(String.format(OUTPUT_FORMAT, pid));
+            }
+        } else System.err.println("No configuration PID found for group " + groupName);
+
         return null;
     }
 
