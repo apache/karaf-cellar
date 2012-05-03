@@ -44,28 +44,23 @@ public class PropListCommand extends CellarCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist.");
             return null;
         }
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-            if (configurationMap != null && !configurationMap.isEmpty()) {
-                Properties properties = configurationMap.get(pid);
-                if (properties == null || properties.isEmpty()) {
-                    System.err.println("No configuration PID found for group " + groupName);
-                } else {
-                    System.out.println(String.format("Property list for configuration PID " + pid + " for group " + groupName));
-                    System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
-                    for (Object key : properties.keySet()) {
-                        String value = properties.getProperty((String) key);
-                        System.out.println(String.format(OUTPUT_FORMAT, key, value));
-                    }
+        if (configurationMap != null && !configurationMap.isEmpty()) {
+            Properties properties = configurationMap.get(pid);
+            if (properties == null || properties.isEmpty()) {
+                System.err.println("No configuration PID found for group " + groupName);
+            } else {
+                System.out.println(String.format("Property list for configuration PID " + pid + " for group " + groupName));
+                System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
+                for (Object key : properties.keySet()) {
+                    String value = properties.getProperty((String) key);
+                    System.out.println(String.format(OUTPUT_FORMAT, key, value));
                 }
-            } else System.err.println("No configuration PID found for group " + groupName);
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
+            }
+        } else System.err.println("No configuration PID found for group " + groupName);
+
         return null;
     }
 

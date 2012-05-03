@@ -21,6 +21,7 @@ import javax.management.openmbean.TabularData;
 public interface CellarConfigMBean {
 
     String[] listConfig(String group) throws Exception;
+    void deleteConfig(String group, String pid) throws Exception;
     TabularData listProperties(String group, String pid) throws Exception;
     void setProperty(String group, String pid, String key, String value) throws Exception;
 

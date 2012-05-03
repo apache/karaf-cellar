@@ -20,8 +20,18 @@ import org.apache.karaf.cellar.core.event.Event;
  */
 public class RemoteConfigurationEvent extends Event {
 
+    private int type;
+
     public RemoteConfigurationEvent(String id) {
         super(id);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
 }
