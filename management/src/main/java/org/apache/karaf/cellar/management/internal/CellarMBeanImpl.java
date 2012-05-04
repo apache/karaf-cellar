@@ -36,10 +36,7 @@ import org.apache.karaf.cellar.management.CellarMBean;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of the Cellar core MBean.
@@ -105,9 +102,15 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
     public void handlerStart(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
-        List<String> nodeIds = new ArrayList<String>();
-        nodeIds.add(nodeId);
-        Set<Node> nodes = clusterManager.listNodes(nodeIds);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setHandlerName(handlerId);
         command.setDestination(nodes);
         command.setStatus(Boolean.TRUE);
@@ -115,9 +118,15 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
     public void handlerStop(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
-        List<String> nodeIds = new ArrayList<String>();
-        nodeIds.add(nodeId);
-        Set<Node> nodes = clusterManager.listNodes(nodeIds);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setHandlerName(handlerId);
         command.setDestination(nodes);
         command.setStatus(Boolean.FALSE);
@@ -148,21 +157,33 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         return table;
     }
 
-    public void consumerStart(String node) throws Exception {
+    public void consumerStart(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
-        List<String> ids = new ArrayList<String>();
-        ids.add(node);
-        Set<Node> nodes = clusterManager.listNodes(ids);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.ON);
         executionContext.execute(command);
     }
 
-    public void consumerStop(String node) throws Exception {
+    public void consumerStop(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
-        List<String> ids = new ArrayList<String>();
-        ids.add(node);
-        Set<Node> nodes = clusterManager.listNodes(ids);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.OFF);
         executionContext.execute(command);
@@ -193,21 +214,33 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         return table;
     }
 
-    public void producerStop(String node) throws Exception {
+    public void producerStop(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
-        List<String> ids = new ArrayList<String>();
-        ids.add(node);
-        Set<Node> nodes = clusterManager.listNodes(ids);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.OFF);
         executionContext.execute(command);
     }
 
-    public void producerStart(String node) throws Exception {
+    public void producerStart(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
-        List<String> ids = new ArrayList<String>();
-        ids.add(node);
-        Set<Node> nodes = clusterManager.listNodes(ids);
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist)");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.ON);
         executionContext.execute(command);
