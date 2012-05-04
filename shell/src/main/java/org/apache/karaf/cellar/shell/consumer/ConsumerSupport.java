@@ -53,7 +53,6 @@ public abstract class ConsumerSupport extends ClusterCommandSupport {
             return null;
         }
 
-
         command.setDestination(recipientList);
         command.setStatus(status);
 
