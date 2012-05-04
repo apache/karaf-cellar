@@ -80,6 +80,10 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
+        // TODO check if the feature exist on the group
+        // TODO update the distributed resource
+
+        // broadcast the cluster event
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
@@ -100,6 +104,9 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
+
+        // TODO check if the feature exist on the group
+        // TODO update the distributed resource
 
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
