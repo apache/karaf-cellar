@@ -19,37 +19,48 @@ import org.apache.karaf.cellar.core.control.ProducerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class ProducerSupport extends ClusterCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "%-20s %s";
+    protected static final String HEADER_FORMAT = " %-30s   %-5s";
+    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s]";
 
-    /**
-     * Executes the command.
-     *
-     * @return
-     * @throws Exception
-     */
-    protected Object doExecute(List<String> nodes, SwitchStatus status) throws Exception {
+    protected Object doExecute(List<String> nodeIds, SwitchStatus status) throws Exception {
+
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
-        Set<Node> recipientList = clusterManager.listNodes(nodes);
 
-        //Set the recipient list
-        if (recipientList != null && !recipientList.isEmpty()) {
-            command.setDestination(recipientList);
+        // looking for nodes and check if exist
+        Set<Node> recipientList;
+        if (nodeIds != null && !nodeIds.isEmpty()) {
+            recipientList = new HashSet<Node>();
+            for (String nodeId : nodeIds) {
+                Node node = clusterManager.findNodeById(nodeId);
+                if (node == null) {
+                    System.err.println("Cluster node " + nodeId + " doesn't exist");
+                } else {
+                    recipientList.add(node);
+                }
+            }
+        } else {
+            recipientList = clusterManager.listNodes();
         }
 
-        command.setStatus(status);
+        if (recipientList.size() < 1) {
+            return null;
+        }
 
+        command.setDestination(recipientList);
+        command.setStatus(status);
 
         Map<Node, ProducerSwitchResult> results = executionContext.execute(command);
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
-            System.out.println(String.format(OUTPUT_FORMAT, "Node", "Status"));
+            System.out.println(String.format(HEADER_FORMAT, "Node", "Status"));
             for (Node node : results.keySet()) {
                 ProducerSwitchResult result = results.get(node);
                 System.out.println(String.format(OUTPUT_FORMAT, node.getId(), result.getStatus()));
