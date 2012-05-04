@@ -18,22 +18,38 @@ import org.apache.karaf.cellar.core.control.ManageHandlersCommand;
 import org.apache.karaf.cellar.core.control.ManageHandlersResult;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "%-20s %-7s %s";
+    protected static final String HEADER_FORMAT = " %-30s   %-5s   %-40s";
+    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s] [%-40s]";
 
-    protected Object doExecute(String handlerName, List<String> nodes, Boolean status) throws Exception {
+    protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
+
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
+        // looking for nodes and check if exist
         Set<Node> recipientList;
-        if (nodes == null || nodes.isEmpty()) {
-            recipientList = clusterManager.listNodes();
+        if (nodeIds != null && !nodeIds.isEmpty()) {
+            recipientList = new HashSet<Node>();
+            for (String nodeId : nodeIds) {
+                Node node = clusterManager.findNodeById(nodeId);
+                if (node == null) {
+                    System.err.println("Cluster node " + nodeId + " doesn't exist");
+                } else {
+                    recipientList.add(node);
+                }
+            }
         } else {
-            recipientList = clusterManager.listNodes(nodes);
+            recipientList = clusterManager.listNodes();
+        }
+
+        if (recipientList.size() < 1) {
+            return null;
         }
 
         command.setDestination(recipientList);
@@ -44,7 +60,7 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
-            System.out.println(String.format(OUTPUT_FORMAT, "Node", "Status", "Event Handler"));
+            System.out.println(String.format(HEADER_FORMAT, "Node", "Status", "Event Handler"));
             for (Map.Entry<Node,ManageHandlersResult> handlersResultEntry : results.entrySet()) {
                 Node node = handlersResultEntry.getKey();
                 ManageHandlersResult result = handlersResultEntry.getValue();
