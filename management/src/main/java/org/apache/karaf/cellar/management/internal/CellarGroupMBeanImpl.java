@@ -26,6 +26,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -95,25 +96,46 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         }
     }
 
-    public void join(String group, String nodeId) throws Exception {
-        List<String> nodes = new ArrayList<String>();
-        nodes.add(nodeId);
+    public void join(String groupName, String nodeId) throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         command.setAction(ManageGroupAction.JOIN);
-        command.setGroupName(group);
-        Set<Node> recipientList = clusterManager.listNodes(nodes);
-        command.setDestination(recipientList);
+        command.setGroupName(groupName);
+        command.setDestination(nodes);
+
         executionContext.execute(command);
     }
 
-    public void quit(String group, String nodeId) throws Exception {
-        List<String> nodes = new ArrayList<String>();
-        nodes.add(nodeId);
+    public void quit(String groupName, String nodeId) throws Exception {
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        Node node = clusterManager.findNodeById(nodeId);
+        if (node == null) {
+            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+        }
+
+        Set<Node> nodes = new HashSet<Node>();
+        nodes.add(node);
+
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
         command.setAction(ManageGroupAction.QUIT);
-        command.setGroupName(group);
-        Set<Node> recipientList = clusterManager.listNodes(nodes);
-        command.setDestination(recipientList);
+        command.setGroupName(groupName);
+        command.setDestination(nodes);
         executionContext.execute(command);
     }
 
