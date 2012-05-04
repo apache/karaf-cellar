@@ -30,11 +30,19 @@ public class GroupDeleteCommand extends GroupSupport {
 
     @Override
     protected Object doExecute() throws Exception {
+        // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
+        // check if the group doesn't contain nodes
+        if (group.getNodes() != null && !group.getNodes().isEmpty()) {
+            System.err.println("Cluster group " + groupName  + " is not empty");
+            return null;
+        }
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
