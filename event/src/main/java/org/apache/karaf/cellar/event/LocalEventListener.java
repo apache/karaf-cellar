@@ -70,7 +70,8 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                             RemoteEvent remoteEvent = new RemoteEvent(topicName, properties);
                             remoteEvent.setSourceGroup(group);
                             eventProducer.produce(remoteEvent);
-                        } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
+                        } else if (!topicName.startsWith("org/osgi/service/log/LogEntry/"))
+                                LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }
                 }
             }
