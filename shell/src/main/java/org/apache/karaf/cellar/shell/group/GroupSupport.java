@@ -47,24 +47,35 @@ public abstract class GroupSupport extends ClusterCommandSupport {
      *
      * @param action
      * @param group
-     * @param nodes
+     * @param nodeIds
      * @param suppressOutput
      * @return
      * @throws Exception
      */
-    protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodes, Boolean suppressOutput) throws Exception {
-        ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
-        Set<Node> recipientList = clusterManager.listNodes(nodes);
+    protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodeIds, Boolean suppressOutput) throws Exception {
 
-        //Set the recipient list
-        if (recipientList != null && !recipientList.isEmpty()) {
-            command.setDestination(recipientList);
+        ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
+
+        // looking for nodes and check if exist
+        Set<Node> recipientList = new HashSet<Node>();
+        if (nodeIds != null && !nodeIds.isEmpty()) {
+            for (String nodeId : nodeIds) {
+                Node node = clusterManager.findNodeById(nodeId);
+                if (node == null) {
+                    System.err.println("Cluster node " + nodeId + " doesn't exist");
+                } else {
+                    recipientList.add(node);
+                }
+            }
         } else {
-            Set<Node> recipients = new HashSet<Node>();
-            recipients.add(clusterManager.getNode());
-            command.setDestination(recipients);
+            recipientList.add(clusterManager.getNode());
         }
 
+        if (recipientList.size() < 1) {
+            return null;
+        }
+
+        command.setDestination(recipientList);
         command.setAction(action);
 
         if (group != null) {
