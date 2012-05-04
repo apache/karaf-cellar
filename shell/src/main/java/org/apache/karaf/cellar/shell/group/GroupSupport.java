@@ -27,7 +27,8 @@ import java.util.Set;
 
 public abstract class GroupSupport extends ClusterCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "%1s %-20s %s";
+    protected static final String HEADER_FORMAT = "   %-20s   %s";
+    protected static final String OUTPUT_FORMAT = "%1s [%-20s] [%s]";
 
     /**
      * Executes the command.
@@ -91,20 +92,24 @@ public abstract class GroupSupport extends ClusterCommandSupport {
             if (results == null || results.isEmpty()) {
                 System.out.println("No result received within given timeout");
             } else {
-                System.out.println(String.format(OUTPUT_FORMAT, " ", "Node", "Group"));
+                System.out.println(String.format(HEADER_FORMAT, "Group", "Members"));
                 for (Node node : results.keySet()) {
                     ManageGroupResult result = results.get(node);
                     if (result != null && result.getGroups() != null) {
                         for (Group g : result.getGroups()) {
+                            StringBuffer buffer = new StringBuffer();
                             if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                                String mark = " ";
                                 for (Node member : g.getNodes()) {
-                                    String name = g.getName();
-                                    String mark = " ";
-                                    if (member.equals(clusterManager.getNode()))
+                                    buffer.append(member.getId());
+                                    if (member.equals(clusterManager.getNode())) {
                                         mark = "*";
-                                    System.out.println(String.format(OUTPUT_FORMAT, mark, member.getId(), name));
+                                        buffer.append(mark);
+                                    }
+                                    buffer.append(" ");
                                 }
-                            } else System.out.println(String.format(OUTPUT_FORMAT, "", "", g.getName()));
+                                System.out.println(String.format(OUTPUT_FORMAT, mark, g.getName(), buffer.toString()));
+                            } else System.out.println(String.format(OUTPUT_FORMAT, "", g.getName(), ""));
                         }
                     }
                 }

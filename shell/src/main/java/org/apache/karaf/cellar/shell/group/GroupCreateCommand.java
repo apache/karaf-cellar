@@ -24,7 +24,8 @@ public class GroupCreateCommand extends GroupSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        return groupManager.createGroup(group);
+        groupManager.createGroup(group);
+        return null;
     }
 
 }

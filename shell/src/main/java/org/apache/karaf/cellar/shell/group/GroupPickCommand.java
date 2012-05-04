@@ -40,12 +40,12 @@ public class GroupPickCommand extends GroupSupport {
     protected Object doExecute() throws Exception {
         Group sourceGroup = groupManager.findGroupByName(sourceGroupName);
         if (sourceGroup == null) {
-            System.err.println("Source cluster group " + sourceGroupName + " doesn't exist.");
+            System.err.println("Source cluster group " + sourceGroupName + " doesn't exist");
             return null;
         }
         Group targetGroup = groupManager.findGroupByName(targetGroupName);
         if (targetGroup == null) {
-            System.err.println("Target cluster group " + targetGroupName + " doesn't exist.");
+            System.err.println("Target cluster group " + targetGroupName + " doesn't exist");
             return null;
         }
 
@@ -61,9 +61,7 @@ public class GroupPickCommand extends GroupSupport {
             i++;
         }
 
-        doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
-
-        return null;
+        return doExecute(ManageGroupAction.LIST, null, null, new ArrayList(), false);
     }
 
 }
