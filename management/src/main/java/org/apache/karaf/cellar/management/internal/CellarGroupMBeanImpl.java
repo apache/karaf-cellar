@@ -68,6 +68,11 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
     }
 
     public void create(String name) throws Exception {
+        // check if the group exists
+        Group group = groupManager.findGroupByName(name);
+        if (group != null) {
+            throw new IllegalArgumentException("Cluster group " + name + " already exists");
+        }
         groupManager.createGroup(name);
     }
 
