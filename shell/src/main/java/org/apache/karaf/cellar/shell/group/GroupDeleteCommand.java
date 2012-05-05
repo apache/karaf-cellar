@@ -43,21 +43,8 @@ public class GroupDeleteCommand extends GroupSupport {
             return null;
         }
 
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            List<String> nodes = new LinkedList<String>();
-            if (group.getNodes() != null && !group.getNodes().isEmpty()) {
-                for (Node n : group.getNodes()) {
-                    nodes.add(n.getId());
-                }
-                doExecute(ManageGroupAction.QUIT, group.getName(), null, nodes);
-            }
+        groupManager.deleteGroup(groupName);
 
-            groupManager.deleteGroup(group.getName());
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
         return null;
     }
 
