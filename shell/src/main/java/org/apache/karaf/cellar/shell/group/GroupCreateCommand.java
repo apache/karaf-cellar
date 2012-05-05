@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.shell.group;
 
+import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 
@@ -20,11 +21,18 @@ import org.apache.karaf.shell.commands.Command;
 public class GroupCreateCommand extends GroupSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
-    String group;
+    String groupName;
 
     @Override
     protected Object doExecute() throws Exception {
-        groupManager.createGroup(group);
+        // check if the group exists
+        Group group = groupManager.findGroupByName(groupName);
+        if (group != null) {
+            System.err.println("Cluster group " + groupName + " already exists");
+            return null;
+        }
+
+        groupManager.createGroup(groupName);
         return null;
     }
 
