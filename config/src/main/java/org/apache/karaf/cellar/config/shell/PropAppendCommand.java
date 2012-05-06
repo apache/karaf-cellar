@@ -13,23 +13,20 @@
  */
 package org.apache.karaf.cellar.config.shell;
 
+import org.apache.felix.gogo.commands.Argument;
+import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.config.RemoteConfigurationEvent;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Config properties set cluster command.
- */
-@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a configuration PID assigned to a cluster group")
-public class PropSetCommand extends ConfigCommandSupport {
+@Command(scope = "cluster", name = "config-propappend", description = "Append to the property value for a configuration PID in a cluster group name")
+public class PropAppendCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -67,7 +64,15 @@ public class PropSetCommand extends ConfigCommandSupport {
             if (properties == null) {
                 properties = new Properties();
             }
-            properties.put(key, value);
+            Object currentValue = properties.get(key);
+            if (currentValue == null) {
+                properties.put(key, value);
+            } else if (currentValue instanceof String) {
+                properties.put(key, currentValue + value);
+            } else {
+                System.err.println("Append failed: current value is not a String");
+                return null;
+            }
             configurationMap.put(pid, properties);
 
             // broadcast the cluster event
