@@ -25,8 +25,8 @@ import org.apache.karaf.shell.commands.Command;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a configuration PID assigned to a cluster group")
-public class PropSetCommand extends ConfigCommandSupport {
+@Command(scope = "cluster", name = "config-propappend", description = "Append to the property value for a configuration PID in a cluster group name")
+public class PropAppendCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -64,7 +64,15 @@ public class PropSetCommand extends ConfigCommandSupport {
             if (properties == null) {
                 properties = new Properties();
             }
-            properties.put(key, value);
+            Object currentValue = properties.get(key);
+            if (currentValue == null) {
+                properties.put(key, value);
+            } else if (currentValue instanceof String) {
+                properties.put(key, currentValue + value);
+            } else {
+                System.err.println("Append failed: current value is not a String");
+                return null;
+            }
             configurationMap.put(pid, properties);
 
             // broadcast the cluster event

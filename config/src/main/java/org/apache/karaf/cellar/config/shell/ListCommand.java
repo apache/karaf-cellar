@@ -22,12 +22,12 @@ import org.apache.karaf.shell.commands.Command;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs assigned to a cluster group.")
+@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs assigned to a group")
 public class ListCommand extends ConfigCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s";
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     @Override
