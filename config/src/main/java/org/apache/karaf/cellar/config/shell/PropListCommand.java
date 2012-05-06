@@ -23,15 +23,15 @@ import org.apache.karaf.shell.commands.Command;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-proplist", description = "List the properties in a configuration PID assigned to a cluster group.")
+@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs assigned to a cluster group")
 public class PropListCommand extends CellarCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %s";
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "pid", description = "The configuration PID.", required = true, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The configuration PID", required = true, multiValued = false)
     String pid;
 
     @Override
