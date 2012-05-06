@@ -26,22 +26,22 @@ import java.util.Properties;
 /**
  * Config properties list cluster command.
  */
-@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs assigned to a cluster group.")
+@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs assigned to a cluster group")
 public class PropListCommand extends CellarCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %s";
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "pid", description = "The configuration PID.", required = true, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The configuration PID", required = true, multiValued = false)
     String pid;
 
     @Override
     protected Object doExecute() throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
 
