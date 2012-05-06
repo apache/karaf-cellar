@@ -59,7 +59,7 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
         }
 
         // update distributed set
-        updateFeatureStatus(groupName, feature, version, true);
+        updateFeatureStatus(groupName, feature, version, false);
 
         // broadcast the cluster event
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
