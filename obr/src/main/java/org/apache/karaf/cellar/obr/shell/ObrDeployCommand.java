@@ -67,4 +67,12 @@ public class ObrDeployCommand extends CellarCommandSupport {
         return null;
     }
 
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
+
 }

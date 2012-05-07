@@ -26,17 +26,17 @@ import java.util.Set;
 /**
  * cluster:obr-list command
  */
-@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service assigned to a given group.")
+@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service assigned to a given group")
 public class ObrListUrlCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     public Object doExecute() throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
         // get the URLs from the distribution set
