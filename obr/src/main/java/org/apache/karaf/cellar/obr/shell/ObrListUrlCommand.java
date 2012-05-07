@@ -22,10 +22,13 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.Set;
 
-@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service for the given cluster group.")
+/**
+ * cluster:obr-list command
+ */
+@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service assigned to a given group")
 public class ObrListUrlCommand extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     public Object doExecute() throws Exception {

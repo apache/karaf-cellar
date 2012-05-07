@@ -43,6 +43,8 @@
             org.apache.karaf.shell.console.commands;version="[3,4)",
             org.apache.karaf.shell.console.completer;version="[3,4)",
             org.apache.karaf.shell.commands;version="[3,4)",
+            org.apache.karaf.management;version="[3,4)",
+            javax.management*,
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>
@@ -53,6 +55,9 @@
         <osgi.export>
             org.apache.karaf.cellar.obr*;version="${project.version}"
         </osgi.export>
+        <osgi.private>
+            org.apache.karaf.cellar.obr.management.internal
+        </osgi.private>
     </properties>
 
     <dependencies>
