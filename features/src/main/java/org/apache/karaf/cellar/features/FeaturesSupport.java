@@ -119,9 +119,16 @@ public class FeaturesSupport extends CellarSupport {
         String groupName = group.getName();
         List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
-        if (featuresService != null && repositories != null) {
-            URI uri = repository.getURI();
-            repositories.add(uri.toString());
+        boolean found = false;
+        for (String registeredRepository : repositories) {
+            if (registeredRepository.equals(repository.getURI().toString())) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            repositories.add(repository.getURI().toString());
         }
     }
 
