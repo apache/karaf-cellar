@@ -69,16 +69,22 @@ public class InstallBundleCommand extends CellarCommandSupport {
             String version = manifest.getMainAttributes().getValue("Bundle-Version");
             jarInputStream.close();
 
-            // populate the cluster map
-            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            BundleState state = new BundleState();
-            state.setLocation(url);
-            if (start) {
-                state.setStatus(BundleEvent.STARTED);
-            } else {
-                state.setStatus(BundleEvent.INSTALLED);
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                // populate the cluster map
+                Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+                BundleState state = new BundleState();
+                state.setLocation(url);
+                if (start) {
+                    state.setStatus(BundleEvent.STARTED);
+                } else {
+                    state.setStatus(BundleEvent.INSTALLED);
+                }
+                bundles.put(name + "/" + version, state);
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
-            bundles.put(name + "/" + version, state);
 
             // broadcast the event
             RemoteBundleEvent event = new RemoteBundleEvent(name, version, url, BundleEvent.INSTALLED);
