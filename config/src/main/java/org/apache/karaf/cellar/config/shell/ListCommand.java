@@ -13,12 +13,12 @@
  */
 package org.apache.karaf.cellar.config.shell;
 
-import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 
 import java.util.Enumeration;
 import java.util.Map;
