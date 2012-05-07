@@ -70,31 +70,36 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             String groupName = group.getName();
             Map<String, BundleState> bundleDistributedMap = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            for (Map.Entry<String,BundleState> entry : bundleDistributedMap.entrySet()) {
-                String id = entry.getKey();
-                BundleState state = entry.getValue();
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                for (Map.Entry<String, BundleState> entry : bundleDistributedMap.entrySet()) {
+                    String id = entry.getKey();
+                    BundleState state = entry.getValue();
 
-                //Check if the pid is marked as local.
-                String[] tokens = id.split("/");
-                String symbolicName = tokens[0];
-                String version = tokens[1];
-                if (tokens != null && tokens.length == 2) {
-                    if (state != null) {
-                        String bundleLocation = state.getLocation();
-                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
-                            try {
-                                if (state.getStatus() == BundleEvent.INSTALLED) {
-                                    installBundleFromLocation(state.getLocation());
-                                } else if (state.getStatus() == BundleEvent.STARTED) {
-                                    installBundleFromLocation(state.getLocation());
-                                    startBundle(symbolicName, version);
+                    String[] tokens = id.split("/");
+                    String symbolicName = tokens[0];
+                    String version = tokens[1];
+                    if (tokens != null && tokens.length == 2) {
+                        if (state != null) {
+                            String bundleLocation = state.getLocation();
+                            if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
+                                try {
+                                    if (state.getStatus() == BundleEvent.INSTALLED) {
+                                        installBundleFromLocation(state.getLocation());
+                                    } else if (state.getStatus() == BundleEvent.STARTED) {
+                                        installBundleFromLocation(state.getLocation());
+                                        startBundle(symbolicName, version);
+                                    }
+                                } catch (BundleException e) {
+                                    LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                                 }
-                            } catch (BundleException e) {
-                                LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
-                            }
-                        } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
+                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
+                        }
                     }
                 }
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
         }
     }
@@ -113,36 +118,43 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         if (group != null) {
             String groupName = group.getName();
             Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            Bundle[] bundles;
-            BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
 
-            bundles = bundleContext.getBundles();
-            for (Bundle bundle : bundles) {
-                String symbolicName = bundle.getSymbolicName();
-                String version = bundle.getVersion().toString();
-                String bundleLocation = bundle.getLocation();
-                int status = bundle.getState();
-                String id = symbolicName + "/" + version;
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                Bundle[] bundles;
+                BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
 
-                //Check if the pid is marked as local.
-                if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                bundles = bundleContext.getBundles();
+                for (Bundle bundle : bundles) {
+                    String symbolicName = bundle.getSymbolicName();
+                    String version = bundle.getVersion().toString();
+                    String bundleLocation = bundle.getLocation();
+                    int status = bundle.getState();
+                    String id = symbolicName + "/" + version;
 
-                    BundleState bundleState = new BundleState();
-                    bundleState.setLocation(bundleLocation);
-                    bundleState.setStatus(status);
+                    //Check if the pid is marked as local.
+                    if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
-                    BundleState existingState = bundleTable.get(id);
-                    RemoteBundleEvent event = null;
+                        BundleState bundleState = new BundleState();
+                        bundleState.setLocation(bundleLocation);
+                        bundleState.setStatus(status);
 
-                    if (existingState == null) {
-                        // update the distributed map
-                        event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
-                        bundleTable.put(id, bundleState);
-                    }
+                        BundleState existingState = bundleTable.get(id);
+                        RemoteBundleEvent event = null;
 
-                    // broadcast the event
-                    eventProducer.produce(event);
-                } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                        if (existingState == null) {
+                            // update the distributed map
+                            event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
+                            bundleTable.put(id, bundleState);
+                        }
+
+                        // broadcast the event
+                        eventProducer.produce(event);
+                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                }
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
         }
     }

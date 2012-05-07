@@ -90,12 +90,18 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         String version = manifest.getMainAttributes().getValue("Bundle-Version");
         jarInputStream.close();
 
-        // populate the cluster map
-        Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-        BundleState state = new BundleState();
-        state.setLocation(location);
-        state.setStatus(BundleEvent.INSTALLED);
-        bundles.put(name + "/" + version, state);
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            // populate the cluster map
+            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = new BundleState();
+            state.setLocation(location);
+            state.setStatus(BundleEvent.INSTALLED);
+            bundles.put(name + "/" + version, state);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
         // broadcast the event
         RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
