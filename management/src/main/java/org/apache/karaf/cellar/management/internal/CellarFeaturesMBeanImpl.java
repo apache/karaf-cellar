@@ -80,8 +80,40 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
-        // TODO check if the feature exist on the group
-        // TODO update the distributed resource
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            // get the features distributed map
+            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+
+            // check if the feature exist
+            FeatureInfo feature = null;
+            for (FeatureInfo info : distributedFeatures.keySet()) {
+                if (version == null) {
+                    if (info.getName().equals(name)) {
+                        feature = info;
+                        break;
+                    }
+                } else {
+                    if (info.getName().equals(name) && info.getVersion().equals(version)) {
+                        feature = info;
+                        break;
+                    }
+                }
+            }
+
+            if (feature == null) {
+                if (version == null)
+                    throw new IllegalArgumentException("Feature " + name + " doesn't exist for cluster group " + groupName);
+                else throw new IllegalArgumentException("Feature " + name + "/" + version + " doesn't exist for cluster group " + groupName);
+            }
+
+            // update the distributed map
+            distributedFeatures.put(feature, true);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
         // broadcast the cluster event
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
@@ -105,8 +137,40 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
-        // TODO check if the feature exist on the group
-        // TODO update the distributed resource
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            // get the features distributed map
+            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+
+            // check if the feature exist
+            FeatureInfo feature = null;
+            for (FeatureInfo info : distributedFeatures.keySet()) {
+                if (version == null) {
+                    if (info.getName().equals(name)) {
+                        feature = info;
+                        break;
+                    }
+                } else {
+                    if (info.getName().equals(name) && info.getVersion().equals(version)) {
+                        feature = info;
+                        break;
+                    }
+                }
+            }
+
+            if (feature == null) {
+                if (version == null)
+                    throw new IllegalArgumentException("Feature " + name + " doesn't exist for cluster group " + groupName);
+                else throw new IllegalArgumentException("Feature " + name + "/" + version + " doesn't exist for cluster group " + groupName);
+            }
+
+            // update the distributed map
+            distributedFeatures.put(feature, false);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
         RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
