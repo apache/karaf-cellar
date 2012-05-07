@@ -41,7 +41,6 @@
             <action class="org.apache.karaf.cellar.obr.shell.ObrListUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
                 <ref component-id="allGroupCompleter"/>
