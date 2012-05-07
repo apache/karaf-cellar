@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.features;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -113,8 +115,28 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     // update the distributed map
                     if (RepositoryEvent.EventType.RepositoryAdded.equals(type)){
                         pushRepository(event.getRepository(), group);
+                        // update the feature map
+                        Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                        try {
+                            for (Feature feature : event.getRepository().getFeatures()) {
+                                FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
+                                distributedFeatures.put(info, false);
+                            }
+                        } catch (Exception e) {
+                            LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
+                        }
                     } else {
                         removeRepository(event.getRepository(),group);
+                        // update the feature map
+                        Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                        try {
+                            for (Feature feature : event.getRepository().getFeatures()) {
+                                FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
+                                distributedFeatures.remove(info);
+                            }
+                        } catch (Exception e) {
+                            LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
+                        }
                     }
                     eventProducer.produce(repositoryEvent);
                 }
