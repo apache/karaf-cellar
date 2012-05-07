@@ -48,6 +48,12 @@
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
+    <bean id="cellarBundleMBean" class="org.apache.karaf.cellar.management.internal.CellarBundleMBeanImpl">
+        <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
+        <property name="eventProducer" ref="eventProducer"/>
+    </bean>
+
     <service ref="cellarMBean" auto-export="interfaces">
         <service-properties>
             <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=core,name=${karaf.name}"/>
@@ -75,6 +81,12 @@
     <service ref="cellarGroupMBean" auto-export="interfaces">
         <service-properties>
             <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=group,name=${karaf.name}"/>
+        </service-properties>
+    </service>
+
+    <service ref="cellarBundleMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=bundle,name=${karaf.name}"/>
         </service-properties>
     </service>
 
