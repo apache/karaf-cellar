@@ -13,22 +13,25 @@
  */
 package org.apache.karaf.cellar.config.shell;
 
+import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
 @Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs assigned to a group")
 public class ListCommand extends ConfigCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "%-40s";
-
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
+
+    @Option(name = "-m", aliases = { "--minimal" }, description = "Don't display the properties of each configuration", required = false, multiValued = false)
+    boolean minimal;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -39,15 +42,24 @@ public class ListCommand extends ConfigCommandSupport {
             return null;
         }
 
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> configurationDistributedMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (configurationTable != null && !configurationTable.isEmpty()) {
-            System.out.println(String.format("Configuration PIDs for group " + groupName));
-            System.out.println(String.format(OUTPUT_FORMAT, "PID"));
-            for (String pid : configurationTable.keySet()) {
-                System.out.println(String.format(OUTPUT_FORMAT, pid));
+        if (configurationDistributedMap != null && !configurationDistributedMap.isEmpty()) {
+            for (String pid : configurationDistributedMap.keySet()) {
+                System.out.println("----------------------------------------------------------------");
+                System.out.println("Pid:            " + pid);
+                if (!minimal) {
+                    Properties properties = configurationDistributedMap.get(pid);
+                    if (properties != null) {
+                        System.out.println("Properties:");
+                        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
+                            Object key = e.nextElement();
+                            System.out.println("   " + key + " = " + properties.get(key));
+                        }
+                    }
+                }
             }
-        } else System.err.println("No configuration PID found for group " + groupName);
+        } else System.err.println("No configuration PID found for cluster group " + groupName);
 
         return null;
     }
