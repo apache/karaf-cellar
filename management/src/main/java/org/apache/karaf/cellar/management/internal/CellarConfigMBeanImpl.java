@@ -42,16 +42,21 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         super(CellarConfigMBean.class);
     }
 
-    public String[] listConfig(String groupName) throws Exception {
+    public List<String> listConfig(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
         }
 
-        ArrayType arrayType = new ArrayType(1, SimpleType.STRING);
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        return configurationTable.keySet().toArray(new String[configurationTable.keySet().size()]);
+        List<String> result = new ArrayList<String>();
+
+        Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        for (String pid : config.keySet()) {
+            result.add(pid);
+        }
+
+        return result;
     }
 
     public void deleteConfig(String groupName, String pid) throws Exception {
