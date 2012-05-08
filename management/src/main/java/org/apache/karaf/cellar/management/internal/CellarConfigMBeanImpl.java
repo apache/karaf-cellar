@@ -27,9 +27,7 @@ import org.osgi.service.cm.ConfigurationEvent;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Implementation of the Cellar Config MBean allowing to manipulate Cellar config admin layer.
@@ -45,15 +43,21 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
     }
 
 
-    public String[] listConfig(String groupName) throws Exception {
+    public List<String> listConfig(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
         }
 
-        Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        return config.keySet().toArray(new String[config.keySet().size()]);
+        List<String> result = new ArrayList<String>();
+
+        Map<String, Properties> config = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        for (String pid : config.keySet()) {
+            result.add(pid);
+        }
+
+        return result;
     }
 
     public void deleteConfig(String groupName, String pid) throws Exception {
