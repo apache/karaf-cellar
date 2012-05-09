@@ -13,9 +13,12 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
@@ -46,7 +49,7 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF for this node");
+            System.err.println("Cluster event producer is OFF");
             return null;
         }
 
@@ -55,6 +58,12 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             if (version != null)
                 System.err.println("Feature " + feature + "/" + version + " doesn't exist for the cluster group " + groupName);
             else System.err.println("Feature " + feature + " doesn't exist for the cluster group " + groupName);
+            return null;
+        }
+
+        // check if the outbound event is allowed
+        if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
+            System.err.println("Feature " + feature + " is blocked outbound");
             return null;
         }
 
