@@ -26,7 +26,7 @@ import java.util.Set;
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected static final String HEADER_FORMAT = " %-30s   %-5s  %s";
-    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s] %s";
+    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s]  %s";
 
     protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
 
