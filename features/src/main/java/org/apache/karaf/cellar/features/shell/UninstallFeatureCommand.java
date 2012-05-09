@@ -16,6 +16,8 @@ package org.apache.karaf.cellar.features.shell;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.shell.commands.Argument;
@@ -55,6 +57,12 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
             if (version != null)
                 System.err.println("Feature " + feature + "/" + version + " doesn't exist for the cluster group " + groupName);
             else System.err.println("Feature " + feature + " doesn't exist for the cluster group " + groupName);
+            return null;
+        }
+
+        // check if the outbound event is allowed
+        if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
+            System.err.println("Feature " + feature + " is blocked outbound");
             return null;
         }
 

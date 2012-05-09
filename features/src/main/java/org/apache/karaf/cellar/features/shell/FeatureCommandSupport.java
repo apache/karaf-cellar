@@ -13,8 +13,10 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
@@ -119,6 +121,14 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+    }
+
+    public boolean isAllowed(Group group, String category, String name, EventType type) {
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        return support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND);
     }
 
     public BundleContext getBundleContext() {
