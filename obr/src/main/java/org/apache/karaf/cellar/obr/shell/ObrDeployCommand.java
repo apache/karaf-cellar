@@ -28,7 +28,7 @@ import org.apache.karaf.cellar.obr.ObrBundleEvent;
 import java.util.Set;
 
 @Command(scope = "cluster", name = "obr-deploy", description = "Deploy a bundle from the OBR assigned to a cluster group.")
-public class ObrDeployCommand extends CellarCommandSupport {
+public class ObrDeployCommand extends ObrCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
@@ -42,7 +42,7 @@ public class ObrDeployCommand extends CellarCommandSupport {
     private EventProducer eventProducer;
 
     @Override
-    protected Object doExecute() throws Exception {
+    public Object doExecute() throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -53,6 +53,12 @@ public class ObrDeployCommand extends CellarCommandSupport {
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             System.err.println("Cluster event producer is OFF for this node");
+            return null;
+        }
+
+        // check if the bundle is allowed
+        if (!isAllowed(group, Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.OUTBOUND)) {
+            System.err.println("OBR bundle " + bundleId + " is blocked outbound");
             return null;
         }
 
