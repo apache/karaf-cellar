@@ -20,6 +20,7 @@
             <action class="org.apache.karaf.cellar.features.shell.InstallFeatureCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
+                <property name="configurationAdmin" ref="configurationAdmin"/>
                 <property name="featuresService" ref="featuresService"/>
                 <property name="eventProducer" ref="eventProducer"/>
             </action>
@@ -32,6 +33,7 @@
             <action class="org.apache.karaf.cellar.features.shell.UninstallFeatureCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
+                <property name="configurationAdmin" ref="configurationAdmin"/>
                 <property name="featuresService" ref="featuresService"/>
                 <property name="eventProducer" ref="eventProducer"/>
             </action>

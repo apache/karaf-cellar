@@ -17,6 +17,7 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * Abstract Cellar command.
@@ -25,6 +26,7 @@ public abstract class CellarCommandSupport extends OsgiCommandSupport {
 
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
+    protected ConfigurationAdmin configurationAdmin;
 
     public ClusterManager getClusterManager() {
         return clusterManager;
@@ -40,6 +42,14 @@ public abstract class CellarCommandSupport extends OsgiCommandSupport {
 
     public void setGroupManager(GroupManager groupManager) {
         this.groupManager = groupManager;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }

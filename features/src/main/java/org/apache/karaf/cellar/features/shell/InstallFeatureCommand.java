@@ -13,9 +13,12 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.shell.commands.Argument;
@@ -46,7 +49,7 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF for this node");
+            System.err.println("Cluster event producer is OFF");
             return null;
         }
 
@@ -58,7 +61,13 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
-        // update the distributed map
+        // check if the outbound event is allowed
+        if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
+            System.err.println("Feature " + feature + " is blocked outbound");
+            return null;
+        }
+
+        // update the distributed resource
         updateFeatureStatus(groupName, feature, version, true);
 
         // broadcast the cluster event
