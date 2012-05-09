@@ -77,7 +77,7 @@ public class UninstallBundleCommand extends CellarCommandSupport {
             support.setGroupManager(this.groupManager);
             support.setConfigurationAdmin(this.configurationAdmin);
             if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-                System.err.println("Bundle on " + location + " is blocked outbound");
+                System.err.println("Bundle location " + location + " is blocked outbound");
                 return null;
             }
 
