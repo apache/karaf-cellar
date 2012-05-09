@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.ConfigurationEvent;
 
 import java.util.Map;
@@ -49,6 +50,12 @@ public class DeleteCommand extends ConfigCommandSupport {
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             System.err.println("Cluster event producer is OFF");
+            return null;
+        }
+
+        // check if the config pid is allowed
+        if (!isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+            System.err.println("Configuration PID " + pid + " is blocked outbound");
             return null;
         }
 
