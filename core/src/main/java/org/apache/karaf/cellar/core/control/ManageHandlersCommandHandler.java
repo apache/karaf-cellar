@@ -23,6 +23,8 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+
 /**
  * Manage handlers command handler.
  */
@@ -58,6 +60,13 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
                         result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
                     } else {
                         if (command.getHandlerName().equals(handler.getClass().getName())) {
+                            if (command.getStatus() != null) {
+                                if (command.getStatus()) {
+                                    handler.getSwitch().turnOn();
+                                } else {
+                                    handler.getSwitch().turnOff();
+                                }
+                            }
                             result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
                             break;
                         }
