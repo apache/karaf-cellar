@@ -43,7 +43,8 @@
             javax.management.openmbean,
             org.apache.karaf.features*;version="[3,4)",
             org.apache.karaf.cellar*;version="${project.version}",
-            org.osgi*
+            org.osgi.service.cm,
+            org.osgi.service.blueprint
         </osgi.import>
         <osgi.private>
             org.apache.karaf.cellar.management.internal
