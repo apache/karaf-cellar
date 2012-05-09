@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
 import org.apache.karaf.cellar.obr.ObrUrlEvent;
@@ -52,7 +53,13 @@ public class ObrRemoveUrlCommand extends ObrCommandSupport {
             return null;
         }
 
-        // remove URLS_DISTRIBUTED_SET_NAME from the distributed map
+        // check if the URL is allowed
+        if (!isAllowed(group, Constants.URLS_CONFIG_CATEGORY, url, EventType.OUTBOUND)) {
+            System.err.println("OBR URL " + url + " is blocked outbound");
+            return null;
+        }
+
+        // remove URL from the distributed map
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.remove(url);
         // remove bundles from the distributed map

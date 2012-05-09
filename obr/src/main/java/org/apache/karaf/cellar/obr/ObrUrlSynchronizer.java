@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,15 +98,19 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 Repository[] repositories = obrService.listRepositories();
                 for (Repository repository : repositories) {
-                    urls.add(repository.getURI().toString());
-                    // push the bundles in the OBR distributed set
-                    Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
-                    Resource[] resources = repository.getResources();
-                    for (Resource resource : resources) {
-                        ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(),resource.getSymbolicName(), resource.getVersion().toString());
-                        bundles.add(info);
+                    if (isAllowed(group, Constants.URLS_CONFIG_CATEGORY, repository.getURI().toString(), EventType.OUTBOUND)) {
+                        urls.add(repository.getURI().toString());
+                        // push the bundles in the OBR distributed set
+                        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+                        Resource[] resources = repository.getResources();
+                        for (Resource resource : resources) {
+                            ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
+                            bundles.add(info);
+                            // TODO fire event to the other nodes ?
+                        }
+                    } else {
+                        LOGGER.warn("CELLAR OBR: URL " + repository.getURI().toString() + " is blocked outbound");
                     }
-                    // TODO fire event to the other nodes ?
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
