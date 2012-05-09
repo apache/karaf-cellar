@@ -18,10 +18,12 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
 
@@ -68,6 +70,17 @@ public class StartBundleCommand extends CellarCommandSupport {
                 return null;
             }
             location = state.getLocation();
+
+            // check if the bundle is allowed
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(this.clusterManager);
+            support.setGroupManager(this.groupManager);
+            support.setConfigurationAdmin(this.configurationAdmin);
+            if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                System.err.println("Bundle on " + location + " is blocked outbound");
+                return null;
+            }
+
             state.setStatus(BundleEvent.STARTED);
             bundles.put(name + "/" + version, state);
         } finally {
