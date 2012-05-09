@@ -16,10 +16,12 @@ package org.apache.karaf.cellar.bundle.shell;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
@@ -61,35 +63,46 @@ public class InstallBundleCommand extends CellarCommandSupport {
             return null;
         }
 
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+
         for (String url : urls) {
-            // get the name and version in the location MANIFEST
-            JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream());
-            Manifest manifest = jarInputStream.getManifest();
-            String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
-            String version = manifest.getMainAttributes().getValue("Bundle-Version");
-            jarInputStream.close();
+            // check if the bundle is allowed
+            if (support.isAllowed(group, Constants.CATEGORY, url, EventType.OUTBOUND)) {
 
-            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-            try {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                // populate the cluster map
-                Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-                BundleState state = new BundleState();
-                state.setLocation(url);
-                if (start) {
-                    state.setStatus(BundleEvent.STARTED);
-                } else {
-                    state.setStatus(BundleEvent.INSTALLED);
+                // get the name and version in the location MANIFEST
+                JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream());
+                Manifest manifest = jarInputStream.getManifest();
+                String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+                String version = manifest.getMainAttributes().getValue("Bundle-Version");
+                jarInputStream.close();
+
+                ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                    // populate the cluster map
+                    Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+                    BundleState state = new BundleState();
+                    state.setLocation(url);
+                    if (start) {
+                        state.setStatus(BundleEvent.STARTED);
+                    } else {
+                        state.setStatus(BundleEvent.INSTALLED);
+                    }
+                    bundles.put(name + "/" + version, state);
+                } finally {
+                    Thread.currentThread().setContextClassLoader(originalClassLoader);
                 }
-                bundles.put(name + "/" + version, state);
-            } finally {
-                Thread.currentThread().setContextClassLoader(originalClassLoader);
-            }
 
-            // broadcast the event
-            RemoteBundleEvent event = new RemoteBundleEvent(name, version, url, BundleEvent.INSTALLED);
-            event.setSourceGroup(group);
-            eventProducer.produce(event);
+                // broadcast the cluster event
+                RemoteBundleEvent event = new RemoteBundleEvent(name, version, url, BundleEvent.INSTALLED);
+                event.setSourceGroup(group);
+                eventProducer.produce(event);
+            } else {
+                System.err.println("Bundle from " + url + " is blocked outbound");
+            }
         }
 
         return null;
