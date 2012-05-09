@@ -39,10 +39,11 @@ public class NodePingCommand extends ClusterCommandSupport {
     protected Object doExecute() throws Exception {
         Node node = clusterManager.findNodeById(nodeId);
         if (node == null) {
-            System.out.println("Node " + nodeId + " doesn't exist");
+            System.out.println("Cluster node " + nodeId + " doesn't exist");
             return null;
         }
-        System.out.println("Pinging node " + node.getId());
+
+        System.out.println("PING " + node.getId());
         for (int i = 1; i <= iterations; i++) {
             Long start = System.currentTimeMillis();
             Ping ping = new Ping(clusterManager.generateId());
@@ -50,10 +51,10 @@ public class NodePingCommand extends ClusterCommandSupport {
             executionContext.execute(ping);
             Long stop = System.currentTimeMillis();
             Long delay = stop - start;
-            if (delay > TIMEOUT) {
-                System.err.println(String.format("TIMEOUT %s %s %sms", i, node.getId(), delay));
+            if (delay >= TIMEOUT) {
+                System.err.println(String.format("TIMEOUT %s %s", i, node.getId()));
             } else {
-                System.out.println(String.format("PING %s %s %sms", i, node.getId(), delay));
+                System.out.println(String.format("from %s: req=%s time=%s ms", i, node.getId(), delay));
             }
             Thread.sleep(interval);
         }
