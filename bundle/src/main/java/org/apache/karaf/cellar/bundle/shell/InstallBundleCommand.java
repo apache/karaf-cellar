@@ -101,7 +101,7 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {
-                System.err.println("Bundle from " + url + " is blocked outbound");
+                System.err.println("Bundle location " + url + " is blocked outbound");
             }
         }
 

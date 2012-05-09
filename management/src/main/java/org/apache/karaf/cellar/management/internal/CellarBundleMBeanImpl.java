@@ -16,15 +16,14 @@ package org.apache.karaf.cellar.management.internal;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.management.CellarBundleMBean;
 import org.osgi.framework.BundleEvent;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
@@ -41,6 +40,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
     private ClusterManager clusterManager;
     private GroupManager groupManager;
+    private ConfigurationAdmin configurationAdmin;
     private EventProducer eventProducer;
 
     public CellarBundleMBeanImpl() throws NotCompliantMBeanException {
@@ -63,6 +63,14 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         this.groupManager = groupManager;
     }
 
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
+    }
+
     public EventProducer getEventProducer() {
         return eventProducer;
     }
@@ -81,6 +89,15 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
+        // check if the bundle location is allowed
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
         }
 
         // get the name and version in the location MANIFEST
@@ -126,6 +143,21 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            BundleState state = bundles.get(symbolicName + "/" + version);
+            if (state == null) {
+                throw new IllegalArgumentException("Bundle " + symbolicName + "/" + version + " is not found in cluster group " + groupName);
+            }
+            String location = state.getLocation();
+
+            // check if the bundle location is allowed outbound
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(this.clusterManager);
+            support.setGroupManager(this.groupManager);
+            support.setConfigurationAdmin(this.configurationAdmin);
+            if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+            }
+
             bundles.remove(symbolicName + "/" + version);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -158,6 +190,17 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             if (state == null) {
                 throw new IllegalStateException("Bundle " + symbolicName + "/" + version + " not found in cluster group " + groupName);
             }
+            String location = state.getLocation();
+
+            // check if the bundle location is allowed
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(this.clusterManager);
+            support.setGroupManager(this.groupManager);
+            support.setConfigurationAdmin(this.configurationAdmin);
+            if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+            }
+
             state.setStatus(BundleEvent.STARTED);
             bundles.put(symbolicName + "/" + version, state);
         } finally {
@@ -191,6 +234,17 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             if (state == null) {
                 throw new IllegalStateException("Bundle " + symbolicName + "/" + version + " not found in cluster group " + groupName);
             }
+            String location = state.getLocation();
+
+            // check if the bundle location is allowed
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(this.clusterManager);
+            support.setGroupManager(this.groupManager);
+            support.setConfigurationAdmin(this.configurationAdmin);
+            if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+            }
+
             state.setStatus(BundleEvent.STOPPED);
             bundles.put(symbolicName + "/" + version, state);
         } finally {
