@@ -20,6 +20,7 @@
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+    <reference id="featuresService" interface="org.apache.karaf.features.FeaturesService"/>
 
     <reference id="mbeanServer" interface="javax.management.MBeanServer">
         <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
@@ -47,6 +48,7 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="eventProducer" ref="eventProducer"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="featuresService" ref="featuresService"/>
     </bean>
 
     <bean id="cellarGroupMBean" class="org.apache.karaf.cellar.management.internal.CellarGroupMBeanImpl">
