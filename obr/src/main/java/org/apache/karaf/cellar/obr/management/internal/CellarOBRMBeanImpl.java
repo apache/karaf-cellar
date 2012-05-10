@@ -16,17 +16,16 @@ package org.apache.karaf.cellar.obr.management.internal;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resource;
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleEvent;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
 import org.apache.karaf.cellar.obr.ObrUrlEvent;
 import org.apache.karaf.cellar.obr.management.CellarOBRMBean;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
@@ -43,6 +42,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
     private ClusterManager clusterManager;
     private GroupManager groupManager;
     private EventProducer eventProducer;
+    private ConfigurationAdmin configurationAdmin;
     private RepositoryAdmin obrService;
 
     public CellarOBRMBeanImpl() throws NotCompliantMBeanException {
@@ -108,6 +108,15 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
             throw new IllegalStateException("Cluster event producer is OFF");
         }
 
+        // check if the URL is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.URLS_CONFIG_CATEGORY, url, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("OBR URL " + url + " is blocked outbound");
+        }
+
         // push the OBR URL in the distributed set
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.add(url);
@@ -142,6 +151,15 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
             throw new IllegalStateException("Cluster event producer is OFF");
         }
 
+        // check if the URL is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.URLS_CONFIG_CATEGORY, url, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("OBR URL " + url + " is blocked outbound");
+        }
+
         // remove URL from the distributed map
         Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         urls.remove(url);
@@ -173,6 +191,15 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF");
+        }
+
+        // check if the bundle ID is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("OBR bundle " + bundleId + " is blocked outbound");
         }
 
         // create an event and produce it
@@ -213,6 +240,14 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
 
     public void setObrService(RepositoryAdmin obrService) {
         this.obrService = obrService;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }
