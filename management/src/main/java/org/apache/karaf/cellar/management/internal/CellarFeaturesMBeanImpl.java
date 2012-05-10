@@ -13,19 +13,18 @@
  */
 package org.apache.karaf.cellar.management.internal;
 
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.cellar.management.CellarFeaturesMBean;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeatureEvent;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
@@ -40,6 +39,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     private ClusterManager clusterManager;
     private GroupManager groupManager;
     private EventProducer eventProducer;
+    private ConfigurationAdmin configurationAdmin;
 
     public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
         super(CellarFeaturesMBean.class);
@@ -69,6 +69,14 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.eventProducer = eventProducer;
     }
 
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
+    }
+
     public void install(String groupName, String name, String version) throws Exception {
         // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -79,6 +87,15 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
+        // check if the feature is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("Feature " + name + " is blocked outbound");
         }
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -136,6 +153,15 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         // check if producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
+        // check if the feature is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("Feature " + name + " is blocked outbound");
         }
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
