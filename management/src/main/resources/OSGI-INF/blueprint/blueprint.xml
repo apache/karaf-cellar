@@ -46,6 +46,7 @@
         <property name="clusterManager" ref="clusterManager"/>
         <property name="eventProducer" ref="eventProducer"/>
         <property name="groupManager" ref="groupManager"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <bean id="cellarGroupMBean" class="org.apache.karaf.cellar.management.internal.CellarGroupMBeanImpl">
