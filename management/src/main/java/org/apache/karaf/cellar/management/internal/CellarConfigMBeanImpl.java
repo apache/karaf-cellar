@@ -15,13 +15,12 @@ package org.apache.karaf.cellar.management.internal;
 
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.config.RemoteConfigurationEvent;
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.GroupManager;
+import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.management.CellarConfigMBean;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationEvent;
 
 import javax.management.NotCompliantMBeanException;
@@ -36,6 +35,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
 
     private ClusterManager clusterManager;
     private GroupManager groupManager;
+    private ConfigurationAdmin configurationAdmin;
     private EventProducer eventProducer;
 
     public CellarConfigMBeanImpl() throws NotCompliantMBeanException {
@@ -69,6 +69,15 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             throw new IllegalStateException("Cluster event producer is OFF");
+        }
+
+        // check if the PID is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound");
         }
 
         Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
@@ -124,6 +133,15 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             throw new IllegalStateException("Cluster event producer is OFF");
         }
 
+        // check if the PID is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("Configuration PID " + pid + " is blocked outbound");
+        }
+
         Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         if (configurationMap != null) {
             // update the distributed map
@@ -141,6 +159,53 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             eventProducer.produce(event);
         } else {
             throw new IllegalStateException("Configuration distributed map not found for cluster group " + groupName);
+        }
+    }
+
+    public void appendProperty(String groupName, String pid, String key, String value) throws Exception {
+        // check if the group exists
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is on
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is off");
+        }
+
+        // check if the pid is allowed outbound
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+        if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+            throw new IllegalArgumentException("Configuration PID " + pid + " is blocked outbound");
+        }
+
+        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (configurationMap != null) {
+            // update the distributed map
+            Properties properties = configurationMap.get(pid);
+            if (properties == null) {
+                properties = new Properties();
+            }
+            Object currentValue = properties.get(key);
+            if (currentValue == null) {
+                properties.put(key, value);
+            } else if (currentValue instanceof String) {
+                properties.put(key, currentValue + value);
+            } else {
+                throw new IllegalStateException("Append failed: current value is not a String");
+            }
+            configurationMap.put(pid, properties);
+
+            // broadcast the cluster event
+            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
+        } else {
+            System.out.println("Configuration distributed map not found for cluster group " + groupName);
         }
     }
 
@@ -166,6 +231,14 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
 
     public void setEventProducer(EventProducer eventProducer) {
         this.eventProducer = eventProducer;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }
