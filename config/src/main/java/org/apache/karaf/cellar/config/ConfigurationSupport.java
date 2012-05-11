@@ -24,9 +24,7 @@ import java.util.Properties;
  */
 public class ConfigurationSupport extends CellarSupport {
 
-    private static String HOME_PLACEHOLDER = "karaf.home";
-    private static String RELATIVE_HOME = "${" + HOME_PLACEHOLDER + "}";
-    private static String HOME = System.getProperty("karaf.home");
+    private static String[] EXCLUDED_PROPERTIES = { "felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories" };
 
     /**
      * Reads a {@code Dictionary} object and creates a property object out of it.
@@ -55,44 +53,32 @@ public class ConfigurationSupport extends CellarSupport {
      * @return
      */
     public Dictionary filter(Dictionary dictionary) {
-        Dictionary properties = new Properties();
-        Enumeration keys = dictionary.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            if (key != null && dictionary.get(key) != null) {
-                String value = String.valueOf(dictionary.get(key));
-                value = this.convert(value, HOME, RELATIVE_HOME);
-                properties.put(key, value);
+        Dictionary result = new Properties();
+        if (dictionary != null) {
+            Enumeration enumaration = dictionary.keys();
+            while (enumaration.hasMoreElements()) {
+                String key = (String) enumaration.nextElement();
+                if (!isExcludedProperty(key)) {
+                    String value = String.valueOf(dictionary.get(key));
+                    result.put(key, value);
+                }
             }
         }
-        return properties;
+        return result;
     }
 
     /**
-     * Filter a dictionary, specially replace the karaf.home property with a relative value.
-     * @param dictionary
+     * Returns true if property is Filtered.
+     *
+     * @param propertyName
      * @return
      */
-    public Dictionary filter(Dictionary dictionary, boolean reverse) {
-        Dictionary properties = new Properties();
-        Enumeration keys = dictionary.keys();
-        while (keys.hasMoreElements()) {
-            String key = (String) keys.nextElement();
-            if (key != null && dictionary.get(key) != null) {
-                String value = String.valueOf(dictionary.get(key));
-                value = this.convert(value, RELATIVE_HOME, HOME);
-                properties.put(key, value);
-            }
+    public boolean isExcludedProperty(String propertyName) {
+        for (int i = 0; i < EXCLUDED_PROPERTIES.length; i++) {
+            if (EXCLUDED_PROPERTIES[i].equals(propertyName))
+                return true;
         }
-        return properties;
-    }
-
-    public String convert(String value, String absolute, String relative) {
-        String result = value;
-        if (absolute != null && (absolute.trim().length() > 0) && value.contains(absolute)) {
-            result = value.replace(absolute, relative);
-        }
-        return result;
+        return false;
     }
 
 }

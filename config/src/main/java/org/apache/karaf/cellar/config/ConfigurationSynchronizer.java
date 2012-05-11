@@ -88,7 +88,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         try {
                             // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid);
-                            conf.update(filter(remoteDictionary, true));
+                            conf.update(filter(remoteDictionary));
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
@@ -126,7 +126,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         String pid = conf.getPid();
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
                             Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
-                            Properties remoteDictionary = configurationTable.get(pid);
                             // update the distributed map
                             configurationTable.put(pid, localDictionary);
                             // broadcast the cluster event

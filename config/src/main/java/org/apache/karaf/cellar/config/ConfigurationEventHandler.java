@@ -75,7 +75,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                     } else {
                         if (remoteDictionary != null) {
                             Dictionary localDictionary = conf.getProperties();
-                            conf.update(filter(remoteDictionary, true));
+                            conf.update(filter(remoteDictionary));
                         }
                     }
                 }
