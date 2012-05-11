@@ -55,11 +55,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             joinGroup(targetGroupName);
         }
 
-        if (ManageGroupAction.LIST.equals(action)) {
-            addGrouListToResult(result, null);
-        } else {
-            addGrouListToResult(result, node);
-        }
+        addGroupListToResult(result);
 
         return result;
     }
@@ -68,13 +64,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * Adds the {@link Group} list to the result.
      *
      * @param result
-     * @param node
      */
-    public void addGrouListToResult(ManageGroupResult result, Node node) {
-        Set<Group> groups = null;
-        if (node != null) {
-            groups = groupManager.listGroups(node);
-        } else groups = groupManager.listAllGroups();
+    public void addGroupListToResult(ManageGroupResult result) {
+        Set<Group> groups = groupManager.listAllGroups();
 
         for (Group g : groups) {
             if (g.getName() != null && (g.getName().trim().length() > 0)) {
