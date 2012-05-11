@@ -36,7 +36,9 @@ public class GroupSetCommand extends GroupSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
-        return doExecute(ManageGroupAction.SET, groupName, null, nodes, false);
+
+        Group localGroup = groupManager.listLocalGroups().iterator().next();
+        return doExecute(ManageGroupAction.SET, groupName, localGroup, nodes,false);
     }
 
 }
