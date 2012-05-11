@@ -63,7 +63,11 @@ public abstract class ProducerSupport extends ClusterCommandSupport {
             System.out.println(String.format(HEADER_FORMAT, "Node", "Status"));
             for (Node node : results.keySet()) {
                 ProducerSwitchResult result = results.get(node);
-                System.out.println(String.format(OUTPUT_FORMAT, node.getId(), result.getStatus()));
+                String statusString = "OFF";
+                if (result.getStatus()) {
+                    statusString = "ON";
+                }
+                System.out.println(String.format(OUTPUT_FORMAT, node.getId(), statusString));
             }
         }
         return null;

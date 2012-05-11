@@ -21,28 +21,22 @@ import java.util.Set;
 @Command(scope = "cluster", name = "node-list", description = "List the cluster nodes.")
 public class NodesListCommand extends ClusterCommandSupport {
 
-    private static final String LIST_FORMAT = "%1s %4s %-20s %5s %s";
+    private static final String HEADER_FORMAT = "  %30s   %20s   %5s";
+    private static final String OUTPUT_FORMAT = "%1s [%-30s] [%-20s] [%5s]";
 
     @Override
     protected Object doExecute() throws Exception {
-        if (clusterManager == null) {
-            System.err.println("Cluster Manager not found!");
-            return null;
-        } else {
-            Set<Node> nodes = clusterManager.listNodes();
-            if (nodes != null && !nodes.isEmpty()) {
-                int count = 1;
-                System.out.println(String.format(LIST_FORMAT, " ", "No.", "Host Name", "Port", "ID"));
-                for (Node node : nodes) {
-                    String mark = " ";
-                    if (node.equals(clusterManager.getNode()))
-                        mark = "*";
-                    System.out.println(String.format(LIST_FORMAT, mark, count++, node.getHost(), node.getPort(), node.getId()));
-                }
-            } else {
-                System.err.println("No node found in the cluster");
-                return null;
+        Set<Node> nodes = clusterManager.listNodes();
+        if (nodes != null && !nodes.isEmpty()) {
+            System.out.println(String.format(HEADER_FORMAT, "ID", "Host Name", "Port"));
+            for (Node node : nodes) {
+                String mark = " ";
+                if (node.equals(clusterManager.getNode()))
+                    mark = "*";
+                System.out.println(String.format(OUTPUT_FORMAT, mark, node.getId(), node.getHost(), node.getPort()));
             }
+        } else {
+            System.err.println("No node found in the cluster");
         }
         return null;
     }
