@@ -71,7 +71,6 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                         } else {
                             Configuration conf = configurationAdmin.getConfiguration(pid);
                             Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
-                            Dictionary remoteDictionary = configurationTable.get(pid);
                             // update the distributed map
                             configurationTable.put(pid, localDictionary);
                             // TODO broadcast a cluster event but it creates a loop
