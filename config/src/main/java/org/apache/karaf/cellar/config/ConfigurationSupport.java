@@ -24,6 +24,10 @@ import java.util.Properties;
  */
 public class ConfigurationSupport extends CellarSupport {
 
+    private static String HOME_PLACEHOLDER = "karaf.home";
+    private static String RELATIVE_HOME = "${" + HOME_PLACEHOLDER + "}";
+    private static String HOME = System.getProperty("karaf.home");
+
     /**
      * Reads a {@code Dictionary} object and creates a property object out of it.
      *
@@ -47,33 +51,49 @@ public class ConfigurationSupport extends CellarSupport {
     }
 
     /**
-     * Returns true if dictionaries are equal.
-     *
-     * @param dict1
-     * @param dict2
+     * Filter a dictionary, specially replace the karaf.home property with a relative value.
+     * @param dictionary
      * @return
      */
-    protected boolean equals(Dictionary dict1, Dictionary dict2) {
-        if (dict1 == null && dict2 == null)
-            return true;
-
-        if (dict1 == null && dict2 != null)
-            return false;
-
-        if (dict1 != null && dict2 == null)
-            return false;
-
-        if (dict1.size() != dict2.size())
-            return false;
-
-        for (Enumeration e = dict1.keys(); e.hasMoreElements(); ) {
-            Object key = e.nextElement();
-            if (!dict1.get(key).equals(dict2.get(key))) {
-                return false;
+    public Dictionary filter(Dictionary dictionary) {
+        Dictionary properties = new Properties();
+        Enumeration keys = dictionary.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            if (key != null && dictionary.get(key) != null) {
+                String value = String.valueOf(dictionary.get(key));
+                value = this.convert(value, HOME, RELATIVE_HOME);
+                properties.put(key, value);
             }
         }
+        return properties;
+    }
 
-        return true;
+    /**
+     * Filter a dictionary, specially replace the karaf.home property with a relative value.
+     * @param dictionary
+     * @return
+     */
+    public Dictionary filter(Dictionary dictionary, boolean reverse) {
+        Dictionary properties = new Properties();
+        Enumeration keys = dictionary.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            if (key != null && dictionary.get(key) != null) {
+                String value = String.valueOf(dictionary.get(key));
+                value = this.convert(value, RELATIVE_HOME, HOME);
+                properties.put(key, value);
+            }
+        }
+        return properties;
+    }
+
+    public String convert(String value, String absolute, String relative) {
+        String result = value;
+        if (absolute != null && (absolute.trim().length() > 0) && value.contains(absolute)) {
+            result = value.replace(absolute, relative);
+        }
+        return result;
     }
 
 }
