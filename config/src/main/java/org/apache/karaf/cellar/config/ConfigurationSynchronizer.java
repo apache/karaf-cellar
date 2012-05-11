@@ -88,7 +88,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         try {
                             // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid);
-                            conf.update(remoteDictionary);
+                            conf.update(filter(remoteDictionary, true));
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
                         }
@@ -125,17 +125,16 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         String pid = conf.getPid();
                         // check if the pid is marked as local.
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            Properties localDictionary = dictionaryToProperties(conf.getProperties());
+                            Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
                             Properties remoteDictionary = configurationTable.get(pid);
-                            if (!this.equals(localDictionary, remoteDictionary)) {
-                                // update the distributed map
-                                configurationTable.put(pid, localDictionary);
-                                // broadcast the cluster event
-                                RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
-                                event.setSourceGroup(group);
-                                eventProducer.produce(event);
-                            }
-                        }
+                            // update the distributed map
+                            configurationTable.put(pid, localDictionary);
+                            // broadcast the cluster event
+                            RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
+                            event.setSourceGroup(group);
+                            eventProducer.produce(event);
+                        } else
+                            LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read the distributed map (IO error)", ex);

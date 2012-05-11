@@ -70,13 +70,11 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             // TODO broadcast the cluster event
                         } else {
                             Configuration conf = configurationAdmin.getConfiguration(pid);
-                            Properties localDictionary = dictionaryToProperties(conf.getProperties());
+                            Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
                             Dictionary remoteDictionary = configurationTable.get(pid);
-                            if (!equals(localDictionary, remoteDictionary)) {
-                                // update the distributed map
-                                configurationTable.put(pid, localDictionary);
-                                // TODO broadcast the cluster event but it creates a loop
-                            }
+                            // update the distributed map
+                            configurationTable.put(pid, localDictionary);
+                            // TODO broadcast a cluster event but it creates a loop
                         }
                     } catch (Exception e) {
                         LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
