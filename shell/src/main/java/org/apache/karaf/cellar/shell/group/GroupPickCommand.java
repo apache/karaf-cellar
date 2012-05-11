@@ -51,6 +51,9 @@ public class GroupPickCommand extends GroupSupport {
 
         Set<Node> groupMembers = sourceGroup.getNodes();
 
+        if (count > groupMembers.size())
+            count = groupMembers.size();
+
         int i = 0;
         for (Node node : groupMembers) {
             if (i >= count)
