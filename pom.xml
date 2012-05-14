@@ -44,11 +44,11 @@
         <joda-time.version>1.6.2</joda-time.version>
         <junit.version>4.7</junit.version>
         <junit.bundle.version>4.7_3</junit.bundle.version>
-        <karaf.version>2.2.6</karaf.version>
+        <karaf.version>2.2.7</karaf.version>
         <osgi.version>4.2.0</osgi.version>
-        <pax.exam.version>2.3.0.M1</pax.exam.version>
-        <pax.exam.karaf.version>0.4.0</pax.exam.karaf.version>
-        <pax.url.version>1.2.8</pax.url.version>
+        <pax.exam.version>2.3.1</pax.exam.version>
+        <pax.exam.karaf.version>0.5.3</pax.exam.karaf.version>
+        <pax.url.version>1.3.5</pax.url.version>
         <servlet.api.version>2.5</servlet.api.version>
         <slf4j.version>1.6.4</slf4j.version>
     </properties>
