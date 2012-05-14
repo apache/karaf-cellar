@@ -56,28 +56,28 @@ public class CellarFeaturesTest extends CellarTestSupport {
 
         //Test feature sync - install
         System.err.println(executeCommand("features:install eventadmin"));
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeatureStatus);
         assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
 
         //Test feature sync - uninstall
         System.err.println(executeCommand("features:uninstall eventadmin"));
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeatureStatus);
         assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
 
         //Test feature command - install
         System.err.println(executeCommand("cluster:feature-install default eventadmin"));
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeatureStatus);
         assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
 
         //Test feature command - uninstall
         System.err.println(executeCommand("cluster:feature-uninstall default eventadmin"));
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeatureStatus);
         assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
@@ -85,7 +85,7 @@ public class CellarFeaturesTest extends CellarTestSupport {
         //Test feature command - install - before a node joins
         System.err.println(executeCommand("cluster:feature-install testgroup eventadmin"));
         System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         eventadminFeatureStatus = executeCommand("admin:connect child1 features:list | grep eventadmin");
         System.err.println(eventadminFeatureStatus);
         assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
