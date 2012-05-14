@@ -74,7 +74,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         conf.delete();
                     } else {
                         if (remoteDictionary != null) {
-                            Dictionary localDictionary = conf.getProperties();
+                            remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
                             conf.update(filter(remoteDictionary));
                         }
                     }
