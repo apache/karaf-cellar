@@ -20,5 +20,6 @@ public class Constants {
 
     public static final String CATEGORY = "config";
     public static final String CONFIGURATION_MAP = "org.apache.karaf.cellar.configuration.map";
+    public static final String SYNC_PROPERTY = "karaf.cellar.sync";
 
 }

@@ -36,6 +36,8 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalConfigurationListener.class);
 
+    private static final long SYNC_TIMEOUT = 200;
+
     private EventProducer eventProducer;
 
     /**
@@ -53,6 +55,22 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
         }
 
         String pid = event.getPid();
+        Configuration conf = null;
+        try {
+            conf = configurationAdmin.getConfiguration(pid);
+        } catch (Exception e) {
+            LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
+            return;
+        }
+
+        Dictionary localDictionary = conf.getProperties();
+        if (localDictionary.get(Constants.SYNC_PROPERTY) != null) {
+            Long syncTimestamp = new Long((String) localDictionary.get(Constants.SYNC_PROPERTY));
+            Long currentTimestamp = System.currentTimeMillis();
+            if ((currentTimestamp - syncTimestamp) <= SYNC_TIMEOUT) {
+                return;
+            }
+        }
 
         Set<Group> groups = groupManager.listLocalGroups();
 
@@ -69,11 +87,14 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             configurationTable.remove(pid);
                             // TODO broadcast the cluster event
                         } else {
-                            Configuration conf = configurationAdmin.getConfiguration(pid);
-                            Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
+                            //Configuration conf = configurationAdmin.getConfiguration(pid);
+                            Properties localProperties = dictionaryToProperties(filter(localDictionary));
                             // update the distributed map
-                            configurationTable.put(pid, localDictionary);
-                            // TODO broadcast a cluster event but it creates a loop
+                            configurationTable.put(pid, localProperties);
+                            // broadcast the cluster event
+                            RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
+                            remoteConfigurationEvent.setSourceGroup(group);
+                            eventProducer.produce(remoteConfigurationEvent);
                         }
                     } catch (Exception e) {
                         LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);

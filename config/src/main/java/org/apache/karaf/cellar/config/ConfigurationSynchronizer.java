@@ -88,6 +88,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         try {
                             // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid);
+                            remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
                             conf.update(filter(remoteDictionary));
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
