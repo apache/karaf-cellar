@@ -55,20 +55,24 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
         }
 
         String pid = event.getPid();
-        Configuration conf = null;
-        try {
-            conf = configurationAdmin.getConfiguration(pid);
-        } catch (Exception e) {
-            LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
-            return;
-        }
 
-        Dictionary localDictionary = conf.getProperties();
-        if (localDictionary.get(Constants.SYNC_PROPERTY) != null) {
-            Long syncTimestamp = new Long((String) localDictionary.get(Constants.SYNC_PROPERTY));
-            Long currentTimestamp = System.currentTimeMillis();
-            if ((currentTimestamp - syncTimestamp) <= SYNC_TIMEOUT) {
+        Dictionary localDictionary = null;
+        if (event.getType() != ConfigurationEvent.CM_DELETED) {
+            Configuration conf = null;
+            try {
+                conf = configurationAdmin.getConfiguration(pid);
+            } catch (Exception e) {
+                LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
                 return;
+            }
+
+            localDictionary = conf.getProperties();
+            if (localDictionary.get(Constants.SYNC_PROPERTY) != null) {
+                Long syncTimestamp = new Long((String) localDictionary.get(Constants.SYNC_PROPERTY));
+                Long currentTimestamp = System.currentTimeMillis();
+                if ((currentTimestamp - syncTimestamp) <= SYNC_TIMEOUT) {
+                    return;
+                }
             }
         }
 
