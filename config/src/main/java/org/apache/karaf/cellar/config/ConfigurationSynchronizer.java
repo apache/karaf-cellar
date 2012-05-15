@@ -89,7 +89,11 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid);
                             remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
-                            conf.update(filter(remoteDictionary));
+                            Dictionary localDictionary = conf.getProperties();
+                            if (localDictionary == null)
+                                localDictionary = new Properties();
+                            filter(remoteDictionary, localDictionary);
+                            conf.update(localDictionary);
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
@@ -126,11 +130,15 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     for (Configuration conf : configs) {
                         String pid = conf.getPid();
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            Properties localDictionary = dictionaryToProperties(filter(conf.getProperties()));
+                            Dictionary localDictionary = conf.getProperties();
+                            if (localDictionary == null)
+                                localDictionary = new Properties();
+                            Properties localProperties = new Properties();
+                            filter(localDictionary, localProperties);
                             // update the distributed map
-                            configurationTable.put(pid, localDictionary);
+                            configurationTable.put(pid, localProperties);
                             // broadcast the cluster event
-                            RemoteConfigurationEvent event = new RemoteConfigurationEvent(conf.getPid());
+                            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
                             event.setSourceGroup(group);
                             eventProducer.produce(event);
                         } else
