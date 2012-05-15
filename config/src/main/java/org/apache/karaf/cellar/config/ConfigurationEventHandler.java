@@ -73,7 +73,11 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                     } else {
                         if (remoteDictionary != null) {
                             remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
-                            conf.update(filter(remoteDictionary));
+                            Dictionary localDictionary = conf.getProperties();
+                            if (localDictionary == null)
+                                localDictionary = new Properties();
+                            filter(remoteDictionary, localDictionary);
+                            conf.update(localDictionary);
                         }
                     }
                 }

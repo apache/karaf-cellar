@@ -91,8 +91,8 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             configurationTable.remove(pid);
                             // TODO broadcast the cluster event
                         } else {
-                            //Configuration conf = configurationAdmin.getConfiguration(pid);
-                            Properties localProperties = dictionaryToProperties(filter(localDictionary));
+                            Properties localProperties = new Properties();
+                            filter(localDictionary, localProperties);
                             // update the distributed map
                             configurationTable.put(pid, localProperties);
                             // broadcast the cluster event
