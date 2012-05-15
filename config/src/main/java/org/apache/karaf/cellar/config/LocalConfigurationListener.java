@@ -93,8 +93,8 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
                             configurationTable.remove(pid);
                         } else {
-                            //Configuration conf = configurationAdmin.getConfiguration(pid);
-                            Properties localProperties = dictionaryToProperties(filter(localDictionary));
+                            Properties localProperties = new Properties();
+                            filter(localDictionary, localProperties);
                             // update the distributed map
                             configurationTable.put(pid, localProperties);
                             // broadcast the cluster event
