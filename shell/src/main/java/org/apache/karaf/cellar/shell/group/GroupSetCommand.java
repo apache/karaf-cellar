@@ -37,8 +37,7 @@ public class GroupSetCommand extends GroupSupport {
             return null;
         }
 
-        Group localGroup = groupManager.listLocalGroups().iterator().next();
-        return doExecute(ManageGroupAction.SET, groupName, localGroup, nodes,false);
+        return doExecute(ManageGroupAction.SET, groupName, null, nodes, false);
     }
 
 }
