@@ -49,9 +49,8 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
             purgeGroups();
             joinGroup(Configurations.DEFAULT_GROUP_NAME);
         } else if (ManageGroupAction.SET.equals(action)) {
-            if (command.getSourceGroup() != null) {
-                quitGroup(command.getSourceGroup().getName());
-            }
+            Group localGroup = groupManager.listLocalGroups().iterator().next();
+            quitGroup(localGroup.getName());
             joinGroup(targetGroupName);
         }
 
@@ -81,7 +80,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * @param targetGroupName
      */
     public void joinGroup(String targetGroupName) {
-        LOGGER.info("CELLAR GROUP: Joining group {}.",targetGroupName);
         Node node = clusterManager.getNode();
         Map<String, Group> groups = groupManager.listGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -102,7 +100,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * @param targetGroupName
      */
     public void quitGroup(String targetGroupName) {
-        LOGGER.info("CELLAR GROUP: Quiting group {}.",targetGroupName);
         Node node = clusterManager.getNode();
         Map<String, Group> groups = groupManager.listGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -119,7 +116,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
      * Removes {@link Node} from ALL {@link Group}s.
      */
     public void purgeGroups() {
-        LOGGER.info("CELLAR GROUP: Purging all groups from node.");
         Node node = clusterManager.getNode();
         Set<String> groupNames = groupManager.listGroupNames(node);
         if (groupNames != null && !groupNames.isEmpty()) {
