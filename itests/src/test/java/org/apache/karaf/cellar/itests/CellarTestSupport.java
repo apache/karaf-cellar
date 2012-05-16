@@ -149,15 +149,14 @@ public class CellarTestSupport {
      * Returns the node id of a specific child instance.
      */
     protected String getNodeIdOfChild(String name) {
-        String nodeId = null;
-        String nodesList = executeCommand("instance:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
-        String[] tokens = nodesList.split(" ");
-        if (tokens != null && tokens.length > 0) {
-            nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");
-        }
-        //As of Karaf 2.2.5 grep will add the reset character at the end of the match.
-        nodeId = nodeId.replaceAll("\\u001B\\[m", "");
-        return nodeId;
+        String node;
+        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        int stop = nodesList.indexOf(']');
+        node = nodesList.substring(0, stop);
+        int start = node.lastIndexOf('[');
+        node = node.substring(start + 1);
+        node = node.trim();
+        return node;
     }
 
     protected Option cellarDistributionConfiguration() {
