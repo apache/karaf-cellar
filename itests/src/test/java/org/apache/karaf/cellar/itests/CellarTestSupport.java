@@ -133,13 +133,14 @@ public class CellarTestSupport {
      * @return
      */
     protected String getNodeIdOfChild(String name) {
-        String nodeId = null;
+        String node;
         String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
-        String[] tokens = nodesList.split(" ");
-        if (tokens != null && tokens.length > 0) {
-            nodeId = tokens[tokens.length - 1].trim().replaceAll("\n", "");
-        }
-        return nodeId;
+        int stop = nodesList.indexOf(']');
+        node = nodesList.substring(0, stop);
+        int start = node.lastIndexOf('[');
+        node = node.substring(start + 1);
+        node = node.trim();
+        return node;
     }
 
     /**
