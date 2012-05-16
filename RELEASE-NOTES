@@ -15,6 +15,107 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.2.4
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
+ representing a major update to Apache Karaf Cellar 2.2.3. It contains bug fixes
+ identified in the prior release, and introduces new features.
+ group support.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-1190] - Cellar does not replicate Managed Service Factory configurations correctly
+    * [KARAF-1236] - The distributed node/group map is not currently updated when uninstalling Cellar
+    * [KARAF-1237] - cluster:bundle-install command doesn't exist using Equinox framework
+    * [KARAF-1239] - Cellar stopped producer still generates event
+    * [KARAF-1297] - Switching off multicast discovery in Cellar does not work properly
+    * [KARAF-1301] - Cellar ignores features sync flag
+    * [KARAF-1306] - Cellar Group related changes are not persisted in config files
+    * [KARAF-1308] - Cannot move a node which belongs to more than one group to another group using 'cluster:group-pick'
+    * [KARAF-1310] - CellarNodeMBean.getNodes() return only node on which it is executed instead all available nodes in cluster
+    * [KARAF-1312] - log4j:ERROR Attempted to append to closed appender named [out]
+    * [KARAF-1313] - cluster:group-create command has wrong message about absent parameter
+    * [KARAF-1314] - cluster:feature-install command does not react on wrong feature name
+    * [KARAF-1315] - Impossible to set or join group of remote cluster node
+    * [KARAF-1316] - cluster:group-set and cluster:group-join commands are not rejecting incorrect node names
+    * [KARAF-1317] - Unsuccessful remote cluster node ping
+    * [KARAF-1319] - No warning or error is given when attempting to delete the "default" group
+    * [KARAF-1320] - cluster:group-quit with no parameters leads to a timeout
+    * [KARAF-1321] - Inconsistent behavior of cluster:group-quit
+    * [KARAF-1322] - The Hazelcast group name is randomly set
+    * [KARAF-1325] - Feature "cellar-obr", "cellar-cloud", "cellar-webconsole" cannot be synchronized from node1 to node2
+    * [KARAF-1326] - Parameter count of "cluster:group-pick" is not working
+    * [KARAF-1330] - "cluster:feature-uninstall" command only worked for current group but didn't work for other group
+    * [KARAF-1332] - cluster:group-pick - <count> parameter is not handled correctly
+    * [KARAF-1337] -  'cluster:config-list' command list  configuration PIDs two times whose name include "-"
+    * [KARAF-1338] - cluster:config-proplist' command does not react on  group and PID parameter which are not existent
+    * [KARAF-1339] - "cluster:feature-list" command didn't list any feature after karaf instance join a user defined group
+    * [KARAF-1340] - The error info is not readable when cluster:feature-uninstall has incorrect argument.
+    * [KARAF-1341] - The argument "node" of "cluster:group-set" command didn't work
+    * [KARAF-1342] - Can not share new configuration in default group using standard karaf commands
+    * [KARAF-1344] - 'cluster:config-list' command list the configution deleted by standard karaf 'config:delete' command
+    * [KARAF-1345] - Feature still can be synchronized after stopping FeaturesEventHandler.
+    * [KARAF-1348] - Can not disable config sync through stopping handler org.apache.karaf.cellar.config.ConfigurationEventHandler
+    * [KARAF-1349] - Can not share new configuration between user defined groups which have common node
+    * [KARAF-1352] - "Apache Karaf :: Cellar :: Hazelcast" remains in "RESOLVED" state
+    * [KARAF-1353] - Exception is thrown after attempt to install cellar
+    * [KARAF-1375] - The property "Version" in the output of cluster:feature-list default isn't flush left but flush right
+    * [KARAF-1384] - Cellar manual doesn't build
+    * [KARAF-1401] - Cellar handlers have to check the switch status and log a warn message when OFF
+    * [KARAF-1404] - Cluster command 'cluster:config-proplist' only output edited properties
+    * [KARAF-1405] - Can not update properties of configuraton  using cluster command 'cluster:config-propset'
+    * [KARAF-1408] - These changes of the PID(org.apache.karaf.cellar.groups)  which in both blacklist inbound and blacklist outbound can be synchronized to other karaf instance
+    * [KARAF-1409] - cluster:group-set fails with timeout
+    * [KARAF-1412] - Output is not right when using cluster command 'cluster:handler-stop' without parameter
+    * [KARAF-1413] - Parameters hander and node of 'cluster:handler-status' can not work
+    * [KARAF-1419] - NPE in Cellar BundleEventHandler around start/stop/uninstall event
+    * [KARAF-1426] - Cluster event handlers have to check if the target group is a local
+    * [KARAF-1428] - Cellar should blacklist org.apache.karaf.shell PID by default
+    * [KARAF-1429] - Cellar commands/MBeans should check if the event is allowed outbound
+    * [KARAF-1433] - CellarConfigMBean listConfig operation returns nothing
+    * [KARAF-1434] - Cellar ConfigLocalListener should broadcast cluster event
+    * [KARAF-1435] - Cellar bundle has to tweak the TCCL
+    * [KARAF-1436] - CellarFeaturesMBean doesn't update the distributed map
+    * [KARAF-1437] - cluster:group-create on an existing group raise a CNFE
+    * [KARAF-1453] - The command "cluster:handler-stop" don't work
+    * [KARAF-1463] - Reintroduce config properties filtering
+    * [KARAF-1464] - Some bundles of cellar failed to startup from time to time
+    * [KARAF-1465] - "cluster:group-set" command same to "cluster:group-join" command
+    * [KARAF-1477] - The "node(s)" parameter of command "cluster:group-join" doesn't work well
+    * [KARAF-1480] - Cellar config should persist to cfg file
+
+** Dependency upgrade
+    * [KARAF-1205] - Upgrade to maven-bundle-plugin 2.3.7
+    * [KARAF-1358] - Upgrade to Hazelcast 1.9.4.8
+    * [KARAF-1364] - Upgrade to slf4j 1.6.4
+    * [KARAF-1372] - Upgrade to jclouds 1.3.2
+
+** Improvement
+    * [KARAF-838] - Simplify the way classloading works in Cellar
+    * [KARAF-1194] - ping timeout is not correctly handled
+    * [KARAF-1248] - Avoid to duplicate configuration between hazelcast.xml and cellar instance cfg
+    * [KARAF-1294] - Cellar should provide cluster features repository commands
+    * [KARAF-1383] - Fix warning messages during bundle build
+    * [KARAF-1397] - Cellar command should check at least the cluster group existence
+    * [KARAF-1399] - Use Cellar consistent behavior
+    * [KARAF-1417] - cluster:feature-list should mimic the feature:list
+    * [KARAF-1420] - cluster:bundle-* commands should look like bundle:* commands
+    * [KARAF-1460] - CellarFeatureMBean should provide repository operations
+
+** New Feature
+    * [KARAF-641] - Create shell commands for editing Cellar's instance configuration.
+    * [KARAF-1176] - Support for OSGi event distribution in Karaf Cellar
+    * [KARAF-1403] - Add cluster:config-propappend command
+    * [KARAF-1424] - Add CellarOBRMBean
+
                     Apache Karaf Cellar 2.2.3
                     =========================
 
