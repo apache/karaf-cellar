@@ -218,6 +218,11 @@
                 <artifactId>org.apache.karaf.shell.console</artifactId>
                 <version>${karaf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.karaf</groupId>
+                <artifactId>org.apache.karaf.util</artifactId>
+                <version>${karaf.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.karaf.tooling</groupId>
