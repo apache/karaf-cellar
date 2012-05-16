@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
@@ -41,6 +42,7 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 public class CellarGroupsTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testGroupsWithChildNodes() throws InterruptedException {
         installCellar();
         createCellarChild("child1");

@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
@@ -37,6 +38,7 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 public class CellarChildNodesTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testClusterWithChildNodes() throws InterruptedException {
         installCellar();
         createCellarChild("child1");
