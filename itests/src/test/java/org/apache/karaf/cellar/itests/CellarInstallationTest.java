@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.itests;
 
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -31,6 +32,7 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.k
 public class CellarInstallationTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testInstallation() throws InterruptedException {
         installCellar();
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);

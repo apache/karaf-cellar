@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.itests;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
@@ -35,6 +36,7 @@ public class CellarConfigurationTest extends CellarTestSupport {
     private static final String TESTPID = "org.apache.karaf.cellar.tst";
 
     @Test
+    @Ignore
     public void testCellarFeaturesModule() throws InterruptedException {
         installCellar();
         createCellarChild("child1");

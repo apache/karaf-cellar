@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.itests;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
@@ -33,6 +34,7 @@ import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.l
 public class CellarObrTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testCellarObrFeatureInstall() throws Exception {
         installCellar();
         Thread.sleep(DEFAULT_TIMEOUT);
