@@ -51,7 +51,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);
         assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/2.2.3-SNAPSHOT/xml/features"));
+        System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/2.2.4-SNAPSHOT/xml/features"));
 
         System.err.println(executeCommand("admin:list"));
 
@@ -65,13 +65,14 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         String node1 = getNodeIdOfChild("child1");
         String node2 = getNodeIdOfChild("child2");
 
-        System.err.println("Child1:" + node1);
-        System.err.println("Child2:" + node2);
+        System.err.println("Node 1: " + node1);
+        System.err.println("Node 2: " + node2);
 
+        executeCommand("cluster:group-create client-grp");
+        executeCommand("cluster:group-create service-grp");
         System.err.println(executeCommand("cluster:group-list"));
         System.err.println(executeCommand("cluster:group-set client-grp " + localNode.getId()));
         System.err.println(executeCommand("cluster:group-set service-grp " + node1));
-        System.err.println(executeCommand("cluster:group-list"));
 
         System.err.println(executeCommand("cluster:feature-install client-grp greeter-client"));
         Thread.sleep(10000);
