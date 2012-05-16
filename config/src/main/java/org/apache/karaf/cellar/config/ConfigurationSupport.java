@@ -75,18 +75,26 @@ public class ConfigurationSupport extends CellarSupport {
      */
     protected void persistConfiguration(ConfigurationAdmin admin, String pid, Dictionary props) {
         try {
-            if (pid.startsWith("org.apache.felix.fileinstall")) {
+            if (pid.matches(".*-.*-.*-.*-.*")) {
+                // it's UUID
                 return;
             }
             File storageFile = new File(storage, pid + ".cfg");
             Configuration cfg = admin.getConfiguration(pid, null);
             if (cfg != null && cfg.getProperties() != null) {
                 Object val = cfg.getProperties().get(FELIX_FILEINSTALL_FILENAME);
-                if (val instanceof String) {
-                    if (((String) val).startsWith("file:")) {
-                        val = ((String) val).substring("file:".length());
+                try {
+                    if (val instanceof URL) {
+                        storageFile = new File(((URL) val).toURI());
                     }
-                    storageFile = new File((String) val);
+                    if (val instanceof URI) {
+                        storageFile = new File((URI) val);
+                    }
+                    if (val instanceof String) {
+                        storageFile = new File(new URL((String) val).toURI());
+                    }
+                } catch (Exception e) {
+                    throw (IOException) new IOException(e.getMessage()).initCause(e);
                 }
             }
             org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
@@ -98,6 +106,20 @@ public class ConfigurationSupport extends CellarSupport {
                     p.put((String) key, (String) props.get(key));
                 }
             }
+            // remove "removed" properties from the file
+            ArrayList<String> propertiesToRemove = new ArrayList<String>();
+            for (Object key : p.keySet()) {
+                if (props.get(key) == null
+                        && !org.osgi.framework.Constants.SERVICE_PID.equals(key)
+                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
+                    propertiesToRemove.add(key.toString());
+                }
+            }
+            for (String key : propertiesToRemove) {
+                p.remove(key);
+            }
+            // save the cfg file
             storage.mkdirs();
             p.save();
         } catch (Exception e) {
