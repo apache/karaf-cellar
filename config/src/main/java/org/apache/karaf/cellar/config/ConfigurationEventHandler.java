@@ -69,7 +69,10 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                 conf = configurationAdmin.getConfiguration(pid);
                 if (conf != null) {
                     if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                        conf.delete();
+                        if (conf.getProperties() != null) {
+                            conf.delete();
+                            deleteStorage(pid);
+                        }
                     } else {
                         if (remoteDictionary != null) {
                             remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
@@ -78,6 +81,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                                 localDictionary = new Properties();
                             filter(remoteDictionary, localDictionary);
                             conf.update(localDictionary);
+                            persistConfiguration(configurationAdmin, pid, localDictionary);
                         }
                     }
                 }

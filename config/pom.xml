@@ -50,6 +50,10 @@
         <osgi.export>
             org.apache.karaf.cellar.config*;version="${project.version}"
         </osgi.export>
+        <osgi.private>
+            org.apache.felix.utils*;-split-package:=merge-first,
+            !*
+        </osgi.private>
     </properties>
 
     <dependencies>
@@ -58,6 +62,10 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.utils</artifactId>
         </dependency>
 
         <!-- Configuration Admin -->

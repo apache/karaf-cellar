@@ -14,17 +14,25 @@
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
 
-    private static String[] EXCLUDED_PROPERTIES = { "felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories" };
+    private static String[] EXCLUDED_PROPERTIES = {"felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories"};
+
+    private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
+
+    protected File storage;
 
     /**
      * Filter a dictionary, specially replace the karaf.home property with a relative value.
@@ -57,6 +65,57 @@ public class ConfigurationSupport extends CellarSupport {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Persist a configuration to a storage.
+     *
+     * @param pid
+     * @throws Exception
+     */
+    protected void persistConfiguration(ConfigurationAdmin admin, String pid, Dictionary props) {
+        try {
+            if (pid.startsWith("org.apache.felix.fileinstall")) {
+                return;
+            }
+            File storageFile = new File(storage, pid + ".cfg");
+            Configuration cfg = admin.getConfiguration(pid, null);
+            if (cfg != null && cfg.getProperties() != null) {
+                Object val = cfg.getProperties().get(FELIX_FILEINSTALL_FILENAME);
+                if (val instanceof String) {
+                    if (((String) val).startsWith("file:")) {
+                        val = ((String) val).substring("file:".length());
+                    }
+                    storageFile = new File((String) val);
+                }
+            }
+            org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
+            for (Enumeration keys = props.keys(); keys.hasMoreElements(); ) {
+                Object key = keys.nextElement();
+                if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
+                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
+                    p.put((String) key, (String) props.get(key));
+                }
+            }
+            storage.mkdirs();
+            p.save();
+        } catch (Exception e) {
+            // nothing to do
+        }
+    }
+
+    protected void deleteStorage(String pid) {
+        File cfgFile = new File(storage, pid + ".cfg");
+        cfgFile.delete();
+    }
+
+    public File getStorage() {
+        return storage;
+    }
+
+    public void setStorage(File storage) {
+        this.storage = storage;
     }
 
 }

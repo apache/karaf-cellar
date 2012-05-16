@@ -94,6 +94,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 localDictionary = new Properties();
                             filter(remoteDictionary, localDictionary);
                             conf.update(localDictionary);
+                            persistConfiguration(configurationAdmin, pid, localDictionary);
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
                         }
