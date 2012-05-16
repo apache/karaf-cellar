@@ -103,54 +103,61 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
             return;
         }
 
-        if (event != null && event.getRepository() != null) {
-            Set<Group> groups = groupManager.listLocalGroups();
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            if (event != null && event.getRepository() != null) {
+                Set<Group> groups = groupManager.listLocalGroups();
 
-            if (groups != null && !groups.isEmpty()) {
-                for (Group group : groups) {
-                    RemoteRepositoryEvent repositoryEvent = new RemoteRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
-                    repositoryEvent.setSourceGroup(group);
-                    RepositoryEvent.EventType type = event.getType();
+                if (groups != null && !groups.isEmpty()) {
+                    for (Group group : groups) {
+                        RemoteRepositoryEvent repositoryEvent = new RemoteRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
+                        repositoryEvent.setSourceGroup(group);
+                        RepositoryEvent.EventType type = event.getType();
 
-                    // update the distributed map
-                    if (RepositoryEvent.EventType.RepositoryAdded.equals(type)){
-                        pushRepository(event.getRepository(), group);
-                        // update the feature map
-                        Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
-                        try {
-                            for (Feature feature : event.getRepository().getFeatures()) {
-                                // check the feature in the distributed map
-                                FeatureInfo featureInfo = null;
-                                for (FeatureInfo distributedFeature : distributedFeatures.keySet()) {
-                                    if (distributedFeature.getName().equals(feature.getName()) && distributedFeature.getVersion().equals(feature.getVersion())) {
-                                        featureInfo = distributedFeature;
-                                        break;
+                        // update the distributed map
+                        if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
+                            pushRepository(event.getRepository(), group);
+                            // update the feature map
+                            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            try {
+                                for (Feature feature : event.getRepository().getFeatures()) {
+                                    // check the feature in the distributed map
+                                    FeatureInfo featureInfo = null;
+                                    for (FeatureInfo distributedFeature : distributedFeatures.keySet()) {
+                                        if (distributedFeature.getName().equals(feature.getName()) && distributedFeature.getVersion().equals(feature.getVersion())) {
+                                            featureInfo = distributedFeature;
+                                            break;
+                                        }
+                                    }
+                                    if (featureInfo == null) {
+                                        featureInfo = new FeatureInfo(feature.getName(), feature.getVersion());
+                                        distributedFeatures.put(featureInfo, false);
                                     }
                                 }
-                                if (featureInfo == null) {
-                                    featureInfo = new FeatureInfo(feature.getName(), feature.getVersion());
-                                    distributedFeatures.put(featureInfo, false);
+                            } catch (Exception e) {
+                                LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
+                            }
+                        } else {
+                            removeRepository(event.getRepository(), group);
+                            // update the feature map
+                            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            try {
+                                for (Feature feature : event.getRepository().getFeatures()) {
+                                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
+                                    distributedFeatures.remove(info);
                                 }
+                            } catch (Exception e) {
+                                LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
                             }
-                        } catch (Exception e) {
-                            LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
                         }
-                    } else {
-                        removeRepository(event.getRepository(), group);
-                        // update the feature map
-                        Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
-                        try {
-                            for (Feature feature : event.getRepository().getFeatures()) {
-                                FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                                distributedFeatures.remove(info);
-                            }
-                        } catch (Exception e) {
-                            LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
-                        }
+                        // broadcast the cluster event
+                        eventProducer.produce(repositoryEvent);
                     }
-                    eventProducer.produce(repositoryEvent);
                 }
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 

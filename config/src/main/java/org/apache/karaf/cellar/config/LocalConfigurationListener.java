@@ -88,8 +88,13 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
                     try {
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
+                            // update the distributed map
                             configurationTable.remove(pid);
-                            // TODO broadcast the cluster event
+                            // broadcast the cluster event
+                            RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
+                            remoteConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
+                            remoteConfigurationEvent.setSourceGroup(group);
+                            eventProducer.produce(remoteConfigurationEvent);
                         } else {
                             Properties localProperties = new Properties();
                             filter(localDictionary, localProperties);
