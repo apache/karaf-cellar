@@ -34,18 +34,18 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Set;
 
-public class CellarPlugin extends AbstractWebConsolePlugin {
+public class ClusterGroupPlugin extends AbstractWebConsolePlugin {
 
     /**
      * Pseudo class version ID to keep the IDE quite.
      */
     private static final long serialVersionUID = 1L;
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarPlugin.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterGroupPlugin.class);
 
     public static final String NAME = "cellar";
 
-    public static final String LABEL = "Cellar";
+    public static final String LABEL = "Cluster Groups";
 
     private ClassLoader classLoader;
 
