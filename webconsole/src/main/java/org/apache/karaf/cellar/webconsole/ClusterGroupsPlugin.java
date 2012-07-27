@@ -245,7 +245,6 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
                 jw.key("actions");
                 jw.array();
                 boolean enable = true;
-                action(jw, enable, "removeNode", "Remove Node", "update");
                 action(jw, enable, "deleteGroup", "Delete Group", "delete");
                 jw.endArray();
                 jw.endObject();
