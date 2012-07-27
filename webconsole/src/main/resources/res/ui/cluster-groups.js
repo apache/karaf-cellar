@@ -170,13 +170,3 @@ function changeGroupState(/* String */ action, /* String */ group, /* String */ 
         renderData(data);
     }, "json");
 }
-
-function renderFeatureTableData(/* array of Objects */ features) {
-    $("#feature_table > tbody > tr").remove();
-    for (var idx in features) {
-        var trElement = tr(null, { id: "feature-" + features[idx].id });
-        renderFeatureData(trElement, features[idx]);
-        $("#feature_table > tbody").append(trElement);
-    }
-    $("#feature_table").trigger("update");
-}

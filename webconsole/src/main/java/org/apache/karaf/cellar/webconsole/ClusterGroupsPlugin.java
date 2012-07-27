@@ -34,22 +34,22 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Set;
 
-public class ClusterGroupPlugin extends AbstractWebConsolePlugin {
+public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     /**
      * Pseudo class version ID to keep the IDE quite.
      */
     private static final long serialVersionUID = 1L;
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterGroupPlugin.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterGroupsPlugin.class);
 
-    public static final String NAME = "cellar";
+    public static final String NAME = "cluster.groups";
 
     public static final String LABEL = "Cluster Groups";
 
     private ClassLoader classLoader;
 
-    private String cellarJs = "/cellar/res/ui/cellar.js";
+    private String cellarJs = "/cluster.groups/res/ui/cluster-groups.js";
 
     private ClusterManager clusterManager;
     private GroupManager groupManager;
