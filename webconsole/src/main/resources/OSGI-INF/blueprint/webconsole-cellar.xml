@@ -22,12 +22,14 @@
 
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
+    <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext"/>
 
     <bean id="clusterGroupPlugin" class="org.apache.karaf.cellar.webconsole.ClusterGroupsPlugin" init-method="start"
           destroy-method="stop">
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="executionContext" ref="executionContext"/>
     </bean>
 
     <service ref="clusterGroupPlugin" interface="javax.servlet.Servlet">

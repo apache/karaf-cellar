@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.webconsole;
 
 import org.apache.felix.webconsole.AbstractWebConsolePlugin;
@@ -19,6 +18,9 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.command.ExecutionContext;
+import org.apache.karaf.cellar.core.control.ManageGroupAction;
+import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.json.JSONException;
 import org.json.JSONWriter;
 import org.osgi.framework.BundleContext;
@@ -32,6 +34,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
@@ -49,9 +53,10 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     private ClassLoader classLoader;
 
-    private String cellarJs = "/cluster.groups/res/ui/cluster-groups.js";
+    private String clusterGroupsJs = "/cluster.groups/res/ui/cluster-groups.js";
 
     private ClusterManager clusterManager;
+    private ExecutionContext executionContext;
     private GroupManager groupManager;
 
     private BundleContext bundleContext;
@@ -97,9 +102,34 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         if (action == null) {
             success = true;
         } else if (action.equals("createGroup")) {
-            groupManager.createGroup(group);
-            success = true;
+            // check if the group exists
+            Group g = groupManager.findGroupByName(group);
+            if (g != null) {
+                LOGGER.error("Cluster group " + group + " already exists");
+                success = false;
+            } else {
+                groupManager.createGroup(group);
+                success = true;
+            }
         } else if (action.equals("deleteGroup")) {
+            Group g = groupManager.findGroupByName(group);
+            List<String> nodes = new ArrayList<String>();
+            if (g.getNodes() != null && !g.getNodes().isEmpty()) {
+                for (Node n : g.getNodes()) {
+                    nodes.add(n.getId());
+                }
+                ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
+                command.setAction(ManageGroupAction.QUIT);
+                command.setGroupName(group);
+                Set<Node> recipientList = clusterManager.listNodes(nodes);
+                command.setDestination(recipientList);
+                try {
+                    executionContext.execute(command);
+                } catch (Exception e) {
+                    LOGGER.error("Can't send the cluster group command");
+                    success = false;
+                }
+            }
             groupManager.deleteGroup(group);
             success = true;
         }
@@ -123,7 +153,7 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         final PrintWriter pw = response.getWriter();
 
         String appRoot = (String) request.getAttribute("org.apache.felix.webconsole.internal.servlet.OsgiManager.appRoot");
-        final String featuresScriptTag = "<script src='" + appRoot + this.cellarJs
+        final String featuresScriptTag = "<script src='" + appRoot + this.clusterGroupsJs
                 + "' language='JavaScript'></script>";
         pw.println(featuresScriptTag);
 
@@ -263,6 +293,10 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     public void setClusterManager(ClusterManager clusterManager) {
         this.clusterManager = clusterManager;
+    }
+
+    public void setExecutionContext(ExecutionContext executionContext) {
+        this.executionContext = executionContext;
     }
 
 }
