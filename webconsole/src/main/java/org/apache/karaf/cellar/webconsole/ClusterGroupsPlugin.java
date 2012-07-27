@@ -278,7 +278,7 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         }
 
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Found %s members in %s groups", memberCount, groupCount));
+        builder.append(String.format("Cluster group information: %s cluster groups, %s members", groupCount, memberCount));
         return builder.toString();
     }
 
