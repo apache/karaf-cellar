@@ -153,9 +153,9 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         final PrintWriter pw = response.getWriter();
 
         String appRoot = (String) request.getAttribute("org.apache.felix.webconsole.internal.servlet.OsgiManager.appRoot");
-        final String featuresScriptTag = "<script src='" + appRoot + this.clusterGroupsJs
+        final String clusterGroupsScriptTag = "<script src='" + appRoot + this.clusterGroupsJs
                 + "' language='JavaScript'></script>";
-        pw.println(featuresScriptTag);
+        pw.println(clusterGroupsScriptTag);
 
         pw.println("<script type='text/javascript'>");
         pw.println("// <![CDATA[");
