@@ -22,10 +22,6 @@
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
     <reference id="featuresService" interface="org.apache.karaf.features.FeaturesService"/>
 
-    <reference id="mbeanServer" interface="javax.management.MBeanServer">
-        <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
-    </reference>
-
     <bean id="cellarMBean" class="org.apache.karaf.cellar.management.internal.CellarMBeanImpl">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="executionContext" ref="executionContext"/>
