@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -26,6 +27,12 @@ import org.apache.karaf.features.FeatureEvent;
 
 @Command(scope = "cluster", name = "feature-install", description = "Install a feature assigned to a cluster group.")
 public class InstallFeatureCommand extends FeatureCommandSupport {
+
+    @Option(name = "-c", aliases = { "--no-clean" }, description = "Do not uninstall bundles on failure", required = false, multiValued = false)
+    boolean noClean;
+
+    @Option(name = "-r", aliases = { "--no-auto-refresh" }, description = "Do not automatically refresh bundles", required = false, multiValued = false)
+    boolean noRefresh;
 
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
@@ -71,7 +78,7 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
         updateFeatureStatus(groupName, feature, version, true);
 
         // broadcast the cluster event
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureInstalled);
+        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 
