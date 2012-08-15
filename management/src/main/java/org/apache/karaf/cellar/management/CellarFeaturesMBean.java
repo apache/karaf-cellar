@@ -24,7 +24,9 @@ public interface CellarFeaturesMBean {
     void addUrl(String group, String url) throws Exception;
     void removeUrl(String group, String url) throws Exception;
     void install(String group, String name) throws Exception;
+    void install(String group, String name, boolean noClean, boolean noRefresh) throws Exception;
     void install(String group, String name, String version) throws Exception;
+    void install(String group, String name, String version, boolean noClean, boolean noRefresh) throws Exception;
     void uninstall(String group, String name) throws Exception;
     void uninstall(String group, String name, String version) throws Exception;
 
