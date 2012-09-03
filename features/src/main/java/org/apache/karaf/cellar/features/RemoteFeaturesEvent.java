@@ -25,12 +25,25 @@ public class RemoteFeaturesEvent extends Event {
 
     private String name;
     private String version;
+    private Boolean noClean;
+    private Boolean noRefresh;
     private EventType type;
 
     public RemoteFeaturesEvent(String name, String version, EventType type) {
         super(name + separator + version);
         this.name = name;
         this.version = version;
+        this.noClean = false;
+        this.noRefresh = false;
+        this.type = type;
+    }
+
+    public RemoteFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, EventType type) {
+        super(name + separator + version);
+        this.name = name;
+        this.version = version;
+        this.noClean = noClean;
+        this.noRefresh = noRefresh;
         this.type = type;
     }
 
@@ -40,6 +53,14 @@ public class RemoteFeaturesEvent extends Event {
 
     public String getVersion() {
         return version;
+    }
+
+    public Boolean getNoClean() {
+        return noClean;
+    }
+
+    public Boolean getNoRefresh() {
+        return noRefresh;
     }
 
     public EventType getType() {
