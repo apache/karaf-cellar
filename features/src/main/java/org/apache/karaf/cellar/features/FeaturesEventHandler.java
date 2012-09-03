@@ -19,8 +19,11 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.FeatureEvent;
+import org.apache.karaf.features.FeaturesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.EnumSet;
 
 /**
  * Features event handler.
@@ -69,12 +72,21 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             Boolean isInstalled = isInstalled(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
+                    boolean noClean = event.getNoClean();
+                    boolean noRefresh = event.getNoRefresh();
+                    EnumSet<FeaturesService.Option> options = EnumSet.noneOf(FeaturesService.Option.class);
+                    if (noClean) {
+                        options.add(FeaturesService.Option.NoCleanIfFailure);
+                    }
+                    if (noRefresh) {
+                        options.add(FeaturesService.Option.NoAutoRefreshBundles);
+                    }
                     if (version != null) {
                         LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
-                        featuresService.installFeature(name, version);
+                        featuresService.installFeature(name, version, options);
                     } else {
                         LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
-                        featuresService.installFeature(name);
+                        featuresService.installFeature(name, "0.0.0", options);
                     }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
                     if (version != null) {

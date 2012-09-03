@@ -88,7 +88,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.configurationAdmin = configurationAdmin;
     }
 
-    public void install(String groupName, String name, String version) throws Exception {
+    public void install(String groupName, String name, String version, boolean noClean, boolean noRefresh) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -146,13 +146,21 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureInstalled);
+        RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
+    public void install(String groupName, String name, String version) throws Exception {
+        this.install(groupName, name, version, false, false);
+    }
+
     public void install(String groupName, String name) throws Exception {
         this.install(groupName, name, null);
+    }
+
+    public void install(String groupName, String name, boolean noClean, boolean noRefresh) throws Exception {
+        this.install(groupName, name, null, noClean, noRefresh);
     }
 
     public void uninstall(String groupName, String name, String version) throws Exception {
