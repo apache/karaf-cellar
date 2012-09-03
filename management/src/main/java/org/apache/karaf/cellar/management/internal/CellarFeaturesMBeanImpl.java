@@ -152,7 +152,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     public void install(String groupName, String name, String version) throws Exception {
-        this.install(groupName, name, null, false, false);
+        this.install(groupName, name, version, false, false);
     }
 
     public void install(String groupName, String name) throws Exception {
