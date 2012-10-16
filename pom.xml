@@ -44,7 +44,7 @@
         <joda-time.version>2.1</joda-time.version>
         <junit.version>4.7</junit.version>
         <junit.bundle.version>4.7_3</junit.bundle.version>
-        <karaf.version>2.3.0-SNAPSHOT</karaf.version>
+        <karaf.version>2.3.0</karaf.version>
         <osgi.version>4.3.0</osgi.version>
         <pax.exam.version>2.3.1</pax.exam.version>
         <pax.exam.karaf.version>0.5.3</pax.exam.karaf.version>

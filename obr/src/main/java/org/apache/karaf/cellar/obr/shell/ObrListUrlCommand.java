@@ -19,7 +19,6 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.obr.Constants;
-import org.apache.karaf.jaas.modules.GroupPrincipal;
 
 import java.util.Set;
 
