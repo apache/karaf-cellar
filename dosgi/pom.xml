@@ -40,9 +40,9 @@
             org.apache.karaf.cellar.hazelcast;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[2.2,3)",
-            org.apache.karaf.shell.console.commands;version="[2.2,3)",
-            org.apache.karaf.shell.console.completer;version="[2.2,3)",
+            org.apache.karaf.shell.console;version="[2.3,3)",
+            org.apache.karaf.shell.console.commands;version="[2.3,3)",
+            org.apache.karaf.shell.console.completer;version="[2.3,3)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>
