@@ -57,7 +57,7 @@ public class ExportServiceListener implements ServiceListener {
         ServiceReference[] references = null;
         try {
             String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
-            references = bundleContext.getServiceReferences(null, filter);
+            references = bundleContext.getServiceReferences((String) null, filter);
 
             if (references != null) {
                 for (ServiceReference reference : references) {

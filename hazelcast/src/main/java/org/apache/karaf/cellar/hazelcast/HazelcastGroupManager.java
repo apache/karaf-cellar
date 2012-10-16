@@ -14,15 +14,8 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
+
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
@@ -260,7 +253,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         createGroup(groupName);
 
         LOGGER.info("Registering group {}.",groupName);
-        Properties serviceProperties = new Properties();
+        Dictionary <String, Object> serviceProperties = new Hashtable<String, Object>();
         serviceProperties.put("type", "group");
         serviceProperties.put("name", groupName);
 
