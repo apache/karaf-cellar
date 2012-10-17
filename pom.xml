@@ -73,9 +73,9 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</developerConnection>
-        <url>http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.2.x</url>
+        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</connection>
+        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</developerConnection>
+        <url>http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</url>
     </scm>
 
     <issueManagement>
