@@ -67,13 +67,13 @@ public class ListBundleCommand extends CellarCommandSupport {
                             status = "Resolved";
                             break;
                         case BundleEvent.STARTED:
-                            status = "Started";
+                            status = "Active";
                             break;
                         case BundleEvent.STARTING:
                             status = "Starting";
                             break;
                         case BundleEvent.STOPPED:
-                            status = "Stopped";
+                            status = "Resolved";
                             break;
                         case BundleEvent.STOPPING:
                             status = "Stopping";

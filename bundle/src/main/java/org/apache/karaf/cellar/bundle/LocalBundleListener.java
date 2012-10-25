@@ -67,13 +67,17 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
 
                         // update the cluster map
                         Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
-                        BundleState state = bundles.get(symbolicName + "/" + version);
-                        if (state == null) {
-                            state = new BundleState();
+                        if (type == BundleEvent.UNINSTALLED) {
+                            bundles.remove(symbolicName + "/" + version);
+                        } else {
+                            BundleState state = bundles.get(symbolicName + "/" + version);
+                            if (state == null) {
+                                state = new BundleState();
+                            }
+                            state.setStatus(type);
+                            state.setLocation(bundleLocation);
+                            bundles.put(symbolicName + "/" + version, state);
                         }
-                        state.setStatus(event.getBundle().getState());
-                        state.setLocation(event.getBundle().getLocation());
-                        bundles.put(symbolicName + "/" + version, state);
 
                         // broadcast the cluster event
                         RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
