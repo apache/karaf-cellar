@@ -22,6 +22,7 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.management.CellarBundleMBean;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -276,9 +277,36 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String name = tokens[0];
                 String version = tokens[1];
                 BundleState state = bundles.get(bundle);
+                String status;
+                switch (state.getStatus()) {
+                    case BundleEvent.INSTALLED:
+                        status = "Installed";
+                        break;
+                    case BundleEvent.RESOLVED:
+                        status = "Resolved";
+                        break;
+                    case BundleEvent.STARTED:
+                        status = "Active";
+                        break;
+                    case BundleEvent.STARTING:
+                        status = "Starting";
+                        break;
+                    case BundleEvent.STOPPED:
+                        status = "Resolved";
+                        break;
+                    case BundleEvent.STOPPING:
+                        status = "Stopping";
+                        break;
+                    case BundleEvent.UNINSTALLED:
+                        status = "Uninstalled";
+                        break;
+                    default:
+                        status = "";
+                        break;
+                }
                 CompositeData data = new CompositeDataSupport(compositeType,
                         new String[]{"name", "version", "status", "location"},
-                        new Object[]{name, version, state.getStatus(), state.getLocation()});
+                        new Object[]{name, version, status, state.getLocation()});
                 table.put(data);
             }
         } finally {
