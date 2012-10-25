@@ -74,8 +74,8 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                             if (state == null) {
                                 state = new BundleState();
                             }
-                            state.setStatus(event.getBundle().getState());
-                            state.setLocation(event.getBundle().getLocation());
+                            state.setStatus(type);
+                            state.setLocation(bundleLocation);
                             bundles.put(symbolicName + "/" + version, state);
                         }
 
