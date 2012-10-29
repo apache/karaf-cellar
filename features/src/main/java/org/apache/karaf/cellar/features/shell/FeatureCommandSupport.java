@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
@@ -20,12 +21,15 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.features.BundleInfo;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -57,8 +61,8 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
             if (group == null || group.getNodes().isEmpty()) {
                 FeatureInfo info = new FeatureInfo(feature, version);
                 Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
-                //1st check the existing configuration
-                if (version == null || version.isEmpty()) {
+                // check the existing configuration
+                if (version == null || (version.trim().length() < 1)) {
                     for (FeatureInfo f : features.keySet()) {
                         if (f.getName().equals(feature)) {
                             version = f.getVersion();
@@ -67,7 +71,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                     }
                 }
 
-                //2nd check the Features Service.
+                // check the Features Service.
                 try {
                     for (Feature f : featuresService.listFeatures()) {
                         if (f.getName().equals(feature)) {
@@ -81,6 +85,19 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
                 if (info.getVersion() != null && !info.getVersion().isEmpty()) {
                     features.put(info, status);
+                    try {
+                        // update the distributed bundles map
+                        List<BundleInfo> bundles = featuresService.getFeature(info.getName(), info.getVersion()).getBundles();
+                        Map<String, BundleState> bundlesMap = clusterManager.getMap(org.apache.karaf.cellar.bundle.Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+                        for (BundleInfo bundle : bundles) {
+                            BundleState state = new BundleState();
+                            state.setLocation(bundle.getLocation());
+                            state.setStatus(BundleEvent.STARTED);
+                            bundlesMap.put(bundle.toString(), state);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("Can't update the distributed bundles map", e);
+                    }
                     result = Boolean.TRUE;
                 }
             }

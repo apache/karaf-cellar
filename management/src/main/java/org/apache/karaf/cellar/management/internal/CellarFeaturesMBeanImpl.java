@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.management.internal;
 
+import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -23,6 +24,7 @@ import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.cellar.features.RemoteRepositoryEvent;
 import org.apache.karaf.cellar.management.CellarFeaturesMBean;
 import org.apache.karaf.features.*;
+import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
@@ -141,6 +143,20 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
             // update the distributed map
             distributedFeatures.put(feature, true);
+            // update the bundle distributed map
+            try {
+                // update the distributed bundles map
+                List<BundleInfo> bundles = featuresService.getFeature(feature.getName(), version).getBundles();
+                Map<String, BundleState> bundlesMap = clusterManager.getMap(org.apache.karaf.cellar.bundle.Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+                for (BundleInfo bundle : bundles) {
+                    BundleState state = new BundleState();
+                    state.setLocation(bundle.getLocation());
+                    state.setStatus(BundleEvent.STARTED);
+                    bundlesMap.put(bundle.toString(), state);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
