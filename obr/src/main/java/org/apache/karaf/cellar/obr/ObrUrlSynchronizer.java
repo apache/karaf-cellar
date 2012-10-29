@@ -122,7 +122,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         String groupName = group.getName();
 
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             Dictionary<String, String> properties = configuration.getProperties();
             String propertyKey = groupName + Configurations.SEPARATOR + Constants.URLS_CONFIG_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
             String propertyValue = properties.get(propertyKey);
