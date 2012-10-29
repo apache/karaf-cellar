@@ -37,6 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             org.apache.karaf.cellar.core*;version="${project.version}",
+            org.apache.karaf.cellar.bundle*;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
             org.apache.karaf.shell.console;version="[3,4)",
@@ -58,6 +59,10 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.bundle</artifactId>
         </dependency>
 
         <!-- Configuration Admin -->
