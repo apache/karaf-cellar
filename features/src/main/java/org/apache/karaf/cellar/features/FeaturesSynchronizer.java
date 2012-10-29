@@ -176,7 +176,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         String groupName = group.getName();
 
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             Dictionary<String, String> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.FEATURES_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
