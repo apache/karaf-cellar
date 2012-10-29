@@ -59,7 +59,7 @@ public class DiscoveryTask implements Runnable {
                     members.addAll(discovered);
                 }
                 try {
-                    Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
+                    Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID, null);
                     Dictionary properties = configuration.getProperties();
                     String newMemberText = CellarUtils.createStringFromSet(members, true);
                     String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);

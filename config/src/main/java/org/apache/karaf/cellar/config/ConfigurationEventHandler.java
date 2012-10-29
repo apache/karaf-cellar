@@ -68,7 +68,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             Configuration conf;
             try {
                 // update the local configuration
-                conf = configurationAdmin.getConfiguration(pid);
+                conf = configurationAdmin.getConfiguration(pid, null);
                 if (conf != null) {
                     if (event.getType() == ConfigurationEvent.CM_DELETED) {
                         if (conf.getProperties() != null) {

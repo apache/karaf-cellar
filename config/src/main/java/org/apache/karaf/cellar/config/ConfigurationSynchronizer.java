@@ -87,7 +87,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         Properties remoteDictionary = configurationTable.get(pid);
                         try {
                             // update the local configuration if needed
-                            Configuration conf = configurationAdmin.getConfiguration(pid);
+                            Configuration conf = configurationAdmin.getConfiguration(pid, null);
                             remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
                             Dictionary localDictionary = conf.getProperties();
                             if (localDictionary == null)
@@ -160,7 +160,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, String> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
