@@ -60,7 +60,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
         if (event.getType() != ConfigurationEvent.CM_DELETED) {
             Configuration conf = null;
             try {
-                conf = configurationAdmin.getConfiguration(pid);
+                conf = configurationAdmin.getConfiguration(pid, null);
             } catch (Exception e) {
                 LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
                 return;

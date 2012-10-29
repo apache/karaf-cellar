@@ -87,7 +87,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         Properties remoteDictionary = configurationTable.get(pid);
                         try {
                             // update the local configuration if needed
-                            Configuration conf = configurationAdmin.getConfiguration(pid);
+                            Configuration conf = configurationAdmin.getConfiguration(pid, null);
                             remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
                             Dictionary localDictionary = conf.getProperties();
                             if (localDictionary == null)

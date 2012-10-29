@@ -66,7 +66,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             Properties remoteDictionary = configurationTable.get(pid);
             Configuration conf;
             try {
-                conf = configurationAdmin.getConfiguration(pid);
+                conf = configurationAdmin.getConfiguration(pid, null);
                 if (conf != null) {
                     if (event.getType() == ConfigurationEvent.CM_DELETED) {
                         if (conf.getProperties() != null) {
