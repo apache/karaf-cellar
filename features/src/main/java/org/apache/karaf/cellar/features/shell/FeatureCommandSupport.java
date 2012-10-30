@@ -49,9 +49,6 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
      * @param status
      */
     public Boolean updateFeatureStatus(String groupName, String feature, String version, Boolean status) {
-
-        System.out.println("Enter here");
-
         Boolean result = Boolean.FALSE;
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -84,8 +81,6 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                 } catch (Exception e) {
                     LOGGER.error("Error while browsing features", e);
                 }
-
-                System.out.println("Here2");
 
                 if (info.getVersion() != null && (info.getVersion().trim().length() > 0)) {
                     features.put(info, status);
