@@ -55,8 +55,15 @@ public class ListBundleCommand extends CellarCommandSupport {
                 System.out.println(String.format(HEADER_FORMAT, "State", "Name"));
                 for (String bundle : bundles.keySet()) {
                     String[] tokens = bundle.split("/");
-                    String name = tokens[0];
-                    String version = tokens[1];
+                    String name = null;
+                    String version = null;
+                    if (tokens.length == 2) {
+                        name = tokens[0];
+                        version = tokens[1];
+                    } else {
+                        name = bundle;
+                        version = "";
+                    }
                     BundleState state = bundles.get(bundle);
                     String status;
                     switch (state.getStatus()) {

@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
-import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
@@ -21,15 +20,12 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
-import org.apache.karaf.features.BundleInfo;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,12 +49,14 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
      * @param status
      */
     public Boolean updateFeatureStatus(String groupName, String feature, String version, Boolean status) {
+
         Boolean result = Boolean.FALSE;
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Group group = groupManager.findGroupByName(groupName);
             if (group == null || group.getNodes().isEmpty()) {
+
                 FeatureInfo info = new FeatureInfo(feature, version);
                 Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
                 // check the existing configuration
@@ -83,21 +81,8 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                     LOGGER.error("Error while browsing features", e);
                 }
 
-                if (info.getVersion() != null && !info.getVersion().isEmpty()) {
+                if (info.getVersion() != null && (info.getVersion().trim().length() > 0)) {
                     features.put(info, status);
-                    try {
-                        // update the distributed bundles map
-                        List<BundleInfo> bundles = featuresService.getFeature(info.getName(), info.getVersion()).getBundles();
-                        Map<String, BundleState> bundlesMap = clusterManager.getMap(org.apache.karaf.cellar.bundle.Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-                        for (BundleInfo bundle : bundles) {
-                            BundleState state = new BundleState();
-                            state.setLocation(bundle.getLocation());
-                            state.setStatus(BundleEvent.STARTED);
-                            bundlesMap.put(bundle.toString(), state);
-                        }
-                    } catch (Exception e) {
-                        LOGGER.warn("Can't update the distributed bundles map", e);
-                    }
                     result = Boolean.TRUE;
                 }
             }

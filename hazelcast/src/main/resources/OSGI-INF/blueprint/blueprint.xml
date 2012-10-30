@@ -103,6 +103,7 @@
     <!-- Producer Switch Handler -->
     <bean id="producerSwitchCommandHandler" class="org.apache.karaf.cellar.core.control.ProducerSwitchCommandHandler">
         <property name="producer" ref="producer"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <bean id="producerSwitchResultHandler" class="org.apache.karaf.cellar.core.control.ProducerSwitchResultHandler">
