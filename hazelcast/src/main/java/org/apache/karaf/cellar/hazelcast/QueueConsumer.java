@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 import com.hazelcast.core.ItemListener;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -24,6 +25,8 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     private Dispatcher dispatcher;
     private Node node;
     private CombinedClassLoader combinedClassLoader;
-
+    private ConfigurationAdmin configurationAdmin;
 
     public QueueConsumer() {
     }
@@ -114,7 +117,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
      * @param event
      */
     public void consume(E event) {
-        if (event != null && (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce())) {
+        if (event != null && (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce())) {
             dispatcher.dispatch(event);
         } else {
             if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -173,6 +176,20 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     }
 
     public Switch getSwitch() {
+        // load the init status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.CONSUMER));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
 
@@ -183,4 +200,13 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     public void setNode(Node node) {
         this.node = node;
     }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
+    }
+
 }
