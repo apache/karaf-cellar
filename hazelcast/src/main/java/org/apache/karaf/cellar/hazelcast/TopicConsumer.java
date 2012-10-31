@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
 import com.hazelcast.core.MessageListener;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -23,6 +24,8 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventConsumer;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +44,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     private ITopic topic;
     private Dispatcher dispatcher;
     private Node node;
+    private ConfigurationAdmin configurationAdmin;
 
     private boolean isConsuming;
 
@@ -68,7 +72,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
      */
     public void consume(E event) {
         //Check if event has a specified destination.
-        if ((event.getDestination() == null || event.getDestination().contains(node)) && (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce())) {
+        if ((event.getDestination() == null || event.getDestination().contains(node)) && (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce())) {
             dispatcher.dispatch(event);
         } else {
             if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -131,6 +135,20 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     }
 
     public Switch getSwitch() {
+        // load the init status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.CONSUMER));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
 
@@ -140,6 +158,14 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
 
     public void setNode(Node node) {
         this.node = node;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }
