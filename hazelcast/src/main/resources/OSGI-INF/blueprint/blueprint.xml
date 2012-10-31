@@ -87,6 +87,7 @@
         <property name="instance" ref="hazelcast"/>
         <property name="dispatcher" ref="dispatcher"/>
         <property name="node" ref="node"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <!-- Producer -->
@@ -115,6 +116,7 @@
     <bean id="consumerSwitchCommandHandler" class="org.apache.karaf.cellar.core.control.ConsumerSwitchCommandHandler">
         <property name="producer" ref="producer"/>
         <property name="consumer" ref="consumer"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <bean id="consumerSwitchResultHandler" class="org.apache.karaf.cellar.core.control.ConsumerSwitchResultHandler">

@@ -13,8 +13,12 @@
  */
 package org.apache.karaf.cellar.core.control;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Consumer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
+import org.osgi.service.cm.Configuration;
+
+import java.util.Dictionary;
 
 /**
  * Consumer switch command handler.
@@ -32,21 +36,43 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
      * @param command
      */
     public ConsumerSwitchResult execute(ConsumerSwitchCommand command) {
-        //Query
+        // query
         if (command.getStatus() == null) {
             return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, consumer.getSwitch().getStatus().getValue());
-        }
-        //Turn on the switch
-        if (command.getStatus().equals(SwitchStatus.ON)) {
+        } else if (command.getStatus().equals(SwitchStatus.ON)) {
+            // turn on the switch
             consumer.getSwitch().turnOn();
+            // persist the change
+            persist(command.getStatus());
             return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.TRUE);
-        }
-        //Turn on the switch
-        else if (command.getStatus().equals(SwitchStatus.OFF)) {
+        } else if (command.getStatus().equals(SwitchStatus.OFF)) {
+            // turn on the switch
             consumer.getSwitch().turnOff();
+            // persist the change
+            persist(command.getStatus());
             return new ConsumerSwitchResult(command.getId(), Boolean.TRUE, Boolean.FALSE);
         } else {
             return new ConsumerSwitchResult(command.getId(), Boolean.FALSE, consumer.getSwitch().getStatus().getValue());
+        }
+    }
+
+    /**
+     * Store the consumer current status in ConfigurationAdmin.
+     *
+     * @param switchStatus the producer switch status to store.
+     */
+    private void persist(SwitchStatus switchStatus) {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Dictionary<String, String> properties = configuration.getProperties();
+                if (properties != null) {
+                    properties.put(Configurations.CONSUMER, switchStatus.getValue().toString());
+                    configuration.update(properties);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Can't persist the producer status", e);
         }
     }
 

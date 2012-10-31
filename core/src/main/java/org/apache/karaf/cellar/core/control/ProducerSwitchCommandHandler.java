@@ -70,7 +70,6 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
                     configuration.update(properties);
                 }
             }
-            System.out.println("Updated");
         } catch (Exception e) {
             LOGGER.warn("Can't persist the producer status", e);
         }
