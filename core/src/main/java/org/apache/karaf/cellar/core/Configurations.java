@@ -23,6 +23,7 @@ public class Configurations {
     public static final String GROUPS_KEY = "groups";
     public static final String NODE = "org.apache.karaf.cellar.node";
     public static final String PRODUCER = "producer";
+    public static final String CONSUMER = "consumer";
 
     public static final String SEPARATOR = ".";
     public static final String DELIMETER = ",";
