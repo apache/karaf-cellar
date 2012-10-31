@@ -29,6 +29,7 @@ package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.Result;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -36,6 +37,8 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +56,7 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
     private HazelcastInstance instance;
     private IQueue<E> queue;
     private Node node;
+    private ConfigurationAdmin configurationAdmin;
 
     /**
      * Initialization method.
@@ -75,7 +79,7 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
      * @param event
      */
     public void produce(E event) {
-        if (eventSwitch.getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
+        if (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
             event.setSourceNode(node);
             try {
                 queue.put(event);
@@ -90,6 +94,20 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
     }
 
     public Switch getSwitch() {
+        // load the init status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.PRODUCER));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Can't load the producer status from the configuration layer", e);
+        }
         return eventSwitch;
     }
 
@@ -109,13 +127,20 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
         this.instance = instance;
     }
 
-
     public Node getNode() {
         return node;
     }
 
     public void setNode(Node node) {
         this.node = node;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return this.configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }

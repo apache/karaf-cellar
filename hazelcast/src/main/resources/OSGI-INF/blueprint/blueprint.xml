@@ -93,6 +93,7 @@
     <bean id="producer" class="org.apache.karaf.cellar.hazelcast.TopicProducer" init-method="init">
         <property name="instance" ref="hazelcast"/>
         <property name="node" ref="node"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <bean id="executionContext" class="org.apache.karaf.cellar.core.command.ClusteredExecutionContext">
