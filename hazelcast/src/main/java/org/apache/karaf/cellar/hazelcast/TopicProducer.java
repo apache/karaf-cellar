@@ -88,7 +88,7 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Can't load the producer status from the configuration layer", e);
+            // ignore
         }
         return eventSwitch;
     }
