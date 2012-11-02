@@ -176,7 +176,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     }
 
     public Switch getSwitch() {
-        // load the init status from the config
+        // load the switch status from the config
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             if (configuration != null) {

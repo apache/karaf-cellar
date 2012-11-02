@@ -72,7 +72,7 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Can't persist the producer status", e);
+            LOGGER.warn("Can't persist the consumer status", e);
         }
     }
 
