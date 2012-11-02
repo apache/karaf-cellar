@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.core.control;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Consumer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.apache.karaf.cellar.core.event.EventHandler;
@@ -20,10 +21,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
+import java.util.Dictionary;
 
 /**
  * Manage handlers command handler.
@@ -62,8 +65,12 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
                         if (command.getHandlerName().equals(handler.getClass().getName())) {
                             if (command.getStatus() != null) {
                                 if (command.getStatus()) {
+                                    // persist the handler switch status to configuration admin
+                                    persist(handler.getClass().getName(), SwitchStatus.ON);
                                     handler.getSwitch().turnOn();
                                 } else {
+                                    // persist the handler switch status to configuration admin
+                                    persist(handler.getClass().getName(), SwitchStatus.OFF);
                                     handler.getSwitch().turnOff();
                                 }
                             }
@@ -83,6 +90,27 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
             }
         }
         return result;
+    }
+
+    /**
+     * Store the handler switch configuration in configuration admin.
+     *
+     * @param handler the handler to store
+     * @param switchStatus the switch status to store.
+     */
+    private void persist(String handler, SwitchStatus switchStatus) {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Dictionary<String, String> properties = configuration.getProperties();
+                if (properties != null) {
+                    properties.put(Configurations.HANDLER + "." + handler, switchStatus.getValue().toString());
+                    configuration.update(properties);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Can't persist the handler " + handler + " status", e);
+        }
     }
 
     @Override

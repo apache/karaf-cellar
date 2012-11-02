@@ -126,6 +126,7 @@
     <!-- Managed Handlers Command Handlers -->
     <bean id="manageHandlersCommandHandler" class="org.apache.karaf.cellar.core.control.ManageHandlersCommandHandler">
         <property name="producer" ref="producer"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
 
     <bean id="manageHandlersResultHandler" class="org.apache.karaf.cellar.core.control.ManageHandlersResultHandler">

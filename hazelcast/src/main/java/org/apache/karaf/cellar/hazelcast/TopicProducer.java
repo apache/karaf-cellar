@@ -76,7 +76,7 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
     }
 
     public Switch getSwitch() {
-        // load the init status from the config
+        // load the switch status from the config
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             if (configuration != null) {
