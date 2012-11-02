@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -20,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
      */
     public void handle(RemoteBundleEvent event) {
         // check if the handler switch is ON
-        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
@@ -92,6 +94,20 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     }
 
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
 
