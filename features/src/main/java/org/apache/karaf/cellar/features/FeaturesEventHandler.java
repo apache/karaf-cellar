@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.features;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -20,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.FeaturesService;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,8 +55,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
      */
     public void handle(RemoteFeaturesEvent event) {
 
-        // check if the handler is ON
-        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
@@ -108,6 +109,20 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
     }
 
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
 

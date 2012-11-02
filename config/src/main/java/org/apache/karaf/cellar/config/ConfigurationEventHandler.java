@@ -44,8 +44,8 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
     public void handle(RemoteConfigurationEvent event) {
 
         // check if the handler is ON
-        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR CONFIG: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR CONFIG: {} switch is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
 
@@ -106,6 +106,20 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
     }
 
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
 

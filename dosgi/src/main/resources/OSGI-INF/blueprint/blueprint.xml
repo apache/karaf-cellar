@@ -35,6 +35,7 @@
         <property name="clusterManager" ref="clusterManager"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
+        <property name="configurationAdmin" ref="configurationAdmin" />
     </bean>
     <service ref="remoteServiceCallHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
@@ -52,5 +53,6 @@
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
 </blueprint>
