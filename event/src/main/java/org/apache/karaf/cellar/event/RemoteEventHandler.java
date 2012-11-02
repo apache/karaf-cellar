@@ -13,13 +13,13 @@
  */
 package org.apache.karaf.cellar.event;
 
-import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
-import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
     public void handle(RemoteEvent event) {
 
         // check if the handler is ON
-        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR EVENT: {} is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
@@ -75,6 +75,20 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
     }
 
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return eventSwitch;
     }
     
