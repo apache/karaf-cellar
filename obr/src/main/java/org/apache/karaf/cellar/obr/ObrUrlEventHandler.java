@@ -13,11 +13,13 @@
  */
 package org.apache.karaf.cellar.obr;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +53,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     public void handle(ObrUrlEvent obrUrlEvent) {
 
         // check if the handler is ON
-        if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR OBR: {} switch is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
@@ -89,6 +91,20 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     }
 
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    eventSwitch.turnOn();
+                } else {
+                    eventSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return this.eventSwitch;
     }
 

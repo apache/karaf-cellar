@@ -14,14 +14,17 @@
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.CellarSupport;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,13 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
     @Override
     public void handle(RemoteServiceCall event) {
+
+        // check if the handler switch is ON
+        if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR DOSGI: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            return;
+        }
+
         Object targetService = null;
 
         if (event != null) {
@@ -108,6 +118,20 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
     @Override
     public Switch getSwitch() {
+        // load the switch status from the config
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
+                if (status) {
+                    dosgiSwitch.turnOn();
+                } else {
+                    dosgiSwitch.turnOff();
+                }
+            }
+        } catch (Exception e) {
+            // ignore
+        }
         return dosgiSwitch;
     }
 
