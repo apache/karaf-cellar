@@ -72,24 +72,43 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         // create a listener for group configuration.
         IMap groupConfiguration = instance.getMap(GROUPS_CONFIG);
         groupConfiguration.addEntryListener(this, true);
-        // add group to configuration
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            // create group stored in configuration admin
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             if (configuration != null) {
                 Dictionary<String, String> properties = configuration.getProperties();
-                if (properties != null) {
-                    String groups = properties.get(Configurations.GROUPS_KEY);
-                    Set<String> groupNames = convertStringToSet(groups);
-                    if (groupNames != null && !groupNames.isEmpty()) {
-                        for (String groupName : groupNames) {
-                            registerGroup(groupName);
-                        }
-                        return;
+                if (properties == null) {
+                    properties = new Hashtable<String, String>();
+                }
+                String groups = properties.get(Configurations.GROUPS_KEY);
+                Set<String> groupNames = convertStringToSet(groups);
+                if (groupNames != null && !groupNames.isEmpty()) {
+                    for (String groupName : groupNames) {
+                        createGroup(groupName);
                     }
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR HAZELCAST: error reading group configuration", e);
+            LOGGER.warn("CELLAR HAZELCAST: can't create group from configuration admin", e);
+        }
+        try {
+            // add group membership from configuration
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            if (configuration != null) {
+                Dictionary<String, String> properties = configuration.getProperties();
+                if (properties == null) {
+                    properties = new Hashtable<String, String>();
+                }
+                String groups = properties.get(Configurations.GROUPS_KEY);
+                Set<String> groupNames = convertStringToSet(groups);
+                if (groupNames != null && !groupNames.isEmpty()) {
+                    for (String groupName : groupNames) {
+                        registerGroup(groupName);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOGGER.error("CELLAR HAZELCAST: can't set group membership for the current node", e);
         }
         registerGroup(DEFAULT_GROUP);
     }
@@ -104,7 +123,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             listGroups().put(groupName, group);
         }
         // shutdown the group consumer/producers
-        for (Map.Entry<String,EventConsumer> consumerEntry : groupConsumer.entrySet()) {
+        for (Map.Entry<String, EventConsumer> consumerEntry : groupConsumer.entrySet()) {
             EventConsumer consumer = consumerEntry.getValue();
             consumer.stop();
         }
@@ -131,6 +150,12 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         if (!listGroups().containsKey(groupName)) {
             copyGroupConfiguration(Configurations.DEFAULT_GROUP_NAME, groupName);
             listGroups().put(groupName, group);
+            try {
+                // store the group list to configuration admin
+                persist(listGroups());
+            } catch (Exception e) {
+                LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+            }
         }
         return group;
     }
@@ -141,9 +166,33 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             Thread.currentThread().setContextClassLoader(combinedClassLoader);
             if (!groupName.equals(Configurations.DEFAULT_GROUP_NAME)) {
                 listGroups().remove(groupName);
+                try {
+                    // store the group list to configuration admin
+                    persist(listGroups());
+                } catch (Exception e) {
+                    LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+                }
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    /**
+     * Store the group names in configuration admin.
+     *
+     * @param groups the list of group to store.
+     * @throws Exception in case of storage failure.
+     */
+    private void persist(Map<String, Group> groups) throws Exception {
+        Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+        if (configuration != null) {
+            Dictionary<String, String> properties = configuration.getProperties();
+            if (properties == null) {
+                properties = new Hashtable<String, String>();
+            }
+            properties.put(Configurations.GROUPS_KEY, convertSetToString(groups.keySet()));
+            configuration.update(properties);
         }
     }
 
@@ -252,16 +301,16 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         String groupName = group.getName();
         createGroup(groupName);
 
-        LOGGER.info("Registering group {}.",groupName);
-        Dictionary <String, Object> serviceProperties = new Hashtable<String, Object>();
+        LOGGER.info("Registering group {}.", groupName);
+        Properties serviceProperties = new Properties();
         serviceProperties.put("type", "group");
         serviceProperties.put("name", groupName);
 
         if (!producerRegistrations.containsKey(groupName)) {
             EventProducer producer = groupProducers.get(groupName);
-            if(producer == null) {
-                producer = eventTransportFactory.getEventProducer(groupName,Boolean.TRUE);
-                groupProducers.put(groupName,producer);
+            if (producer == null) {
+                producer = eventTransportFactory.getEventProducer(groupName, Boolean.TRUE);
+                groupProducers.put(groupName, producer);
             }
 
             ServiceRegistration producerRegistration = bundleContext.registerService(EventProducer.class.getCanonicalName(), producer, serviceProperties);
@@ -270,10 +319,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
 
         if (!consumerRegistrations.containsKey(groupName)) {
             EventConsumer consumer = groupConsumer.get(groupName);
-            if(consumer == null) {
-                consumer = eventTransportFactory.getEventConsumer(groupName,true);
-                groupConsumer.put(groupName,consumer);
-            } else if(!consumer.isConsuming()) {
+            if (consumer == null) {
+                consumer = eventTransportFactory.getEventConsumer(groupName, true);
+                groupConsumer.put(groupName, consumer);
+            } else if (!consumer.isConsuming()) {
                 consumer.start();
             }
             ServiceRegistration consumerRegistration = bundleContext.registerService(EventConsumer.class.getCanonicalName(), consumer, serviceProperties);
@@ -292,10 +341,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 groups = groupName;
             } else {
 
-                        Set<String> groupNamesSet = convertStringToSet(groups);
-                        groupNamesSet.add(groupName);
-                        groups = convertSetToString(groupNamesSet);
-                    }
+                Set<String> groupNamesSet = convertStringToSet(groups);
+                groupNamesSet.add(groupName);
+                groups = convertSetToString(groupNamesSet);
+            }
 
             if (groups == null || (groups.trim().length() < 1)) {
                 groups = groupName;
@@ -364,7 +413,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         //4. Remove Consumers & Producers
         groupProducers.remove(groupName);
         EventConsumer consumer = groupConsumer.remove(groupName);
-        if(consumer != null) {
+        if (consumer != null) {
             consumer.stop();
         }
 
@@ -395,6 +444,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * Copies the configuration of a {@link Group}.
      * <b>1.</b> Updates configuration admin from Hazelcast using source config.
      * <b>2.</b> Creates target configuration both on Hazelcast and configuration admin.
+     *
      * @param sourceGroupName
      * @param targetGroupName
      */
@@ -405,18 +455,16 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
 
                 //Get configuration from config admin.
                 Dictionary configAdminProperties = conf.getProperties();
-                if(configAdminProperties == null) {
+                if (configAdminProperties == null) {
                     configAdminProperties = new Properties();
                 }
                 //Get configuration from Hazelcast
-                Map<String,String> sourceGropConfig = instance.getMap(GROUPS_CONFIG);
+                Map<String, String> sourceGropConfig = instance.getMap(GROUPS_CONFIG);
 
                 //Update local configuration from cluster.
-                for(Map.Entry<String,String> parentEntry:sourceGropConfig.entrySet()) {
-                    configAdminProperties.put(parentEntry.getKey(),parentEntry.getValue());
+                for (Map.Entry<String, String> parentEntry : sourceGropConfig.entrySet()) {
+                    configAdminProperties.put(parentEntry.getKey(), parentEntry.getValue());
                 }
-
-
 
                 Dictionary updatedProperties = new Properties();
                 Enumeration keyEnumeration = configAdminProperties.keys();
@@ -482,7 +530,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
 
     public void configurationEvent(ConfigurationEvent configurationEvent) {
         String pid = configurationEvent.getPid();
-        if(pid.equals(GROUPS)) {
+        if (pid.equals(GROUPS)) {
             Map groupConfiguration = instance.getMap(GROUPS_CONFIG);
 
             try {
@@ -490,11 +538,11 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 Dictionary properties = conf.getProperties();
                 Enumeration keyEnumeration = properties.keys();
                 while (keyEnumeration.hasMoreElements()) {
-                   Object key = keyEnumeration.nextElement();
-                   Object value = properties.get(key);
-                   if(!groupConfiguration.containsKey(key) || groupConfiguration.get(key) == null || !groupConfiguration.get(key).equals(value)) {
-                      groupConfiguration.put(key,value);
-                   }
+                    Object key = keyEnumeration.nextElement();
+                    Object value = properties.get(key);
+                    if (!groupConfiguration.containsKey(key) || groupConfiguration.get(key) == null || !groupConfiguration.get(key).equals(value)) {
+                        groupConfiguration.put(key, value);
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.warn("Failed to update group configuration");
@@ -508,7 +556,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * @param entryEvent entry event
      */
     public void entryAdded(EntryEvent entryEvent) {
-         entryUpdated(entryEvent);
+        entryUpdated(entryEvent);
     }
 
     /**
@@ -517,7 +565,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * @param entryEvent entry event
      */
     public void entryRemoved(EntryEvent entryEvent) {
-         entryUpdated(entryEvent);
+        entryUpdated(entryEvent);
     }
 
     /**
@@ -536,7 +584,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 conf.update(props);
             }
         } catch (Exception ex) {
-          LOGGER.warn("Error while updating local group configuration", ex);
+            LOGGER.warn("Error while updating local group configuration", ex);
         }
     }
 
@@ -589,4 +637,5 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }
