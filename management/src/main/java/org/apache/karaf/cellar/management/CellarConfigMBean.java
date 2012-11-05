@@ -26,5 +26,6 @@ public interface CellarConfigMBean {
     TabularData listProperties(String group, String pid) throws Exception;
     void setProperty(String group, String pid, String key, String value) throws Exception;
     void appendProperty(String group, String pid, String key, String value) throws Exception;
+    void deleteProperty(String group, String pid, String key) throws Exception;
 
 }
