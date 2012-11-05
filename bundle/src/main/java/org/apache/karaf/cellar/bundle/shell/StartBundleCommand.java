@@ -61,6 +61,7 @@ public class StartBundleCommand extends CellarCommandSupport {
         // update the distributed map
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         String location;
         try {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
