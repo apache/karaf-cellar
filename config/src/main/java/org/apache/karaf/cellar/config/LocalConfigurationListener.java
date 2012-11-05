@@ -36,8 +36,6 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalConfigurationListener.class);
 
-    private static final long SYNC_TIMEOUT = 200;
-
     private EventProducer eventProducer;
 
     /**
@@ -58,21 +56,12 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
         Dictionary localDictionary = null;
         if (event.getType() != ConfigurationEvent.CM_DELETED) {
-            Configuration conf = null;
             try {
-                conf = configurationAdmin.getConfiguration(pid, null);
+                Configuration conf = configurationAdmin.getConfiguration(pid, null);
+                localDictionary = conf.getProperties();
             } catch (Exception e) {
                 LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
                 return;
-            }
-
-            localDictionary = conf.getProperties();
-            if (localDictionary.get(Constants.SYNC_PROPERTY) != null) {
-                Long syncTimestamp = new Long((String) localDictionary.get(Constants.SYNC_PROPERTY));
-                Long currentTimestamp = System.currentTimeMillis();
-                if ((currentTimestamp - syncTimestamp) <= SYNC_TIMEOUT) {
-                    return;
-                }
             }
         }
 
@@ -84,31 +73,37 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                 if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
 
                     // update the distributed map if needed
-                    Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
+                    Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
 
+                    // broadcast the cluster event
                     try {
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
                             // update the distributed map
-                            configurationTable.remove(pid);
+                            distributedConfigurations.remove(pid);
                             // broadcast the cluster event
                             RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
                             remoteConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
+                            remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
                             remoteConfigurationEvent.setSourceGroup(group);
                             eventProducer.produce(remoteConfigurationEvent);
                         } else {
-                            Properties localProperties = new Properties();
-                            filter(localDictionary, localProperties);
-                            // update the distributed map
-                            configurationTable.put(pid, localProperties);
-                            // broadcast the cluster event
-                            RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
-                            remoteConfigurationEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteConfigurationEvent);
+                            localDictionary = filter(localDictionary);
+
+                            Properties distributedDictionary = distributedConfigurations.get(pid);
+
+                            if (!equals(localDictionary, distributedDictionary)) {
+                                // update the distributed map
+                                distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                // broadcast the cluster event
+                                RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
+                                remoteConfigurationEvent.setSourceGroup(group);
+                                remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(remoteConfigurationEvent);
+                            }
                         }
                     } catch (Exception e) {
                         LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
                     }
-                    // broadcast the cluster event
                 } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
             }
         }

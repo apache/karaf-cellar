@@ -42,14 +42,14 @@ public class ListCommand extends ConfigCommandSupport {
             return null;
         }
 
-        Map<String, Properties> configurationDistributedMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (configurationDistributedMap != null && !configurationDistributedMap.isEmpty()) {
-            for (String pid : configurationDistributedMap.keySet()) {
+        if (distributedConfigurations != null && !distributedConfigurations.isEmpty()) {
+            for (String pid : distributedConfigurations.keySet()) {
                 System.out.println("----------------------------------------------------------------");
                 System.out.println("Pid:            " + pid);
                 if (!minimal) {
-                    Properties properties = configurationDistributedMap.get(pid);
+                    Properties properties = distributedConfigurations.get(pid);
                     if (properties != null) {
                         System.out.println("Properties:");
                         for (Enumeration e = properties.keys(); e.hasMoreElements();) {
