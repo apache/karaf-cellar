@@ -80,8 +80,9 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 jarInputStream.close();
 
                 ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
                 try {
-                    Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                     // populate the cluster map
                     Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                     BundleState state = new BundleState();
