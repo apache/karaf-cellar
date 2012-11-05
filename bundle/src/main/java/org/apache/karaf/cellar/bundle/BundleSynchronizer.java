@@ -117,7 +117,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
         if (group != null) {
             String groupName = group.getName();
-            Map<String, BundleState> bundleTable = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -138,19 +138,36 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                         BundleState bundleState = new BundleState();
                         bundleState.setLocation(bundleLocation);
+
+                        if (status == Bundle.ACTIVE)
+                            status = BundleEvent.STARTED;
+                        if (status == Bundle.INSTALLED)
+                            status = BundleEvent.INSTALLED;
+                        if (status == Bundle.RESOLVED)
+                            status = BundleEvent.RESOLVED;
+                        if (status == Bundle.STARTING)
+                            status = BundleEvent.STARTING;
+                        if (status == Bundle.UNINSTALLED)
+                            status = BundleEvent.UNINSTALLED;
+                        if (status == Bundle.STOPPING)
+                            status = BundleEvent.STARTED;
+
                         bundleState.setStatus(status);
 
-                        BundleState existingState = bundleTable.get(id);
-                        RemoteBundleEvent event = null;
+                        BundleState existingState = distributedBundles.get(id);
 
-                        if (existingState == null) {
+                        if (existingState == null ||
+                                !existingState.getLocation().equals(bundleState.getLocation()) ||
+                                existingState.getStatus() != bundleState.getStatus()) {
                             // update the distributed map
-                            event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
-                            bundleTable.put(id, bundleState);
+                            distributedBundles.put(id, bundleState);
+
+                            // broadcast the event
+                            RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
+                            event.setSourceGroup(group);
+                            eventProducer.produce(event);
                         }
 
-                        // broadcast the event
-                        eventProducer.produce(event);
                     } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
                 }
             } finally {

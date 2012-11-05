@@ -313,7 +313,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 groupProducers.put(groupName, producer);
             }
 
-            ServiceRegistration producerRegistration = bundleContext.registerService(EventProducer.class.getCanonicalName(), producer, serviceProperties);
+            ServiceRegistration producerRegistration = bundleContext.registerService(EventProducer.class.getCanonicalName(), producer, (Dictionary) serviceProperties);
             producerRegistrations.put(groupName, producerRegistration);
         }
 
@@ -325,7 +325,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             } else if (!consumer.isConsuming()) {
                 consumer.start();
             }
-            ServiceRegistration consumerRegistration = bundleContext.registerService(EventConsumer.class.getCanonicalName(), consumer, serviceProperties);
+            ServiceRegistration consumerRegistration = bundleContext.registerService(EventConsumer.class.getCanonicalName(), consumer, (Dictionary) serviceProperties);
             consumerRegistrations.put(groupName, consumerRegistration);
         }
 

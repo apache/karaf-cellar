@@ -48,6 +48,7 @@ public class ListBundleCommand extends CellarCommandSupport {
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
         try {
             Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             if (bundles != null && !bundles.isEmpty()) {
@@ -104,6 +105,7 @@ public class ListBundleCommand extends CellarCommandSupport {
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+
         return null;
     }
 
