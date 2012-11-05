@@ -31,5 +31,4 @@ public abstract class ConfigCommandSupport extends CellarCommandSupport {
         return support.isAllowed(group, category, pid, type);
     }
 
-
 }

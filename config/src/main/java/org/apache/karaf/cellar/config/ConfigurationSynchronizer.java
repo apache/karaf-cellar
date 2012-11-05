@@ -76,25 +76,27 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                for (String pid : configurationTable.keySet()) {
+                for (String pid : distributedConfigurations.keySet()) {
                     if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
-                        Properties remoteDictionary = configurationTable.get(pid);
+                        Dictionary remoteDictionary = distributedConfigurations.get(pid);
                         try {
                             // update the local configuration if needed
                             Configuration conf = configurationAdmin.getConfiguration(pid, null);
-                            remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
                             Dictionary localDictionary = conf.getProperties();
                             if (localDictionary == null)
                                 localDictionary = new Properties();
-                            filter(remoteDictionary, localDictionary);
-                            conf.update(localDictionary);
-                            persistConfiguration(configurationAdmin, pid, localDictionary);
+
+                            localDictionary = filter(localDictionary);
+                            if (!equals(localDictionary, remoteDictionary)) {
+                                conf.update(localDictionary);
+                                persistConfiguration(configurationAdmin, pid, localDictionary);
+                            }
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
                         }
@@ -120,7 +122,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
         if (group != null) {
             String groupName = group.getName();
-            Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -132,12 +134,9 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         String pid = conf.getPid();
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
                             Dictionary localDictionary = conf.getProperties();
-                            if (localDictionary == null)
-                                localDictionary = new Properties();
-                            Properties localProperties = new Properties();
-                            filter(localDictionary, localProperties);
+                            localDictionary = filter(localDictionary);
                             // update the distributed map
-                            configurationTable.put(pid, localProperties);
+                            distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
                             // broadcast the cluster event
                             RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
                             event.setSourceGroup(group);

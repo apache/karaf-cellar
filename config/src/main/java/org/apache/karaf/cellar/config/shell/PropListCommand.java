@@ -45,10 +45,10 @@ public class PropListCommand extends CellarCommandSupport {
             return null;
         }
 
-        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (configurationMap != null && !configurationMap.isEmpty()) {
-            Properties properties = configurationMap.get(pid);
+        if (distributedConfigurations != null && !distributedConfigurations.isEmpty()) {
+            Properties properties = distributedConfigurations.get(pid);
             if (properties == null || properties.isEmpty()) {
                 System.err.println("No configuration PID found for group " + groupName);
             } else {

@@ -59,10 +59,10 @@ public class DeleteCommand extends ConfigCommandSupport {
             return null;
         }
 
-        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (configurationMap != null) {
+        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (distributedConfigurations != null) {
             // update the distributed map
-            Properties properties = configurationMap.remove(pid);
+            Properties properties = distributedConfigurations.remove(pid);
 
             // broadcast the cluster event
             RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
