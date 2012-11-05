@@ -13,7 +13,6 @@
  */
 package org.apache.karaf.cellar.config;
 
-import org.apache.felix.utils.properties.Properties;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -25,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * Configuration support.
@@ -161,7 +161,7 @@ public class ConfigurationSupport extends CellarSupport {
                     throw (IOException) new IOException(e.getMessage()).initCause(e);
                 }
             }
-            Properties p = new Properties(storageFile);
+            org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
             for (Enumeration keys = props.keys(); keys.hasMoreElements(); ) {
                 Object key = keys.nextElement();
                 if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
