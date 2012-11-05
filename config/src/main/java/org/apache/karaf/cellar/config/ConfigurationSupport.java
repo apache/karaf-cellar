@@ -35,22 +35,83 @@ public class ConfigurationSupport extends CellarSupport {
     protected File storage;
 
     /**
-     * Filter a dictionary, specially replace the karaf.home property with a relative value.
+     * Reads a {@code Dictionary} object and creates a property object out of it.
      *
-     * @param source the source dictionary.
-     * @param target the target dictionary
+     * @param dictionary
+     * @return
      */
-    public void filter(Dictionary source, Dictionary target) {
-        if (source != null) {
-            Enumeration enumaration = source.keys();
-            while (enumaration.hasMoreElements()) {
-                String key = (String) enumaration.nextElement();
-                if (!isExcludedProperty(key)) {
-                    String value = String.valueOf(source.get(key));
-                    target.put(key, value);
+    public Properties dictionaryToProperties(Dictionary dictionary) {
+        Properties properties = new Properties();
+        if (dictionary != null && dictionary.keys() != null) {
+
+            Enumeration keys = dictionary.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                if (key != null && dictionary.get(key) != null) {
+                    String value = (String) dictionary.get(key);
+                    properties.put(key, dictionary.get(key));
                 }
             }
         }
+        return properties;
+    }
+
+    /**
+     * Returns true if dictionaries are equal.
+     *
+     * @param source the first dictionary
+     * @param target the second dictionary
+     * @return true if the two dictionaries are equal, false else.
+     */
+    protected boolean equals(Dictionary source, Dictionary target) {
+        if (source == null && target == null)
+            return true;
+
+        if (source == null || target == null)
+            return false;
+
+        if (source.isEmpty() && target.isEmpty())
+            return true;
+
+        Enumeration sourceKeys = source.keys();
+        while (sourceKeys.hasMoreElements()) {
+            String key = (String) sourceKeys.nextElement();
+            String sourceValue = String.valueOf(source.get(key));
+            String targetValue = String.valueOf(target.get(key));
+            if (sourceValue != null && targetValue == null)
+                return false;
+            if (sourceValue == null && targetValue != null)
+                return false;
+            if (!sourceValue.equals(targetValue))
+                return false;
+        }
+
+        if (source.size() != target.size())
+            return false;
+
+        return true;
+    }
+
+    /**
+     * Filter a dictionary, and populate a target dictionary.
+     *
+     * @param dictionary the source dictionary.
+     * @return the filtered dictionary
+     */
+
+    public Dictionary filter(Dictionary dictionary) {
+        Dictionary result = new Properties();
+        if (dictionary != null) {
+            Enumeration sourceKeys = dictionary.keys();
+            while (sourceKeys.hasMoreElements()) {
+                String key = (String) sourceKeys.nextElement();
+                if (!isExcludedProperty(key)) {
+                    String value = String.valueOf(dictionary.get(key));
+                    result.put(key, value);
+                }
+            }
+        }
+        return result;
     }
 
     /**

@@ -14,11 +14,6 @@
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.Configurations;
-<<<<<<< HEAD
-import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
-=======
->>>>>>> 3a649a9... [KARAF-1414] Add persistence for event handlers
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;

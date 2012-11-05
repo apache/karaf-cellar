@@ -64,15 +64,15 @@ public class PropSetCommand extends ConfigCommandSupport {
             return null;
         }
 
-        Map<String, Properties> configurationMap = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (configurationMap != null) {
-            // update the distributed map
-            Properties properties = configurationMap.get(pid);
+        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (distributedConfigurations != null) {
+            // update the distributed configuration
+            Properties properties = distributedConfigurations.get(pid);
             if (properties == null) {
                 properties = new Properties();
             }
             properties.put(key, value);
-            configurationMap.put(pid, properties);
+            distributedConfigurations.put(pid, properties);
 
             // broadcast the cluster event
             RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
