@@ -68,24 +68,24 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             Configuration conf;
             try {
                 conf = configurationAdmin.getConfiguration(pid, null);
-                    if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                        if (conf.getProperties() != null) {
-                            // delete the properties
-                            conf.delete();
-                            deleteStorage(pid);
-                        }
-                    } else {
-                        if (distributedDictionary != null) {
-                            Dictionary localDictionary = conf.getProperties();
-                            if (localDictionary == null)
-                                localDictionary = new Properties();
-                            localDictionary = filter(localDictionary);
-                            if (!equals(distributedDictionary, localDictionary)) {
-                                conf.update(distributedDictionary);
-                                persistConfiguration(configurationAdmin, pid, distributedDictionary);
-                            }
+                if (event.getType() == ConfigurationEvent.CM_DELETED) {
+                    if (conf.getProperties() != null) {
+                        // delete the properties
+                        conf.delete();
+                        deleteStorage(pid);
+                    }
+                } else {
+                    if (distributedDictionary != null) {
+                        Dictionary localDictionary = conf.getProperties();
+                        if (localDictionary == null)
+                            localDictionary = new Properties();
+                        localDictionary = filter(localDictionary);
+                        if (!equals(distributedDictionary, localDictionary)) {
+                            conf.update(distributedDictionary);
+                            persistConfiguration(configurationAdmin, pid, distributedDictionary);
                         }
                     }
+                }
             } catch (IOException ex) {
                 LOGGER.error("CELLAR CONFIG: failed to read remote distributed map", ex);
             }
