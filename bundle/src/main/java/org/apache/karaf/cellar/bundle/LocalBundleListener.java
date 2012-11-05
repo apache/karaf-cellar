@@ -65,24 +65,31 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                     int type = event.getType();
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
-                        // update the cluster map
-                        Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
-                        if (type == BundleEvent.UNINSTALLED) {
-                            bundles.remove(symbolicName + "/" + version);
-                        } else {
-                            BundleState state = bundles.get(symbolicName + "/" + version);
-                            if (state == null) {
-                                state = new BundleState();
-                            }
-                            state.setStatus(type);
-                            state.setLocation(bundleLocation);
-                            bundles.put(symbolicName + "/" + version, state);
-                        }
+                        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                        // broadcast the cluster event
-                        RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                        remoteBundleEvent.setSourceGroup(group);
-                        eventProducer.produce(remoteBundleEvent);
+                        try {
+                            // update the cluster map
+                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                            if (type == BundleEvent.UNINSTALLED) {
+                                bundles.remove(symbolicName + "/" + version);
+                            } else {
+                                BundleState state = bundles.get(symbolicName + "/" + version);
+                                if (state == null) {
+                                    state = new BundleState();
+                                }
+                                state.setStatus(type);
+                                state.setLocation(bundleLocation);
+                                bundles.put(symbolicName + "/" + version, state);
+                            }
+
+                            // broadcast the cluster event
+                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                            remoteBundleEvent.setSourceGroup(group);
+                            eventProducer.produce(remoteBundleEvent);
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(originalClassLoader);
+                        }
 
                     } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
                 }
