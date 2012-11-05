@@ -59,34 +59,35 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         Group group = event.getSourceGroup();
         String groupName = group.getName();
 
-        Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
         String pid = event.getId();
 
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-            Properties remoteDictionary = configurationTable.get(pid);
+
+            Properties distributedDictionary = distributedConfigurations.get(pid);
             Configuration conf;
             try {
                 // update the local configuration
                 conf = configurationAdmin.getConfiguration(pid, null);
-                if (conf != null) {
                     if (event.getType() == ConfigurationEvent.CM_DELETED) {
                         if (conf.getProperties() != null) {
+                            // delete the properties
                             conf.delete();
                             deleteStorage(pid);
                         }
                     } else {
-                        if (remoteDictionary != null) {
-                            remoteDictionary.put(Constants.SYNC_PROPERTY, new Long(System.currentTimeMillis()).toString());
+                        if (distributedDictionary != null) {
                             Dictionary localDictionary = conf.getProperties();
                             if (localDictionary == null)
                                 localDictionary = new Properties();
-                            filter(remoteDictionary, localDictionary);
-                            conf.update(localDictionary);
-                            persistConfiguration(configurationAdmin, pid, localDictionary);
+                            localDictionary = filter(localDictionary);
+                            if (!equals(distributedDictionary, localDictionary)) {
+                                conf.update(distributedDictionary);
+                                persistConfiguration(configurationAdmin, pid, distributedDictionary);
+                            }
                         }
                     }
-                }
             } catch (IOException ex) {
                 LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
             }
