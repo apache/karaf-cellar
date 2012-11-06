@@ -30,7 +30,10 @@ public class ListCommand extends ConfigCommandSupport {
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Option(name = "-m", aliases = { "--minimal" }, description = "Don't display the properties of each configuration", required = false, multiValued = false)
+    @Argument(index = 1, name = "pid", description = "The configuration PID to look for", required = false, multiValued = false)
+    String searchPid;
+
+    @Option(name = "-m", aliases = {"--minimal"}, description = "Don't display the properties of each configuration", required = false, multiValued = false)
     boolean minimal;
 
     @Override
@@ -46,15 +49,17 @@ public class ListCommand extends ConfigCommandSupport {
 
         if (distributedConfigurations != null && !distributedConfigurations.isEmpty()) {
             for (String pid : distributedConfigurations.keySet()) {
-                System.out.println("----------------------------------------------------------------");
-                System.out.println("Pid:            " + pid);
-                if (!minimal) {
-                    Properties properties = distributedConfigurations.get(pid);
-                    if (properties != null) {
-                        System.out.println("Properties:");
-                        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
-                            Object key = e.nextElement();
-                            System.out.println("   " + key + " = " + properties.get(key));
+                if (searchPid == null || (searchPid != null && searchPid.equals(pid))) {
+                    System.out.println("----------------------------------------------------------------");
+                    System.out.println("Pid:            " + pid);
+                    if (!minimal) {
+                        Properties properties = distributedConfigurations.get(pid);
+                        if (properties != null) {
+                            System.out.println("Properties:");
+                            for (Enumeration e = properties.keys(); e.hasMoreElements(); ) {
+                                Object key = e.nextElement();
+                                System.out.println("   " + key + " = " + properties.get(key));
+                            }
                         }
                     }
                 }
