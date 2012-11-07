@@ -30,16 +30,7 @@ import org.osgi.framework.BundleEvent;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "bundle-start", description = "Start a bundle assigned to a cluster group.")
-public class StartBundleCommand extends CellarCommandSupport {
-
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
-    String groupName;
-
-    @Argument(index = 1, name = "name", description = "The bundle symbolic name.", required = true, multiValued = false)
-    String name;
-
-    @Argument(index = 2, name = "version", description = "The bundle version.", required = true, multiValued = false)
-    String version;
+public class StartBundleCommand extends BundleCommandSupport {
 
     private EventProducer eventProducer;
 
@@ -63,11 +54,19 @@ public class StartBundleCommand extends CellarCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         String location;
+        String key = null;
         try {
-            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            BundleState state = bundles.get(name + "/" + version);
+            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+
+            key = selector(distributedBundles);
+
+            if (key == null) {
+                System.err.println("Bundle " + key + " not found in cluster group " + groupName);
+            }
+
+            BundleState state = distributedBundles.get(key);
             if (state == null) {
-                System.err.println("Bundle " + name + "/" + version + " not found in cluster group " + groupName);
+                System.err.println("Bundle " + key + " not found in cluster group " + groupName);
                 return null;
             }
             location = state.getLocation();
@@ -83,14 +82,14 @@ public class StartBundleCommand extends CellarCommandSupport {
             }
 
             state.setStatus(BundleEvent.STARTED);
-            location = state.getLocation();
-            bundles.put(name + "/" + version, state);
+            distributedBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
-        // broadcast the event
-        RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.STARTED);
+        // broadcast the cluster event
+        String[] split = key.split("/");
+        RemoteBundleEvent event = new RemoteBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 
