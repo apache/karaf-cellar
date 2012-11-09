@@ -305,8 +305,14 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             int id = 0;
             for (String bundle : bundles.keySet()) {
                 String[] tokens = bundle.split("/");
-                String name = tokens[0];
-                String version = tokens[1];
+                String name = null;
+                String version = null;
+                if (tokens.length == 2) {
+                    name = tokens[0];
+                    version = tokens[1];
+                } else {
+                    name = bundle;
+                }
                 BundleState state = bundles.get(bundle);
                 String status;
                 switch (state.getStatus()) {
