@@ -30,6 +30,13 @@
             </action>
         </command>
 
+        <command name="cluster/sync">
+            <action class="org.apache.karaf.cellar.shell.SyncCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+            </action>
+        </command>
+
         <command name="cluster/consumer-start">
             <action class="org.apache.karaf.cellar.shell.consumer.ConsumerStartCommand">
                 <property name="clusterManager" ref="clusterManager"/>
