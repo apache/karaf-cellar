@@ -43,7 +43,7 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.warn("CELLAR EVENT: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR EVENT: node is not part of the event cluster group");
             return;
         }
 
