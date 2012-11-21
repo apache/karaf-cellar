@@ -27,11 +27,13 @@
  */
 package org.apache.karaf.cellar.management.internal;
 
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.*;
 import org.apache.karaf.cellar.management.CellarMBean;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
@@ -43,11 +45,21 @@ import java.util.*;
  */
 public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
+    private BundleContext bundleContext;
     private ClusterManager clusterManager;
     private ExecutionContext executionContext;
+    private GroupManager groupManager;
 
     public CellarMBeanImpl() throws NotCompliantMBeanException {
         super(CellarMBean.class);
+    }
+
+    public BundleContext getBundleContext() {
+        return bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     public ClusterManager getClusterManager() {
@@ -64,6 +76,35 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
     public void setExecutionContext(ExecutionContext executionContext) {
         this.executionContext = executionContext;
+    }
+
+    public GroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public void setGroupManager(GroupManager groupManager) {
+        this.groupManager = groupManager;
+    }
+
+    public void sync() throws Exception {
+        Set<Group> localGroups = groupManager.listLocalGroups();
+        for (Group group : localGroups) {
+            try {
+                ServiceReference[] serviceReferences = bundleContext.getAllServiceReferences("org.apache.karaf.cellar.core.Synchronizer", null);
+                if (serviceReferences != null && serviceReferences.length > 0) {
+                    for (ServiceReference ref : serviceReferences) {
+                        Synchronizer synchronizer = (Synchronizer) bundleContext.getService(ref);
+                        if (synchronizer.isSyncEnabled(group)) {
+                            synchronizer.pull(group);
+                            synchronizer.push(group);
+                        }
+                        bundleContext.ungetService(ref);
+                    }
+                }
+            } catch (InvalidSyntaxException e) {
+                // ignore
+            }
+        }
     }
 
     public TabularData handlerStatus() throws Exception {
