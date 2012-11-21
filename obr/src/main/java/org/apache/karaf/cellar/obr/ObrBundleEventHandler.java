@@ -120,7 +120,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.warn("CELLAR OBR: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group");
             return;
         }
 
