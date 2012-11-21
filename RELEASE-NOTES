@@ -15,6 +15,53 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.2.5
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
+ representing a major update to Apache Karaf Cellar 2.2.4. It contains bug fixes
+ identified in the prior release, and introduces new features.
+ group support.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-1324] - Only one cellar group configuration updated new groups config for two karaf instance locally
+    * [KARAF-1466] - Empty group doesn't appeared in group-list after restart of node.
+    * [KARAF-1467] - groups configuration is not syncronized normally.
+    * [KARAF-1476] - cellar broadcasts configuration changes to a group that has been left before ...
+    * [KARAF-1484] - config:propdel is not propagated to other group members
+    * [KARAF-1492] - Cellar should use listConfiguration instead of getConfiguration
+    * [KARAF-1504] - Cellar command do not install bundle
+    * [KARAF-1971] - Bundle whitelist/blacklist are not correct by default
+    * [KARAF-1974] - Bundle states are not correct
+    * [KARAF-1975] - CellarBundleMBean is not able to display the list of bundles
+    * [KARAF-1999] - Cellar LocalBundleListener raises ClassNotFoundException about BundleState
+
+** Dependency upgrade
+    * [KARAF-1720] - Upgrade to joda-time 2.1
+    * [KARAF-1920] - Upgrade to Karaf 2.2.9
+    * [KARAF-1948] - Upgrade to Apache POM 11
+
+** Improvement
+    * [KARAF-1707] - CellarNodeMBean should inform which node is local
+    * [KARAF-1982] - Cellar features should populate the bundles distributed map
+    * [KARAF-1998] - Remove cellar sync property and check config dictionary
+    * [KARAF-2001] - cluster:config-list could "filter" for one given PID
+    * [KARAF-2004] - Add Cellar bundle selector support
+    * [KARAF-2021] - Log message should not be warn
+
+** New Feature
+    * [KARAF-1414] - Add persistence for handler/producer/consumer status
+    * [KARAF-1726] - Support norefresh and noclean options in cluster:feature-install and ClusterFeatureMBean
+    * [KARAF-2023] - Provide cluster:sync commands and MBeans
+
                     Apache Karaf Cellar 2.2.4
                     =========================
 
