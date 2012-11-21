@@ -20,6 +20,8 @@ import javax.management.openmbean.TabularData;
  */
 public interface CellarMBean {
 
+    void sync() throws Exception;
+
     TabularData consumerStatus() throws Exception;
     void consumerStart(String nodeId) throws Exception;
     void consumerStop(String nodeId) throws Exception;
