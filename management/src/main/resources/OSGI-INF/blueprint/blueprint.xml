@@ -27,7 +27,9 @@
     </reference>
 
     <bean id="cellarMBean" class="org.apache.karaf.cellar.management.internal.CellarMBeanImpl">
+        <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="executionContext" ref="executionContext"/>
     </bean>
 
