@@ -51,7 +51,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.warn("CELLAR CONFIG: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR CONFIG: node is not part of the event cluster group");
             return;
         }
 
