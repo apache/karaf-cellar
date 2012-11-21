@@ -60,7 +60,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
 
         // check if the group is local
         if (!groupManager.isLocalGroup(obrUrlEvent.getSourceGroup().getName())) {
-            LOGGER.warn("CELLAR OBR: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group");
             return;
         }
 
