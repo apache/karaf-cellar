@@ -29,7 +29,7 @@
 
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
-    <version>2.2.6-SNAPSHOT</version>
+    <version>2.2.5-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
