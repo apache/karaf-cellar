@@ -14,15 +14,11 @@
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.CellarSupport;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -130,24 +126,6 @@ public class BundleSupport extends CellarSupport {
                 }
             }
         }
-    }
-
-    public Boolean isSyncEnabled(Group group) {
-        Boolean result = Boolean.FALSE;
-        String groupName = group.getName();
-
-        try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary<String, String> properties = configuration.getProperties();
-            if (properties != null) {
-                String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
-            }
-        } catch (IOException e) {
-            LOGGER.error("CELLAR BUNDLE: failed to check if sync is enabled", e);
-        }
-        return result;
     }
 
     /**
