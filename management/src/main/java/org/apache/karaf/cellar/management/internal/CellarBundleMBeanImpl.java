@@ -33,6 +33,8 @@ import java.net.URL;
 import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of the Cellar bundle MBean.
@@ -377,17 +379,73 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 // ignore
             }
             if (id == -1) {
+
+                // add regex support
+                Pattern namePattern = Pattern.compile(name);
+
                 // looking for bundle using only the name
                 for (String bundle : distributedBundles.keySet()) {
-                    if (bundle.startsWith(name)) {
-                        key = bundle;
-                        break;
+                    BundleState state = distributedBundles.get(bundle);
+                    if (state.getName() != null) {
+                        // bundle name is populated, check if it matches the regex
+                        Matcher matcher = namePattern.matcher(state.getName());
+                        if (matcher.find()) {
+                            key = bundle;
+                            break;
+                        } else {
+                            // no match on bundle name, fall back to symbolic name and check if it matches the regex
+                            String[] split = bundle.split("/");
+                            matcher = namePattern.matcher(split[0]);
+                            if (matcher.find()) {
+                                key = bundle;
+                                break;
+                            }
+                        }
+                    } else {
+                        // no bundle name, fall back to symbolic name and check if it matches the regex
+                        String[] split = bundle.split("/");
+                        Matcher matcher = namePattern.matcher(split[0]);
+                        if (matcher.find()) {
+                            key = bundle;
+                            break;
+                        }
                     }
                 }
             }
         } else {
             // looking for the bundle using name and version
-            key = name + "/" + version;
+
+            // add regex support of the name
+            Pattern namePattern = Pattern.compile(name);
+
+            for (String bundle : distributedBundles.keySet()) {
+                String[] split = bundle.split("/");
+                BundleState state = distributedBundles.get(bundle);
+                if (split[1].equals(version)) {
+                    if (state.getName() != null) {
+                        // bundle name is populated, check if it matches the regex
+                        Matcher matcher = namePattern.matcher(state.getName());
+                        if (matcher.find()) {
+                            key = bundle;
+                            break;
+                        } else {
+                            // no match on bundle name, fall back to symbolic name and check if it matches the regex
+                            matcher = namePattern.matcher(split[0]);
+                            if (matcher.find()) {
+                                key = bundle;
+                                break;
+                            }
+                        }
+                    } else {
+                        // no bundle name, fall back to symbolic name and check if it matches the regex
+                        Matcher matcher = namePattern.matcher(split[0]);
+                        if (matcher.find()) {
+                            key = bundle;
+                            break;
+                        }
+                    }
+                }
+            }
         }
         return key;
     }
