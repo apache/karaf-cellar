@@ -58,6 +58,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
             if (groups != null && !groups.isEmpty()) {
                 for (Group group : groups) {
 
+                    String name = (String) event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
                     String symbolicName = event.getBundle().getSymbolicName();
                     String version = event.getBundle().getVersion().toString();
                     String bundleLocation = event.getBundle().getLocation();
@@ -78,6 +79,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
                                 if (state == null) {
                                     state = new BundleState();
                                 }
+                                state.setName(name);
                                 state.setStatus(type);
                                 state.setLocation(bundleLocation);
                                 bundles.put(symbolicName + "/" + version, state);
