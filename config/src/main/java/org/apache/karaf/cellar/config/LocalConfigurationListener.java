@@ -15,11 +15,9 @@ package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationEvent;
 import org.osgi.service.cm.ConfigurationListener;
@@ -27,7 +25,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Local configuration listener.
@@ -69,42 +70,48 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                // check if the pid is allowed for outbound.
-                if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
 
-                    // update the distributed map if needed
-                    Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
+                if (isSyncEnabled(group)) {
 
-                    // broadcast the cluster event
-                    try {
-                        if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                            // update the distributed map
-                            distributedConfigurations.remove(pid);
-                            // broadcast the cluster event
-                            RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
-                            remoteConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
-                            remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
-                            remoteConfigurationEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteConfigurationEvent);
-                        } else {
-                            localDictionary = filter(localDictionary);
+                    // check if the pid is allowed for outbound.
+                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
 
-                            Properties distributedDictionary = distributedConfigurations.get(pid);
+                        // update the distributed map if needed
+                        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
 
-                            if (!equals(localDictionary, distributedDictionary)) {
+                        // broadcast the cluster event
+                        try {
+                            if (event.getType() == ConfigurationEvent.CM_DELETED) {
                                 // update the distributed map
-                                distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                distributedConfigurations.remove(pid);
                                 // broadcast the cluster event
                                 RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
-                                remoteConfigurationEvent.setSourceGroup(group);
+                                remoteConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
                                 remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
+                                remoteConfigurationEvent.setSourceGroup(group);
                                 eventProducer.produce(remoteConfigurationEvent);
+                            } else {
+                                localDictionary = filter(localDictionary);
+
+                                Properties distributedDictionary = distributedConfigurations.get(pid);
+
+                                if (!equals(localDictionary, distributedDictionary)) {
+                                    // update the distributed map
+                                    distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                    // broadcast the cluster event
+                                    RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
+                                    remoteConfigurationEvent.setSourceGroup(group);
+                                    remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
+                                    eventProducer.produce(remoteConfigurationEvent);
+                                }
                             }
+                        } catch (Exception e) {
+                            LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
                         }
-                    } catch (Exception e) {
-                        LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
-                    }
-                } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                    } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                } else {
+                    LOGGER.info("CELLAR CONFIG: sync is disabled for cluster group " + group.getName());
+                }
             }
         }
     }
