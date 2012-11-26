@@ -75,7 +75,11 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 // get the name and version in the location MANIFEST
                 JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream());
                 Manifest manifest = jarInputStream.getManifest();
-                String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+                String name = manifest.getMainAttributes().getValue("Bundle-Name");
+                String symbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+                if (name == null) {
+                    name = symbolicName;
+                }
                 String version = manifest.getMainAttributes().getValue("Bundle-Version");
                 jarInputStream.close();
 
@@ -86,19 +90,20 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     // populate the cluster map
                     Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                     BundleState state = new BundleState();
+                    state.setName(name);
                     state.setLocation(url);
                     if (start) {
                         state.setStatus(BundleEvent.STARTED);
                     } else {
                         state.setStatus(BundleEvent.INSTALLED);
                     }
-                    bundles.put(name + "/" + version, state);
+                    bundles.put(symbolicName + "/" + version, state);
                 } finally {
                     Thread.currentThread().setContextClassLoader(originalClassLoader);
                 }
 
                 // broadcast the cluster event
-                RemoteBundleEvent event = new RemoteBundleEvent(name, version, url, BundleEvent.INSTALLED);
+                RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, url, BundleEvent.INSTALLED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {
