@@ -20,10 +20,13 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 
@@ -146,6 +149,25 @@ public class FeaturesSupport extends CellarSupport {
             repositories.remove(uri.toString());
         }
     }
+
+    public Boolean isSyncEnabled(Group group) {
+        Boolean result = Boolean.FALSE;
+        String groupName = group.getName();
+
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                String propertyKey = groupName + Configurations.SEPARATOR + Constants.FEATURES_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
+                String propertyValue = (String) properties.get(propertyKey);
+                result = Boolean.parseBoolean(propertyValue);
+            }
+        } catch (IOException e) {
+            LOGGER.warn("CELLAR FEATURES: error while checking if sync is enabled", e);
+        }
+        return result;
+    }
+
     public FeaturesService getFeaturesService() {
         return featuresService;
     }

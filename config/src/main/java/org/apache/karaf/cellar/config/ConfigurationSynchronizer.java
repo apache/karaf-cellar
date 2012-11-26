@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -153,23 +151,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
         }
-    }
-
-    public Boolean isSyncEnabled(Group group) {
-        Boolean result = Boolean.FALSE;
-        String groupName = group.getName();
-        try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary<String, Object> properties = configuration.getProperties();
-            if (properties != null) {
-                String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = (String) properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
-            }
-        } catch (IOException e) {
-            LOGGER.error("CELLAR CONFIG: failed to check if sync is enabled", e);
-        }
-        return result;
     }
 
     public EventProducer getEventProducer() {
