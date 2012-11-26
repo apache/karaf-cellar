@@ -14,8 +14,6 @@
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
-import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Group;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -204,23 +202,6 @@ public class ConfigurationSupport extends CellarSupport {
 
     public void setStorage(File storage) {
         this.storage = storage;
-    }
-
-    public Boolean isSyncEnabled(Group group) {
-        Boolean result = Boolean.FALSE;
-        String groupName = group.getName();
-        try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary<String, Object> properties = configuration.getProperties();
-            if (properties != null) {
-                String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = (String) properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
-            }
-        } catch (IOException e) {
-            LOGGER.error("CELLAR CONFIG: failed to check if sync is enabled", e);
-        }
-        return result;
     }
 
 }
