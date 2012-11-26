@@ -15,7 +15,6 @@ package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
@@ -24,7 +23,6 @@ import org.osgi.framework.BundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,42 +56,46 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
             if (groups != null && !groups.isEmpty()) {
                 for (Group group : groups) {
 
-                    String name = (String) event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
-                    String symbolicName = event.getBundle().getSymbolicName();
-                    String version = event.getBundle().getVersion().toString();
-                    String bundleLocation = event.getBundle().getLocation();
-                    int type = event.getType();
+                    if (isSyncEnabled(group)) {
 
-                    if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
+                        String name = (String) event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
+                        String symbolicName = event.getBundle().getSymbolicName();
+                        String version = event.getBundle().getVersion().toString();
+                        String bundleLocation = event.getBundle().getLocation();
+                        int type = event.getType();
+                        if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
-                        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-                        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+                            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+                            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                        try {
-                            // update the cluster map
-                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
-                            if (type == BundleEvent.UNINSTALLED) {
-                                bundles.remove(symbolicName + "/" + version);
-                            } else {
-                                BundleState state = bundles.get(symbolicName + "/" + version);
-                                if (state == null) {
-                                    state = new BundleState();
+                            try {
+                                // update the cluster map
+                                Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                                if (type == BundleEvent.UNINSTALLED) {
+                                    bundles.remove(symbolicName + "/" + version);
+                                } else {
+                                    BundleState state = bundles.get(symbolicName + "/" + version);
+                                    if (state == null) {
+                                        state = new BundleState();
+                                    }
+                                    state.setName(name);
+                                    state.setStatus(type);
+                                    state.setLocation(bundleLocation);
+                                    bundles.put(symbolicName + "/" + version, state);
                                 }
-                                state.setName(name);
-                                state.setStatus(type);
-                                state.setLocation(bundleLocation);
-                                bundles.put(symbolicName + "/" + version, state);
+
+                                // broadcast the cluster event
+                                RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
+                                remoteBundleEvent.setSourceGroup(group);
+                                eventProducer.produce(remoteBundleEvent);
+                            } finally {
+                                Thread.currentThread().setContextClassLoader(originalClassLoader);
                             }
 
-                            // broadcast the cluster event
-                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                            remoteBundleEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteBundleEvent);
-                        } finally {
-                            Thread.currentThread().setContextClassLoader(originalClassLoader);
-                        }
-
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                        } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                    } else {
+                        LOGGER.info("CELLAR BUNDLE: sync is disabled for cluster group " + group.getName());
+                    }
                 }
             }
         }
