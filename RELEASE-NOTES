@@ -43,6 +43,8 @@
     * [KARAF-1974] - Bundle states are not correct
     * [KARAF-1975] - CellarBundleMBean is not able to display the list of bundles
     * [KARAF-1999] - Cellar LocalBundleListener raises ClassNotFoundException about BundleState
+    * [KARAF-2032] - Some Cellar bundles doesn't start after a Karaf restart
+    * [KARAF-2033] - Cellar local listeners have to check if sync is enabled
 
 ** Dependency upgrade
     * [KARAF-1720] - Upgrade to joda-time 2.1
@@ -55,7 +57,7 @@
     * [KARAF-1998] - Remove cellar sync property and check config dictionary
     * [KARAF-2001] - cluster:config-list could "filter" for one given PID
     * [KARAF-2004] - Add Cellar bundle selector support
-    * [KARAF-2021] - Log message should not be warn
+    * [KARAF-2031] - Cellar bundle should handle Bundle-Name and fallback to Bundle-SymbolicName
 
 ** New Feature
     * [KARAF-1414] - Add persistence for handler/producer/consumer status
