@@ -56,8 +56,6 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
             Group group = groupManager.findGroupByName(groupName);
             if (group == null || group.getNodes().isEmpty()) {
 
-                System.out.println("Here1");
-
                 FeatureInfo info = new FeatureInfo(feature, version);
                 Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
                 // check the existing configuration

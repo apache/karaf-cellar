@@ -54,9 +54,6 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         try {
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
-                BundleState state = new BundleState();
-                state.setStatus(event.getType());
-
                 if (event.getType() == BundleEvent.INSTALLED) {
                     LOGGER.debug("CELLAR BUNDLE: installing bundle {} from {}", event.getId(), event.getLocation());
                     installBundleFromLocation(event.getLocation());
