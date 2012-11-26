@@ -34,8 +34,11 @@ public class ListBundleCommand extends CellarCommandSupport {
     @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
     String groupName;
 
-    @Option(name = "-l", aliases = {}, description = "Show the locations", required = false, multiValued = false)
-    boolean showLoc;
+    @Option(name = "-s", aliases = {}, description = "Shows the symbolic name", required = false, multiValued = false)
+    boolean showSymbolicName;
+
+    @Option(name = "-l", aliases = {}, description = "Shows the location", required = false, multiValued = false)
+    boolean showLocation;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -57,13 +60,13 @@ public class ListBundleCommand extends CellarCommandSupport {
                 int id = 0;
                 for (String bundle : bundles.keySet()) {
                     String[] tokens = bundle.split("/");
-                    String name = null;
+                    String symbolicName = null;
                     String version = null;
                     if (tokens.length == 2) {
-                        name = tokens[0];
+                        symbolicName = tokens[0];
                         version = tokens[1];
                     } else {
-                        name = bundle;
+                        symbolicName = bundle;
                         version = "";
                     }
                     BundleState state = bundles.get(bundle);
@@ -94,10 +97,14 @@ public class ListBundleCommand extends CellarCommandSupport {
                             status = "";
                             break;
                     }
-                    if (showLoc) {
+                    if (showLocation) {
                         System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getLocation()));
                     } else {
-                        System.out.println(String.format(OUTPUT_FORMAT, id, status, name + " (" + version + ")"));
+                        if (showSymbolicName) {
+                            System.out.println(String.format(OUTPUT_FORMAT, id, status, symbolicName + " (" + version + ")"));
+                        } else {
+                            System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getName() + " (" + version + ")"));
+                        }
                     }
                     id++;
                 }
