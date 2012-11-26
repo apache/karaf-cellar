@@ -17,15 +17,19 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -165,6 +169,24 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
         }
+    }
+
+    public Boolean isSyncEnabled(Group group) {
+        Boolean result = Boolean.FALSE;
+        String groupName = group.getName();
+
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Dictionary<String, String> properties = configuration.getProperties();
+            if (properties != null) {
+                String propertyKey = groupName + Configurations.SEPARATOR + Constants.FEATURES_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
+                String propertyValue = properties.get(propertyKey);
+                result = Boolean.parseBoolean(propertyValue);
+            }
+        } catch (IOException e) {
+            LOGGER.warn("CELLAR FEATURES: error while checking if sync is enabled", e);
+        }
+        return result;
     }
 
     public ClusterManager getCollectionManager() {
