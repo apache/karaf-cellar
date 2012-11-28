@@ -110,7 +110,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         } catch (IOException e) {
             LOGGER.error("CELLAR HAZELCAST: can't set group membership for the current node", e);
         }
-        registerGroup(DEFAULT_GROUP);
     }
 
     public void destroy() {
