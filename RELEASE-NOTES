@@ -44,7 +44,7 @@
     * [KARAF-1975] - CellarBundleMBean is not able to display the list of bundles
     * [KARAF-1999] - Cellar LocalBundleListener raises ClassNotFoundException about BundleState
     * [KARAF-2032] - Some Cellar bundles doesn't start after a Karaf restart
-    * [KARAF-2033] - Cellar local listeners have to check if sync is enabled
+    * [KARAF-2038] - Node rejoin default group after a restart
 
 ** Dependency upgrade
     * [KARAF-1720] - Upgrade to joda-time 2.1
