@@ -58,6 +58,8 @@
     * [KARAF-2001] - cluster:config-list could "filter" for one given PID
     * [KARAF-2004] - Add Cellar bundle selector support
     * [KARAF-2031] - Cellar bundle should handle Bundle-Name and fallback to Bundle-SymbolicName
+    * [KARAF-2041] - Cellar LocalBundleListener should ignore framework stop event
+    * [KARAF-2042] - Cellar should blacklist org.apache.felix.fileinstall* PID by default
 
 ** New Feature
     * [KARAF-1414] - Add persistence for handler/producer/consumer status
