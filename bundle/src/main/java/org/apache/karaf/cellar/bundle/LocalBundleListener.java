@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.SynchronousBundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LocalBundleListener extends BundleSupport implements BundleListener {
+public class LocalBundleListener extends BundleSupport implements SynchronousBundleListener {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalBundleListener.class);
 
@@ -40,6 +41,12 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * @param event
      */
     public void bundleChanged(BundleEvent event) {
+
+        if (event.getBundle().getBundleId() == 0 && (event.getType() == BundleEvent.STOPPING || event.getType() == BundleEvent.STOPPED)) {
+            LOGGER.debug("CELLAR BUNDLE: remove LocalBundleListener");
+            bundleContext.removeBundleListener(this);
+            return;
+        }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -110,7 +117,7 @@ public class LocalBundleListener extends BundleSupport implements BundleListener
      * Destruction Method.
      */
     public void destroy() {
-
+        bundleContext.removeBundleListener(this);
     }
 
     public EventProducer getEventProducer() {
