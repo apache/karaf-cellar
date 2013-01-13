@@ -21,12 +21,6 @@
         <bundle start-level='31' dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
-    <feature name='hazelcast-monitor' description='Hazelcast console' version='${hazelcast.version}' resolver='(obr)'>
-        <feature version='${hazelcast.version}'>org.apache.karaf.cellar.features.hazelcast</feature>
-        <feature>war</feature>
-        <bundle>mvn:com.hazelcast/hazelcast-monitor/${hazelcast.version}/war</bundle>
-    </feature>
-
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
         <bundle start-level='32'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
