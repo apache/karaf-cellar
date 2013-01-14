@@ -81,7 +81,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                             localDictionary = new Properties();
                         localDictionary = filter(localDictionary);
                         if (!equals(distributedDictionary, localDictionary)) {
-                            conf.update(distributedDictionary);
+                            conf.update((Dictionary) distributedDictionary);
                             persistConfiguration(configurationAdmin, pid, distributedDictionary);
                         }
                     }
