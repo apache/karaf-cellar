@@ -76,11 +76,11 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             // create group stored in configuration admin
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             if (configuration != null) {
-                Dictionary<String, String> properties = configuration.getProperties();
+                Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties == null) {
-                    properties = new Hashtable<String, String>();
+                    properties = new Hashtable<String, Object>();
                 }
-                String groups = properties.get(Configurations.GROUPS_KEY);
+                String groups = (String) properties.get(Configurations.GROUPS_KEY);
                 Set<String> groupNames = convertStringToSet(groups);
                 if (groupNames != null && !groupNames.isEmpty()) {
                     for (String groupName : groupNames) {
@@ -95,11 +95,11 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             // add group membership from configuration
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             if (configuration != null) {
-                Dictionary<String, String> properties = configuration.getProperties();
+                Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties == null) {
-                    properties = new Hashtable<String, String>();
+                    properties = new Hashtable<String, Object>();
                 }
-                String groups = properties.get(Configurations.GROUPS_KEY);
+                String groups = (String) properties.get(Configurations.GROUPS_KEY);
                 Set<String> groupNames = convertStringToSet(groups);
                 if (groupNames != null && !groupNames.isEmpty()) {
                     for (String groupName : groupNames) {
@@ -186,9 +186,9 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     private void persist(Map<String, Group> groups) throws Exception {
         Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
         if (configuration != null) {
-            Dictionary<String, String> properties = configuration.getProperties();
+            Dictionary<String, Object> properties = configuration.getProperties();
             if (properties == null) {
-                properties = new Hashtable<String, String>();
+                properties = new Hashtable<String, Object>();
             }
             properties.put(Configurations.GROUPS_KEY, convertSetToString(groups.keySet()));
             configuration.update(properties);
@@ -334,8 +334,8 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         //Add group to configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
-            Dictionary<String, String> properties = configuration.getProperties();
-            String groups = properties.get(Configurations.GROUPS_KEY);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            String groups = (String) properties.get(Configurations.GROUPS_KEY);
             if (groups == null || (groups.trim().length() < 1)) {
                 groups = groupName;
             } else {
@@ -421,8 +421,8 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         //Remove group from configuration
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
-            Dictionary<String, String> properties = configuration.getProperties();
-            String groups = properties.get(Configurations.GROUPS_KEY);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            String groups = (String) properties.get(Configurations.GROUPS_KEY);
             if (groups == null || (groups.trim().length() < 1)) {
                 groups = "";
             } else if (groups.contains(groupName)) {

@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.core;
 
 import java.io.InputStream;
+import java.util.Dictionary;
 import java.util.Properties;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.easymock.EasyMock;
@@ -44,7 +45,8 @@ public class CellarSupportTest {
         props.load(is);
         is.close();
         expect(configurationAdmin.getConfiguration(EasyMock.<String>anyObject())).andReturn(configuration).anyTimes();
-        expect(configuration.getProperties()).andReturn(props).anyTimes();
+        Dictionary propsDictionary = (Dictionary) props;
+        expect(configuration.getProperties()).andReturn(propsDictionary).anyTimes();
         replay(configuration);
         replay(configurationAdmin);
     }
