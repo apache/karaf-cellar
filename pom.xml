@@ -35,7 +35,7 @@
     <name>Apache Karaf :: Cellar</name>
 
     <properties>
-        <easymock.version>2.4</easymock.version>
+        <easymock.version>3.1</easymock.version>
         <felix.bundlerepository.version>1.6.4</felix.bundlerepository.version>
         <felix.configadmin.version>1.2.8</felix.configadmin.version>
         <felix.utils.version>1.1.2</felix.utils.version>
