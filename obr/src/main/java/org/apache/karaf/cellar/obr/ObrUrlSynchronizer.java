@@ -123,9 +123,9 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
 
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary<String, String> properties = configuration.getProperties();
+            Dictionary<String, Object> properties = configuration.getProperties();
             String propertyKey = groupName + Configurations.SEPARATOR + Constants.URLS_CONFIG_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-            String propertyValue = properties.get(propertyKey);
+            String propertyValue = (String) properties.get(propertyKey);
             result = Boolean.parseBoolean(propertyValue);
         } catch (IOException e) {
             LOGGER.error("CELLAR OBR: error while checking if sync is enabled", e);

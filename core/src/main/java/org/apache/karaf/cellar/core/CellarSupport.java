@@ -51,15 +51,15 @@ public class CellarSupport {
         if (group != null) {
             try {
                 Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-                Dictionary<String, String> dictionary = configuration.getProperties();
+                Dictionary<String, Object> dictionary = configuration.getProperties();
                 if (dictionary != null) {
-                    String parent = dictionary.get(group + Configurations.SEPARATOR + Configurations.PARENT);
+                    String parent = (String) dictionary.get(group + Configurations.SEPARATOR + Configurations.PARENT);
                     if (parent != null) {
                         result = getListEntries(listType, parent, category, type);
                     }
 
                     String propertyName = group + Configurations.SEPARATOR + category + Configurations.SEPARATOR + listType + Configurations.SEPARATOR + type.name().toLowerCase();
-                    String propertyValue = dictionary.get(propertyName);
+                    String propertyValue = (String) dictionary.get(propertyName);
                     if (propertyValue != null) {
                         propertyValue = propertyValue.replaceAll("\n","");
                         String[] itemList = propertyValue.split(Configurations.DELIMETER);
