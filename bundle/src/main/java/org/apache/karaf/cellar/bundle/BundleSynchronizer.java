@@ -183,10 +183,10 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
-            Dictionary<String, String> properties = configuration.getProperties();
+            Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = properties.get(propertyKey);
+                String propertyValue = (String) properties.get(propertyKey);
                 result = Boolean.parseBoolean(propertyValue);
             }
         } catch (IOException e) {

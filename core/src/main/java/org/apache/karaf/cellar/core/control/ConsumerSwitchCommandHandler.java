@@ -65,7 +65,7 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
             if (configuration != null) {
-                Dictionary<String, String> properties = configuration.getProperties();
+                Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties != null) {
                     properties.put(Configurations.CONSUMER, switchStatus.getValue().toString());
                     configuration.update(properties);
