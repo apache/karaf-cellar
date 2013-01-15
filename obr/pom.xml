@@ -44,6 +44,7 @@
             org.apache.karaf.shell.console.completer;version="[2.3,3)",
             org.apache.karaf.management;version="[2.3,3)",
             javax.management*,
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>

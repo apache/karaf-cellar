@@ -46,6 +46,7 @@
             org.apache.karaf.cellar.features;version="${project.version}",
             org.apache.karaf.cellar.utils.ping;version="${project.version}",
             org.apache.karaf.features;version="[2.3,3)",
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>
