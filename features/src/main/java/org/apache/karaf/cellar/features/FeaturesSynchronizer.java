@@ -97,10 +97,18 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         //Check if feature is blocked.
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
                             Boolean remotelyInstalled = features.get(info);
-                            Boolean localyInstalled = isInstalled(info.getName(), info.getVersion());
+                            Boolean locallyInstalled = isInstalled(info.getName(), info.getVersion());
+
+                            // prevent NPE
+                            if (remotelyInstalled == null) {
+                                remotelyInstalled = false;
+                            }
+                            if (locallyInstalled == null) {
+                                locallyInstalled = false;
+                            }
 
                             //If feature needs to be installed locally.
-                            if (remotelyInstalled && !localyInstalled) {
+                            if (remotelyInstalled && !locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
@@ -108,7 +116,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                     LOGGER.warn("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
                                 //If feature needs to be localy uninstalled.
-                            } else if (!remotelyInstalled && localyInstalled) {
+                            } else if (!remotelyInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
