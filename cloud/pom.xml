@@ -39,6 +39,7 @@
             org.joda.time;version="${joda-time.version}",
             org.joda.time.chrono;version="${joda-time.version}",
             org.apache.karaf.cellar.core*;version="${project.version}",
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>

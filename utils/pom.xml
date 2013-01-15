@@ -37,6 +37,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             org.apache.karaf.cellar.core*;version="${project.version}",
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi*
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>

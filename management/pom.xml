@@ -45,7 +45,7 @@
             org.apache.karaf.features*;version="[2.3,3)",
             org.apache.karaf.cellar*;version="${project.version}",
             org.osgi.framework,
-            org.osgi.service.cm,
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi.service.blueprint
         </osgi.import>
         <osgi.private>

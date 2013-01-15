@@ -43,6 +43,7 @@
             org.apache.karaf.shell.console.commands;version="[2.3,3)",
             org.apache.karaf.shell.console.completer;version="[2.3,3)",
             org.apache.karaf.features*;version="[2.3,3)",
+            org.osgi.service.cm;version="[1.4,2)",
             org.osgi*,
             org.slf4j;resolution:=optional
         </osgi.import>
