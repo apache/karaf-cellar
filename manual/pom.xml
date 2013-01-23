@@ -68,6 +68,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                    <delimiters>
+                        <delimiter>${*}</delimiter>
+                    </delimiters>
+                </configuration>
                 <executions>
                     <execution>
                         <id>filter</id>
@@ -174,7 +180,7 @@
                         mvn jetty:run
                        to have a live web site
                     -->
-                    <webAppSourceDirectory>${basedir}/src/main/webapp</webAppSourceDirectory>
+                    <webAppSourceDirectory>${project.build.directory}/webapp/</webAppSourceDirectory>
 
                     <systemProperties>
                         <systemProperty>
