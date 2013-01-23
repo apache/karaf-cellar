@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 --%>
 <%@ var body: String %>
-<%@ var title: String = "Apache Karaf Cellar ${cellar.version}" %>
+<%@ var title: String = "Apache Karaf Cellar ${cellar.version} Guides" %>
 <% escapeMarkup = false %>
 <!DOCTYPE html>
 <html>
