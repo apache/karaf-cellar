@@ -26,8 +26,8 @@ import java.util.Set;
 
 public abstract class ProducerSupport extends ClusterCommandSupport {
 
-    protected static final String HEADER_FORMAT = " %-30s   %-5s";
-    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s]";
+    protected static final String HEADER_FORMAT = "   %-30s   %-5s";
+    protected static final String OUTPUT_FORMAT = "%1s [%-30s] [%-5s]";
 
     protected Object doExecute(List<String> nodeIds, SwitchStatus status) throws Exception {
 
@@ -62,12 +62,16 @@ public abstract class ProducerSupport extends ClusterCommandSupport {
         } else {
             System.out.println(String.format(HEADER_FORMAT, "Node", "Status"));
             for (Node node : results.keySet()) {
+                String local = " ";
+                if (node.equals(clusterManager.getNode())) {
+                    local = "*";
+                }
                 ProducerSwitchResult result = results.get(node);
                 String statusString = "OFF";
                 if (result.getStatus()) {
                     statusString = "ON";
                 }
-                System.out.println(String.format(OUTPUT_FORMAT, node.getId(), statusString));
+                System.out.println(String.format(OUTPUT_FORMAT, local, node.getId(), statusString));
             }
         }
         return null;
