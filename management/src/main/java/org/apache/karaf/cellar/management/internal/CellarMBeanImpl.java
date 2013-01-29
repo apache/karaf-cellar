@@ -116,9 +116,9 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Handler", "Karaf Cellar cluster event handler",
-                new String[]{ "node", "handler", "status" },
-                new String[]{ "Node hosting event handler", "Name of the event handler", "Current status of the event handler" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.STRING });
+                new String[]{ "node", "handler", "status", "local" },
+                new String[]{ "Node hosting event handler", "Name of the event handler", "Current status of the event handler", "True if the node is local" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN });
         TabularType tableType = new TabularType("Event Handlers", "Table of Karaf Cellar cluster event handlers",
                 compositeType, new String[]{ "node", "handler" });
         TabularDataSupport table = new TabularDataSupport(tableType);
@@ -130,9 +130,10 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
                 for (Map.Entry<String, String> handlerEntry : result.getHandlers().entrySet()) {
                     String handler = handlerEntry.getKey();
                     String status = handlerEntry.getValue();
+                    boolean local = (node.equals(clusterManager.getNode()));
                     CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                            new String[]{ "node", "handler", "status" },
-                            new Object[]{ node.getId(), handler, status });
+                            new String[]{ "node", "handler", "status", "local" },
+                            new Object[]{ node.getId(), handler, status, local });
                     table.put(data);
                 }
             }
@@ -180,18 +181,19 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ConsumerSwitchResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Consumer", "Karaf Cellar cluster event consumer",
-                new String[]{ "node", "status" },
-                new String[]{ "Node hosting event consumer", "Current status of the event consumer" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN });
+                new String[]{ "node", "status", "local" },
+                new String[]{ "Node hosting event consumer", "Current status of the event consumer", "True if the node is local" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
         TabularType tableType = new TabularType("Event Consumers", "Table of Karaf Cellar cluster event consumers",
                 compositeType, new String[]{ "node" });
         TabularDataSupport table = new TabularDataSupport(tableType);
 
         for (Node node : results.keySet()) {
+            boolean local = (node.equals(clusterManager.getNode()));
             ConsumerSwitchResult consumerSwitchResult = results.get(node);
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                    new String[]{ "node", "status" },
-                    new Object[]{ node.getId(), consumerSwitchResult.getStatus() });
+                    new String[]{ "node", "status", "local" },
+                    new Object[]{ node.getId(), consumerSwitchResult.getStatus(), local });
             table.put(data);
         }
 
@@ -237,18 +239,19 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ProducerSwitchResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Producer", "Karaf Cellar cluster event producer",
-                new String[]{ "node", "status" },
-                new String[]{ "Node hosting event producer", "Current status of the event producer" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN });
+                new String[]{ "node", "status", "local" },
+                new String[]{ "Node hosting event producer", "Current status of the event producer", "True if the node is local" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
         TabularType tableType = new TabularType("Event Producers", "Table of Karaf Cellar cluster event producers",
                 compositeType, new String[]{ "node" });
         TabularDataSupport table = new TabularDataSupport(tableType);
 
         for (Node node : results.keySet()) {
+            boolean local = (node.equals(clusterManager.getNode()));
             ProducerSwitchResult producerSwitchResult = results.get(node);
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                    new String[]{ "node", "status" },
-                    new Object[]{ node.getId(), producerSwitchResult.getStatus() });
+                    new String[]{ "node", "status", "local" },
+                    new Object[]{ node.getId(), producerSwitchResult.getStatus(), local });
             table.put(data);
         }
 
