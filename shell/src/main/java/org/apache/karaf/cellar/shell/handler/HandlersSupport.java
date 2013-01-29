@@ -25,8 +25,8 @@ import java.util.Set;
 
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
-    protected static final String HEADER_FORMAT = " %-30s   %-5s  %s";
-    protected static final String OUTPUT_FORMAT = "[%-30s] [%-5s]  %s";
+    protected static final String HEADER_FORMAT = "   %-30s   %-5s  %s";
+    protected static final String OUTPUT_FORMAT = "%1s [%-30s] [%-5s] %s";
 
     protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
 
@@ -63,13 +63,17 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
             System.out.println(String.format(HEADER_FORMAT, "Node", "Status", "Event Handler"));
             for (Map.Entry<Node,ManageHandlersResult> handlersResultEntry : results.entrySet()) {
                 Node node = handlersResultEntry.getKey();
+                String local = " ";
+                if (node.equals(clusterManager.getNode())) {
+                    local = "*";
+                }
                 ManageHandlersResult result = handlersResultEntry.getValue();
                 if (result != null && result.getHandlers() != null) {
 
                     for (Map.Entry<String,String>  handlerEntry: result.getHandlers().entrySet()) {
                         String handler =  handlerEntry.getKey();
                         String s = handlerEntry.getValue();
-                        System.out.println(String.format(OUTPUT_FORMAT, node.getId(), s, handler));
+                        System.out.println(String.format(OUTPUT_FORMAT, local, node.getId(), s, handler));
                     }
                 }
             }
