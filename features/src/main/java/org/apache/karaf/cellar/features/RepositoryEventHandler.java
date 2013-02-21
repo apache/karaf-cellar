@@ -63,11 +63,19 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         try {
             // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                LOGGER.debug("CELLAR FEATURES: adding repository URI {}", uri);
-                featuresService.addRepository(new URI(uri));
+                if (!isRepositoryRegisteredLocally(uri)) {
+                    LOGGER.debug("CELLAR FEATURES: adding repository URI {}", uri);
+                    featuresService.addRepository(new URI(uri));
+                } else {
+                    LOGGER.debug("CELLAR FEATURES: repository URI {} is already registered locally");
+                }
             } else {
-                LOGGER.debug("CELLAR FEATURES: removing repository URI {}", uri);
-                featuresService.removeRepository(new URI(uri));
+                if (isRepositoryRegisteredLocally(uri)) {
+                    LOGGER.debug("CELLAR FEATURES: removing repository URI {}", uri);
+                    featuresService.removeRepository(new URI(uri));
+                } else {
+                    LOGGER.debug("CELLAR FEATURES: repository URI {} is not registered locally");
+                }
             }
         } catch (Exception e) {
             LOGGER.error("CELLAR FEATURES: failed to add/remove repository URL {}", uri, e);

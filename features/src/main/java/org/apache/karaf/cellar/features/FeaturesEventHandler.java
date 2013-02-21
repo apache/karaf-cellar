@@ -70,7 +70,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
         String version = event.getVersion();
         if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
             FeatureEvent.EventType type = event.getType();
-            Boolean isInstalled = isInstalled(name, version);
+            Boolean isInstalled = isFeatureInstalledLocally(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
                     boolean noClean = event.getNoClean();
