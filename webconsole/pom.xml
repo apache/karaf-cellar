@@ -34,7 +34,12 @@
 
     <properties>
         <osgi.import>
-            org.apache.karaf.cellar.core*;version="${project.version}"
+            org.apache.karaf.cellar.core*;version="${project.version}",
+            org.apache.felix.webconsole;version="[3,5)",
+            org.json,
+            org.osgi.framework,
+            org.osgi.service.blueprint,
+            org.slf4j;resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
         <osgi.export>
@@ -105,22 +110,6 @@
                 </includes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>*</Import-Package>
-                        <Embed-Dependency>
-                            <!-- Required for JSON data transfer -->
-                            <!-- TODO: this needs to be put in a common place for reuse. -->
-                            json
-                        </Embed-Dependency>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
 </project>
