@@ -17,7 +17,6 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
-import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
@@ -97,7 +96,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         //Check if feature is blocked.
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
                             Boolean remotelyInstalled = features.get(info);
-                            Boolean locallyInstalled = isInstalled(info.getName(), info.getVersion());
+                            Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
 
                             // prevent NPE
                             if (remotelyInstalled == null) {
