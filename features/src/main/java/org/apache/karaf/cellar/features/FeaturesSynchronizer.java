@@ -17,7 +17,6 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
-import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
@@ -97,10 +96,18 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         //Check if feature is blocked.
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
                             Boolean remotelyInstalled = features.get(info);
-                            Boolean localyInstalled = isInstalled(info.getName(), info.getVersion());
+                            Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
+
+                            // prevent NPE
+                            if (remotelyInstalled == null) {
+                                remotelyInstalled = false;
+                            }
+                            if (locallyInstalled == null) {
+                                locallyInstalled = false;
+                            }
 
                             //If feature needs to be installed locally.
-                            if (remotelyInstalled && !localyInstalled) {
+                            if (remotelyInstalled && !locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
@@ -108,7 +115,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                     LOGGER.error("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
                                 //If feature needs to be localy uninstalled.
-                            } else if (!remotelyInstalled && localyInstalled) {
+                            } else if (!remotelyInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());

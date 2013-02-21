@@ -36,35 +36,47 @@ public class FeaturesSupport extends CellarSupport {
 
     protected FeaturesService featuresService;
 
-    /**
-     * Initialization method
-     */
     public void init() {
+
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
 
+
     }
 
     /**
-     * Returns true if the specified feature is installed.
+     * Check if a feature is already installed locally.
      *
-     * @param name
-     * @param version
-     * @return
+     * @param name the feature name.
+     * @param version the feature version.
+     * @return true if the feature is already installed locally, false else.
      */
-    public Boolean isInstalled(String name, String version) {
+    public Boolean isFeatureInstalledLocally(String name, String version) {
         if (featuresService != null) {
-            Feature[] features = featuresService.listInstalledFeatures();
+            Feature[] localFeatures = featuresService.listInstalledFeatures();
 
-            if (features != null && features.length > 0) {
-                for (Feature feature : features) {
-                    if (feature.getName().equals(name) && (feature.getVersion().equals(version) || version == null))
+            if (localFeatures != null && localFeatures.length > 0) {
+                for (Feature localFeature : localFeatures) {
+                    if (localFeature.getName().equals(name) && (localFeature.getVersion().equals(version) || version == null))
                         return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a features repository is already registered locally.
+     *
+     * @param uri the features repository URI.
+     * @return true if the features repository is already registered locally, false else.
+     */
+    public Boolean isRepositoryRegisteredLocally(String uri) {
+        Repository[] localRepositories = featuresService.listRepositories();
+        for (Repository localRepository : localRepositories) {
+            if (localRepository.getURI().toString().equals(uri)) {
+                return true;
             }
         }
         return false;
@@ -78,13 +90,13 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
             if (isAllowed(group, Constants.FEATURES_CATEGORY, feature.getName(), EventType.OUTBOUND)) {
-                if (featuresService != null && features != null) {
+                if (featuresService != null && clusterFeatures != null) {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     Boolean installed = featuresService.isInstalled(feature);
-                    features.put(info, installed);
+                    clusterFeatures.put(info, installed);
                 }
             } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
@@ -99,12 +111,12 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
             if (isAllowed(group, Constants.FEATURES_CATEGORY, feature.getName(), EventType.OUTBOUND)) {
-                if (featuresService != null && features != null) {
+                if (featuresService != null && clusterFeatures != null) {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                    features.put(info, force);
+                    clusterFeatures.put(info, force);
                 }
             } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
@@ -117,18 +129,18 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
         boolean found = false;
-        for (String registeredRepository : repositories) {
-            if (registeredRepository.equals(repository.getURI().toString())) {
+        for (String clusterRepository : clusterRepositories) {
+            if (clusterRepository.equals(repository.getURI().toString())) {
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            repositories.add(repository.getURI().toString());
+            clusterRepositories.add(repository.getURI().toString());
         }
     }
 
@@ -139,13 +151,14 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
-        if (featuresService != null && repositories != null) {
+        if (featuresService != null && clusterRepositories != null) {
             URI uri = repository.getURI();
-            repositories.remove(uri.toString());
+            clusterRepositories.remove(uri.toString());
         }
     }
+
     public FeaturesService getFeaturesService() {
         return featuresService;
     }
