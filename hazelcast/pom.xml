@@ -40,12 +40,7 @@
             !com.hazelcast.merge,
             com.hazelcast*,
             org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.bundle;version="${project.version}",
-            org.apache.karaf.cellar.config;version="${project.version}",
-            org.apache.karaf.cellar.dosgi;version="${project.version}",
-            org.apache.karaf.cellar.features;version="${project.version}",
             org.apache.karaf.cellar.utils.ping;version="${project.version}",
-            org.apache.karaf.features;version="[2.3,3)",
             org.osgi.service.cm;version="[1.4,2)",
             org.osgi*,
             org.slf4j;resolution:=optional
@@ -54,16 +49,6 @@
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
-        <osgi.export.service>
-            org.apache.karaf.cellar.core.ClusterManager,
-            org.apache.karaf.cellar.core.GroupManager,
-            org.apache.karaf.cellar.core.event.EventTransportFactory,
-            org.apache.karaf.cellar.core.command.ExecutionContext,
-            org.apache.karaf.cellar.core.command.CommandStore,
-            org.apache.karaf.cellar.core.event.EventHandler,
-            org.apache.karaf.cellar.core.event.EventProducer,
-            org.apache.karaf.cellar.core.event.EventProducer;type=group
-        </osgi.export.service>
         <osgi.fragment.host>hazelcast</osgi.fragment.host>
     </properties>
 

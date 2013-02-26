@@ -37,7 +37,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.hazelcast;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
             org.apache.karaf.shell.console;version="[2.3,3)",
