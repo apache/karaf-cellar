@@ -58,6 +58,12 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
             return;
         }
 
+        if (groupManager == null) {
+        	//in rare cases for example right after installation this happens!
+        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", obrUrlEvent);
+        	return;
+        }
+
         // check if the group is local
         if (!groupManager.isLocalGroup(obrUrlEvent.getSourceGroup().getName())) {
             LOGGER.debug("CELLAR OBR: node is not part of the event cluster group");

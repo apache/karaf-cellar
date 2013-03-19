@@ -21,7 +21,11 @@ import org.apache.karaf.features.RepositoryEvent.EventType;
  */
 public class RemoteRepositoryEvent extends Event {
 
-    private EventType type;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private EventType type;
 
     public RemoteRepositoryEvent(String id, EventType type) {
         super(id);
@@ -32,4 +36,15 @@ public class RemoteRepositoryEvent extends Event {
         return type;
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RemoteRepositoryEvent [type=" + type + ", id=" + id
+				+ ", sourceNode=" + sourceNode + ", sourceGroup=" + sourceGroup
+				+ ", destination=" + destination + ", force=" + force
+				+ ", postPublish=" + postPublish + "]";
+	}
+    
 }
