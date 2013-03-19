@@ -168,7 +168,7 @@ public class CellarTestSupport {
      */
     protected String getNodeIdOfChild(String name) {
         String node;
-        String nodesList = executeCommand("admin:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
+        String nodesList = executeCommand("instance:connect " + name + " cluster:node-list | grep \\\\*", COMMAND_TIMEOUT, true);
         int stop = nodesList.indexOf(']');
         node = nodesList.substring(0, stop);
         int start = node.lastIndexOf('[');

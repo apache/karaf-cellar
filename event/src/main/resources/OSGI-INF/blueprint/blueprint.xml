@@ -13,7 +13,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
   -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+<blueprint default-availability="mandatory"
+    xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+           http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
     <!-- Local Event Listener -->
     <bean id="localEventListener" class="org.apache.karaf.cellar.event.LocalEventListener" init-method="init" destroy-method="destroy">

@@ -43,7 +43,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
 
         System.err.println(executeCommand("features:addurl mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features"));
 
-        System.err.println(executeCommand("admin:list"));
+        System.err.println(executeCommand("instance:list"));
 
         System.err.println(executeCommand("cluster:node-list"));
         Node localNode = clusterManager.getNode();
@@ -77,7 +77,7 @@ public class CellarSampleDosgiGreeterTest extends CellarTestSupport {
         Thread.sleep(10000);
         Thread.sleep(10000);
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("admin:connect child2 osgi:list -t 0"));
+        System.err.println(executeCommand("instance:connect child2 osgi:list -t 0"));
         System.err.println(executeCommand("cluster:list-services"));
         greetOutput = executeCommand("dosgi-greeter:greet Hi 10");
         System.err.println(greetOutput);

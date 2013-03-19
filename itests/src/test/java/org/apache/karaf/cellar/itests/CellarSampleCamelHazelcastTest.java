@@ -42,7 +42,7 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
 
         System.err.println(executeCommand("feature:add-url mvn:org.apache.karaf.cellar.samples/camel-hazelcast-app/3.0.0-SNAPSHOT/xml/features"));
 
-        System.err.println(executeCommand("admin:list"));
+        System.err.println(executeCommand("instance:list"));
 
         System.err.println(executeCommand("cluster:node-list"));
         Node localNode = clusterManager.getNode();
@@ -69,12 +69,12 @@ public class CellarSampleCamelHazelcastTest extends CellarTestSupport {
         System.err.println(executeCommand("osgi:list"));
 
         System.err.println(executeCommand("cluster:group-list"));
-        System.err.println(executeCommand("admin:connect child2  osgi:list -t 0"));
+        System.err.println(executeCommand("instance:connect child2  osgi:list -t 0"));
 
         Thread.sleep(20000);
-        String output1 = executeCommand("admin:connect child1  log:display | grep \"Hallo Cellar\"");
+        String output1 = executeCommand("instance:connect child1  log:display | grep \"Hallo Cellar\"");
         System.err.println(output1);
-        String output2 = executeCommand("admin:connect child2  log:display | grep \"Hallo Cellar\"");
+        String output2 = executeCommand("instance:connect child2  log:display | grep \"Hallo Cellar\"");
         System.err.println(output2);
         assertTrue("Expected at least 1 lines", 1 <= countOutputEntires(output1));
         assertTrue("Expected at least 1 lines", 1 <= countOutputEntires(output2));
