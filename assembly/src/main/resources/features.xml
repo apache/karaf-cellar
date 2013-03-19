@@ -16,15 +16,28 @@
 <features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
     <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
+    
+    <feature name="cellar-core" description="Karaf clustering core" version='${project.version}' resolver='(obr)'>
+        <bundle start-level='30'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
+        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups
+        </configfile>
+        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
+        </configfile>
+    </feature>
 
     <feature name='hazelcast' description='In memory data grid' version='${hazelcast.version}' resolver='(obr)'>
+        <feature version='${project.version}'>cellar-core</feature>
+        <bundle start-level='33'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <configfile finalname="/etc/hazelcast.xml">
+            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
+        </configfile>
         <bundle start-level='31' dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
     <feature name='cellar' description='Karaf clustering' version='${project.version}' resolver='(obr)'>
         <feature version='${hazelcast.version}'>hazelcast</feature>
-        <bundle start-level='32'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
-        <bundle start-level='33'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
@@ -32,15 +45,6 @@
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
         <bundle start-level='40'>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.management/${project.version}</bundle>
-        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups
-        </configfile>
-        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
-        </configfile>
-        <configfile finalname="/etc/hazelcast.xml">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
-        </configfile>
     </feature>
 
     <feature name='cellar-obr' description='OBR support in Cellar clusters' version='${project.version}' resolver='(obr)'>
