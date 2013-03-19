@@ -13,20 +13,16 @@
  */
 package org.apache.karaf.cellar.itests;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.features.FeaturesService;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
-
-import static org.junit.Assert.assertNotNull;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
 
 @RunWith(JUnit4TestRunner.class)
 @ExamReactorStrategy(AllConfinedStagedReactorFactory.class)
@@ -34,6 +30,9 @@ public class CellarBundleTest extends CellarTestSupport {
 
     @Test
     public void testCellarBundleModule() throws Exception {
+    	FeaturesService featuresService = getOsgiService(FeaturesService.class);
+    	assertNotNull(featuresService);
+    	
         installCellar();
         Thread.sleep(DEFAULT_TIMEOUT);
         ClusterManager clusterManager = getOsgiService(ClusterManager.class);

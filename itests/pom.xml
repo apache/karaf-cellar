@@ -62,8 +62,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.openengsb.labs.paxexam.karaf</groupId>
-            <artifactId>paxexam-karaf-container</artifactId>
+            <groupId>org.apache.karaf.tooling.exam</groupId>
+            <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
+            <version>3.0.0.RC1</version>
             <scope>test</scope>
         </dependency>
 

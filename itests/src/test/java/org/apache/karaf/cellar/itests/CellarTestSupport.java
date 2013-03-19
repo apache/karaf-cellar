@@ -13,29 +13,47 @@
  */
 package org.apache.karaf.cellar.itests;
 
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
-import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
-import org.ops4j.pax.exam.MavenUtils;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.TestProbeBuilder;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.ProbeBuilder;
-import org.osgi.framework.*;
-import org.osgi.util.tracker.ServiceTracker;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFileExtend;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.keepRuntimeFolder;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
+import static org.ops4j.pax.exam.CoreOptions.maven;
 
-import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.*;
-import static org.ops4j.pax.exam.CoreOptions.maven;
+import javax.inject.Inject;
+
+import org.apache.felix.service.command.CommandProcessor;
+import org.apache.felix.service.command.CommandSession;
+import org.apache.karaf.tooling.exam.options.LogLevelOption;
+import org.ops4j.pax.exam.MavenUtils;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.TestProbeBuilder;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.ProbeBuilder;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Filter;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class CellarTestSupport {
 
@@ -90,8 +108,8 @@ public class CellarTestSupport {
      * Installs the Cellar feature
      */
     protected void installCellar() {
-        System.err.println(executeCommand("feature:url-add " + System.getProperty("cellar.feature.url")));
-        System.err.println(executeCommand("feature:url-list"));
+        System.err.println(executeCommand("feature:repo-add " + System.getProperty("cellar.feature.url")));
+        System.err.println(executeCommand("feature:repo-list"));
         System.err.println(executeCommand("feature:list"));
         executeCommand("feature:install cellar");
     }
