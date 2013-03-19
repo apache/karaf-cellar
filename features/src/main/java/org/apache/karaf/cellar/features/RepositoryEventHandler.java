@@ -45,11 +45,17 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     }
 
     public void handle(RemoteRepositoryEvent event) {
-
-        // check if the handler is ON
+    	
+    	// check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.error("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
+        }
+        
+        if (groupManager == null) {
+        	//in rare cases for example right after installation this happens!
+        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", event);
+        	return;
         }
 
         // check if the group is local
