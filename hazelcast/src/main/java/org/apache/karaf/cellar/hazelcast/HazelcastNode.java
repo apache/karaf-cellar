@@ -81,4 +81,13 @@ public class HazelcastNode implements Node {
         return id != null ? id.hashCode() : 0;
     }
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "HazelcastNode [id=" + id + ", host=" + host + ", port=" + port
+				+ "]";
+	}
+    
 }

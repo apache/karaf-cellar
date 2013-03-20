@@ -20,7 +20,12 @@ import org.apache.karaf.cellar.core.event.Event;
  */
 public class RemoteConfigurationEvent extends Event {
 
-    private int type;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private int type;
 
     public RemoteConfigurationEvent(String id) {
         super(id);
@@ -33,5 +38,18 @@ public class RemoteConfigurationEvent extends Event {
     public void setType(int type) {
         this.type = type;
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RemoteConfigurationEvent [type=" + type + ", id=" + id
+				+ ", sourceNode=" + sourceNode + ", sourceGroup=" + sourceGroup
+				+ ", destination=" + destination + ", force=" + force
+				+ ", postPublish=" + postPublish + "]";
+	}
+    
+    
 
 }
