@@ -50,7 +50,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         
         if (groupManager == null) {
         	//in rare cases for example right after installation this happens!
-        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", event);
+        	LOGGER.error("CELLAR BUNDLE: retrieved event {} while groupManager is not available yet!", event);
         	return;
         }
 

@@ -51,7 +51,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         
         if (groupManager == null) {
         	//in rare cases for example right after installation this happens!
-        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", event);
+        	LOGGER.error("CELLAR CONFIG: retrieved event {} while groupManager is not available yet!", event);
         	return;
         }
 

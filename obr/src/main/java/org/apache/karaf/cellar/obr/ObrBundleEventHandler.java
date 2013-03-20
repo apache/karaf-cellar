@@ -121,7 +121,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
 
         if (groupManager == null) {
         	//in rare cases for example right after installation this happens!
-        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", event);
+        	LOGGER.error("CELLAR OBR: retrieved event {} while groupManager is not available yet!", event);
         	return;
         }
 
