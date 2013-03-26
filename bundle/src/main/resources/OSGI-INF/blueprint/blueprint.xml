@@ -46,6 +46,7 @@
         <property name="clusterManager" ref="clusterManager"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="groupManager" ref="groupManager"/>
+        <property name="featuresService" ref="featuresService"/>
     </bean>
     <service ref="eventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
@@ -58,5 +59,6 @@
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager" />
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
+    <reference id="featuresService" interface="org.apache.karaf.features.FeaturesService"/>
 
 </blueprint>
