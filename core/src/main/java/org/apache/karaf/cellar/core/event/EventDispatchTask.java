@@ -69,13 +69,13 @@ public class EventDispatchTask<E extends Event> implements Runnable {
 
     public void run() {
         try {
-        boolean dispathced = false;
+        boolean dispatched = false;
 
-        for (long delay = 0; delay < timeout && !dispathced; delay += interval) {
+        for (long delay = 0; delay < timeout && !dispatched; delay += interval) {
             EventHandler handler = handlerRegistry.getHandler(event);
             if (handler != null) {
                 handler.handle(event);
-                dispathced = true;
+                dispatched = true;
             } else {
                 try {
                     Thread.sleep(interval);
@@ -84,7 +84,7 @@ public class EventDispatchTask<E extends Event> implements Runnable {
                 }
             }
         }
-        if (!dispathced) {
+        if (!dispatched) {
             LOGGER.warn("Failed to retrieve handler for event {}", event.getClass());
         }
         }catch(Exception ex) {
