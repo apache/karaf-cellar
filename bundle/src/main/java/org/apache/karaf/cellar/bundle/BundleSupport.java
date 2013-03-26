@@ -14,18 +14,24 @@
 package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.CellarSupport;
+import org.apache.karaf.features.BundleInfo;
+import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.service.cm.ConfigurationAdmin;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 public class BundleSupport extends CellarSupport {
 
     protected BundleContext bundleContext;
+	private FeaturesService featuresService;
 
     /**
      * Reads a {@code Dictionary} object and creates a property object out of it.
@@ -152,5 +158,35 @@ public class BundleSupport extends CellarSupport {
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
+
+	protected List<Feature> retrieveFeature(String bundleLocation) throws Exception {
+		Feature[] features = featuresService.listFeatures();
+		List<Feature> matchingFeatures = new ArrayList<Feature>();
+		for (Feature feature : features) {
+			List<BundleInfo> bundles = feature.getBundles();
+			for (BundleInfo bundleInfo : bundles) {
+				String location = bundleInfo.getLocation();
+				if (location.equalsIgnoreCase(bundleLocation)) {
+					matchingFeatures.add(feature);
+					LOGGER.debug("CELLAR BUNDLE: found a feature {} containing bundle: {}", feature.getName(), bundleLocation);
+				}
+			}
+		}
+		return matchingFeatures;
+	}
+	
+	/**
+	 * @return the featuresService
+	 */
+	public FeaturesService getFeaturesService() {
+		return featuresService;
+	}
+
+	/**
+	 * @param featuresService the featuresService to set
+	 */
+	public void setFeaturesService(FeaturesService featureService) {
+		this.featuresService = featureService;
+	}
 
 }
