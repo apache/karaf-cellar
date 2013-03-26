@@ -26,6 +26,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="eventProducer" ref="eventProducer"/>
+        <property name="featuresService" ref="featuresService"/>
     </bean>
 
     <!-- Bundle Synchronizer -->

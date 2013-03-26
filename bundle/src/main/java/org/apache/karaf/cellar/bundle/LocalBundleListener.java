@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.features.Feature;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.SynchronousBundleListener;
@@ -92,11 +93,22 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                                 bundles.put(symbolicName + "/" + version, state);
                             }
 
+                            // check the features first
+                        	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
+                        	for (Feature feature : matchingFeatures) {
+            					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
+            						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED OUTBOUND", bundleLocation);
+            						return;
+            					}
+            				}
+                            
                             // broadcast the cluster event
                             RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
                             remoteBundleEvent.setSourceGroup(group);
                             eventProducer.produce(remoteBundleEvent);
-                        } finally {
+                        } catch (Exception e) {
+                        	LOGGER.error("CELLAR BUNDLE: failed to create bundle event", e);
+						} finally {
                             Thread.currentThread().setContextClassLoader(originalClassLoader);
                         }
 

@@ -19,7 +19,6 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.features.BundleInfo;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleEvent;
@@ -28,7 +27,6 @@ import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +38,6 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     
-    private FeaturesService featureService;
-
     /**
      * Handles remote bundle events.
      *
@@ -71,10 +67,11 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
             	//check the features first
-            	List<Feature> matchingFeatures = retrieveFeature(event);
+            	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
 						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED INBOUND", event.getLocation());
+						return;
 					}
 				}
                 if (event.getType() == BundleEvent.INSTALLED) {
@@ -101,21 +98,6 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         }
     }
 
-    private List<Feature> retrieveFeature(RemoteBundleEvent event) throws Exception {
-    	Feature[] features = featureService.listFeatures();
-    	List<Feature> matchingFeatures = new ArrayList<Feature>();
-    	for (Feature feature : features) {
-			List<BundleInfo> bundles = feature.getBundles();
-			for (BundleInfo bundleInfo : bundles) {
-				String location = bundleInfo.getLocation();
-				if (location.equalsIgnoreCase(event.getLocation())) {
-					matchingFeatures.add(feature);
-				}
-			}
-		}
-		return matchingFeatures;
-	}
-    
     /**
      * Initialization Method.
      */
@@ -151,19 +133,5 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public Class<RemoteBundleEvent> getType() {
         return RemoteBundleEvent.class;
     }
-    
-	/**
-	 * @return the featureService
-	 */
-	public FeaturesService getFeatureService() {
-		return featureService;
-	}
-
-	/**
-	 * @param featureService the featureService to set
-	 */
-	public void setFeatureService(FeaturesService featureService) {
-		this.featureService = featureService;
-	}
 
 }
