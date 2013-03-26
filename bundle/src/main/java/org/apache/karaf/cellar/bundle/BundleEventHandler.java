@@ -13,12 +13,18 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.features.BundleInfo;
+import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.service.cm.Configuration;
@@ -32,6 +38,8 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public static final String SWITCH_ID = "org.apache.karaf.cellar.bundle.handler";
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
+    
+    private FeaturesService featureService;
 
     /**
      * Handles remote bundle events.
@@ -54,6 +62,13 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         try {
             //Check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
+            	//check the features first
+            	List<Feature> matchingFeatures = retrieveFeature(event);
+            	for (Feature feature : matchingFeatures) {
+					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
+						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED INBOUND", event.getLocation());
+					}
+				}
                 if (event.getType() == BundleEvent.INSTALLED) {
                     LOGGER.debug("CELLAR BUNDLE: installing bundle {} from {}", event.getId(), event.getLocation());
                     installBundleFromLocation(event.getLocation());
@@ -73,10 +88,27 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
             } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getLocation());
         } catch (BundleException e) {
             LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", e);
-        }
+        } catch (Exception e) {
+        	LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", e);
+		}
     }
 
-    /**
+    private List<Feature> retrieveFeature(RemoteBundleEvent event) throws Exception {
+    	Feature[] features = featureService.listFeatures();
+    	List<Feature> matchingFeatures = new ArrayList<Feature>();
+    	for (Feature feature : features) {
+			List<BundleInfo> bundles = feature.getBundles();
+			for (BundleInfo bundleInfo : bundles) {
+				String location = bundleInfo.getLocation();
+				if (location.equalsIgnoreCase(event.getLocation())) {
+					matchingFeatures.add(feature);
+				}
+			}
+		}
+		return matchingFeatures;
+	}
+
+	/**
      * Initialization Method.
      */
     public void init() {
@@ -111,5 +143,19 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     public Class<RemoteBundleEvent> getType() {
         return RemoteBundleEvent.class;
     }
+
+	/**
+	 * @return the featureService
+	 */
+	public FeaturesService getFeatureService() {
+		return featureService;
+	}
+
+	/**
+	 * @param featureService the featureService to set
+	 */
+	public void setFeatureService(FeaturesService featureService) {
+		this.featureService = featureService;
+	}
 
 }
