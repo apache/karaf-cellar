@@ -96,6 +96,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             Object obj = readBlob(container, ip);
             //Check if ip hasn't been updated recently.
             if (obj instanceof DateTime) {
+            	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
                 DateTime registeredTime = (DateTime) obj;
                 if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
                     members.add(ip);
@@ -103,6 +104,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                     blobStore.removeBlob(container, ip);
                 }
             } else if (obj instanceof ServiceContainer) {
+            	LOGGER.debug("CELLAR CLOUD: retrieved a ServiceContainer from blog store");
             	ServiceContainer serviceContainer = (ServiceContainer) obj;
             	DateTime registeredTime = serviceContainer.getRegisteredTime();
             	if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
@@ -128,7 +130,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void refresh() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, now);
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(),now));
     }
 
     /**
