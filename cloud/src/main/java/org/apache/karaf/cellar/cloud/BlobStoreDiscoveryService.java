@@ -102,6 +102,14 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 } else {
                     blobStore.removeBlob(container, ip);
                 }
+            } else if (obj instanceof ServiceContainer) {
+            	ServiceContainer serviceContainer = (ServiceContainer) obj;
+            	DateTime registeredTime = serviceContainer.getRegisteredTime();
+            	if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
+                    members.add(serviceContainer.getHostName());
+                } else {
+                    blobStore.removeBlob(container, ip);
+                }
             }
         }
         return members;
@@ -112,7 +120,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void signIn() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, now);
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(),now));
     }
 
     /**
@@ -225,6 +233,15 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             LOGGER.error("CELLAR CLOUD: unable to determine IP address for current node", ex);
             return null;
         }
+    }
+    
+    protected String getHostAdress() {
+    	try {
+			return InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException ex) {
+			LOGGER.error("CELLAR CLOUD: unable to determine host address for current node", ex);
+            return null;
+		}
     }
 
     public String getProvider() {
