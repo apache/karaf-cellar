@@ -119,7 +119,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             	DateTime registeredTime = serviceContainer.getRegisteredTime();
             	if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
             		LOGGER.debug("CELLAR CLOUD: adding member {} for IP {}", serviceContainer.getHostName(), ip);
-                    members.add(serviceContainer.getHostName());
+                    members.add(serviceContainer.getHostIp());
                 } else {
                 	LOGGER.debug("CELLAR CLOUD: remove container {}", ip);
                     blobStore.removeBlob(container, ip);
@@ -135,7 +135,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void signIn() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(),now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
     }
 
     /**
@@ -143,7 +143,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void refresh() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(),now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
     }
 
     /**
