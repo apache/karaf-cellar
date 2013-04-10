@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.core.discovery;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -60,16 +61,25 @@ public class DiscoveryTask implements Runnable {
                     service.refresh();
                     Set<String> discovered = service.discoverMembers();
                     members.addAll(discovered);
-                    LOGGER.debug("CELLAR DISCOVERY: Service {} found members {}", service, discovered);
+                    LOGGER.trace("CELLAR DISCOVERY: Service {} found members {}", service, discovered);
                 }
                 try {
+                	LOGGER.trace("CELLAR DISCOVERY: retrieving configuration for PID={}", Discovery.PID);
                     Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
                     Dictionary properties = configuration.getProperties();
+                    if (properties == null) {
+                    	//this is a new configuration ...
+                    	LOGGER.trace("CELLAR DISCOVERY: configuration is new!");
+                    	properties = new Hashtable();
+                    }
                     String newMemberText = CellarUtils.createStringFromSet(members, true);
                     String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
                     if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
                         properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
+                        LOGGER.trace("CELLAR DISCOVERY: adding a new member {} to configuration and updating it", newMemberText);
                         configuration.update(properties);
+                    } else {
+                    	LOGGER.trace("CELLAR DISCOVERY: found a valid member in the configuration will skip");
                     }
                 } catch (IOException e) {
                     LOGGER.error("Failed to update member list", e);
