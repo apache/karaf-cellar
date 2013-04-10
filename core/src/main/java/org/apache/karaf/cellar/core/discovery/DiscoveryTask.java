@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.core.discovery;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -52,11 +53,13 @@ public class DiscoveryTask implements Runnable {
 
         if (configurationAdmin != null) {
             Set<String> members = new LinkedHashSet<String>();
+            //TODO: some sort of timing should be included here ...
             if (discoveryServices != null && !discoveryServices.isEmpty()) {
                 for (DiscoveryService service : discoveryServices) {
                     service.refresh();
                     Set<String> discovered = service.discoverMembers();
                     members.addAll(discovered);
+                    LOGGER.debug("CELLAR DISCOVERY: Service {} found members {}", service, discovered);
                 }
                 try {
                     Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
