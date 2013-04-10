@@ -99,8 +99,10 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
                 DateTime registeredTime = (DateTime) obj;
                 if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
+                	LOGGER.debug("CELLAR CLOUD: adding member {}", ip);
                     members.add(ip);
                 } else {
+                	LOGGER.debug("CELLAR CLOUD: remove container {}", ip);
                     blobStore.removeBlob(container, ip);
                 }
             } else if (obj instanceof ServiceContainer) {
@@ -108,8 +110,10 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             	ServiceContainer serviceContainer = (ServiceContainer) obj;
             	DateTime registeredTime = serviceContainer.getRegisteredTime();
             	if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
+            		LOGGER.debug("CELLAR CLOUD: adding member {} for IP {}", serviceContainer.getHostName(), ip);
                     members.add(serviceContainer.getHostName());
                 } else {
+                	LOGGER.debug("CELLAR CLOUD: remove container {}", ip);
                     blobStore.removeBlob(container, ip);
                 }
             }
