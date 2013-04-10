@@ -40,10 +40,12 @@ public class DiscoveryTask implements Runnable {
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void init() {
+    	LOGGER.debug("CELLAR DISCOVERY: a new Task initalized");
         scheduler.scheduleWithFixedDelay(this, 10, 10, TimeUnit.SECONDS);
     }
 
     public void destroy() {
+    	LOGGER.debug("CELLAR DISCOVERY: task is beeing destroyed");
         scheduler.shutdown();
     }
 
@@ -53,7 +55,6 @@ public class DiscoveryTask implements Runnable {
 
         if (configurationAdmin != null) {
             Set<String> members = new LinkedHashSet<String>();
-            //TODO: some sort of timing should be included here ...
             if (discoveryServices != null && !discoveryServices.isEmpty()) {
                 for (DiscoveryService service : discoveryServices) {
                     service.refresh();
@@ -73,7 +74,11 @@ public class DiscoveryTask implements Runnable {
                 } catch (IOException e) {
                     LOGGER.error("Failed to update member list", e);
                 }
+            } else {
+            	LOGGER.trace("CELLAR DISCOVERY: no discovery services found ... ");
             }
+        } else {
+        	LOGGER.trace("CELLAR DISCOVERY: no config admin found");
         }
     }
 
