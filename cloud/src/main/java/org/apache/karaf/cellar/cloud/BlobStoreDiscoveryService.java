@@ -18,7 +18,9 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -91,7 +93,13 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         Set<String> members = new HashSet<String>();
         ListContainerOptions opt = new ListContainerOptions();
 
-        for (StorageMetadata md : blobStore.list(container, opt)) {
+        PageSet<? extends StorageMetadata> pageSet = blobStore.list(container, opt);
+        LOGGER.debug("CELLAR CLOUD: storage contains a pageset of size {}", pageSet.size());
+		for (StorageMetadata md : pageSet) {
+			if (md.getType() != StorageType.BLOB) {
+				//skip everything that isn't of type BLOB ...
+				continue;
+			}
             String ip = md.getName();
             Object obj = readBlob(container, ip);
             //Check if ip hasn't been updated recently.
@@ -118,6 +126,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 }
             }
         }
+        LOGGER.debug("CELLAR CLOUD: returning members {}", members);
         return members;
     }
 
