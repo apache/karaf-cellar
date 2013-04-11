@@ -26,9 +26,9 @@ public class ServiceContainer implements Serializable {
 	
 	private DateTime registeredTime;
 	private String hostName;
-
 	private String hostIp;
-
+	private String hostPort;
+	
 	public DateTime getRegisteredTime() {
 		return registeredTime;
 	}
@@ -40,10 +40,20 @@ public class ServiceContainer implements Serializable {
 	public String getHostIp() {
 		return hostIp;
 	}
+	
+	public String getHostPort() {
+		return hostPort;
+	}
 
 	public ServiceContainer(String hostName, String hostIp, DateTime registeredTime) {
+		this(hostName, hostIp, null, registeredTime);
+	}
+	
+	
+	public ServiceContainer(String hostName, String hostIp, String hostPort, DateTime registeredTime) {
 		this.registeredTime = registeredTime;
 		this.hostName = hostName;
 		this.hostIp = hostIp;
+		this.hostPort = hostPort;
 	}
 }
