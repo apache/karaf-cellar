@@ -13,15 +13,20 @@
  */
 package org.apache.karaf.cellar.hazelcast.factory;
 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 /**
  * A factory for a Hazelcast Instance, which integration with OSGi Service Registry and Config Admin.
@@ -53,7 +58,28 @@ public class HazelcastServiceFactory  {
     }
 
     public void update(Map properties) {
-        configurationManager.isUpdated(properties);
+    	if (configurationManager.isUpdated(properties)) {
+    		LOGGER.debug("CELLAR HAZELCAST: configuration update is true");
+    		Config config = instance.getConfig();
+    		TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
+    		List<String> members = tcpIpConfig.getMembers();
+    		
+    		Set<String> discoveredMemberSet = configurationManager.getDiscoveredMemberSet();
+    		discoveredMemberSet.removeAll(members);
+    		
+    		if (!discoveredMemberSet.isEmpty()) {
+    			LOGGER.debug("CELLAR HAZELCAST: will add following members {}", discoveredMemberSet);
+    			instance.getLifecycleService().pause();
+    			for (String discoveredMember : discoveredMemberSet) {
+    				tcpIpConfig.addMember(discoveredMember);
+				}
+    			if (!tcpIpConfig.isEnabled()) {
+    				LOGGER.debug("CELLAR HAZELCAST: tcpip mode needs to be enabled, will do now!");
+    				tcpIpConfig.setEnabled(true);
+    			}
+    			instance.getLifecycleService().restart();
+    		}
+    	}
     }
 
     /**
