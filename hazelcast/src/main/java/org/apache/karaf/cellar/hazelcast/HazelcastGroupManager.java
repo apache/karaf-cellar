@@ -534,6 +534,8 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * @return
      */
     protected Set<String> convertStringToSet(String string) {
+    	if (string == null)
+    		return Collections.EMPTY_SET;
         Set<String> result = new HashSet<String>();
         String[] groupNames = string.split(",");
 
