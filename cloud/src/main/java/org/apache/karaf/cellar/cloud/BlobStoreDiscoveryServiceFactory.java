@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
@@ -52,6 +53,14 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         try {
             if (properties != null) {
 
+                Properties serviceProperties = new Properties();
+
+                for (Map.Entry entry : serviceProperties.entrySet()) {
+                    Object key = entry.getKey();
+                    Object val = entry.getValue();
+                    serviceProperties.put(key, val);
+                }
+
                 BlobStoreDiscoveryService service = new BlobStoreDiscoveryService();
 
                 String provider = (String) properties.get(PROVIDER);
@@ -67,7 +76,7 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
                 service.setValidityPeriod(Integer.parseInt(validity));
                 service.init();
 
-                newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), service, properties);
+                newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), service, serviceProperties);
             }
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);

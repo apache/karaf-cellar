@@ -18,7 +18,9 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -91,19 +93,40 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         Set<String> members = new HashSet<String>();
         ListContainerOptions opt = new ListContainerOptions();
 
-        for (StorageMetadata md : blobStore.list(container, opt)) {
+        PageSet<? extends StorageMetadata> pageSet = blobStore.list(container, opt);
+        LOGGER.debug("CELLAR CLOUD: storage contains a pageset of size {}", pageSet.size());
+		for (StorageMetadata md : pageSet) {
+			if (md.getType() != StorageType.BLOB) {
+				//skip everything that isn't of type BLOB ...
+				continue;
+			}
             String ip = md.getName();
             Object obj = readBlob(container, ip);
             //Check if ip hasn't been updated recently.
             if (obj instanceof DateTime) {
+            	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
                 DateTime registeredTime = (DateTime) obj;
                 if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
+                	LOGGER.debug("CELLAR CLOUD: adding member {}", ip);
                     members.add(ip);
                 } else {
+                	LOGGER.debug("CELLAR CLOUD: remove container {}", ip);
+                    blobStore.removeBlob(container, ip);
+                }
+            } else if (obj instanceof ServiceContainer) {
+            	LOGGER.debug("CELLAR CLOUD: retrieved a ServiceContainer from blog store");
+            	ServiceContainer serviceContainer = (ServiceContainer) obj;
+            	DateTime registeredTime = serviceContainer.getRegisteredTime();
+            	if (registeredTime != null && registeredTime.plusSeconds(validityPeriod).isAfterNow()) {
+            		LOGGER.debug("CELLAR CLOUD: adding member {} for IP {}", serviceContainer.getHostName(), ip);
+                    members.add(serviceContainer.getHostIp());
+                } else {
+                	LOGGER.debug("CELLAR CLOUD: remove container {}", ip);
                     blobStore.removeBlob(container, ip);
                 }
             }
         }
+        LOGGER.debug("CELLAR CLOUD: returning members {}", members);
         return members;
     }
 
@@ -112,7 +135,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void signIn() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, now);
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
     }
 
     /**
@@ -120,7 +143,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      */
     public void refresh() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, now);
+        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
     }
 
     /**
@@ -225,6 +248,15 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             LOGGER.error("CELLAR CLOUD: unable to determine IP address for current node", ex);
             return null;
         }
+    }
+    
+    protected String getHostAdress() {
+    	try {
+			return InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException ex) {
+			LOGGER.error("CELLAR CLOUD: unable to determine host address for current node", ex);
+            return null;
+		}
     }
 
     public String getProvider() {
