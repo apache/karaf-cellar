@@ -73,6 +73,11 @@ public class HazelcastConfigurationManager {
         return updated;
     }
 
-
+	/**
+	 * @return the discoveredMemberSet
+	 */
+	public Set<String> getDiscoveredMemberSet() {
+		return discoveredMemberSet;
+	}
 
 }
