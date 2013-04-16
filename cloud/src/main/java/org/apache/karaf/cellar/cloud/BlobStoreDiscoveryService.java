@@ -102,6 +102,8 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
 			}
             String ip = md.getName();
             Object obj = readBlob(container, ip);
+            if (obj == null)
+            	continue;
             //Check if ip hasn't been updated recently.
             if (obj instanceof DateTime) {
             	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
