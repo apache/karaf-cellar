@@ -68,14 +68,6 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
                     serviceProperties.put(key, val);
                 }
 
-                Properties serviceProperties = new Properties();
-
-                for (Map.Entry entry : serviceProperties.entrySet()) {
-                    Object key = entry.getKey();
-                    Object val = entry.getValue();
-                    serviceProperties.put(key, val);
-                }
-
                 BlobStoreDiscoveryService service = new BlobStoreDiscoveryService();
 
                 String provider = (String) properties.get(PROVIDER);
