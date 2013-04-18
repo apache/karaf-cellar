@@ -39,7 +39,7 @@
         <felix.bundlerepository.version>1.6.6</felix.bundlerepository.version>
         <felix.configadmin.version>1.6.0</felix.configadmin.version>
         <felix.webconsole.version>4.0.0</felix.webconsole.version>
-        <hazelcast.version>1.9.4.8</hazelcast.version>
+        <hazelcast.version>2.5</hazelcast.version>
         <jclouds.version>1.3.2</jclouds.version>
         <jclouds.features.version>1.3.2_3</jclouds.features.version>
         <joda-time.version>2.1</joda-time.version>

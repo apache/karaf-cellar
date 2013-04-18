@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Cellar group.
  */
-public class Group implements MultiNode {
+public class Group implements MultiNode, Serializable {
 
     private String name;
     private Set<Node> nodes = new HashSet<Node>();
