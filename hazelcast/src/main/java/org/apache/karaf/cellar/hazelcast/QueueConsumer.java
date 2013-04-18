@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
+import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Dispatcher;
@@ -142,12 +143,12 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     }
 
     @Override
-    public void itemAdded(E event) {
+    public void itemAdded(ItemEvent<E> event) {
 
     }
 
     @Override
-    public void itemRemoved(E event) {
+    public void itemRemoved(ItemEvent<E> event) {
 
     }
 

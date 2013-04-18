@@ -142,21 +142,27 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     public Group createGroup(String groupName) {
-        Group group = listGroups().get(groupName);
-        if (group == null) {
-            group = new Group(groupName);
-        }
-        if (!listGroups().containsKey(groupName)) {
-            copyGroupConfiguration(Configurations.DEFAULT_GROUP_NAME, groupName);
-            listGroups().put(groupName, group);
-            try {
-                // store the group list to configuration admin
-                persist(listGroups());
-            } catch (Exception e) {
-                LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
+            Group group = listGroups().get(groupName);
+            if (group == null) {
+                group = new Group(groupName);
             }
+            if (!listGroups().containsKey(groupName)) {
+                copyGroupConfiguration(Configurations.DEFAULT_GROUP_NAME, groupName);
+                listGroups().put(groupName, group);
+                try {
+                    // store the group list to configuration admin
+                    persist(listGroups());
+                } catch (Exception e) {
+                    LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+                }
+            }
+            return group;
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-        return group;
     }
 
     public void deleteGroup(String groupName) {
@@ -373,11 +379,17 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     public void registerGroup(String groupName) {
-        Group group = listGroups().get(groupName);
-        if (group == null) {
-            group = new Group(groupName);
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(combinedClassLoader);
+            Group group = listGroups().get(groupName);
+            if (group == null) {
+                group = new Group(groupName);
+            }
+            registerGroup(group);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-        registerGroup(group);
     }
 
     public void unRegisterGroup(String groupName) {

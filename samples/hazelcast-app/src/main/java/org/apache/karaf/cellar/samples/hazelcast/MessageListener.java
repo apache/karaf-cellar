@@ -19,8 +19,8 @@ package org.apache.karaf.cellar.samples.hazelcast;
 public class MessageListener implements com.hazelcast.core.MessageListener {
 
     @Override
-    public void onMessage(Object message) {
-        System.out.println("Received message:"+message);
+    public void onMessage(com.hazelcast.core.Message message) {
+        System.out.println("Received message: " + message.getMessageObject());
     }
 
 }
