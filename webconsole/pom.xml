@@ -46,6 +46,7 @@
         <osgi.export>
             org.apache.karaf.cellar.webconsole*;version="${project.version}"
         </osgi.export>
+        <osgi.embed.dependency>json</osgi.embed.dependency>
     </properties>
 
     <dependencies>
