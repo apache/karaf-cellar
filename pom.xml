@@ -525,6 +525,7 @@
                         <Require-Bundle>${osgi.bundles}</Require-Bundle>
                         <Export-Service>${osgi.export.service}</Export-Service>
                         <Fragment-Host>${osgi.fragment.host}</Fragment-Host>
+                        <Embed-Dependency>${osgi.embed.dependency}</Embed-Dependency>
                     </instructions>
                     <supportedProjectTypes>
                         <supportedProjectType>jar</supportedProjectType>
