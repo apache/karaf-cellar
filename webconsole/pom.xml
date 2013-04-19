@@ -37,7 +37,6 @@
         <osgi.import>
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.felix.webconsole;version="[3,5)",
-            org.json,
             org.osgi.framework,
             org.osgi.service.blueprint,
             org.slf4j;resolution:=optional
