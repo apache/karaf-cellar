@@ -37,7 +37,6 @@
         <osgi.import>
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.felix.webconsole;version="[3,5)",
-            org.json,
             org.osgi.framework,
             org.osgi.service.blueprint,
             org.slf4j;resolution:=optional
@@ -46,6 +45,7 @@
         <osgi.export>
             org.apache.karaf.cellar.webconsole*;version="${project.version}"
         </osgi.export>
+        <osgi.embed.dependency>json</osgi.embed.dependency>
     </properties>
 
     <dependencies>
