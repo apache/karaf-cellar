@@ -20,7 +20,7 @@ public class MessageListener implements com.hazelcast.core.MessageListener {
 
     @Override
     public void onMessage(com.hazelcast.core.Message message) {
-        System.out.println("Received message: " + message);
+        System.out.println("Received message: " + message.getMessageObject());
     }
 
 }

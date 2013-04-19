@@ -144,12 +144,12 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     }
 
     @Override
-    public void itemAdded(ItemEvent event) {
+    public void itemAdded(ItemEvent<E> event) {
 
     }
 
     @Override
-    public void itemRemoved(ItemEvent event) {
+    public void itemRemoved(ItemEvent<E> event) {
 
     }
 
