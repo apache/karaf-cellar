@@ -37,7 +37,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.ignore>com.hazelcast.merge</osgi.ignore>
         <osgi.import>
-            !com.hazelcast.merge,
             com.hazelcast*,
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.karaf.cellar.utils.ping;version="${project.version}",
@@ -49,7 +48,6 @@
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
-        <osgi.fragment.host>com.hazelcast</osgi.fragment.host>
     </properties>
 
     <dependencies>

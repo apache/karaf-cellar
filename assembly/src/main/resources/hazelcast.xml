@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-basic.xsd"
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-2.5.xsd"
            xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <group>
         <name>cellar</name>
         <password>pass</password>
     </group>
+    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
     <network>
         <port auto-increment="true">5701</port>
+        <outbound-ports>
+            <!--
+                Allowed port range when connecting to other nodes.
+                0 or * means use system provided port.
+            -->
+            <ports>0</ports>
+        </outbound-ports>
         <join>
             <multicast enabled="true">
                 <multicast-group>224.2.2.3</multicast-group>
@@ -19,12 +27,21 @@
             <aws enabled="false">
                 <access-key>my-access-key</access-key>
                 <secret-key>my-secret-key</secret-key>
-                <region>us-east-1</region>
+                <!--optional, default is us-east-1 -->
+                <region>us-west-1</region>
+                <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+                <hostHeader>ec2.amazonaws.com</hostHeader>
+                <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
+                <security-group-name>hazelcast-sg</security-group-name>
+                <tag-key>type</tag-key>
+                <tag-value>hz-nodes</tag-value>
             </aws>
         </join>
         <interfaces enabled="false">
             <interface>10.10.1.*</interface>
         </interfaces>
+        <ssl enabled="false"/>
+        <socket-interceptor enabled="false"/>
         <symmetric-encryption enabled="false">
             <!--
                encryption algorithm such as
@@ -57,6 +74,7 @@
             <storePath>keystore</storePath>
         </asymmetric-encryption>
     </network>
+    <partition-group enabled="false"/>
     <executor-service>
         <core-pool-size>16</core-pool-size>
         <max-pool-size>64</max-pool-size>
@@ -137,15 +155,15 @@
             hz.HIGHER_HITS   ; entry with the higher hits wins.
             hz.LATEST_UPDATE ; entry with the latest update wins.
         -->
-        <merge-policy>CELLAR_MERGE_POLICY</merge-policy>
+        <merge-policy>hz.ADD_NEW_ENTRY</merge-policy>
+        <!-- <merge-policy>CELLAR_MERGE_POLICY</merge-policy> -->
     </map>
-
-
-        <!-- Cellar MERGE POLICY -->
-    	<merge-policies>
-           	<map-merge-policy name="CELLAR_MERGE_POLICY">
-            	<class-name>org.apache.karaf.cellar.hazelcast.merge.CellarMergePolicy</class-name>
-        	</map-merge-policy>
-    	</merge-policies>
-
+    <!-- Cellar MERGE POLICY -->
+    <!--
+    <merge-policies>
+        <map-merge-policy name="CELLAR_MERGE_POLICY">
+            <class-name>org.apache.karaf.cellar.hazelcast.merge.CellarMergePolicy</class-name>
+        </map-merge-policy>
+    </merge-policies>
+    -->
 </hazelcast>

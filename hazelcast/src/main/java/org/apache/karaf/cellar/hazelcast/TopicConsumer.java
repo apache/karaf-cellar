@@ -82,10 +82,6 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         }
     }
 
-    private void consume(Message<E> message) {
-        consume(message.getMessageObject());
-    }
-
     @Override
     public void start() {
         isConsuming = true;
@@ -112,7 +108,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     }
 
     public void onMessage(Message<E> message) {
-        consume(message);
+        consume(message.getMessageObject());
     }
 
     public Dispatcher getDispatcher() {
