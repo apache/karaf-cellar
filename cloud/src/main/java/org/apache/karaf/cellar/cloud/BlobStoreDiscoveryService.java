@@ -33,13 +33,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class BlobStoreDiscoveryService implements DiscoveryService {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
+    private static final String KARAF_CELLAR = "Karaf-Cellar";
+
+	private static final String APPLICATION_TYPE = "Application-Type";
+
+	private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
 
     private String provider;
     private String identity;
@@ -101,8 +106,14 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
 				continue;
 			}
             String ip = md.getName();
-            Object obj = readBlob(container, ip);
-            if (obj == null)
+            Map<String, String> userMetadata = md.getUserMetadata();
+            Object obj = null;
+            if (userMetadata.containsKey(APPLICATION_TYPE) && KARAF_CELLAR.equalsIgnoreCase(userMetadata.get(APPLICATION_TYPE))) {
+            	obj = readBlob(container, ip);
+            } else {
+            	LOGGER.debug("CELLAR CLOUD: found blob of unknown Application-Type, will be skipped!");
+            }
+            if (obj == null) 
             	continue;
             //Check if ip hasn't been updated recently.
             if (obj instanceof DateTime) {
@@ -218,6 +229,11 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 oos = new ObjectOutputStream(baos);
                 oos.writeObject(data);
                 blob.setPayload(baos.toByteArray());
+                if (blob.getMetadata().getUserMetadata() == null) {
+                	blob.getMetadata().setUserMetadata(new HashMap<String, String>());
+                }
+                Map<String, String> userMetadata = blob.getMetadata().getUserMetadata();
+                userMetadata.put(APPLICATION_TYPE, KARAF_CELLAR);
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
                 LOGGER.error("CELLAR CLOUD: failed to write blob", e);
