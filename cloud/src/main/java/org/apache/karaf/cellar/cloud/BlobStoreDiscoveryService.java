@@ -43,6 +43,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     private static final String KARAF_CELLAR = "Karaf-Cellar";
 
 	private static final String APPLICATION_TYPE = "Application-Type";
+	private static final String X_AMZ_META_APPLICATION_TYPE = "x-amz-meta-application-type";
 
 	private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
 
@@ -108,7 +109,8 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             String ip = md.getName();
             Map<String, String> userMetadata = md.getUserMetadata();
             Object obj = null;
-            if (userMetadata.containsKey(APPLICATION_TYPE) && KARAF_CELLAR.equalsIgnoreCase(userMetadata.get(APPLICATION_TYPE))) {
+            //x-amz-meta-application-type
+            if (userMetadata.containsKey(X_AMZ_META_APPLICATION_TYPE) && KARAF_CELLAR.equalsIgnoreCase(userMetadata.get(X_AMZ_META_APPLICATION_TYPE))) {
             	obj = readBlob(container, ip);
             } else {
             	LOGGER.debug("CELLAR CLOUD: found blob of unknown Application-Type, will be skipped!");
