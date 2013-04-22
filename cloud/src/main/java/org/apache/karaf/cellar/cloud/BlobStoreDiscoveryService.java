@@ -13,6 +13,17 @@
  */
 package org.apache.karaf.cellar.cloud;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -26,25 +37,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 public class BlobStoreDiscoveryService implements DiscoveryService {
 
     private static final String KARAF_CELLAR = "Karaf-Cellar";
-
-	private static final String APPLICATION_TYPE = "Application-Type";
-	private static final String X_AMZ_META_APPLICATION_TYPE = "x-amz-meta-application-type";
-
 	private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
 
     private String provider;
@@ -107,16 +102,11 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
 				continue;
 			}
             String ip = md.getName();
-            Map<String, String> userMetadata = md.getUserMetadata();
-            Object obj = null;
-            //x-amz-meta-application-type
-            if (userMetadata.containsKey(X_AMZ_META_APPLICATION_TYPE) && KARAF_CELLAR.equalsIgnoreCase(userMetadata.get(X_AMZ_META_APPLICATION_TYPE))) {
-            	obj = readBlob(container, ip);
-            } else {
-            	LOGGER.debug("CELLAR CLOUD: found blob of unknown Application-Type, will be skipped!");
-            }
-            if (obj == null) 
+            Object obj = readBlob(container, ip);
+            if (obj == null) {
+            	LOGGER.debug("CELLAR CLOUD: no valid object found skipping it");
             	continue;
+            }
             //Check if ip hasn't been updated recently.
             if (obj instanceof DateTime) {
             	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
@@ -190,9 +180,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             ois = new ObjectInputStream(is);
             result = ois.readObject();
         } catch (IOException e) {
-            LOGGER.error("CELLAR CLOUD: failed to read blob", e);
+            LOGGER.warn("CELLAR CLOUD: failed to read blob", e);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("CELLAR CLOUD: failed to read blob", e);
+            LOGGER.warn("CELLAR CLOUD: failed to read blob", e);
         } finally {
             if (ois != null) {
                 try {
@@ -231,11 +221,6 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 oos = new ObjectOutputStream(baos);
                 oos.writeObject(data);
                 blob.setPayload(baos.toByteArray());
-                if (blob.getMetadata().getUserMetadata() == null) {
-                	blob.getMetadata().setUserMetadata(new HashMap<String, String>());
-                }
-                Map<String, String> userMetadata = blob.getMetadata().getUserMetadata();
-                userMetadata.put(APPLICATION_TYPE, KARAF_CELLAR);
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
                 LOGGER.error("CELLAR CLOUD: failed to write blob", e);
