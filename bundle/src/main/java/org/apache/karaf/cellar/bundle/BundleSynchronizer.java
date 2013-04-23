@@ -30,19 +30,19 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * The BundleSynchronizer is called when Cellar starts or a node join a cluster group.
+ * The purpose is synchronize bundles local state with the states in cluster groups.
+ */
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
     private EventProducer eventProducer;
 
-    /**
-     * Registration method
-     */
     public void init() {
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -50,30 +50,32 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR BUNDLE: sync is disabled for group {}", group.getName());
+                } else LOGGER.warn("CELLAR BUNDLE: sync is disabled for cluster group {}", group.getName());
             }
         }
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
-
+        // nothing to do
     }
 
     /**
-     * Get the bundle to install from the distributed map
+     * Pull the bundles states from a cluster group.
+     *
+     * @param group the cluster group where to get the bundles states.
      */
+    @Override
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Map<String, BundleState> bundleDistributedMap = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            LOGGER.debug("CELLAR BUNDLE: pulling bundles from cluster group {}", groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                for (Map.Entry<String, BundleState> entry : bundleDistributedMap.entrySet()) {
+                for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
                     String id = entry.getKey();
                     BundleState state = entry.getValue();
 
@@ -94,7 +96,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                                 }
-                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", bundleLocation);
+                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
                         }
                     }
                 }
@@ -105,8 +107,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Publishes local bundle to the cluster.
+     * Push local bundles states to a cluster group.
+     *
+     * @param group the cluster group where to update the bundles states.
      */
+    @Override
     public void push(Group group) {
 
         // check if the producer is ON
@@ -117,7 +122,8 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
         if (group != null) {
             String groupName = group.getName();
-            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            LOGGER.debug("CELLAR BUNDLE: pushing bundles to cluster group {}", groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -133,7 +139,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     int status = bundle.getState();
                     String id = symbolicName + "/" + version;
 
-                    //Check if the pid is marked as local.
+                    // check if the pid is marked as local.
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
                         BundleState bundleState = new BundleState();
@@ -154,21 +160,21 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                         bundleState.setStatus(status);
 
-                        BundleState existingState = distributedBundles.get(id);
+                        BundleState existingState = clusterBundles.get(id);
 
                         if (existingState == null ||
                                 !existingState.getLocation().equals(bundleState.getLocation()) ||
                                 existingState.getStatus() != bundleState.getStatus()) {
                             // update the distributed map
-                            distributedBundles.put(id, bundleState);
+                            clusterBundles.put(id, bundleState);
 
                             // broadcast the event
-                            RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, bundleLocation, status);
+                            ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
                             event.setSourceGroup(group);
                             eventProducer.produce(event);
                         }
 
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -176,6 +182,12 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
     }
 
+    /**
+     * Check if the bundle sync flag is enabled for a cluster group.
+     *
+     * @param group the cluster group to check.
+     * @return true if the sync flag is enabled, false else.
+     */
     @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;

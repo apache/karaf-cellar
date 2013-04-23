@@ -14,8 +14,8 @@
 package org.apache.karaf.cellar.bundle.shell;
 
 import org.apache.karaf.cellar.bundle.BundleState;
+import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
-import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
-@Command(scope = "cluster", name = "bundle-install", description = "Install a bundle assigned to a cluster group.")
+@Command(scope = "cluster", name = "bundle-install", description = "Install a bundle in a cluster group.")
 public class InstallBundleCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -87,8 +87,8 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
                 try {
-                    // populate the cluster map
-                    Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+                    // update the cluster group
+                    Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                     BundleState state = new BundleState();
                     state.setName(name);
                     state.setLocation(url);
@@ -97,17 +97,17 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     } else {
                         state.setStatus(BundleEvent.INSTALLED);
                     }
-                    bundles.put(symbolicName + "/" + version, state);
+                    clusterBundles.put(symbolicName + "/" + version, state);
                 } finally {
                     Thread.currentThread().setContextClassLoader(originalClassLoader);
                 }
 
                 // broadcast the cluster event
-                RemoteBundleEvent event = new RemoteBundleEvent(symbolicName, version, url, BundleEvent.INSTALLED);
+                ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, url, BundleEvent.INSTALLED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {
-                System.err.println("Bundle location " + url + " is blocked outbound");
+                System.err.println("Bundle location " + url + " is blocked outbound for cluster group " + groupName);
             }
         }
 

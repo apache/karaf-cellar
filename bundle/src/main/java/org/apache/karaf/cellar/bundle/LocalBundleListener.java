@@ -15,13 +15,11 @@ package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
 import org.osgi.framework.SynchronousBundleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * LocalBundleListener is listening for local bundles changes.
+ * When a local bundle change occurs, this listener updates the cluster and broadcast a cluster bundle event.
+ */
 public class LocalBundleListener extends BundleSupport implements SynchronousBundleListener {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(LocalBundleListener.class);
@@ -37,14 +39,15 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
     private EventProducer eventProducer;
 
     /**
-     * Process {@link BundleEvent}s.
+     * Callback method called when a local bundle status change.
      *
-     * @param event
+     * @param event the local bundle event.
      */
+    @Override
     public void bundleChanged(BundleEvent event) {
 
         if (event.getBundle().getBundleId() == 0 && (event.getType() == BundleEvent.STOPPING || event.getType() == BundleEvent.STOPPED)) {
-            LOGGER.debug("CELLAR BUNDLE: remove LocalBundleListener");
+            LOGGER.debug("CELLAR BUNDLE: Karaf shutdown detected, removing Cellar LocalBundleListener");
             bundleContext.removeBundleListener(this);
             return;
         }
@@ -78,56 +81,50 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
                         try {
-                            // update the cluster map
-                            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
+                            // update bundles in the cluster group
+                            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
                             if (type == BundleEvent.UNINSTALLED) {
-                                bundles.remove(symbolicName + "/" + version);
+                                clusterBundles.remove(symbolicName + "/" + version);
                             } else {
-                                BundleState state = bundles.get(symbolicName + "/" + version);
+                                BundleState state = clusterBundles.get(symbolicName + "/" + version);
                                 if (state == null) {
                                     state = new BundleState();
                                 }
                                 state.setName(name);
                                 state.setStatus(type);
                                 state.setLocation(bundleLocation);
-                                bundles.put(symbolicName + "/" + version, state);
+                                clusterBundles.put(symbolicName + "/" + version, state);
                             }
 
                             // check the features first
                         	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
                         	for (Feature feature : matchingFeatures) {
             					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
-            						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED OUTBOUND", bundleLocation);
+            						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
             						return;
             					}
             				}
                             
                             // broadcast the cluster event
-                            RemoteBundleEvent remoteBundleEvent = new RemoteBundleEvent(symbolicName, version, bundleLocation, type);
-                            remoteBundleEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteBundleEvent);
+                            ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, type);
+                            clusterBundleEvent.setSourceGroup(group);
+                            eventProducer.produce(clusterBundleEvent);
                         } catch (Exception e) {
                         	LOGGER.error("CELLAR BUNDLE: failed to create bundle event", e);
 						} finally {
                             Thread.currentThread().setContextClassLoader(originalClassLoader);
                         }
 
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND", bundleLocation);
+                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND in cluster group {}", bundleLocation, group.getName());
                 }
             }
         }
     }
 
-    /**
-     * Initialization Method.
-     */
     public void init() {
         getBundleContext().addBundleListener(this);
     }
 
-    /**
-     * Destruction Method.
-     */
     public void destroy() {
         bundleContext.removeBundleListener(this);
     }
