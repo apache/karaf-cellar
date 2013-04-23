@@ -37,6 +37,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Discovery service that use a cloud blob store.
+ */
 public class BlobStoreDiscoveryService implements DiscoveryService {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryService.class);
@@ -51,9 +54,6 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     BlobStoreContext context;
     private BlobStore blobStore;
 
-    /**
-     * Constructor
-     */
     public BlobStoreDiscoveryService() {
         LOGGER.debug("CELLAR CLOUD: blob store discovery service initialized");
     }
@@ -82,10 +82,11 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     /**
-     * Returns a {@link Set} of Ips.
+     * Return a {@link Set} of IPs.
      *
-     * @return
+     * @return a set of IPs.
      */
+    @Override
     public Set<String> discoverMembers() {
 
         refresh();
@@ -94,7 +95,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         ListContainerOptions opt = new ListContainerOptions();
 
         PageSet<? extends StorageMetadata> pageSet = blobStore.list(container, opt);
-        LOGGER.debug("CELLAR CLOUD: storage contains a pageset of size {}", pageSet.size());
+        LOGGER.debug("CELLAR CLOUD: storage contains a page set of size {}", pageSet.size());
 		for (StorageMetadata md : pageSet) {
 			if (md.getType() != StorageType.BLOB) {
 				//skip everything that isn't of type BLOB ...
@@ -105,7 +106,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             if (obj == null)
             	continue;
             
-            //Check if ip hasn't been updated recently.
+            // check if the IP hasn't been updated recently
             if (obj instanceof DateTime) {
             	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
                 DateTime registeredTime = (DateTime) obj;
@@ -134,24 +135,27 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     /**
-     * Sign In member to the {@link DiscoveryService}.
+     * Sign in member to the {@link DiscoveryService}.
      */
+    @Override
     public void signIn() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostAddress(), getIpAddress(), now));
     }
 
     /**
      * Refresh member to the {@link DiscoveryService}.
      */
+    @Override
     public void refresh() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostAddress(), getIpAddress(), now));
     }
 
     /**
-     * Sing out member to the {@link DiscoveryService}.
+     * Sign out member to the {@link DiscoveryService}.
      */
+    @Override
     public void signOut() {
         if (blobStore.blobExists(container, ipAddress)) {
             blobStore.removeBlob(container, ipAddress);
@@ -161,11 +165,11 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     /**
-     * Reads from a {@link BlobStore}. It returns an Object.
+     * Reads from a {@link BlobStore}.
      *
-     * @param container
-     * @param blobName
-     * @return
+     * @param container the blob store container.
+     * @param blobName the blob store name.
+     * @return the Object read from the blob store.
      */
     protected Object readBlob(String container, String blobName) {
         Object result = null;
@@ -186,6 +190,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 try {
                     ois.close();
                 } catch (IOException e) {
+                    // nothing to do
                 }
             }
 
@@ -193,6 +198,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                 try {
                     is.close();
                 } catch (IOException e) {
+                    // nothing to do
                 }
             }
         }
@@ -200,6 +206,13 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         return result;
     }
 
+    /**
+     * Create a blob store.
+     *
+     * @param container the blob store container.
+     * @param name the blob store name.
+     * @param data the blob store data.
+     */
     public void createBlob(String container, String name, Object data) {
         Blob blob;
         if (blobStore != null) {
@@ -227,6 +240,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                     try {
                         oos.close();
                     } catch (IOException e) {
+                        // nothing to do
                     }
                 }
 
@@ -234,6 +248,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
                     try {
                         baos.close();
                     } catch (IOException e) {
+                        // nothing to do
                     }
                 }
             }
@@ -241,23 +256,29 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     }
 
     /**
-     * Get an instance of InetAddress for the local computer
-     * and return its string representation.
+     * Get the IP address of the local node.
+     *
+     * @return the IP address of the local node.
      */
     protected String getIpAddress() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException ex) {
-            LOGGER.error("CELLAR CLOUD: unable to determine IP address for current node", ex);
+            LOGGER.error("CELLAR CLOUD: unable to determine IP address of the local node", ex);
             return null;
         }
     }
-    
-    protected String getHostAdress() {
+
+    /**
+     * Get the hostname of the local node.
+     *
+     * @return the hostname of the local node.
+     */
+    protected String getHostAddress() {
     	try {
 			return InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException ex) {
-			LOGGER.error("CELLAR CLOUD: unable to determine host address for current node", ex);
+			LOGGER.error("CELLAR CLOUD: unable to determine host name of the local node", ex);
             return null;
 		}
     }

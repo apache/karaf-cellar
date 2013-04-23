@@ -20,8 +20,12 @@ import org.osgi.service.cm.ManagedServiceFactory;
 
 import java.util.Hashtable;
 
+/**
+ * Cloud bundle activator.
+ */
 public class Activator implements BundleActivator {
 
+    @Override
     public void start(BundleContext context) throws Exception {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(Constants.SERVICE_PID, "org.apache.karaf.cellar.cloud");
@@ -29,7 +33,9 @@ public class Activator implements BundleActivator {
         context.registerService(ManagedServiceFactory.class.getName(), blobStoreDiscoveryServiceFactory, properties);
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
+        // nothing to do
     }
 
 }
