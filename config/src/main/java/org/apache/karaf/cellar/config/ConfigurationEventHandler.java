@@ -15,7 +15,6 @@ package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -32,9 +31,9 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Configuration event handler.
+ * ConfigurationEventHandler handles received cluster configuration event.
  */
-public class ConfigurationEventHandler extends ConfigurationSupport implements EventHandler<RemoteConfigurationEvent> {
+public class ConfigurationEventHandler extends ConfigurationSupport implements EventHandler<ClusterConfigurationEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationEventHandler.class);
 
@@ -42,7 +41,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    public void handle(RemoteConfigurationEvent event) {
+    public void handle(ClusterConfigurationEvent event) {
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -52,62 +51,62 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR CONFIG: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR CONFIG: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
         Group group = event.getSourceGroup();
         String groupName = group.getName();
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
         String pid = event.getId();
 
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
 
-            Properties distributedDictionary = distributedConfigurations.get(pid);
-            Configuration conf;
+            Properties clusterDictionary = clusterConfigurations.get(pid);
+            Configuration localConfiguration;
             try {
                 // update the local configuration
-                conf = configurationAdmin.getConfiguration(pid, null);
+                localConfiguration = configurationAdmin.getConfiguration(pid, null);
                 if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                    if (conf.getProperties() != null) {
+                    if (localConfiguration.getProperties() != null) {
                         // delete the properties
-                        conf.delete();
+                        localConfiguration.delete();
                         deleteStorage(pid);
                     }
                 } else {
-                    if (distributedDictionary != null) {
-                        Dictionary localDictionary = conf.getProperties();
+                    if (clusterDictionary != null) {
+                        Dictionary localDictionary = localConfiguration.getProperties();
                         if (localDictionary == null)
                             localDictionary = new Properties();
                         localDictionary = filter(localDictionary);
-                        if (!equals(distributedDictionary, localDictionary)) {
-                            conf.update((Dictionary) distributedDictionary);
-                            persistConfiguration(configurationAdmin, pid, distributedDictionary);
+                        if (!equals(clusterDictionary, localDictionary)) {
+                            localConfiguration.update((Dictionary) clusterDictionary);
+                            persistConfiguration(configurationAdmin, pid, clusterDictionary);
                         }
                     }
                 }
             } catch (IOException ex) {
-                LOGGER.error("CELLAR CONFIG: failed to read distributed map", ex);
+                LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
             }
-        } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
+        } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
     }
 
-    /**
-     * Initialization Method.
-     */
     public void init() {
+        // nothing to do
+    }
 
+    public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Destruction Method.
+     * Get the configuration event handler switch.
+     *
+     * @return the configuration event handler switch.
      */
-    public void destroy() {
-
-    }
-
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {
@@ -126,8 +125,14 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         return eventSwitch;
     }
 
-    public Class<RemoteConfigurationEvent> getType() {
-        return RemoteConfigurationEvent.class;
+    /**
+     * Get the cluster event type.
+     *
+     * @return the cluster configuration event type.
+     */
+    @Override
+    public Class<ClusterConfigurationEvent> getType() {
+        return ClusterConfigurationEvent.class;
     }
 
 }

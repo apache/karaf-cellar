@@ -26,14 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 /**
- * Configuration synchronizer.
+ * The ConfigurationSynchronizer is called when Cellar starts or when a node joins a cluster group.
+ * The purpose is to synchronize local configurations with the configurations in the cluster groups.
  */
 public class ConfigurationSynchronizer extends ConfigurationSupport implements Synchronizer {
 
@@ -41,16 +40,10 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
     private EventProducer eventProducer;
 
-    /**
-     * Constructor
-     */
     public ConfigurationSynchronizer() {
-
+        // nothing to do
     }
 
-    /**
-     * Registration method
-     */
     public void init() {
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -63,45 +56,46 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         }
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
-
+        // nothing to do
     }
 
     /**
-     * Gets the configuration from the distributed map.
+     * Pull the configurations from a cluster group to update the local ones.
+     *
+     * @param group the cluster group where to get the configurations.
      */
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+            LOGGER.debug("CELLAR CONFIG: pulling configurations from cluster group {}", groupName);
+
+            Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                for (String pid : distributedConfigurations.keySet()) {
-                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
-                        Dictionary remoteDictionary = distributedConfigurations.get(pid);
+                for (String clusterPID : clusterConfigurations.keySet()) {
+                    if (isAllowed(group, Constants.CATEGORY, clusterPID, EventType.INBOUND)) {
+                        Dictionary clusterDictionary = clusterConfigurations.get(clusterPID);
                         try {
                             // update the local configuration if needed
-                            Configuration conf = configurationAdmin.getConfiguration(pid, null);
-                            Dictionary localDictionary = conf.getProperties();
+                            Configuration localConfiguration = configurationAdmin.getConfiguration(clusterPID, null);
+                            Dictionary localDictionary = localConfiguration.getProperties();
                             if (localDictionary == null)
                                 localDictionary = new Properties();
 
                             localDictionary = filter(localDictionary);
-                            if (!equals(localDictionary, remoteDictionary)) {
-                                conf.update(localDictionary);
-                                persistConfiguration(configurationAdmin, pid, localDictionary);
+                            if (!equals(localDictionary, clusterDictionary)) {
+                                localConfiguration.update(localDictionary);
+                                persistConfiguration(configurationAdmin, clusterPID, localDictionary);
                             }
                         } catch (IOException ex) {
-                            LOGGER.error("CELLAR CONFIG: failed to read from the distributed map", ex);
+                            LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
                         }
                     }
-                    LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED INBOUND", pid);
+                    LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterPID, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -110,7 +104,9 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Publish local configuration to the cluster.
+     * Push local configurations to a cluster group.
+     *
+     * @param group the cluster group where to update the configurations.
      */
     public void push(Group group) {
 
@@ -122,32 +118,32 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
         if (group != null) {
             String groupName = group.getName();
-            Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                Configuration[] configs;
+                Configuration[] localConfigurations;
                 try {
-                    configs = configurationAdmin.listConfigurations(null);
-                    for (Configuration conf : configs) {
+                    localConfigurations = configurationAdmin.listConfigurations(null);
+                    for (Configuration conf : localConfigurations) {
                         String pid = conf.getPid();
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
                             Dictionary localDictionary = conf.getProperties();
                             localDictionary = filter(localDictionary);
-                            // update the distributed map
-                            distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                            // update the configurations in the cluster group
+                            clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                             // broadcast the cluster event
-                            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+                            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                             event.setSourceGroup(group);
                             eventProducer.produce(event);
                         } else
-                            LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                            LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
                     }
                 } catch (IOException ex) {
-                    LOGGER.error("CELLAR CONFIG: failed to read from the distributed map (IO error)", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to update configuration (IO error)", ex);
                 } catch (InvalidSyntaxException ex) {
-                    LOGGER.error("CELLAR CONFIG: failed to read from the distributed map (invalid syntax error)", ex);
+                    LOGGER.error("CELLAR CONFIG: failed to update configuration (invalid syntax error)", ex);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -155,6 +151,13 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         }
     }
 
+    /**
+     * Check if configuration sync flag is enabled for a cluster group.
+     *
+     * @param group the cluster group.
+     * @return true if the configuration sync flag is enabled for the cluster group, false else.
+     */
+    @Override
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
