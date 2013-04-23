@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A factory for blob store discovery service.
+ */
 public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BlobStoreDiscoveryServiceFactory.class);
@@ -40,11 +43,6 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
 
     private final BundleContext bundleContext;
 
-    /**
-     * Constructor
-     *
-     * @param bundleContext
-     */
     public BlobStoreDiscoveryServiceFactory(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
@@ -94,6 +92,7 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
         }
     }
 
+    @Override
     public void deleted(String pid) {
         LOGGER.debug("CELLAR CLOUD: deleting blob store discovery service {}", pid);
         ServiceRegistration oldRegistration = registrations.remove(pid);
