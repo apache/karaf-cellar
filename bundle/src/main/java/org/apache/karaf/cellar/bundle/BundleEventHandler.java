@@ -20,7 +20,6 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
-import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.service.cm.Configuration;
@@ -28,9 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 
-public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
+/**
+ * The BundleEventHandler is responsible to process received cluster event for bundles.
+ */
+public class BundleEventHandler extends BundleSupport implements EventHandler<ClusterBundleEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
 
@@ -39,11 +40,12 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     
     /**
-     * Handles remote bundle events.
+     * Handle received bundle cluster events.
      *
-     * @param event
+     * @param event the received bundle cluster event.
      */
-    public void handle(RemoteBundleEvent event) {
+    @Override
+    public void handle(ClusterBundleEvent event) {
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -64,13 +66,13 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         }
 
         try {
-            //Check if the pid is marked as local.
+            // check if the pid is marked as local.
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
-            	//check the features first
+            	// check the features first
             	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
-						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED INBOUND", event.getLocation());
+						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup());
 						return;
 					}
 				}
@@ -98,20 +100,15 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         }
     }
 
-    /**
-     * Initialization Method.
-     */
     public void init() {
-
+        // nothing to do
     }
 
-    /**
-     * Destruction Method.
-     */
     public void destroy() {
-
+        // nothing to do
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {
@@ -130,8 +127,9 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         return eventSwitch;
     }
 
-    public Class<RemoteBundleEvent> getType() {
-        return RemoteBundleEvent.class;
+    @Override
+    public Class<ClusterBundleEvent> getType() {
+        return ClusterBundleEvent.class;
     }
 
 }

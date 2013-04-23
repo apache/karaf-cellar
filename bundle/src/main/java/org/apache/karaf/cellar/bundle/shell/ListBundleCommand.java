@@ -25,13 +25,13 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-list", description = "List the bundles assigned to a cluster group.")
+@Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group.")
 public class ListBundleCommand extends CellarCommandSupport {
 
     protected static final String HEADER_FORMAT = " %-4s   %-11s  %s";
     protected static final String OUTPUT_FORMAT = "[%-4s] [%-11s] %s";
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     @Option(name = "-s", aliases = {}, description = "Shows the symbolic name", required = false, multiValued = false)
@@ -53,12 +53,12 @@ public class ListBundleCommand extends CellarCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         try {
-            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            if (bundles != null && !bundles.isEmpty()) {
-                System.out.println(String.format("Bundles for cluster group " + groupName));
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            if (clusterBundles != null && !clusterBundles.isEmpty()) {
+                System.out.println(String.format("Bundles in cluster group " + groupName));
                 System.out.println(String.format(HEADER_FORMAT, "ID", "State", "Name"));
                 int id = 0;
-                for (String bundle : bundles.keySet()) {
+                for (String bundle : clusterBundles.keySet()) {
                     String[] tokens = bundle.split("/");
                     String symbolicName = null;
                     String version = null;
@@ -69,7 +69,7 @@ public class ListBundleCommand extends CellarCommandSupport {
                         symbolicName = bundle;
                         version = "";
                     }
-                    BundleState state = bundles.get(bundle);
+                    BundleState state = clusterBundles.get(bundle);
                     String status;
                     switch (state.getStatus()) {
                         case BundleEvent.INSTALLED:
@@ -109,7 +109,7 @@ public class ListBundleCommand extends CellarCommandSupport {
                     id++;
                 }
             } else {
-                System.err.println("No bundles found for cluster group " + groupName);
+                System.err.println("No bundle found in cluster group " + groupName);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);

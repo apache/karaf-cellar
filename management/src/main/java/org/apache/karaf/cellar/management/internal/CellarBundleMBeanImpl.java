@@ -14,15 +14,13 @@
 package org.apache.karaf.cellar.management.internal;
 
 import org.apache.karaf.cellar.bundle.BundleState;
+import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
-import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
-import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.management.CellarBundleMBean;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -124,7 +122,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        RemoteBundleEvent event = new RemoteBundleEvent(name, version, location, BundleEvent.INSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(name, version, location, BundleEvent.INSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -178,7 +176,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the event
         String[] split = key.split("/");
-        RemoteBundleEvent event = new RemoteBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -232,7 +230,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the event
         String[] split = key.split("/");
-        RemoteBundleEvent event = new RemoteBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -286,7 +284,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the event
         String[] split = key.split("/");
-        RemoteBundleEvent event = new RemoteBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
