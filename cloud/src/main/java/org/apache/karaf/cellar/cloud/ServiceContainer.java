@@ -17,13 +17,11 @@ import java.io.Serializable;
 
 import org.joda.time.DateTime;
 
+/**
+ * A cloud service container.
+ */
 public class ServiceContainer implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private DateTime registeredTime;
 	private String hostName;
 	private String hostIp;
@@ -48,12 +46,12 @@ public class ServiceContainer implements Serializable {
 	public ServiceContainer(String hostName, String hostIp, DateTime registeredTime) {
 		this(hostName, hostIp, null, registeredTime);
 	}
-	
-	
+
 	public ServiceContainer(String hostName, String hostIp, String hostPort, DateTime registeredTime) {
 		this.registeredTime = registeredTime;
 		this.hostName = hostName;
 		this.hostIp = hostIp;
 		this.hostPort = hostPort;
 	}
+
 }
