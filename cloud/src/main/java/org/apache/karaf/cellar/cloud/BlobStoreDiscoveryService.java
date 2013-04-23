@@ -139,7 +139,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     @Override
     public void signIn() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostName(), getIpAddress(), now));
     }
 
     /**
@@ -148,7 +148,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
     @Override
     public void refresh() {
         DateTime now = new DateTime();
-        createBlob(container, ipAddress, new ServiceContainer(getHostAdress(), getIpAddress(), now));
+        createBlob(container, ipAddress, new ServiceContainer(getHostName(), getIpAddress(), now));
     }
 
     /**
@@ -272,7 +272,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
      *
      * @return the hostname of the local node.
      */
-    protected String getHostAdress() {
+    protected String getHostName() {
     	try {
 			return InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException ex) {
