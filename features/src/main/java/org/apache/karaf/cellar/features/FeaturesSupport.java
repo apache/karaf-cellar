@@ -36,25 +36,20 @@ public class FeaturesSupport extends CellarSupport {
 
     protected FeaturesService featuresService;
 
-    /**
-     * Initialization method
-     */
     public void init() {
+        // nothing to do
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
-
+        // nothing to do
     }
 
     /**
-     * Returns true if the specified feature is installed.
+     * Check if a feature is installed locally.
      *
-     * @param name
-     * @param version
-     * @return
+     * @param name the feature name.
+     * @param version the feature version.
+     * @return true if the feature is installed locally, false else.
      */
     public Boolean isInstalled(String name, String version) {
         if (featuresService != null) {
@@ -71,9 +66,26 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Check if a features repository is already registered locally.
      *
-     * @param feature
+     * @param uri the features repository URI.
+     * @return true if the features repository is already registered locally, false else.
+     */
+    public Boolean isRepositoryRegisteredLocally(String uri) {
+        Repository[] localRepositories = featuresService.listRepositories();
+        for (Repository localRepository : localRepositories) {
+            if (localRepository.getURI().toString().equals(uri)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Push a {@code Feature} and its status to a cluster group.
+     *
+     * @param feature the feature to push.
+     * @param group the cluster group where to push the feature.
      */
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
@@ -91,10 +103,12 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Push a {@code Feature} and its status to a cluster group.
      * This version of the method force the bundle status, without looking the features service.
      *
-     * @param feature
+     * @param feature the feature to push.
+     * @param group the cluster group where to push the feature.
+     * @param force true to force the update of the bundle status as well, false else.
      */
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
@@ -111,39 +125,41 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushed a {@code Repository} to the distributed list of repositories.
+     * Push a features {@code Repository} to a cluster group.
      *
-     * @param repository
+     * @param repository the features repository to push.
+     * @param group the cluster group where to push.
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
         boolean found = false;
-        for (String registeredRepository : repositories) {
-            if (registeredRepository.equals(repository.getURI().toString())) {
+        for (String clusterRepository : clusterRepositories) {
+            if (clusterRepository.equals(repository.getURI().toString())) {
                 found = true;
                 break;
             }
         }
 
         if (!found) {
-            repositories.add(repository.getURI().toString());
+            clusterRepositories.add(repository.getURI().toString());
         }
     }
 
     /**
-     * Removes a {@code Repository} to the distributed list of repositories.
+     * Remove a features {@code Repository} from a cluster group.
      *
-     * @param repository
+     * @param repository the feature repository to remove.
+     * @param group the cluster group where to remove.
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
-        if (featuresService != null && repositories != null) {
+        if (featuresService != null && clusterRepositories != null) {
             URI uri = repository.getURI();
-            repositories.remove(uri.toString());
+            clusterRepositories.remove(uri.toString());
         }
     }
     public FeaturesService getFeaturesService() {
