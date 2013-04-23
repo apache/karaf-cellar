@@ -35,7 +35,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="eventProducer" ref="eventProducer"/>
     </bean>
-    <service ref="configurationListener" interface="org.osgi.service.cm.ConfigurationListener"/>
+    <service ref="localListener" interface="org.osgi.service.cm.ConfigurationListener"/>
 
     <!-- Configuration Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.config.ConfigurationSynchronizer"
