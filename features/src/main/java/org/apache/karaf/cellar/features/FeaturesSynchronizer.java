@@ -69,53 +69,55 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                //Retrieve remote feautre URLs.
-                if (repositories != null && !repositories.isEmpty()) {
-                    for (String url : repositories) {
+
+                // retrieve features URLs from cluster
+                if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
+                    for (String url : clusterRepositories) {
                         try {
-                            LOGGER.debug("CELLAR FEATURES: adding repository {}", url);
-                            featuresService.addRepository(new URI(url));
+                            if (!isRepositoryRegisteredLocally(url)) {
+                                LOGGER.debug("CELLAR FEATURES: adding repository {}", url);
+                                featuresService.addRepository(new URI(url));
+                            }
                         } catch (MalformedURLException e) {
-                            LOGGER.warn("CELLAR FEATURES: failed to add features repository {} (URL is malformed)", url, e);
+                            LOGGER.warn("CELLAR FEATURES: failed to add clusterFeatures repository {} (URL is malformed)", url, e);
                         } catch (Exception e) {
-                            LOGGER.warn("CELLAR FEATURES: failed to add features repository {}", url, e);
+                            LOGGER.warn("CELLAR FEATURES: failed to add clusterFeatures repository {}", url, e);
                         }
                     }
                 }
 
-                // retrieve remote feature status.
-                if (features != null && !features.isEmpty()) {
-                    for (FeatureInfo info : features.keySet()) {
+                // retrieve feature status in the cluster
+                if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
+                    for (FeatureInfo info : clusterFeatures.keySet()) {
                         String name = info.getName();
-                        //Check if feature is blocked.
+                        // check if feature is blocked
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
-                            Boolean remotelyInstalled = features.get(info);
+                            Boolean clusterInstalled = clusterFeatures.get(info);
                             Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
 
                             // prevent NPE
-                            if (remotelyInstalled == null) {
-                                remotelyInstalled = false;
+                            if (clusterInstalled == null) {
+                                clusterInstalled = false;
                             }
                             if (locallyInstalled == null) {
                                 locallyInstalled = false;
                             }
-
-                            //If feature needs to be installed locally.
-                            if (remotelyInstalled && !locallyInstalled) {
+                            // if feature needs to be installed locally.
+                            if (clusterInstalled && !locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
                                 } catch (Exception e) {
                                     LOGGER.warn("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
                                 }
-                                //If feature needs to be localy uninstalled.
-                            } else if (!remotelyInstalled && locallyInstalled) {
+                                // if feature has to be uninstalled locally
+                            } else if (!clusterInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
@@ -139,8 +141,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.info("CELLAR FEATURES: Pulling features from group {}.",groupName);
-            //List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -157,7 +157,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     LOGGER.warn("CELLAR FEATURES: unable to list features", e);
                 }
 
-                //Process repository list
+                // process repository list
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
                         pushRepository(repository, group);
@@ -165,7 +165,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                //Process features list
+                // process features list
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         pushFeature(feature, group);
