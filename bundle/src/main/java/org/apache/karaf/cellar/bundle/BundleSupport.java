@@ -20,13 +20,9 @@ import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Generic Cellar bundle support.
@@ -35,29 +31,6 @@ public class BundleSupport extends CellarSupport {
 
     protected BundleContext bundleContext;
 	private FeaturesService featuresService;
-
-    /**
-     * Read a {@code Dictionary} and create a {@code Properties}.
-     *
-     * @param dictionary the {@code Dictionary} to read.
-     * @return the {@code Properties} corresponding to the {@code Dictionary}.
-     */
-    /*
-    public Properties dictionaryToProperties(Dictionary dictionary) {
-        Properties properties = new Properties();
-        if (dictionary != null && dictionary.keys() != null) {
-
-            Enumeration keys = dictionary.keys();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                if (key != null && dictionary.get(key) != null) {
-                    properties.put(key, dictionary.get(key));
-                }
-            }
-        }
-        return properties;
-    }
-    */
 
     /**
      * Locally install a bundle.

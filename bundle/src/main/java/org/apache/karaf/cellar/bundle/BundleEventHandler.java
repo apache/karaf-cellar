@@ -61,7 +61,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR BUNDLE: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR BUNDLE: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
@@ -72,7 +72,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
             	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
-						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup());
+						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
 						return;
 					}
 				}
@@ -92,7 +92,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     updateBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: updating {}/{}", event.getSymbolicName(), event.getVersion());
                 }
-            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getSymbolicName());
+            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", event.getSymbolicName(), event.getSourceGroup().getName());
         } catch (BundleException e) {
             LOGGER.error("CELLAR BUNDLE: failed to install bundle {}/{}.", new Object[]{event.getSymbolicName(), event.getVersion()}, e);
         } catch (Exception e) {
@@ -108,6 +108,11 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
         // nothing to do
     }
 
+    /**
+     * Get the cluster bundle event handler switch.
+     *
+     * @return the cluster bundle event handler switch.
+     */
     @Override
     public Switch getSwitch() {
         // load the switch status from the config
@@ -127,6 +132,11 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
         return eventSwitch;
     }
 
+    /**
+     * Get the cluster event type.
+     *
+     * @return the cluster bundle event type.
+     */
     @Override
     public Class<ClusterBundleEvent> getType() {
         return ClusterBundleEvent.class;
