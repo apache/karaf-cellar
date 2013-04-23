@@ -19,10 +19,19 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
 /**
- * Abstract config command support.
+ * Abstract cluster config command support.
  */
 public abstract class ConfigCommandSupport extends CellarCommandSupport {
 
+    /**
+     * Check if a configuration is allowed.
+     *
+     * @param group the cluster group.
+     * @param category the configuration category constant.
+     * @param pid the configuration PID.
+     * @param type the cluster event type.
+     * @return true if the cluster event type is allowed, false else.
+     */
     public boolean isAllowed(Group group, String category, String pid, EventType type) {
         CellarSupport support = new CellarSupport();
         support.setClusterManager(this.clusterManager);

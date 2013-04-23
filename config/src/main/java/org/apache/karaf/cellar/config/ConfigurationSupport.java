@@ -24,7 +24,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Configuration support.
+ * Generic configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
 
@@ -35,10 +35,10 @@ public class ConfigurationSupport extends CellarSupport {
     protected File storage;
 
     /**
-     * Reads a {@code Dictionary} object and creates a property object out of it.
+     * Read a {@code Dictionary} and create a corresponding {@code Properties}.
      *
-     * @param dictionary
-     * @return
+     * @param dictionary the source dictionary.
+     * @return the corresponding properties.
      */
     public Properties dictionaryToProperties(Dictionary dictionary) {
         Properties properties = new Properties();
@@ -59,8 +59,8 @@ public class ConfigurationSupport extends CellarSupport {
     /**
      * Returns true if dictionaries are equal.
      *
-     * @param source the first dictionary
-     * @param target the second dictionary
+     * @param source the source dictionary.
+     * @param target the target dictionary.
      * @return true if the two dictionaries are equal, false else.
      */
     protected boolean equals(Dictionary source, Dictionary target) {
@@ -98,7 +98,6 @@ public class ConfigurationSupport extends CellarSupport {
      * @param dictionary the source dictionary.
      * @return the filtered dictionary
      */
-
     public Dictionary filter(Dictionary dictionary) {
         Dictionary result = new Properties();
         if (dictionary != null) {
@@ -115,10 +114,10 @@ public class ConfigurationSupport extends CellarSupport {
     }
 
     /**
-     * Returns true if property is Filtered.
+     * Check if a property is in the default excluded list.
      *
-     * @param propertyName
-     * @return
+     * @param propertyName the property name to check.
+     * @return true is the property is excluded, false else.
      */
     public boolean isExcludedProperty(String propertyName) {
         for (int i = 0; i < EXCLUDED_PROPERTIES.length; i++) {
@@ -131,8 +130,10 @@ public class ConfigurationSupport extends CellarSupport {
     /**
      * Persist a configuration to a storage.
      *
-     * @param pid
-     * @throws Exception
+     * @param admin the configuration admin service.
+     * @param pid the configuration PID to store.
+     * @param props the properties to store, linked to the configuration PID.
+     * @throws Exception in case of store failure.
      */
     protected void persistConfiguration(ConfigurationAdmin admin, String pid, Dictionary props) {
         try {
@@ -188,6 +189,11 @@ public class ConfigurationSupport extends CellarSupport {
         }
     }
 
+    /**
+     * Delete the storage of a configuration.
+     *
+     * @param pid the configuration PID to delete.
+     */
     protected void deleteStorage(String pid) {
         File cfgFile = new File(storage, pid + ".cfg");
         cfgFile.delete();

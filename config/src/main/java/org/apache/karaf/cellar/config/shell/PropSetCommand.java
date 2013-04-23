@@ -13,8 +13,8 @@
  */
 package org.apache.karaf.cellar.config.shell;
 
+import org.apache.karaf.cellar.config.ClusterConfigurationEvent;
 import org.apache.karaf.cellar.config.Constants;
-import org.apache.karaf.cellar.config.RemoteConfigurationEvent;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -26,7 +26,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-propset", description = "Sets the a property value for a configuration PID assigned to a cluster group")
+@Command(scope = "cluster", name = "config-propset", description = "Set a property value for a configuration in a cluster group")
 public class PropSetCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -60,26 +60,26 @@ public class PropSetCommand extends ConfigCommandSupport {
 
         // check if the config pid is allowed
         if (!isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-            System.err.println("Configuration PID " + pid + " is blocked outbound");
+            System.err.println("Configuration PID " + pid + " is blocked outbound for cluster group " + groupName);
             return null;
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (distributedConfigurations != null) {
-            // update the distributed configuration
-            Properties properties = distributedConfigurations.get(pid);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (clusterConfigurations != null) {
+            // update the configurations in the cluster group
+            Properties properties = clusterConfigurations.get(pid);
             if (properties == null) {
                 properties = new Properties();
             }
             properties.put(key, value);
-            distributedConfigurations.put(pid, properties);
+            clusterConfigurations.put(pid, properties);
 
             // broadcast the cluster event
-            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
-            System.out.println("Configuration distributed map not found for cluster group " + groupName);
+            System.out.println("No configuration found in cluster group " + groupName);
         }
         return null;
     }

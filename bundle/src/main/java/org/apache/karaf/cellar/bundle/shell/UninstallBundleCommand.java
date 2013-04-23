@@ -27,7 +27,7 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle from a cluster group.")
+@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle from a cluster group")
 public class UninstallBundleCommand extends BundleCommandSupport {
 
     private EventProducer eventProducer;

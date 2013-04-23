@@ -15,22 +15,20 @@ package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationEvent;
 import org.osgi.service.cm.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
- * Local configuration listener.
+ * LocalConfigurationListener is listening for local configuration changes.
+ * When a local configuration change occurs, this listener updates the cluster group and broadcasts a cluster config event.
  */
 public class LocalConfigurationListener extends ConfigurationSupport implements ConfigurationListener {
 
@@ -39,11 +37,11 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
     private EventProducer eventProducer;
 
     /**
-     * Handle local configuration events.
-     * If the event is a pending event stop it. Else broadcast it to the cluster.
+     * Callback method called when a local configuration changes.
      *
-     * @param event
+     * @param event the local configuration event.
      */
+    @Override
     public void configurationEvent(ConfigurationEvent event) {
 
         // check if the producer is ON
@@ -72,56 +70,47 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                 // check if the pid is allowed for outbound.
                 if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
 
-                    // update the distributed map if needed
-                    Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
+                    Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group.getName());
 
-                    // broadcast the cluster event
                     try {
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                            // update the distributed map
-                            distributedConfigurations.remove(pid);
+                            // update the configurations in the cluster group
+                            clusterConfigurations.remove(pid);
                             // broadcast the cluster event
-                            RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
-                            remoteConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
-                            remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
-                            remoteConfigurationEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteConfigurationEvent);
+                            ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
+                            clusterConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
+                            clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
+                            clusterConfigurationEvent.setSourceGroup(group);
+                            eventProducer.produce(clusterConfigurationEvent);
                         } else {
                             localDictionary = filter(localDictionary);
 
-                            Properties distributedDictionary = distributedConfigurations.get(pid);
+                            Properties distributedDictionary = clusterConfigurations.get(pid);
 
                             if (!equals(localDictionary, distributedDictionary)) {
-                                // update the distributed map
-                                distributedConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                // update the configurations in the cluster group
+                                clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                                 // broadcast the cluster event
-                                RemoteConfigurationEvent remoteConfigurationEvent = new RemoteConfigurationEvent(pid);
-                                remoteConfigurationEvent.setSourceGroup(group);
-                                remoteConfigurationEvent.setSourceNode(clusterManager.getNode());
-                                eventProducer.produce(remoteConfigurationEvent);
+                                ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
+                                clusterConfigurationEvent.setSourceGroup(group);
+                                clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(clusterConfigurationEvent);
                             }
                         }
                     } catch (Exception e) {
-                        LOGGER.error("CELLAR CONFIG: failed to push configuration with PID {} to the distributed map", pid, e);
+                        LOGGER.error("CELLAR CONFIG: failed to update configuration with PID {} in the cluster group {}", pid, group.getName(), e);
                     }
-                } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked as BLOCKED OUTBOUND", pid);
+                } else LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, group.getName());
             }
         }
     }
 
-
-    /**
-     * Initialization Method.
-     */
     public void init() {
-
+        // nothing to do
     }
 
-    /**
-     * Destruction Method.
-     */
     public void destroy() {
-
+        // nothing to do
     }
 
     public EventProducer getEventProducer() {

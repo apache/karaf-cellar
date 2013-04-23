@@ -30,7 +30,7 @@ import java.util.Set;
 
 /**
  * LocalBundleListener is listening for local bundles changes.
- * When a local bundle change occurs, this listener updates the cluster and broadcast a cluster bundle event.
+ * When a local bundle change occurs, this listener updates the cluster and broadcasts a cluster bundle event.
  */
 public class LocalBundleListener extends BundleSupport implements SynchronousBundleListener {
 

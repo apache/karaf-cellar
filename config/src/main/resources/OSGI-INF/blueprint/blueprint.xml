@@ -28,7 +28,7 @@
            ">
 
     <!-- Local Configuration Listener -->
-    <bean id="configurationListener" class="org.apache.karaf.cellar.config.LocalConfigurationListener" init-method="init"
+    <bean id="localListener" class="org.apache.karaf.cellar.config.LocalConfigurationListener" init-method="init"
           destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>

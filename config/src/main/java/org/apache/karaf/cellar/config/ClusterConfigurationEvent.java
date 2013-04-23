@@ -16,18 +16,13 @@ package org.apache.karaf.cellar.config;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
- * Remote configuration event.
+ * Cluster configuration event.
  */
-public class RemoteConfigurationEvent extends Event {
+public class ClusterConfigurationEvent extends Event {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private int type;
 
-    public RemoteConfigurationEvent(String id) {
+    public ClusterConfigurationEvent(String id) {
         super(id);
     }
 
@@ -39,17 +34,12 @@ public class RemoteConfigurationEvent extends Event {
         this.type = type;
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "RemoteConfigurationEvent [type=" + type + ", id=" + id
+		return "ClusterConfigurationEvent [type=" + type + ", id=" + id
 				+ ", sourceNode=" + sourceNode + ", sourceGroup=" + sourceGroup
 				+ ", destination=" + destination + ", force=" + force
 				+ ", postPublish=" + postPublish + "]";
 	}
-    
-    
 
 }
