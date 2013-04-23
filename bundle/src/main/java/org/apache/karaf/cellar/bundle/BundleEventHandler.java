@@ -22,14 +22,16 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
-import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BundleEventHandler extends BundleSupport implements EventHandler<RemoteBundleEvent> {
+/**
+ * This class handles the received cluster bundle event.
+ */
+public class BundleEventHandler extends BundleSupport implements EventHandler<ClusterBundleEvent> {
 
     static final Logger LOGGER = LoggerFactory.getLogger(BundleEventHandler.class);
 
@@ -38,11 +40,12 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
     
     /**
-     * Handles remote bundle events.
+     * Handle a received cluster bundle event.
      *
-     * @param event
+     * @param event the received cluster bundle event.
      */
-    public void handle(RemoteBundleEvent event) {
+    @Override
+    public void handle(ClusterBundleEvent event) {
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
@@ -56,13 +59,13 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         }
 
         try {
-            //Check if the pid is marked as local.
+            // check if the cluster bundle event is allowed inbound
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {
-            	//check the features first
+            	// check the features first
             	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
-						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in a feature marked as BLOCKED INBOUND", event.getLocation());
+						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED INBOUND in cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
 						return;
 					}
 				}
@@ -82,7 +85,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
                     LOGGER.debug("CELLAR BUNDLE: updating bundle {}/{}", event.getSymbolicName(), event.getVersion());
                     updateBundle(event.getSymbolicName(), event.getVersion());
                 }
-            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND", event.getLocation());
+            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND in cluster group {}", event.getLocation(), event.getSourceGroup().getName());
         } catch (BundleException e) {
             LOGGER.error("CELLAR BUNDLE: failed to handle bundle event", e);
         } catch (Exception e) {
@@ -90,20 +93,20 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         }
     }
 
-    /**
-     * Initialization Method.
-     */
     public void init() {
+        // nothing to do
+    }
 
+    public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Destruction Method.
+     * Get the current handler switch.
+     *
+     * @return the bundle event handler switch.
      */
-    public void destroy() {
-
-    }
-
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {
@@ -122,8 +125,14 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Re
         return eventSwitch;
     }
 
-    public Class<RemoteBundleEvent> getType() {
-        return RemoteBundleEvent.class;
+    /**
+     * Get the cluster event type handled by this handler.
+     *
+     * @return the cluster bundle event managed by this handler.
+     */
+    @Override
+    public Class<ClusterBundleEvent> getType() {
+        return ClusterBundleEvent.class;
     }
     
 }

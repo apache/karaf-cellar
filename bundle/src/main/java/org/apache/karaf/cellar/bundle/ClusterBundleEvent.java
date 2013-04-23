@@ -15,14 +15,17 @@ package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.event.Event;
 
-public class RemoteBundleEvent extends Event {
+/**
+ * Cluster bundle event.
+ */
+public class ClusterBundleEvent extends Event {
 
     private String symbolicName;
     private String version;
     private String location;
     private int type;
 
-    public RemoteBundleEvent(String symbolicName, String version, String location, int type) {
+    public ClusterBundleEvent(String symbolicName, String version, String location, int type) {
         super(symbolicName + "/" + version);
         this.symbolicName = symbolicName;
         this.version = version;

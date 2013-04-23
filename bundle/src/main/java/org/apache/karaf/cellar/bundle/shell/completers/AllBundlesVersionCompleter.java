@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 import java.util.List;
 
 /**
- * Completer on all bundle version..
+ * Completer on bundles version.
  */
 public class AllBundlesVersionCompleter implements Completer {
 

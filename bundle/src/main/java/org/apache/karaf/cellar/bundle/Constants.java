@@ -13,6 +13,9 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+/**
+ * Cellar bundle support constants.
+ */
 public class Constants {
 
     public static final String CATEGORY = "bundle";

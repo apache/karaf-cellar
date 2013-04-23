@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 import java.util.List;
 
 /**
- * Completer on all bundle symbolic name.
+ * Completer on bundles symbolic name.
  */
 public class AllBundlesNameCompleter implements Completer {
     

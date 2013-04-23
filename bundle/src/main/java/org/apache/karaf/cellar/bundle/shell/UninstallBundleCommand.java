@@ -13,23 +13,21 @@
  */
 package org.apache.karaf.cellar.bundle.shell;
 
-import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.cellar.bundle.BundleState;
+import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
-import org.apache.karaf.cellar.bundle.RemoteBundleEvent;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle assigned to a cluster group.")
+@Command(scope = "cluster", name = "bundle-uninstall", description = "Uninstall a bundle from a cluster group.")
 public class UninstallBundleCommand extends BundleCommandSupport {
 
     private EventProducer eventProducer;
@@ -49,23 +47,23 @@ public class UninstallBundleCommand extends BundleCommandSupport {
             return null;
         }
 
-        // update the cluster map
+        // update the bundle in the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         String location;
         String key = null;
         try {
-            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            key = selector(distributedBundles);
+            key = selector(clusterBundles);
 
             if (key == null) {
                 System.err.println("Bundle " + key + " not found in cluster group " + groupName);
                 return null;
             }
 
-            BundleState state = distributedBundles.get(key);
+            BundleState state = clusterBundles.get(key);
             if (state == null) {
                 System.err.println("Bundle " + key + " not found in cluster group " + groupName);
                 return null;
@@ -82,14 +80,14 @@ public class UninstallBundleCommand extends BundleCommandSupport {
                 return null;
             }
 
-            distributedBundles.remove(key);
+            clusterBundles.remove(key);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        RemoteBundleEvent event = new RemoteBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 
