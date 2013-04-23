@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The BundleSynchronizer is called when Cellar starts or a node join a cluster group.
- * The purpose is synchronize bundles local state with the states in cluster groups.
+ * The BundleSynchronizer is called when Cellar starts or a node joins a cluster group.
+ * The purpose is to synchronize bundles local state with the states in the cluster groups.
  */
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 

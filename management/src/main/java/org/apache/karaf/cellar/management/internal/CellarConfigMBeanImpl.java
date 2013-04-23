@@ -13,8 +13,8 @@
  */
 package org.apache.karaf.cellar.management.internal;
 
+import org.apache.karaf.cellar.config.ClusterConfigurationEvent;
 import org.apache.karaf.cellar.config.Constants;
-import org.apache.karaf.cellar.config.RemoteConfigurationEvent;
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -86,7 +86,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             Properties properties = distributedConfigurations.remove(pid);
 
             // broadcast the cluster event
-            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             event.setType(ConfigurationEvent.CM_DELETED);
             eventProducer.produce(event);
@@ -153,7 +153,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             distributedConfigurations.put(pid, properties);
 
             // broadcast the cluster event
-            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
@@ -200,7 +200,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             distributedConfigurations.put(pid, properties);
 
             // broadcast the cluster event
-            RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
@@ -237,7 +237,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
                 distributedDictionary.remove(key);
                 distributedConfigurations.put(pid, distributedDictionary);
                 // broadcast the cluster event
-                RemoteConfigurationEvent event = new RemoteConfigurationEvent(pid);
+                ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }

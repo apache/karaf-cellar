@@ -27,7 +27,7 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-stop", description = "Stop a bundle in a cluster group.")
+@Command(scope = "cluster", name = "bundle-stop", description = "Stop a bundle in a cluster group")
 public class StopBundleCommand extends BundleCommandSupport {
     private EventProducer eventProducer;
 

@@ -18,7 +18,7 @@
            http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
     <!-- Local Bundle Listener -->
-    <bean id="localBundleListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init"
+    <bean id="localListener" class="org.apache.karaf.cellar.bundle.LocalBundleListener" init-method="init"
           destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
