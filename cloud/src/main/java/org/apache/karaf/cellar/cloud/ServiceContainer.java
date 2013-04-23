@@ -46,8 +46,7 @@ public class ServiceContainer implements Serializable {
 	public ServiceContainer(String hostName, String hostIp, DateTime registeredTime) {
 		this(hostName, hostIp, null, registeredTime);
 	}
-	
-	
+
 	public ServiceContainer(String hostName, String hostIp, String hostPort, DateTime registeredTime) {
 		this.registeredTime = registeredTime;
 		this.hostName = hostName;
