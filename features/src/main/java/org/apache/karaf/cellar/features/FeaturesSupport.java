@@ -37,12 +37,11 @@ public class FeaturesSupport extends CellarSupport {
     protected FeaturesService featuresService;
 
     public void init() {
-
+        // nothing to do
     }
 
     public void destroy() {
-
-
+        // nothing to do
     }
 
     /**
@@ -83,9 +82,10 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Push a {@code Feature} and its status to a cluster group.
      *
-     * @param feature
+     * @param feature the feature to push to the cluster group.
+     * @param group the cluster group where to push the feature.
      */
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
@@ -103,10 +103,12 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Push a {@code Feature} and its status to a cluster group.
      * This version of the method force the bundle status, without looking the features service.
      *
-     * @param feature
+     * @param feature the feature to push to the cluster group.
+     * @param group the cluster group where to push the feature.
+     * @param force true to force the bundle status as well, false else.
      */
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
@@ -123,9 +125,10 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushed a {@code Repository} to the distributed list of repositories.
+     * Push a {@code Repository} to a cluster group.
      *
-     * @param repository
+     * @param repository the features repository to push.
+     * @param group the cluster group where to push.
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
@@ -145,9 +148,10 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Removes a {@code Repository} to the distributed list of repositories.
+     * Remove a {@code Repository} from a cluster group.
      *
-     * @param repository
+     * @param repository the features repository to remove from the cluster group.
+     * @param group the cluster group where to remove from.
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();

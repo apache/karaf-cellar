@@ -13,13 +13,11 @@
  */
 package org.apache.karaf.cellar.features;
 
-import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
-import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -40,9 +38,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
 
-    /**
-     * Initialization method
-     */
     public void init() {
         super.init();
         Set<Group> groups = groupManager.listLocalGroups();
@@ -56,15 +51,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
         super.destroy();
     }
 
     /**
-     * Pulls the features from the cluster.
+     * Get and update local features depending of the status in a cluster group.
+     *
+     * @param group the cluster group where to retrieve.
      */
     public void pull(Group group) {
         if (group != null) {
@@ -76,7 +70,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                // retrieve features URLs from cluster
+                // get features URLs from the cluster group
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
                     for (String url : clusterRepositories) {
                         try {
@@ -92,7 +86,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                // retrieve feature status in the cluster
+                // get features status from the cluster group
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
                     for (FeatureInfo info : clusterFeatures.keySet()) {
                         String name = info.getName();
@@ -108,7 +102,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             if (locallyInstalled == null) {
                                 locallyInstalled = false;
                             }
-                            // if feature needs to be installed locally.
+                            // if feature has to be installed locally
                             if (clusterInstalled && !locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
@@ -135,7 +129,9 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     }
 
     /**
-     * Push features to the cluster.
+     * Push local features status to a cluster group.
+     *
+     * @param group the cluster group where to push.
      */
     public void push(Group group) {
         if (group != null) {
@@ -157,7 +153,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     LOGGER.warn("CELLAR FEATURES: unable to list features", e);
                 }
 
-                // process repository list
+                // push the local features repositories to the cluster group
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
                         pushRepository(repository, group);
@@ -165,7 +161,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                // process features list
+                // push the local features status to the cluster group
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         pushFeature(feature, group);
@@ -178,6 +174,12 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
     }
 
+    /**
+     * Check if the features synchronization is enabled for a cluster group.
+     *
+     * @param group the cluster group.
+     * @return true if sync is enabled for the cluster group, false else.
+     */
     public Boolean isSyncEnabled(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
@@ -194,22 +196,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.warn("CELLAR FEATURES: error while checking if sync is enabled", e);
         }
         return result;
-    }
-
-    public ClusterManager getCollectionManager() {
-        return clusterManager;
-    }
-
-    public void setCollectionManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-    }
-
-    public FeaturesService getFeaturesService() {
-        return featuresService;
-    }
-
-    public void setFeaturesService(FeaturesService featuresService) {
-        this.featuresService = featuresService;
     }
 
 }
