@@ -15,6 +15,9 @@ package org.apache.karaf.cellar.bundle;
 
 import org.apache.karaf.cellar.core.event.Event;
 
+/**
+ * Cluster bundle event.
+ */
 public class ClusterBundleEvent extends Event {
 
     private String symbolicName;

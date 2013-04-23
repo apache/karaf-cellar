@@ -96,7 +96,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                                 }
-                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
+                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
                         }
                     }
                 }
@@ -174,7 +174,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             eventProducer.produce(event);
                         }
 
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
+                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);

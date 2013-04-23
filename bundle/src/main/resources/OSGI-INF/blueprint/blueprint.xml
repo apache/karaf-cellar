@@ -39,7 +39,7 @@
     </bean>
     <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
-    <!-- Cluster Event Handler -->
+    <!-- Cluster Bundle Event Handler -->
     <bean id="eventHandler" class="org.apache.karaf.cellar.bundle.BundleEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="configurationAdmin" ref="configurationAdmin"/>
