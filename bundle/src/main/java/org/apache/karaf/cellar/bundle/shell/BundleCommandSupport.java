@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.bundle.shell;
 
 import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
@@ -22,15 +21,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Abstract class for the Cellar bundle commands.
+ */
 public abstract class BundleCommandSupport extends CellarCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "id", description = "The bundle ID or name.", required = true, multiValued = false)
+    @Argument(index = 1, name = "id", description = "The bundle ID or name", required = true, multiValued = false)
     String name;
 
-    @Argument(index = 2, name = "version", description = "The bundle version.", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The bundle version", required = false, multiValued = false)
     String version;
 
     protected abstract Object doExecute() throws Exception;
@@ -38,9 +40,10 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
     /**
      * Bundle selector.
      *
-     * @return the bundle key is the distributed bundle map.
+     * @param clusterBundles the bundles present in a cluster group.
+     * @return the bundle key in the cluster group.
      */
-    protected String selector(Map<String, BundleState> distributedBundles) {
+    protected String selector(Map<String, BundleState> clusterBundles) {
         String key = null;
         if (version == null) {
             // looking for bundle using ID
@@ -48,7 +51,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             try {
                 id = Integer.parseInt(name);
                 int index = 0;
-                for (String bundle : distributedBundles.keySet()) {
+                for (String bundle : clusterBundles.keySet()) {
                     if (index == id) {
                         key = bundle;
                         break;
@@ -64,8 +67,8 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 Pattern namePattern = Pattern.compile(name);
 
                 // looking for bundle using only the name
-                for (String bundle : distributedBundles.keySet()) {
-                    BundleState state = distributedBundles.get(bundle);
+                for (String bundle : clusterBundles.keySet()) {
+                    BundleState state = clusterBundles.get(bundle);
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex
                         Matcher matcher = namePattern.matcher(state.getName());
@@ -99,9 +102,9 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             // add regex support of the name
             Pattern namePattern = Pattern.compile(name);
 
-            for (String bundle : distributedBundles.keySet()) {
+            for (String bundle : clusterBundles.keySet()) {
                 String[] split = bundle.split("/");
-                BundleState state = distributedBundles.get(bundle);
+                BundleState state = clusterBundles.get(bundle);
                 if (split[1].equals(version)) {
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex

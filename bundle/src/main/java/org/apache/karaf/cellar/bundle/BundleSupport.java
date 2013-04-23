@@ -20,53 +20,34 @@ import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 
+/**
+ * Generic class to manage bundles.
+ */
 public class BundleSupport extends CellarSupport {
 
     protected BundleContext bundleContext;
 	private FeaturesService featuresService;
 
     /**
-     * Reads a {@code Dictionary} object and creates a property object out of it.
+     * Locally install a bundle.
      *
-     * @param dictionary
-     * @return
-     */
-    public Properties dictionaryToProperties(Dictionary dictionary) {
-        Properties properties = new Properties();
-        if (dictionary != null && dictionary.keys() != null) {
-
-            Enumeration keys = dictionary.keys();
-            while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
-                if (key != null && dictionary.get(key) != null) {
-                    properties.put(key, dictionary.get(key));
-                }
-            }
-        }
-        return properties;
-    }
-
-    /**
-     * Installs a bundle using its location.
+     * @param location the bundle location.
+     * @throws BundleException in case of install failure.
      */
     public void installBundleFromLocation(String location) throws BundleException {
         getBundleContext().installBundle(location);
     }
 
     /**
-     * Uninstalls a bundle using its Symbolic name and version.
+     * Locally uninstall a bundle.
      *
-     * @param symbolicName
-     * @param version
-     * @throws BundleException
+     * @param symbolicName the bundle symbolic name.
+     * @param version the bundle version.
+     * @throws BundleException in case of uninstall failure.
      */
     public void uninstallBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
@@ -80,11 +61,11 @@ public class BundleSupport extends CellarSupport {
     }
 
     /**
-     * Starts a bundle using its Symbolic name and version.
+     * Locally start a bundle.
      *
-     * @param symbolicName
-     * @param version
-     * @throws BundleException
+     * @param symbolicName the bundle symbolic name.
+     * @param version the bundle version.
+     * @throws BundleException in case of start failure.
      */
     public void startBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
@@ -98,11 +79,11 @@ public class BundleSupport extends CellarSupport {
     }
 
     /**
-     * Stops a bundle using its Symbolic name and version.
+     * Locally stop a bundle.
      *
-     * @param symbolicName
-     * @param version
-     * @throws BundleException
+     * @param symbolicName the bundle symbolic name.
+     * @param version the bundle version.
+     * @throws BundleException in case of stop failure.
      */
     public void stopBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
@@ -116,11 +97,11 @@ public class BundleSupport extends CellarSupport {
     }
 
     /**
-     * Updates a bundle using its Symbolic name and version.
+     * Locally update a bundle.
      *
-     * @param symbolicName
-     * @param version
-     * @throws BundleException
+     * @param symbolicName the bundle symbolic name.
+     * @param version the bundle version.
+     * @throws BundleException in case of update failure.
      */
     public void updateBundle(String symbolicName, String version) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
@@ -134,31 +115,12 @@ public class BundleSupport extends CellarSupport {
     }
 
     /**
-     * Returns the {@link BundleContext}.
+     * Get the features where a bundle is belonging.
      *
-     * @return
+     * @param bundleLocation the bundle location.
+     * @return the list of features where the bundle is present.
+     * @throws Exception in case of retrieval failure.
      */
-    public BundleContext getBundleContext() {
-        return this.bundleContext;
-    }
-
-    /**
-     * Sets the {@link BundleContext}.
-     *
-     * @param bundleContext
-     */
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-    }
-
-    public ConfigurationAdmin getConfigurationAdmin() {
-        return configurationAdmin;
-    }
-
-    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
-        this.configurationAdmin = configurationAdmin;
-    }
-
 	protected List<Feature> retrieveFeature(String bundleLocation) throws Exception {
 		Feature[] features = featuresService.listFeatures();
 		List<Feature> matchingFeatures = new ArrayList<Feature>();
@@ -168,23 +130,25 @@ public class BundleSupport extends CellarSupport {
 				String location = bundleInfo.getLocation();
 				if (location.equalsIgnoreCase(bundleLocation)) {
 					matchingFeatures.add(feature);
-					LOGGER.debug("CELLAR BUNDLE: found a feature {} containing bundle: {}", feature.getName(), bundleLocation);
+					LOGGER.debug("CELLAR BUNDLE: found feature {} containing bundle {}", feature.getName(), bundleLocation);
 				}
 			}
 		}
 		return matchingFeatures;
 	}
-	
-	/**
-	 * @return the featuresService
-	 */
+
+    public BundleContext getBundleContext() {
+        return this.bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
+    }
+
 	public FeaturesService getFeaturesService() {
 		return featuresService;
 	}
 
-	/**
-	 * @param featuresService the featuresService to set
-	 */
 	public void setFeaturesService(FeaturesService featureService) {
 		this.featuresService = featureService;
 	}
