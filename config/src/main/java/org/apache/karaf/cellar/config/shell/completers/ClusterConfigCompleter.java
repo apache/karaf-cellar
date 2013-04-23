@@ -26,32 +26,32 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Command completer on the cluster config.
+ * Command completer for configurations in cluster groups.
  */
 public class ClusterConfigCompleter implements Completer {
 
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
 
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
             Map<String, Group> groups = groupManager.listGroups();
             if (groups != null && !groups.isEmpty()) {
                 for (String groupName : groups.keySet()) {
-                    Map<String, Properties> configurationTable = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-                    if (configurationTable != null && !configurationTable.isEmpty()) {
-                        for (String pid : configurationTable.keySet()) {
-                            if (delegate.getStrings() != null && !delegate.getStrings().contains(pid)) {
-                                delegate.getStrings().add(pid);
+                    Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+                    if (clusterConfigurations != null && !clusterConfigurations.isEmpty()) {
+                        for (String clusterConfiguration : clusterConfigurations.keySet()) {
+                            if (delegate.getStrings() != null && !delegate.getStrings().contains(clusterConfiguration)) {
+                                delegate.getStrings().add(clusterConfiguration);
                             }
                         }
                     }
                 }
             }
-
         } catch (Exception e) {
-            // Ignore
+            // nothing to do
         }
         return delegate.complete(buffer, cursor, candidates);
     }

@@ -23,10 +23,7 @@ import org.apache.felix.gogo.commands.Command;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Config properties list cluster command.
- */
-@Command(scope = "cluster", name = "config-proplist", description = "List the configuration PIDs assigned to a cluster group")
+@Command(scope = "cluster", name = "config-proplist", description = "List the properties of a configuration in a cluster group")
 public class PropListCommand extends CellarCommandSupport {
 
     protected static final String OUTPUT_FORMAT = "%-40s %s";
@@ -45,21 +42,21 @@ public class PropListCommand extends CellarCommandSupport {
             return null;
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (distributedConfigurations != null && !distributedConfigurations.isEmpty()) {
-            Properties properties = distributedConfigurations.get(pid);
+        if (clusterConfigurations != null && !clusterConfigurations.isEmpty()) {
+            Properties properties = clusterConfigurations.get(pid);
             if (properties == null || properties.isEmpty()) {
-                System.err.println("No configuration PID found for group " + groupName);
+                System.err.println("Configuration PID not found in cluster group " + groupName);
             } else {
-                System.out.println(String.format("Property list for configuration PID " + pid + " for group " + groupName));
+                System.out.println(String.format("Property list for configuration PID " + pid + " in cluster group " + groupName));
                 System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
                 for (Object key : properties.keySet()) {
                     String value = properties.getProperty((String) key);
                     System.out.println(String.format(OUTPUT_FORMAT, key, value));
                 }
             }
-        } else System.err.println("No configuration PID found for group " + groupName);
+        } else System.err.println("No configuration found in cluster group " + groupName);
 
         return null;
     }

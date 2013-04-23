@@ -25,7 +25,7 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group.")
+@Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
 public class ListBundleCommand extends CellarCommandSupport {
 
     protected static final String HEADER_FORMAT = " %-4s   %-11s  %s";

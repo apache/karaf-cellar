@@ -18,14 +18,14 @@
            xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0">
 
     <!-- Local Configuration Listener -->
-    <bean id="configurationListener" class="org.apache.karaf.cellar.config.LocalConfigurationListener" init-method="init"
+    <bean id="localListener" class="org.apache.karaf.cellar.config.LocalConfigurationListener" init-method="init"
           destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="eventProducer" ref="eventProducer"/>
     </bean>
-    <service ref="configurationListener" interface="org.osgi.service.cm.ConfigurationListener"/>
+    <service ref="localListener" interface="org.osgi.service.cm.ConfigurationListener"/>
 
     <!-- Configuration Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.config.ConfigurationSynchronizer"

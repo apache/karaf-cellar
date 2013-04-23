@@ -16,13 +16,13 @@ package org.apache.karaf.cellar.config;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
- * Remote configuration event.
+ * Cluster configuration event.
  */
-public class RemoteConfigurationEvent extends Event {
+public class ClusterConfigurationEvent extends Event {
 
     private int type;
 
-    public RemoteConfigurationEvent(String id) {
+    public ClusterConfigurationEvent(String id) {
         super(id);
     }
 

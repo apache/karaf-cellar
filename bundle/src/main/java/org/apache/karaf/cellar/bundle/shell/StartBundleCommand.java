@@ -27,7 +27,7 @@ import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-start", description = "Start a bundle in a cluster group.")
+@Command(scope = "cluster", name = "bundle-start", description = "Start a bundle in a cluster group")
 public class StartBundleCommand extends BundleCommandSupport {
 
     private EventProducer eventProducer;

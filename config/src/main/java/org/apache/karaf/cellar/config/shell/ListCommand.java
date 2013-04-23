@@ -24,10 +24,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * List cluster config command.
- */
-@Command(scope = "cluster", name = "config-list", description = "List the configuration PIDs assigned to a group")
+@Command(scope = "cluster", name = "config-list", description = "List the configurations in a cluster group")
 public class ListCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -48,15 +45,15 @@ public class ListCommand extends ConfigCommandSupport {
             return null;
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
 
-        if (distributedConfigurations != null && !distributedConfigurations.isEmpty()) {
-            for (String pid : distributedConfigurations.keySet()) {
+        if (clusterConfigurations != null && !clusterConfigurations.isEmpty()) {
+            for (String pid : clusterConfigurations.keySet()) {
                 if (searchPid == null || (searchPid != null && searchPid.equals(pid))) {
                     System.out.println("----------------------------------------------------------------");
                     System.out.println("Pid:            " + pid);
                     if (!minimal) {
-                        Properties properties = distributedConfigurations.get(pid);
+                        Properties properties = clusterConfigurations.get(pid);
                         if (properties != null) {
                             System.out.println("Properties:");
                             for (Enumeration e = properties.keys(); e.hasMoreElements(); ) {
@@ -67,7 +64,7 @@ public class ListCommand extends ConfigCommandSupport {
                     }
                 }
             }
-        } else System.err.println("No configuration PID found for cluster group " + groupName);
+        } else System.err.println("No configuration found in cluster group " + groupName);
 
         return null;
     }
