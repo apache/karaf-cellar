@@ -40,9 +40,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
 
-    /**
-     * Initialization method
-     */
     public void init() {
         super.init();
         Set<Group> groups = groupManager.listLocalGroups();
@@ -56,31 +53,32 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
     }
 
-    /**
-     * Destruction method
-     */
     public void destroy() {
         super.destroy();
     }
 
     /**
-     * Pulls the features from the cluster.
+     * Get the features from the cluster group.
+     *
+     * @param group the cluster group.
      */
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                //Retrieve remote feautre URLs.
-                if (repositories != null && !repositories.isEmpty()) {
-                    for (String url : repositories) {
+                // get the features repositories URLs from the cluster group
+                if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
+                    for (String url : clusterRepositories) {
                         try {
-                            LOGGER.debug("CELLAR FEATURES: adding new repository {}", url);
-                            featuresService.addRepository(new URI(url));
+                            if (!isRepositoryRegisteredLocally(url)) {
+                                LOGGER.debug("CELLAR FEATURES: adding new repository {}", url);
+                                featuresService.addRepository(new URI(url));
+                            }
                         } catch (MalformedURLException e) {
                             LOGGER.error("CELLAR FEATURES: failed to add features repository URL {} (malformed)", url, e);
                         } catch (Exception e) {
@@ -89,13 +87,13 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                // retrieve remote feature status
-                if (features != null && !features.isEmpty()) {
-                    for (FeatureInfo info : features.keySet()) {
+                // get the features from the cluster group
+                if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
+                    for (FeatureInfo info : clusterFeatures.keySet()) {
                         String name = info.getName();
-                        //Check if feature is blocked.
+                        // check if feature is blocked
                         if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
-                            Boolean remotelyInstalled = features.get(info);
+                            Boolean remotelyInstalled = clusterFeatures.get(info);
                             Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
 
                             // prevent NPE
@@ -106,21 +104,21 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 locallyInstalled = false;
                             }
 
-                            //If feature needs to be installed locally.
+                            // if feature has to be installed locally
                             if (remotelyInstalled && !locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.installFeature(info.getName(), info.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.error("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
+                                    LOGGER.error("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{info.getName(), info.getVersion()}, e);
                                 }
-                                //If feature needs to be localy uninstalled.
+                                // if feature has to be uninstalled locally
                             } else if (!remotelyInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", info.getName(), info.getVersion());
                                     featuresService.uninstallFeature(info.getName(), info.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.error("CELLAR FEATURES: failed to uninstall feature {}/{} ", new Object[]{ info.getName(), info.getVersion() }, e);
+                                    LOGGER.error("CELLAR FEATURES: failed to uninstall feature {}/{} ", new Object[]{info.getName(), info.getVersion()}, e);
                                 }
                             }
                         } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
@@ -133,14 +131,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     }
 
     /**
-     * Push features to the cluster.
+     * Push features repositories and features status to the cluster group.
+     *
+     * @param group the cluster group.
      */
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
             LOGGER.info("CELLAR FEATURES: Pulling features from group {}.",groupName);
-            //List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
@@ -157,14 +155,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     LOGGER.error("CELLAR FEATURES: error listing features", e);
                 }
 
-                //Process repository list
+                // push features repositories to the cluster group
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
                         pushRepository(repository, group);
                     }
                 }
 
-                //Process features list
+                // push features to the cluster group
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         pushFeature(feature, group);
@@ -193,22 +191,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.error("CELLAR FEATURES: error while checking if sync is enabled", e);
         }
         return result;
-    }
-
-    public ClusterManager getCollectionManager() {
-        return clusterManager;
-    }
-
-    public void setCollectionManager(ClusterManager clusterManager) {
-        this.clusterManager = clusterManager;
-    }
-
-    public FeaturesService getFeaturesService() {
-        return featuresService;
-    }
-
-    public void setFeaturesService(FeaturesService featuresService) {
-        this.featuresService = featuresService;
     }
 
 }
