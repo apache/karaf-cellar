@@ -37,12 +37,11 @@ public class FeaturesSupport extends CellarSupport {
     protected FeaturesService featuresService;
 
     public void init() {
-
+        // nothing to do
     }
 
     public void destroy() {
-
-
+        // nothing to do
     }
 
     /**
