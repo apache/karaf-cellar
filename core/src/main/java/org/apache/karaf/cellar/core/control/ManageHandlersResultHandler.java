@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * Manage handlers result handler.
+ * Handler for cluster manage handlers result event.
  */
 public class ManageHandlersResultHandler extends ResultHandler<ManageHandlersResult> {
 

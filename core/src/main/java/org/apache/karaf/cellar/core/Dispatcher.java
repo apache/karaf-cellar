@@ -21,9 +21,9 @@ import java.io.Serializable;
 public interface Dispatcher<T extends Serializable> {
 
     /**
-     * Dispatches the object to the appropriate handler.
+     * Dispatch the object to the appropriate handler.
      *
-     * @param obj
+     * @param obj the object to dispatch.
      */
     public void dispatch(T obj);
 

@@ -34,6 +34,7 @@ public class ClusteredExecutionContext implements ExecutionContext {
     private ScheduledExecutorService timeoutScheduler = new ScheduledThreadPoolExecutor(10);
 
     public ClusteredExecutionContext() {
+        // nothing to do
     }
 
     public ClusteredExecutionContext(Producer producer, CommandStore commandStore) {
@@ -41,6 +42,16 @@ public class ClusteredExecutionContext implements ExecutionContext {
         this.commandStore = commandStore;
     }
 
+    /**
+     * Execute a command in this context.
+     *
+     * @param command the command to execute.
+     * @return the result of the command execution.
+     * @throws StoreNotFoundException if the commands store is not found.
+     * @throws ProducerNotFoundException if no cluster event producer is found.
+     * @throws InterruptedException if the command execution has been interrupted.
+     */
+    @Override
     public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws StoreNotFoundException, ProducerNotFoundException, InterruptedException {
         if (command == null) {
             throw new StoreNotFoundException("Command store not found");

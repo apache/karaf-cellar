@@ -14,10 +14,8 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <!-- Registry -->
+    <!-- Handler Registry -->
     <bean id="registry" class="org.apache.karaf.cellar.core.event.EventHandlerServiceRegistry"/>
-
-    <!-- Service Registrations -->
     <service ref="registry" interface="org.apache.karaf.cellar.core.event.EventHandlerRegistry"/>
 
     <reference-list id="eventHandlers" interface="org.apache.karaf.cellar.core.event.EventHandler" availability="optional">

@@ -13,33 +13,23 @@
  */
 package org.apache.karaf.cellar.core.event;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleReference;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
- * Event handler service registry.
+ * Default implementation of an event handler services registry.
  */
 public class EventHandlerServiceRegistry<E extends Event> implements EventHandlerRegistry<E> {
-
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
 
     private Map<Class,EventHandler> eventHandlerMap = new ConcurrentHashMap<Class,EventHandler>();
 
     /**
-     * Returns the appropriate {@code EventHandler} found inside the {@code HandlerRegistry}.
+     * Get the handler which is able to handle a given cluster event.
      *
-     * @param event
-     * @return
+     * @param event the cluster event to handle.
+     * @return the handler which is able to handle the cluster event.
      */
+    @Override
     public EventHandler<E> getHandler(E event) {
         if (event != null) {
             Class clazz = event.getClass();
@@ -48,12 +38,22 @@ public class EventHandlerServiceRegistry<E extends Event> implements EventHandle
         return null;
     }
 
+    /**
+     * Register a handler in the registry.
+     *
+     * @param handler the handler to register.
+     */
     public void bind(EventHandler handler) {
         if(handler != null && handler.getType() != null) {
             eventHandlerMap.put(handler.getType(),handler);
         }
     }
 
+    /**
+     * Un-register a handler from the registry.
+     *
+     * @param handler the handler to un-register.
+     */
     public void unbind(EventHandler handler) {
          if(handler != null && handler.getType() != null) {
             eventHandlerMap.remove(handler.getType());

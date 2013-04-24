@@ -11,20 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.event;
 
 import org.apache.karaf.cellar.core.Handler;
 import org.apache.karaf.cellar.core.HandlerRegistry;
 
+/**
+ * Description of a cluster event handlers registry.
+ */
 public interface EventHandlerRegistry<E extends Event> extends HandlerRegistry<E, Handler<E>> {
 
     /**
-     * Returns the {@code EventHandler} for the given {@code Event}.
+     * Get the handler which is able to handle a given cluster event.
      *
-     * @param event
-     * @return
+     * @param event the cluster event to handle.
+     * @return the handler which is able to handle the cluster event.
      */
+    @Override
     public EventHandler<E> getHandler(E event);
 
 }

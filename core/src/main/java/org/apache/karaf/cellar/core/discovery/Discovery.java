@@ -13,6 +13,9 @@
  */
 package org.apache.karaf.cellar.core.discovery;
 
+/**
+ * Discovery configuration constants.
+ */
 public class Discovery {
 
     public static final String PID = "org.apache.karaf.cellar.discovery";

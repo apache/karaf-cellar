@@ -15,12 +15,11 @@ package org.apache.karaf.cellar.core.shell;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
-import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
- * Abstract Cellar command.
+ * Abstract Cellar shell command.
  */
 public abstract class CellarCommandSupport extends OsgiCommandSupport {
 

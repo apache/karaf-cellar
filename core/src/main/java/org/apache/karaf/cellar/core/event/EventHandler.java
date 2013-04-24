@@ -13,18 +13,19 @@
  */
 package org.apache.karaf.cellar.core.event;
 
-
 import org.apache.karaf.cellar.core.Handler;
 
 /**
- * Event handler interface.
+ * Description of a cluster event handler.
  */
 public interface EventHandler<E extends Event> extends Handler<E> {
 
     public static String MANAGED_FILTER = "(managed=true)";
 
     /**
-     * Called to handle {@code Event}.
+     * Handle a cluster event.
+     *
+     * @param event the cluster event to handle.
      */
     public void handle(E event);
 

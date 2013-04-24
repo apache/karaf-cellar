@@ -16,10 +16,15 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * Producer switch result handler.
+ * Handler for the cluster producer switch result event.
  */
 public class ProducerSwitchResultHandler extends ResultHandler<ProducerSwitchResult> {
 
+    /**
+     * Get the event type that this handler can handle.
+     *
+     * @return the cluster producer switch result event type.
+     */
     @Override
     public Class<ProducerSwitchResult> getType() {
         return ProducerSwitchResult.class;

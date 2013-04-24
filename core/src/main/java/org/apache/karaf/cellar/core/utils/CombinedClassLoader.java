@@ -11,13 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.utils;
 
 import org.osgi.framework.Bundle;
 
 import java.net.URL;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -47,7 +45,7 @@ public class CombinedClassLoader extends ClassLoader {
         bundles.remove(bundle.getBundleId());
     }
 
-
+    @Override
     public Class findClass(String name) throws ClassNotFoundException {
         for (Map.Entry<Long, Bundle> entry : bundles.entrySet()) {
             try {
@@ -56,14 +54,13 @@ public class CombinedClassLoader extends ClassLoader {
                     return bundle.loadClass(name);
                 }
             } catch (ClassNotFoundException cnfe) {
-                // Try next
+                // try next
             }
         }
         throw new ClassNotFoundException(name);
     }
 
-
-
+    @Override
     public URL getResource(String name) {
         for (Map.Entry<Long, Bundle> entry : bundles.entrySet()) {
             Bundle bundle = entry.getValue();
@@ -76,4 +73,5 @@ public class CombinedClassLoader extends ClassLoader {
         }
         return null;
     }
+
 }

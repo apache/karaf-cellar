@@ -13,9 +13,13 @@
  */
 package org.apache.karaf.cellar.core.exception;
 
+/**
+ * Exception when a store is not found.
+ */
 public class StoreNotFoundException extends Exception {
 
     public StoreNotFoundException() {
+        // nothing to do
     }
 
     public StoreNotFoundException(String message) {

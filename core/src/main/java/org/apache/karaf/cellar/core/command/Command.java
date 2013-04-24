@@ -40,13 +40,18 @@ public class Command<R extends Result> extends Event {
         this.force = true;
     }
 
+    /**
+     * Set the force flag for the execution of this command.
+     *
+     * @return true if the force flag is set, false else.
+     */
     @Override
     public Boolean getForce() {
         return true;
     }
 
     /**
-     * Process the event of timeout.
+     * Handle a command execution timeout.
      */
     public void onTimeout() {
         try {
@@ -57,9 +62,9 @@ public class Command<R extends Result> extends Event {
     }
 
     /**
-     * Adds {@code Results} to the result queue.
+     * Add command execution results into the results queue.
      *
-     * @param results
+     * @param results the command execution results.
      */
     public void addResults(R... results) {
         if (results != null && results.length > 0) {
@@ -78,11 +83,10 @@ public class Command<R extends Result> extends Event {
     }
 
     /**
-     * Returns the responses.
-     * If no results found it returns an empty map.
+     * Get the command execution results from the results queue.
      *
-     * @return
-     * @throws Exception
+     * @return the map of command execution results.
+     * @throws Exception if the command execution has timed out.
      */
     public Map<Node, R> getResult() throws InterruptedException {
         Map<Node, R> nodeResults = null;
@@ -91,7 +95,6 @@ public class Command<R extends Result> extends Event {
         }
         return nodeResults;
     }
-
 
     public long getTimeout() {
         return timeout;

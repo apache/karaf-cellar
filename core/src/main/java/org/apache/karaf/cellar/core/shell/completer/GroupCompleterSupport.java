@@ -21,7 +21,7 @@ import org.apache.karaf.shell.console.completer.StringsCompleter;
 import java.util.List;
 
 /**
- * Abstract group completer.
+ * Abstract shell completer for cluster groups.
  */
 public abstract class GroupCompleterSupport implements Completer {
 
@@ -29,6 +29,7 @@ public abstract class GroupCompleterSupport implements Completer {
 
     protected abstract boolean acceptsGroup(Group group);
 
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
@@ -41,11 +42,10 @@ public abstract class GroupCompleterSupport implements Completer {
                 }
             }
         } catch (Exception e) {
-            // Ignore
+            // ignore
         }
         return delegate.complete(buffer, cursor, candidates);
     }
-
 
     public GroupManager getGroupManager() {
         return groupManager;

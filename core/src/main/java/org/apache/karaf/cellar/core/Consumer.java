@@ -18,21 +18,21 @@ import org.apache.karaf.cellar.core.control.Switch;
 import java.io.Serializable;
 
 /**
- * Generic consumer interface.
+ * Cluster event consumer.
  */
 public interface Consumer<T extends Serializable> {
 
     /**
      * Consume an object.
      *
-     * @param obj
+     * @param obj the object to consume.
      */
     public void consume(T obj);
 
     /**
-     * Returns the {@code Switch}.
+     * Get the consumer switch.
      *
-     * @return
+     * @return the consumer switch.
      */
     public Switch getSwitch();
 

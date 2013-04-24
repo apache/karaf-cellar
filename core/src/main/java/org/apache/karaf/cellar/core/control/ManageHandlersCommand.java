@@ -16,18 +16,13 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * Manage handlers command.
+ * Cluster manage handlers command event.
  */
 public class ManageHandlersCommand extends Command<ManageHandlersResult> {
 
     private String handlerName;
     private Boolean status = Boolean.TRUE;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public ManageHandlersCommand(String id) {
         super(id);
     }

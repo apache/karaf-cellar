@@ -18,21 +18,21 @@ import org.apache.karaf.cellar.core.control.Switch;
 import java.io.Serializable;
 
 /**
- * Generic handler.
+ * Description of a cluster event handler.
  */
 public interface Handler<T extends Serializable> {
 
     /**
-     * Returns the Class of the object that is to be handled.
+     * Get the event type that the handler can handle.
      *
-     * @return
+     * @return the event type class.
      */
     public Class<T> getType();
 
     /**
-     * Returns the {@code Switch}.
+     * Get the handler switch.
      *
-     * @return
+     * @return the handler switch.
      */
     public Switch getSwitch();
 

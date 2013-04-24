@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Manager group result.
+ * Cluster manage group result event.
  */
 public class ManageGroupResult extends Result {
 
@@ -46,4 +46,5 @@ public class ManageGroupResult extends Result {
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
+
 }

@@ -16,40 +16,22 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * Consumer switch result.
+ * Cluster consumer switch result event.
  */
 public class ConsumerSwitchResult extends Result {
 
     protected Boolean success = Boolean.TRUE;
     protected Boolean status = Boolean.TRUE;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public ConsumerSwitchResult(String id) {
         super(id);
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param success
-     */
     public ConsumerSwitchResult(String id, Boolean success) {
         super(id);
         this.success = success;
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param success
-     * @param status
-     */
     public ConsumerSwitchResult(String id, Boolean success, Boolean status) {
         super(id);
         this.success = success;

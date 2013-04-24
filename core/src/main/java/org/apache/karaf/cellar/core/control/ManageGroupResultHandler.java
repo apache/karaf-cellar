@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * Manager group result handler.
+ * Handler on cluster manage group result handler event.
  */
 public class ManageGroupResultHandler extends ResultHandler<ManageGroupResult> {
 

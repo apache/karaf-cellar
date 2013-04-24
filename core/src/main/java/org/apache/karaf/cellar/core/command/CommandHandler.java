@@ -23,17 +23,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Command handler.
+ * Cluster command event handler.
  */
 public abstract class CommandHandler<C extends Command<R>, R extends Result> extends CellarSupport implements EventHandler<C> {
 
     protected Producer producer;
 
     /**
-     * Hanldes the the {@code Command}.
+     * Handles a received cluster command event.
      *
-     * @param command
+     * @param command the received cluster command event.
      */
+    @Override
     public void handle(C command) {
         if (producer != null) {
             R result = execute(command);
@@ -47,31 +48,33 @@ public abstract class CommandHandler<C extends Command<R>, R extends Result> ext
     }
 
     /**
-     * Executes a {@code Command} and returns a {@code Result}.
+     * Execute a command.
      *
-     * @param command
-     * @return
+     * @param command the command to execute.
+     * @return the command execution result.
      */
     public abstract R execute(C command);
 
+    /**
+     * Get the cluster event type handled by this handler.
+     *
+     * @return the cluster event type handled by this handler.
+     */
+    @Override
     public abstract Class<C> getType();
 
+    /**
+     * Get the handler switch.
+     *
+     * @return the handler switch.
+     */
+    @Override
     public abstract Switch getSwitch();
 
-    /**
-     * Returns the {@code Producer}.
-     *
-     * @return
-     */
     public Producer getProducer() {
         return producer;
     }
 
-    /**
-     * Sets the {@code Producer}.
-     *
-     * @param producer
-     */
     public void setProducer(Producer producer) {
         this.producer = producer;
     }

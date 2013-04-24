@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Manager group command handler.
+ * Cluster manage group command event handler.
  */
 public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand, ManageGroupResult> {
 
@@ -60,9 +60,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Adds the {@link Group} list to the result.
+     * Add the cluster {@link Group} list to the result.
      *
-     * @param result
+     * @param result the cluster manage group result event.
      */
     public void addGroupListToResult(ManageGroupResult result) {
         Set<Group> groups = groupManager.listAllGroups();
@@ -75,9 +75,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Adds {@link Node} to the target {@link Group}.
+     * Add a {@link Node} to the target cluster {@link Group}.
      *
-     * @param targetGroupName
+     * @param targetGroupName the target cluster group to join.
      */
     public void joinGroup(String targetGroupName) {
         Node node = clusterManager.getNode();
@@ -95,9 +95,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Removes {@link Node} from the target {@link Group}.
+     * Remove a {@link Node} from the target cluster {@link Group}.
      *
-     * @param targetGroupName
+     * @param targetGroupName the target cluster group where to remove the node.
      */
     public void quitGroup(String targetGroupName) {
         Node node = clusterManager.getNode();
@@ -111,9 +111,8 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
         }
     }
 
-
     /**
-     * Removes {@link Node} from ALL {@link Group}s.
+     * Remove a {@link Node} from all cluster {@link Group}s.
      */
     public void purgeGroups() {
         Node node = clusterManager.getNode();

@@ -17,27 +17,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Event handler service registry dispatcher.
+ * Default implementation of the event dispatcher.
+ * This dispatcher relays on the handlers service registry to look for the handler
+ * which is able to handle a given cluster event.
  */
 public class EventHandlerServiceRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
 
     private ExecutorService threadPool;
     private EventHandlerServiceRegistry handlerRegistry;
 
-    /**
-     * Initialization
-     */
     public void init() {
         if (threadPool == null) {
             threadPool = Executors.newCachedThreadPool();
         }
     }
 
-    /**
-     * Dispatches an {@code Event} to the appropriate {@code EventHandler}.
-     *
-     * @param event
-     */
+    @Override
     public void dispatch(E event) {
         EventDispatchTask task = new EventDispatchTask(event, handlerRegistry);
         threadPool.execute(task);

@@ -18,21 +18,21 @@ import org.apache.karaf.cellar.core.control.Switch;
 import java.io.Serializable;
 
 /**
- * Generic producer interface.
+ * Description of a cluster event producer.
  */
 public interface Producer<T extends Serializable> {
 
     /**
-     * Produce an object.
+     * Produce an object and send to the cluster.
      *
-     * @param obj
+     * @param obj the object to produce and send to the cluster.
      */
     public void produce(T obj);
 
     /**
-     * Returns the {@code Switch}.
+     * Get the producer switch.
      *
-     * @return
+     * @return the producer switch.
      */
     public Switch getSwitch();
 

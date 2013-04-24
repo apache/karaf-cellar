@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * Manager group command.
+ * Cluster manage group command event.
  */
 public class ManageGroupCommand extends Command<ManageGroupResult> {
 

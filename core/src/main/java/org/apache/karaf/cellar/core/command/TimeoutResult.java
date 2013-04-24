@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.core.command;
 
 /**
- * A result that is used to denote that no result has been received during the timeout.
+ * Cluster command execution timeout result event.
  */
 public class TimeoutResult extends Result {
 

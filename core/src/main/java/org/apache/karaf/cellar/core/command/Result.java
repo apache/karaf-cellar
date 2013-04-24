@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.core.command;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
- * Result event.
+ * Cluster command execution result event.
  */
 public class Result extends Event {
 
@@ -25,6 +25,11 @@ public class Result extends Event {
         this.force = true;
     }
 
+    /**
+     * Get the force flag in the cluster result event.
+     *
+     * @return true if the force flag is set on the cluster result event, false else.
+     */
     @Override
     public Boolean getForce() {
         return true;

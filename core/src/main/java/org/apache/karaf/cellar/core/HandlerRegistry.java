@@ -16,15 +16,15 @@ package org.apache.karaf.cellar.core;
 import java.io.Serializable;
 
 /**
- * Handler registry interface.
+ * Description of a handler registry.
  */
 public interface HandlerRegistry<T extends Serializable, H extends Handler<T>> {
 
     /**
-     * Returns the {@code Handler} for the given object.
+     * Get the handler which is able to handle a given object.
      *
-     * @param obj
-     * @return
+     * @param obj the object to handle.
+     * @return the handler able to handle the object, null if no handler found.
      */
     public H getHandler(T obj);
 
