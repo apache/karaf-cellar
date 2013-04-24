@@ -26,14 +26,18 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Map;
 
-public class RemoteEventHandler extends EventSupport implements EventHandler<RemoteEvent> {
+/**
+ * Handler for cluster event.
+ */
+public class ClusterEventHandler extends EventSupport implements EventHandler<ClusterEvent> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(RemoteEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterEventHandler.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.handler";
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    public void handle(RemoteEvent event) {
+    @Override
+    public void handle(ClusterEvent event) {
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -42,7 +46,7 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
         }
         
         if (groupManager == null) {
-        	//in rare cases for example right after installation this happens!
+        	// in rare cases for example right after installation this happens!
         	LOGGER.error("CELLAR EVENT: retrieved event {} while groupManager is not available yet!", event);
         	return;
         }
@@ -60,26 +64,26 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
                 properties.put(Constants.EVENT_SOURCE_GROUP_KEY, event.getSourceGroup());
                 properties.put(Constants.EVENT_SOURCE_NODE_KEY, event.getSourceNode());
                 postEvent(event.getTopicName(), properties);
-            } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED INBOUND", event.getTopicName());
+            } else LOGGER.warn("CELLAR EVENT: event {} is marked BLOCKED INBOUND for cluster group {}", event.getTopicName(), event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR EVENT: failed to handle event", e);
         }
     }
 
-    /**
-     * Initialization method.
-     */
     public void init() {
+        // nothing to do
+    }
 
+    public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Destroy method.
+     * Get the handler switch.
+     *
+     * @return the handler switch.
      */
-    public void destroy() {
-
-    }
-
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {
@@ -97,9 +101,15 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
         }
         return eventSwitch;
     }
-    
-    public Class<RemoteEvent> getType() {
-        return RemoteEvent.class;
+
+    /**
+     * Get the event type handled by this handler.
+     *
+     * @return the cluster event type.
+     */
+    @Override
+    public Class<ClusterEvent> getType() {
+        return ClusterEvent.class;
     }
 
 }

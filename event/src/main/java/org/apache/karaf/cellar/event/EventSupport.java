@@ -21,14 +21,17 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Generic Cellar OSGi event support.
+ */
 public class EventSupport extends CellarSupport {
     
     protected EventAdmin eventAdmin;
 
     /**
-     * Reads a {@code Event} object and creates a map object out of it.
+     * Read a local {@code Event} and create a map object out of it.
      *
-     * @param event the event to read
+     * @param event the local event to read.
      * @return the map
      */
     public Map<String, Serializable> getEventProperties(Event event) {
@@ -47,9 +50,9 @@ public class EventSupport extends CellarSupport {
     }
 
     /**
-     * Reads {@code Event} object and checks if a property exists.
+     * Read a local {@code Event} and check if a property exists.
      *
-     * @param event the event to read.
+     * @param event the local event to read.
      * @param name  the property name to check.
      * @return true if the property exists in the event, false else.
      */
