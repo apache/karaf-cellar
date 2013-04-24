@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Call handler for remote service.
+ * Handler for cluster remote service call event.
  */
 public class RemoteServiceCallHandler extends CellarSupport implements EventHandler<RemoteServiceCall> {
 
@@ -46,6 +46,11 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
     private EventTransportFactory eventTransportFactory;
 
+    /**
+     * Handle a cluster remote service call event.
+     *
+     * @param event the cluster event to handle.
+     */
     @Override
     public void handle(RemoteServiceCall event) {
 
@@ -58,28 +63,22 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
         Object targetService = null;
 
         if (event != null) {
-
             ServiceReference[] serviceReferences = null;
             try {
-
                 serviceReferences = bundleContext.getServiceReferences(event.getServiceClass(), null);
                 if (serviceReferences != null && serviceReferences.length > 0) {
                     targetService = bundleContext.getService(serviceReferences[0]);
                     bundleContext.ungetService(serviceReferences[0]);
                 }
-
             } catch (InvalidSyntaxException e) {
-                LOGGER.error("CELLAR DOSGI: could not lookup service", e);
+                LOGGER.error("CELLAR DOSGI: failed to lookup service", e);
             }
 
             if (targetService != null) {
-
                 Class[] classes = new Class[0];
-
                 if (event.getArguments() != null && event.getArguments().size() > 0) {
                     classes = new Class[event.getArguments().size()];
                     int i = 0;
-
                     for (Object obj : event.getArguments()) {
                         classes[i++] = obj.getClass();
                     }
@@ -111,12 +110,21 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
         }
     }
 
-
+    /**
+     * Get the event type that this handler can handle.
+     *
+     * @return the remote service call event type.
+     */
     @Override
     public Class<RemoteServiceCall> getType() {
         return RemoteServiceCall.class;
     }
 
+    /**
+     * Get the handler switch.
+     *
+     * @return the handler switch.
+     */
     @Override
     public Switch getSwitch() {
         // load the switch status from the config

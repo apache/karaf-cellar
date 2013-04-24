@@ -16,21 +16,22 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
     <!-- Import Service Listener -->
-    <bean id="importListener" class="org.apache.karaf.cellar.dosgi.ImportServiceListener" init-method="init" destroy-method="destroy">
+    <bean id="importServiceListener" class="org.apache.karaf.cellar.dosgi.ImportServiceListener" init-method="init" destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="commandStore" ref="commandStore"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
     </bean>
-    <service ref="importListener" interface="org.osgi.framework.hooks.service.ListenerHook"/>
+    <service ref="importServiceListener" interface="org.osgi.framework.hooks.service.ListenerHook"/>
 
     <!-- Export Service Listener -->
-    <bean id="exportListener" class="org.apache.karaf.cellar.dosgi.ExportServiceListener" init-method="init" destroy-method="destroy">
+    <bean id="exportServiceListener" class="org.apache.karaf.cellar.dosgi.ExportServiceListener" init-method="init" destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
     </bean>
 
+    <!-- Remote Service Call Event Handler -->
     <bean id="remoteServiceCallHandler" class="org.apache.karaf.cellar.dosgi.RemoteServiceCallHandler">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="eventTransportFactory" ref="eventTransportFactory"/>
@@ -43,13 +44,12 @@
         </service-properties>
     </service>
 
-    <!-- Cluster Event Handler -->
+    <!-- Remote Service Result Event Handler -->
     <bean id="remoteServiceResultHandler" class="org.apache.karaf.cellar.dosgi.RemoteServiceResultHandler">
         <property name="commandStore" ref="commandStore"/>
     </bean>
     <service ref="remoteServiceResultHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
-    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
     <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
