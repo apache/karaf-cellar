@@ -11,12 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.hazelcast;
 
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
 
+/**
+ * Cellar extender.
+ */
 public class CellarExtender  {
 
     private HazelcastBundleListener hazelcastBundleListener;
@@ -45,4 +47,5 @@ public class CellarExtender  {
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }

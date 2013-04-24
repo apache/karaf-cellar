@@ -36,7 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Consumes messages from the distributed {@code ITopic} and calls the {@code EventDispatcher}.
+ * Consumes cluster events from the Hazelcast {@code IQueue} and calls the {@code EventDispatcher}.
  */
 public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemListener<E>, Runnable {
 
@@ -57,15 +57,13 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     private ConfigurationAdmin configurationAdmin;
 
     public QueueConsumer() {
+        // nothing to do
     }
 
     public QueueConsumer(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
 
-    /**
-     * Initialization method.
-     */
     public void init() {
         if (queue != null) {
             queue.addItemListener(this, true);
@@ -76,9 +74,6 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         executorService.execute(this);
     }
 
-    /**
-     * Destruction method.
-     */
     public void destroy() {
         isConsuming = false;
         if (queue != null) {
@@ -99,24 +94,25 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
                 try {
                     e = getQueue().poll(10, TimeUnit.SECONDS);
                 } catch (InterruptedException e1) {
-                    LOGGER.warn("Consume task interrupted");
+                    LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
                 }
                 if (e != null) {
                     consume(e);
                 }
             }
         } catch (Exception ex) {
-            LOGGER.error("Error while consuming from queue", ex);
+            LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", ex);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
     }
 
     /**
-     * Consumes an event form the topic.
+     * Consume a cluster event.
      *
-     * @param event
+     * @param event the cluster event.
      */
+    @Override
     public void consume(E event) {
         if (event != null && (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce())) {
             dispatcher.dispatch(event);
@@ -133,24 +129,24 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         executorService.execute(this);
     }
 
-
     @Override
     public void stop() {
         isConsuming = false;
     }
 
+    @Override
     public Boolean isConsuming() {
         return isConsuming;
     }
 
     @Override
     public void itemAdded(ItemEvent<E> event) {
-
+        // nothing to do
     }
 
     @Override
     public void itemRemoved(ItemEvent<E> event) {
-
+        // nothing to do
     }
 
     public Dispatcher getDispatcher() {
@@ -177,6 +173,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
         this.queue = queue;
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

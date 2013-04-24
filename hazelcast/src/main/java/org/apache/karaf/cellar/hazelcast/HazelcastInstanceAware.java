@@ -18,6 +18,9 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.Member;
 import org.apache.karaf.cellar.core.Node;
 
+/**
+ * Hazelcast instance aware.
+ */
 public class HazelcastInstanceAware {
 
     protected HazelcastInstance instance;
@@ -30,10 +33,10 @@ public class HazelcastInstanceAware {
         this.instance = null;
     }
 
-        /**
-     * Returns the node on which the command was run.
+    /**
+     * Return the local node.
      *
-     * @return
+     * @return the local node.
      */
     public Node getNode() {
         Cluster cluster = instance.getCluster();
@@ -52,7 +55,5 @@ public class HazelcastInstanceAware {
     public void setInstance(HazelcastInstance instance) {
         this.instance = instance;
     }
-
-
 
 }

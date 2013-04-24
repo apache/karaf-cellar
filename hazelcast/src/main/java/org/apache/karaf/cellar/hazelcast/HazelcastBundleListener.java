@@ -18,6 +18,9 @@ import org.osgi.framework.*;
 
 import java.util.Dictionary;
 
+/**
+ * Hazelcast bundle listener.
+ */
 public class HazelcastBundleListener implements SynchronousBundleListener {
 
     private BundleContext bundleContext;

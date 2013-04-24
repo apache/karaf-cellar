@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Hazelcast cluster manager.
+ * Cluster manager implementation powered by Hazelcast.
  */
 public class HazelcastClusterManager extends HazelcastInstanceAware implements ClusterManager {
 
@@ -41,40 +41,44 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     private CombinedClassLoader combinedClassLoader;
 
     /**
-     * Returns a named distributed map.
+     * Get a Map in Hazelcast.
      *
-     * @param mapName
-     * @return
+     * @param mapName the Map name.
+     * @return the Map in Hazelcast.
      */
+    @Override
     public Map getMap(String mapName) {
         return instance.getMap(mapName);
     }
 
     /**
-     * Returns a named distributed list.
+     * Get a List in Hazelcast.
      *
-     * @param listName
-     * @return
+     * @param listName the List name.
+     * @return the List in Hazelcast.
      */
+    @Override
     public List getList(String listName) {
         return instance.getList(listName);
     }
 
     /**
-     * Returns a named distributed set.
-     * @param setName
-     * @return
+     * Get a Set in Hazelcast.
+     *
+     * @param setName the Set name.
+     * @return the Set in Hazelcast.
      */
+    @Override
     public Set getSet(String setName) {
         return instance.getSet(setName);
     }
 
-
     /**
-     * Returns the list of Hazelcast Nodes.
+     * Get the list of Hazelcast nodes.
      *
-     * @return
+     * @return a Set containing the Hazelcast nodes.
      */
+    @Override
     public Set<Node> listNodes() {
         Set<Node> nodes = new HashSet<Node>();
 
@@ -91,14 +95,13 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return nodes;
     }
 
-
-
     /**
-     * Returns the {@code Node}s with the corresponding ids.
+     * Get the nodes with given IDs.
      *
-     * @param ids
-     * @return
+     * @param ids a collection of IDs to look for.
+     * @return a Set containing the nodes.
      */
+    @Override
     public Set<Node> listNodes(Collection<String> ids) {
         Set<Node> nodes = new HashSet<Node>();
         if (ids != null && !ids.isEmpty()) {
@@ -119,11 +122,12 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     }
 
     /**
-     * Returns the {@code Node} with the corresponding id.
+     * Get a node with a given ID.
      *
-     * @param id
-     * @return
+     * @param id the node ID.
+     * @return the node.
      */
+    @Override
     public Node findNodeById(String id) {
         if (id != null) {
             Cluster cluster = instance.getCluster();
@@ -142,16 +146,23 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return null;
     }
 
+    /**
+     * List the nodes in a given cluster group.
+     *
+     * @param group the cluster group.
+     * @return a Set with the nodes.
+     */
     @Override
     public Set<Node> listNodesByGroup(Group group) {
         return group.getNodes();
     }
 
     /**
-     * Generate an id.
+     * Generate an unique ID.
      *
-     * @return
+     * @return the generated unique ID.
      */
+    @Override
     public synchronized String generateId() {
         if (idgenerator == null) {
             idgenerator = instance.getIdGenerator(GENERATOR_ID);
@@ -159,16 +170,19 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return String.valueOf(idgenerator.newId());
     }
 
+    @Override
     public void start() {
-
+        // nothing to do
     }
 
+    @Override
     public void stop() {
         if (instance != null && instance.getLifecycleService().isRunning()) {
             instance.getLifecycleService().shutdown();
         }
     }
 
+    @Override
     public void restart() {
         if (instance != null && instance.getLifecycleService().isRunning()) {
             instance.getLifecycleService().restart();
@@ -190,4 +204,5 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }

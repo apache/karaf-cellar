@@ -25,6 +25,10 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Hazelcast configuration manager.
+ * It loads hazelcast.xml configuration file.
+ */
 public class HazelcastConfigurationManager {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(HazelcastServiceFactory.class);
@@ -34,9 +38,9 @@ public class HazelcastConfigurationManager {
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
 
     /**
-     * Builds a Hazelcast {@link com.hazelcast.config.Config}
+     * Build a Hazelcast {@link com.hazelcast.config.Config}.
      *
-     * @return
+     * @return the Hazelcast configuration.
      */
     public Config getHazelcastConfig() {
         System.setProperty("hazelcast.config", xmlConfigLocation);
@@ -49,9 +53,9 @@ public class HazelcastConfigurationManager {
     }
 
     /**
-     * Updates Hazelcast Instance.
+     * Update configuration of a Hazelcast instance.
      *
-     * @param properties
+     * @param properties the updated configuration properties.
      */
     public boolean isUpdated(Map properties) {
         Boolean updated = Boolean.FALSE;

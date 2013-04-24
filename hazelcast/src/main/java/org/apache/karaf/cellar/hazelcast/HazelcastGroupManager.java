@@ -42,7 +42,7 @@ import org.osgi.service.cm.ConfigurationListener;
 import org.slf4j.Logger;
 
 /**
- * Hazelcast group manager.
+ * A group manager implementation powered by Hazelcast.
  * The role of this class is to provide means of creating groups, setting nodes to groups etc.
  * Keep in sync the distributed group configuration with the locally persisted.
  */
@@ -89,7 +89,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 }
             }
         } catch (IOException e) {
-            LOGGER.warn("CELLAR HAZELCAST: can't create group from configuration admin", e);
+            LOGGER.warn("CELLAR HAZELCAST: can't create cluster group from configuration admin", e);
         }
         try {
             // add group membership from configuration
@@ -169,7 +169,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     // store the group list to configuration admin
                     persist(listGroups());
                 } catch (Exception e) {
-                    LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+                    LOGGER.warn("CELLAR HAZELCAST: can't store cluster group list", e);
                 }
             }
             return group;
@@ -189,7 +189,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     // store the group list to configuration admin
                     persist(listGroups());
                 } catch (Exception e) {
-                    LOGGER.warn("CELLAR HAZELCAST: can't store group list", e);
+                    LOGGER.warn("CELLAR HAZELCAST: can't store cluster group list", e);
                 }
             }
         } finally {
@@ -331,8 +331,9 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     /**
-     * Registers a {@link Group}.
-     * @param group
+     * Register a cluster {@link Group}.
+     *
+     * @param group the cluster group to register.
      */
     @Override
     public void registerGroup(Group group) {
@@ -342,7 +343,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             String groupName = group.getName();
             createGroup(groupName);
 
-            LOGGER.info("Registering group {}.", groupName);
+            LOGGER.info("CELLAR HAZELCAST: registering cluster group {}.", groupName);
             Properties serviceProperties = new Properties();
             serviceProperties.put("type", "group");
             serviceProperties.put("name", groupName);
@@ -396,7 +397,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     }
                 }
             } catch (IOException e) {
-                LOGGER.error("Error reading group configuration {}", group);
+                LOGGER.error("CELLAR HAZELCAST: error reading cluster group configuration {}", group);
             }
 
             // launch the synchronization on the group
@@ -413,7 +414,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     }
                 }
             } catch (InvalidSyntaxException e) {
-                LOGGER.error("Error looking up for Synchronizers", e);
+                LOGGER.error("CELLAR HAZELCAST: failed to look for synchronizers", e);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -446,16 +447,17 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
     }
 
+    @Override
     public void unRegisterGroup(Group group) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(combinedClassLoader);
             String groupName = group.getName();
-            // remove local node from group.
+            // remove local node from cluster group
             group.getNodes().remove(getNode());
             listGroups().put(groupName, group);
 
-            // unregister group consumers
+            // un-register cluster group consumers
             if (consumerRegistrations != null && !consumerRegistrations.isEmpty()) {
                 ServiceRegistration consumerRegistration = consumerRegistrations.get(groupName);
                 if (consumerRegistration != null) {
@@ -464,7 +466,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 }
             }
 
-            // unregister group producers
+            // un-register cluster group producers
             if (producerRegistrations != null && !producerRegistrations.isEmpty()) {
                 ServiceRegistration producerRegistration = producerRegistrations.get(groupName);
                 if (producerRegistration != null) {
@@ -473,14 +475,14 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 }
             }
 
-            // remove Consumers & Producers
+            // remove consumers & producers
             groupProducers.remove(groupName);
             EventConsumer consumer = groupConsumer.remove(groupName);
             if (consumer != null) {
                 consumer.stop();
             }
 
-            // remove group from configuration
+            // remove cluster group from configuration
             try {
                 Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
                 Dictionary<String, Object> properties = configuration.getProperties();
@@ -495,7 +497,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 properties.put(Configurations.GROUPS_KEY, groups);
                 configuration.update(properties);
             } catch (IOException e) {
-                LOGGER.error("Error reading group configuration {}", group);
+                LOGGER.error("CELLAR HAZELCAST: failed to read cluster group configuration", e);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -503,27 +505,28 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     /**
-     * Copies the configuration of a {@link Group}.
+     * Copy the configuration of a cluster {@link Group}.
+     *
      * <b>1.</b> Updates configuration admin from Hazelcast using source config.
      * <b>2.</b> Creates target configuration both on Hazelcast and configuration admin.
      *
-     * @param sourceGroupName
-     * @param targetGroupName
+     * @param sourceGroupName the source cluster group.
+     * @param targetGroupName the target cluster group.
      */
     public void copyGroupConfiguration(String sourceGroupName, String targetGroupName) {
         try {
             Configuration conf = configurationAdmin.getConfiguration(Configurations.GROUP);
             if (conf != null) {
 
-                //Get configuration from config admin.
+                // get configuration from config admin
                 Dictionary configAdminProperties = conf.getProperties();
                 if (configAdminProperties == null) {
                     configAdminProperties = new Properties();
                 }
-                //Get configuration from Hazelcast
+                // get configuration from Hazelcast
                 Map<String, String> sourceGropConfig = instance.getMap(GROUPS_CONFIG);
 
-                //Update local configuration from cluster.
+                // update local configuration from cluster
                 for (Map.Entry<String, String> parentEntry : sourceGropConfig.entrySet()) {
                     configAdminProperties.put(parentEntry.getKey(), parentEntry.getValue());
                 }
@@ -546,15 +549,15 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             }
 
         } catch (IOException e) {
-            LOGGER.error("Error reading group configuration ", e);
+            LOGGER.error("CELLAR HAZELCAST: failed to read cluster group configuration", e);
         }
     }
 
     /**
-     * Utility method which converts a set to a String.
+     * Util method which converts a Set to a String.
      *
-     * @param set
-     * @return
+     * @param set the Set to convert.
+     * @return the String corresponding to the Set.
      */
     protected String convertSetToString(Set<String> set) {
         StringBuffer result = new StringBuffer();
@@ -570,10 +573,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     }
 
     /**
-     * Utility method which converts String to Set.
+     * Util method which converts a String to a Set.
      *
-     * @param string
-     * @return
+     * @param string the String to convert.
+     * @return the Set corresponding to the String.
      */
     protected Set<String> convertStringToSet(String string) {
     	if (string == null)
@@ -591,7 +594,11 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         return result;
     }
 
-
+    /**
+     * A local configuration listener to update the local Hazelcast instance when the configuration changes.
+     *
+     * @param configurationEvent the local configuration event.
+     */
     @Override
     public void configurationEvent(ConfigurationEvent configurationEvent) {
         String pid = configurationEvent.getPid();
@@ -610,7 +617,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     }
                 }
             } catch (Exception e) {
-                LOGGER.warn("Failed to update group configuration");
+                LOGGER.warn("CELLAR HAZELCAST: failed to update cluster group configuration", e);
             }
         }
     }
@@ -642,7 +649,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      */
     @Override
     public void entryUpdated(EntryEvent entryEvent) {
-        LOGGER.info("Distributed Group configuration has been updated, updating local configuration.");
+        LOGGER.info("CELLAR HAZELCAST: cluster group configuration has been updated, updating local configuration");
         try {
             Configuration conf = configurationAdmin.getConfiguration(GROUPS);
             Dictionary props = conf.getProperties();
@@ -653,7 +660,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 conf.update(props);
             }
         } catch (Exception ex) {
-            LOGGER.warn("Error while updating local group configuration", ex);
+            LOGGER.warn("CELLAR HAZELCAST: failed to update local configuration", ex);
         }
     }
 
@@ -666,7 +673,6 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void entryEvicted(EntryEvent entryEvent) {
         entryUpdated(entryEvent);
     }
-
 
     public HazelcastInstance getInstance() {
         return instance;
