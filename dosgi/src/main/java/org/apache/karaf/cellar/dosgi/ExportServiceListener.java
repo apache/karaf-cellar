@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Listener on the export service action.
+ * Listener on the export service.
  */
 public class ExportServiceListener implements ServiceListener {
 
@@ -42,9 +42,9 @@ public class ExportServiceListener implements ServiceListener {
     private EventTransportFactory eventTransportFactory;
 
     private BundleContext bundleContext;
-    private Map<String,EndpointDescription> remoteEndpoints;
+    private Map<String, EndpointDescription> remoteEndpoints;
 
-    private final Map<String,EventConsumer> consumers = new HashMap<String,EventConsumer>();
+    private final Map<String, EventConsumer> consumers = new HashMap<String, EventConsumer>();
 
     private Node node;
 
@@ -53,7 +53,7 @@ public class ExportServiceListener implements ServiceListener {
         remoteEndpoints = clusterManager.getMap(Constants.REMOTE_ENDPOINTS);
         bundleContext.addServiceListener(this);
 
-        //Lookup for already exported services.
+        // lookup for already exported services.
         ServiceReference[] references = null;
         try {
             String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
@@ -65,40 +65,40 @@ public class ExportServiceListener implements ServiceListener {
                 }
             }
         } catch (InvalidSyntaxException e) {
-            LOGGER.error("CELLAR DOSGI: unable to export existing remote services", e);
+            LOGGER.error("CELLAR DOSGI: failed to export existing remote services", e);
         }
     }
 
     public void destroy() {
         bundleContext.removeServiceListener(this);
-            for(Map.Entry<String,EventConsumer> consumerEntry:consumers.entrySet()) {
-                EventConsumer consumer = consumerEntry.getValue();
-                consumer.stop();
-            }
-            consumers.clear();
+        for (Map.Entry<String, EventConsumer> consumerEntry : consumers.entrySet()) {
+            EventConsumer consumer = consumerEntry.getValue();
+            consumer.stop();
+        }
+        consumers.clear();
     }
 
     @Override
     public void serviceChanged(ServiceEvent event) {
-            if (event != null) {
-                switch (event.getType()) {
-                    case ServiceEvent.REGISTERED:
-                        exportService(event.getServiceReference());
-                        break;
-                    case ServiceEvent.UNREGISTERING:
-                        unExportService(event.getServiceReference());
-                        break;
-                    case ServiceEvent.MODIFIED:
-                    case ServiceEvent.MODIFIED_ENDMATCH:
-                    default:
-                        break;
-                }
+        if (event != null) {
+            switch (event.getType()) {
+                case ServiceEvent.REGISTERED:
+                    exportService(event.getServiceReference());
+                    break;
+                case ServiceEvent.UNREGISTERING:
+                    unExportService(event.getServiceReference());
+                    break;
+                case ServiceEvent.MODIFIED:
+                case ServiceEvent.MODIFIED_ENDMATCH:
+                default:
+                    break;
             }
+        }
 
     }
 
     /**
-     * Registers {@link EventConsumer}s for consuming remote service calls.
+     * Register {@link EventConsumer}s for consuming remote service calls.
      *
      * @param serviceReference The reference of the service to be exported.
      */
@@ -116,7 +116,7 @@ public class ExportServiceListener implements ServiceListener {
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
                 for (String iface : exportedInterfaces) {
-                    //Add endpoint description to the set.
+                    // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
                     String endpointId = iface + Constants.SEPARATOR + version.toString();
 
@@ -126,17 +126,17 @@ public class ExportServiceListener implements ServiceListener {
                         endpoint = remoteEndpoints.get(endpointId);
                         endpoint.getNodes().add(node);
                     } else {
-                        endpoint = new EndpointDescription(endpointId,node);
+                        endpoint = new EndpointDescription(endpointId, node);
                     }
 
                     remoteEndpoints.put(endpointId, endpoint);
 
-                    //Register the endpoint consumer
+                    // register the endpoint consumer
                     EventConsumer consumer = consumers.get(endpointId);
-                    if(consumer == null) {
+                    if (consumer == null) {
                         consumer = eventTransportFactory.getEventConsumer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpointId, false);
                         consumers.put(endpointId, consumer);
-                    } else if(!consumer.isConsuming()) {
+                    } else if (!consumer.isConsuming()) {
                         consumer.start();
                     }
                 }
@@ -147,12 +147,12 @@ public class ExportServiceListener implements ServiceListener {
     }
 
     /**
-     * Removes {@link EventConsumer}s for consuming remote service calls.
+     * Remove {@link EventConsumer}s for consuming remote service calls.
      *
      * @param serviceReference
      */
     public void unExportService(ServiceReference serviceReference) {
-      ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
@@ -164,15 +164,15 @@ public class ExportServiceListener implements ServiceListener {
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
                 for (String iface : exportedInterfaces) {
-                    //Add endpoint description to the set.
+                    // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
                     String endpointId = iface + Constants.SEPARATOR + version.toString();
 
                     EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
                     endpointDescription.getNodes().remove(node);
-                    //If the endpoint is used for export from other nodes too, then put it back.
-                    if(endpointDescription.getNodes().size() > 0) {
-                        remoteEndpoints.put(endpointId,endpointDescription);
+                    // if the endpoint is used for export from other nodes too, then put it back.
+                    if (endpointDescription.getNodes().size() > 0) {
+                        remoteEndpoints.put(endpointId, endpointDescription);
                     }
 
                     EventConsumer eventConsumer = consumers.remove(endpointId);
@@ -185,11 +185,11 @@ public class ExportServiceListener implements ServiceListener {
     }
 
     /**
-     * Returns a Set of interfaces that match the actual exported service interfaces of a service.
+     * Return a Set of interfaces that match the actual exported service interfaces of a service.
      *
-     * @param service
-     * @param services
-     * @return
+     * @param service the service.
+     * @param services the services.
+     * @return the set of interfaces.
      */
     public Set<String> getServiceInterfaces(Object service, String[] services) {
         Set<String> interfaceList = new LinkedHashSet<String>();

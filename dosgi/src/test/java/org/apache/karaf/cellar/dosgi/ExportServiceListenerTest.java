@@ -13,9 +13,7 @@
  */
 package org.apache.karaf.cellar.dosgi;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -29,16 +27,6 @@ public class ExportServiceListenerTest {
 
     private ExportServiceListener listener = new ExportServiceListener();
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
-
     @Test
     public void testGetServiceInterfaces() throws Exception {
         System.out.println("Test Service interfaces with null service");
@@ -49,7 +37,7 @@ public class ExportServiceListenerTest {
         result = listener.getServiceInterfaces(null,new String[] {"*"});
         Assert.assertEquals(expectedResult,result);
 
-        System.out.println("Test Service interfaces with ArrayList and wildchard services");
+        System.out.println("Test Service interfaces with ArrayList and wildcard services");
         result = listener.getServiceInterfaces(new ArrayList(),new String[] {"*"});
         Assert.assertTrue(result.contains("java.util.List"));
 

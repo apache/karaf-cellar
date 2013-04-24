@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.dosgi;
 
 import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Producer;
 import org.apache.karaf.cellar.core.command.ClusteredExecutionContext;
 import org.apache.karaf.cellar.core.command.CommandStore;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
@@ -78,6 +77,7 @@ public class ImportServiceListener implements ListenerHook, Runnable {
         producers.clear();
     }
 
+    @Override
     public void run() {
         for (ListenerInfo listener : pendingListeners) {
             checkListener(listener);
@@ -96,7 +96,7 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                 }
 
                 pendingListeners.add(listenerInfo);
-                // Make sure we only import remote services
+                // make sure we only import remote services
                 checkListener(listenerInfo);
             }
         } finally {
@@ -114,9 +114,9 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                     continue;
                 }
 
-                // Make sure we only import remote services
+                // make sure we only import remote services
                 String filter = "(&" + listenerInfo.getFilter() + "(!(" + Constants.ENDPOINT_FRAMEWORK_UUID + "=" + clusterManager.getNode().getId() + ")))";
-                // Iterate through known services and import them if needed
+                // iterate through known services and import them if needed
                 Set<EndpointDescription> matches = new LinkedHashSet<EndpointDescription>();
                 for (Map.Entry<String, EndpointDescription> entry : remoteEndpoints.entrySet()) {
                     EndpointDescription endpointDescription = entry.getValue();
@@ -126,7 +126,7 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                 }
 
                 for (EndpointDescription endpoint : matches) {
-                    unimportService(endpoint);
+                    unImportService(endpoint);
                 }
 
                 pendingListeners.remove(listenerInfo);
@@ -137,15 +137,15 @@ public class ImportServiceListener implements ListenerHook, Runnable {
     }
 
     /**
-     * Checks if there is a match for the current {@link ListenerInfo}.
+     * Check if there is a match for the current {@link ListenerInfo}.
      *
-     * @param listenerInfo
+     * @param listenerInfo the listener info.
      */
     private void checkListener(ListenerInfo listenerInfo) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            // Iterate through known services and import them if needed
+            // iterate through known services and import them if needed
             Set<EndpointDescription> matches = new LinkedHashSet<EndpointDescription>();
             for (Map.Entry<String, EndpointDescription> entry : remoteEndpoints.entrySet()) {
                 EndpointDescription endpointDescription = entry.getValue();
@@ -162,10 +162,10 @@ public class ImportServiceListener implements ListenerHook, Runnable {
     }
 
     /**
-     * Imports a remote service to the service registry.
+     * Import a remote service to the service registry.
      *
-     * @param endpoint
-     * @param listenerInfo
+     * @param endpoint the endpoint description.
+     * @param listenerInfo the listener info.
      */
     private void importService(EndpointDescription endpoint, ListenerInfo listenerInfo) {
         LOGGER.debug("CELLAR DOSGI: importing remote service");
@@ -199,11 +199,11 @@ public class ImportServiceListener implements ListenerHook, Runnable {
     }
 
     /**
-     * Unregisters an imported service
+     * Un-register an imported service.
      *
-     * @param endpoint
+     * @param endpoint the endpoint description.
      */
-    private void unimportService(EndpointDescription endpoint) {
+    private void unImportService(EndpointDescription endpoint) {
         ServiceRegistration registration = registrations.get(endpoint);
         registration.unregister();
 

@@ -18,7 +18,7 @@ import org.apache.karaf.cellar.core.command.Command;
 import java.util.List;
 
 /**
- * Call to a remote service.
+ * Cluster remote service call event.
  */
 public class RemoteServiceCall extends Command<RemoteServiceResult> {
 
@@ -27,11 +27,6 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
     private String serviceClass;
     private List<Object> arguments;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public RemoteServiceCall(String id) {
         super(id);
     }
