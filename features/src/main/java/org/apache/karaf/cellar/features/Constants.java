@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.features;
 
 /**
- * Features constants.
+ * Features configuration constants.
  */
 public class Constants {
 

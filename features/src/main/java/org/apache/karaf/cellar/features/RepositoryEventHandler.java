@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 
 /**
- * Repository event handler.
+ * Handler for cluster features repository event.
  */
-public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<RemoteRepositoryEvent> {
+public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<ClusterRepositoryEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(RepositoryEventHandler.class);
 
@@ -44,7 +44,13 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         super.destroy();
     }
 
-    public void handle(RemoteRepositoryEvent event) {
+    /**
+     * Handle cluster features repository event.
+     *
+     * @param event the cluster event to handle.
+     */
+    @Override
+    public void handle(ClusterRepositoryEvent event) {
     	
     	// check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -88,10 +94,12 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         }
     }
 
-    public Class<RemoteRepositoryEvent> getType() {
-        return RemoteRepositoryEvent.class;
+    @Override
+    public Class<ClusterRepositoryEvent> getType() {
+        return ClusterRepositoryEvent.class;
     }
 
+    @Override
     public Switch getSwitch() {
         return eventSwitch;
     }

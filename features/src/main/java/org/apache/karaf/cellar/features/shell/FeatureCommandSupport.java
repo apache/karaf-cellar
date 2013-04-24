@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
- * Abstract feature command.
+ * Abstract cluster feature shell command.
  */
 public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
@@ -39,14 +39,14 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
     protected BundleContext bundleContext;
 
     /**
-     * Forces the features status for a specific group.
+     * Force the features status for a specific group.
      * Why? Its required if no group member currently in the cluster.
      * If a member of the group joins later, it won't find the change, unless we force it.
      *
-     * @param groupName
-     * @param feature
-     * @param version
-     * @param status
+     * @param groupName the cluster group name.
+     * @param feature the feature name.
+     * @param version the feature version.
+     * @param status the feature status (installed, uninstalled).
      */
     public Boolean updateFeatureStatus(String groupName, String feature, String version, Boolean status) {
 
@@ -58,10 +58,10 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
             if (group == null || group.getNodes().isEmpty()) {
 
                 FeatureInfo info = new FeatureInfo(feature, version);
-                Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+                Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
                 // check the existing configuration
                 if (version == null || (version.trim().length() < 1)) {
-                    for (FeatureInfo f : features.keySet()) {
+                    for (FeatureInfo f : clusterFeatures.keySet()) {
                         if (f.getName().equals(feature)) {
                             version = f.getVersion();
                             info.setVersion(version);
@@ -69,7 +69,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                     }
                 }
 
-                // check the Features Service.
+                // check the features service
                 try {
                     for (Feature f : featuresService.listFeatures()) {
                         if (f.getName().equals(feature)) {
@@ -82,7 +82,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
                 }
 
                 if (info.getVersion() != null && (info.getVersion().trim().length() > 0)) {
-                    features.put(info, status);
+                    clusterFeatures.put(info, status);
                     result = Boolean.TRUE;
                 }
             }
@@ -93,23 +93,23 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
     }
 
     /**
-     * Check if a feature is present in the distributed map.
+     * Check if a feature is present in the cluster group.
      *
-     * @param groupName the target cluster group.
-     * @param feature   the target feature name.
-     * @param version   the target feature version.
-     * @return true if the feature exists in the distributed map, false else
+     * @param groupName the cluster group.
+     * @param feature the feature name.
+     * @param version the feature version.
+     * @return true if the feature exists in the cluster group, false else.
      */
     public boolean featureExists(String groupName, String feature, String version) {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
-            if (distributedFeatures == null)
+            if (clusterFeatures == null)
                 return false;
 
-            for (FeatureInfo distributedFeature : distributedFeatures.keySet()) {
+            for (FeatureInfo distributedFeature : clusterFeatures.keySet()) {
                 if (version == null) {
                     if (distributedFeature.getName().equals(feature))
                         return true;
@@ -125,20 +125,21 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         }
     }
 
+    /**
+     * Check if a cluster features event is allowed.
+     *
+     * @param group the cluster group.
+     * @param category the features category name.
+     * @param name the feature name.
+     * @param type the event type (inbound, outbound).
+     * @return true if the cluster features event is allowed, false else.
+     */
     public boolean isAllowed(Group group, String category, String name, EventType type) {
         CellarSupport support = new CellarSupport();
         support.setClusterManager(this.clusterManager);
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         return support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND);
-    }
-
-    public BundleContext getBundleContext() {
-        return bundleContext;
-    }
-
-    public void setBundleContext(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
     }
 
     public FeaturesService getFeaturesService() {

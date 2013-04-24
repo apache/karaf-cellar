@@ -21,7 +21,7 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "feature-url-list", description = "Displays a list of all defined repository URLs in the given cluster group")
+@Command(scope = "cluster", name = "feature-url-list", description = "List the features repository URLs in a cluster group")
 public class UrlListCommand extends FeatureCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -36,10 +36,10 @@ public class UrlListCommand extends FeatureCommandSupport {
             return null;
         }
 
-        // get the distributed list
-        List<String> repositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        // get the features repositories in the cluster group
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
-        for (String repository : repositories) {
+        for (String repository : clusterRepositories) {
             System.out.println(repository);
         }
 

@@ -23,16 +23,16 @@ import org.apache.karaf.shell.commands.Option;
 
 import java.util.Map;
 
-@Command(scope = "cluster", name = "feature-list", description = "List the features assigned to a cluster group.")
+@Command(scope = "cluster", name = "feature-list", description = "List the features in a cluster group")
 public class ListGroupFeatures extends FeatureCommandSupport {
 
     protected static final String HEADER_FORMAT = " %-11s   %-15s   %s";
     protected static final String OUTPUT_FORMAT = "[%-11s] [%-15s] %s";
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Option(name = "-i", aliases = { "--installed" }, description = "Display only installed features.", required = false, multiValued = false)
+    @Option(name = "-i", aliases = { "--installed" }, description = "Display only installed features", required = false, multiValued = false)
     boolean installed;
 
     @Override
@@ -46,15 +46,15 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<FeatureInfo, Boolean> features = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
-            if (features != null && !features.isEmpty()) {
-                System.out.println(String.format("Features for cluster group " + groupName));
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
+                System.out.println(String.format("Features in cluster group " + groupName));
                 System.out.println(String.format(HEADER_FORMAT, "Status", "Version", "Name"));
-                for (FeatureInfo info : features.keySet()) {
+                for (FeatureInfo info : clusterFeatures.keySet()) {
                     String name = info.getName();
                     String version = info.getVersion();
                     String statusString = "";
-                    boolean status = features.get(info);
+                    boolean status = clusterFeatures.get(info);
                     if (status) {
                         statusString = "installed";
                     } else {
@@ -63,10 +63,10 @@ public class ListGroupFeatures extends FeatureCommandSupport {
                     if (version == null)
                         version = "";
                     if (!installed || (installed && status)) {
-                        System.out.println(String.format(OUTPUT_FORMAT, status, version, name));
+                        System.out.println(String.format(OUTPUT_FORMAT, statusString, version, name));
                     }
                 }
-            } else System.err.println("No features found for cluster group " + groupName);
+            } else System.err.println("No features in cluster group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

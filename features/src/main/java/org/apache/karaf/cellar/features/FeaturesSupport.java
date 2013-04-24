@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Features support.
+ * Generic features support.
  */
 public class FeaturesSupport extends CellarSupport {
 
@@ -82,9 +82,10 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Push a {@code Feature} and its status in a cluster group.
      *
-     * @param feature
+     * @param feature the feature to push in the cluster group.
+     * @param group the cluster group.
      */
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
@@ -97,15 +98,17 @@ public class FeaturesSupport extends CellarSupport {
                     Boolean installed = featuresService.isInstalled(feature);
                     clusterFeatures.put(info, installed);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**
-     * Pushes a {@code Feature} and its status to the distributed list of features.
+     * Push a {@code Feature} and its status in a cluster group.
      * This version of the method force the bundle status, without looking the features service.
      *
-     * @param feature
+     * @param feature the feature to push in the cluster group.
+     * @param group the cluster group.
+     * @param force true to force the bundle status (ignoring the features service), false else.
      */
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
@@ -117,14 +120,15 @@ public class FeaturesSupport extends CellarSupport {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     clusterFeatures.put(info, force);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**
-     * Pushed a {@code Repository} to the distributed list of repositories.
+     * Push a features {@code Repository} in a cluster group.
      *
-     * @param repository
+     * @param repository the features repository to push in the cluster group.
+     * @param group the cluster group.
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
@@ -144,9 +148,10 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Removes a {@code Repository} to the distributed list of repositories.
+     * Remove a features {@code Repository} from a cluster group.
      *
-     * @param repository
+     * @param repository the features repository to remove from the cluster group.
+     * @param group the cluster group.
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();

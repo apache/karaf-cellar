@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.features;
 import java.io.Serializable;
 
 /**
- * Feature info.
+ * Feature info to store in the cluster.
  */
 public class FeatureInfo implements Serializable {
 

@@ -17,9 +17,9 @@ import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.FeatureEvent.EventType;
 
 /**
- * Remove features event.
+ * Cluster features event.
  */
-public class RemoteFeaturesEvent extends Event {
+public class ClusterFeaturesEvent extends Event {
 
     private static final String separator = "/";
 
@@ -29,7 +29,7 @@ public class RemoteFeaturesEvent extends Event {
     private Boolean noRefresh;
     private EventType type;
 
-    public RemoteFeaturesEvent(String name, String version, EventType type) {
+    public ClusterFeaturesEvent(String name, String version, EventType type) {
         super(name + separator + version);
         this.name = name;
         this.version = version;
@@ -38,7 +38,7 @@ public class RemoteFeaturesEvent extends Event {
         this.type = type;
     }
 
-    public RemoteFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, EventType type) {
+    public ClusterFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, EventType type) {
         super(name + separator + version);
         this.name = name;
         this.version = version;
