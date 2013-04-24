@@ -16,14 +16,14 @@ package org.apache.karaf.cellar.core.event;
 import org.apache.karaf.cellar.core.Dispatcher;
 
 /**
- * A dispatcher which dispatches each event to the appropriate Handler.
+ * A dispatcher which dispatches each cluster event to the appropriate handler.
  */
 public interface EventDispatcher<E extends Event> extends Dispatcher<E> {
 
     /**
-     * Dispatches the Event to the appropriate handler.
+     * Dispatch the cluster event to the appropriate handler.
      *
-     * @param event
+     * @param event the cluster event to dispatch.
      */
     public void dispatch(E event);
 

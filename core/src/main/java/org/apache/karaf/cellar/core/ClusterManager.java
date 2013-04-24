@@ -24,87 +24,86 @@ import java.util.Set;
 public interface ClusterManager {
 
     /**
-     * Returns a named distributed map.
+     * Get a map in the cluster.
      *
-     * @param mapName
-     * @return
+     * @param mapName the map name in the cluster.
+     * @return the map in the cluster.
      */
     public Map getMap(String mapName);
 
     /**
-     * Returns a named distributed list.
+     * Get a list in the cluster.
      *
-     * @param listName
-     * @return
+     * @param listName the list name in the cluster.
+     * @return the list in the cluster.
      */
     public List getList(String listName);
 
-
     /**
-     * Returns a named distributed list.
+     * Get a set in the cluster.
      *
-     * @param setName
-     * @return
+     * @param setName the set name in the cluster.
+     * @return the set in the cluster.
      */
     public Set getSet(String setName);
 
-
     /**
-     * Returns a list of {@code Node}s.
+     * Get the nodes in the cluster.
      *
-     * @return
+     * @return the set of nodes in the cluster.
      */
     public Set<Node> listNodes();
 
     /**
-     * Returns the {@link Node} with specified id.
+     * Get the nodes with a given ID.
      *
-     * @return
+     * @param ids the collection of ID to look for.
+     * @return the set of nodes.
      */
     public Set<Node> listNodes(Collection<String> ids);
 
     /**
-     * Returns the {@link Node} with specified {@link Group}.
+     * Get the nodes in a given cluster group.
      *
-     * @return
+     * @param group the cluster group.
+     * @return the set of nodes in the cluster group.
      */
     public Set<Node> listNodesByGroup(Group group);
 
-
     /**
-     * Returns the {@link Node} with specified id.
+     * Get a node identified by a given ID.
      *
-     * @return
+     * @param id the id of the node to look for.
+     * @return the node.
      */
     public Node findNodeById(String id);
 
-
     /**
-     * Returns the {@link Node} on which the command was executed.
+     * Get the local node.
      *
-     * @return
+     * @return the local node.
      */
     public Node getNode();
 
     /**
-     * Generate an Id unique across the cluster.
+     * Generate an unique ID across the cluster.
      *
-     * @return
+     * @return a unique ID across the cluster.
      */
     public String generateId();
 
     /**
-     * Start the clustering support on the {@link Node}.
+     * Start the local node.
      */
     public void start();
 
     /**
-     * Stops the node.
+     * Stop the local node.
      */
     public void stop();
 
     /**
-     * Restarts the clustering support on the {@link Node}.
+     * Restart the local node.
      */
     public void restart();
 

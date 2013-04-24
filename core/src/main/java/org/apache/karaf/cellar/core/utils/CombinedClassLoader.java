@@ -11,13 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.core.utils;
 
 import org.osgi.framework.Bundle;
 
 import java.net.URL;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -25,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * A class loader which combines multiple bundle class loaders.
  * A bundle can add itself for to this class loader, so that the class loader can load classes from the bundle.
- * It is meant to be used together with the extender pattern in order to extends cellars class space.
+ * It is meant to be used together with the extender pattern in order to extends Cellar class space.
  */
 public class CombinedClassLoader extends ClassLoader {
 
@@ -47,7 +45,7 @@ public class CombinedClassLoader extends ClassLoader {
         bundles.remove(bundle.getBundleId());
     }
 
-
+    @Override
     public Class findClass(String name) throws ClassNotFoundException {
         for (Map.Entry<Long, Bundle> entry : bundles.entrySet()) {
             try {
@@ -62,8 +60,7 @@ public class CombinedClassLoader extends ClassLoader {
         throw new ClassNotFoundException(name);
     }
 
-
-
+    @Override
     public URL getResource(String name) {
         for (Map.Entry<Long, Bundle> entry : bundles.entrySet()) {
             Bundle bundle = entry.getValue();
@@ -76,4 +73,5 @@ public class CombinedClassLoader extends ClassLoader {
         }
         return null;
     }
+
 }

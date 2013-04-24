@@ -13,32 +13,23 @@
  */
 package org.apache.karaf.cellar.core.event;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Event handler service registry.
  */
 public class EventHandlerServiceRegistry<E extends Event> implements EventHandlerRegistry<E> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
-
     private Map<Class,EventHandler> eventHandlerMap = new ConcurrentHashMap<Class,EventHandler>();
 
     /**
-     * Returns the appropriate {@code EventHandler} found inside the {@code HandlerRegistry}.
+     * Return the appropriate cluster {@code EventHandler} found inside the cluster {@code HandlerRegistry}.
      *
-     * @param event
-     * @return
+     * @param event the cluster event to handle.
+     * @return the corresponding cluster event handler to use.
      */
+    @Override
     public EventHandler<E> getHandler(E event) {
         if (event != null) {
             Class clazz = event.getClass();

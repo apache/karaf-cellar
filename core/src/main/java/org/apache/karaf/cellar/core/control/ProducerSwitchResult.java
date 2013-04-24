@@ -23,33 +23,15 @@ public class ProducerSwitchResult extends Result {
     protected Boolean success = Boolean.TRUE;
     protected Boolean status = Boolean.TRUE;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public ProducerSwitchResult(String id) {
         super(id);
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param success
-     */
     public ProducerSwitchResult(String id, Boolean success) {
         super(id);
         this.success = success;
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param success
-     * @param status
-     */
     public ProducerSwitchResult(String id, Boolean success, Boolean status) {
         super(id);
         this.success = success;

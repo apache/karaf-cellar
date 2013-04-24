@@ -21,14 +21,21 @@ import org.apache.karaf.shell.console.completer.StringsCompleter;
 import java.util.List;
 
 /**
- * Abstract group completer.
+ * Abstract cluster group completer.
  */
 public abstract class GroupCompleterSupport implements Completer {
 
     protected GroupManager groupManager;
 
+    /**
+     * Check if a cluster group should be accepted for completion.
+     *
+     * @param group the cluster group to check.
+     * @return true if the cluster group has been accepted, false else.
+     */
     protected abstract boolean acceptsGroup(Group group);
 
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
@@ -41,11 +48,10 @@ public abstract class GroupCompleterSupport implements Completer {
                 }
             }
         } catch (Exception e) {
-            // Ignore
+            // ignore
         }
         return delegate.complete(buffer, cursor, candidates);
     }
-
 
     public GroupManager getGroupManager() {
         return groupManager;

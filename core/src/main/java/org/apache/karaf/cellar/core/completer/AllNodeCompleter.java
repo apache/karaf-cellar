@@ -23,8 +23,8 @@ public class AllNodeCompleter extends NodeCompleterSupport {
     /**
      * Always returns true.
      *
-     * @param node
-     * @return
+     * @param node the node.
+     * @return return true.
      */
     @Override
     protected boolean acceptsNode(Node node) {

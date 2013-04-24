@@ -17,10 +17,16 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * Local groups completer.
+ * Local cluster groups completer.
  */
 public class LocalGroupsCompleter extends GroupCompleterSupport {
 
+    /**
+     * Add cluster groups where the local node is belonging.
+     *
+     * @param group the cluster group candidate for completion.
+     * @return true if the cluster group has been accepted, false else.
+     */
     @Override
     protected boolean acceptsGroup(Group group) {
         Node node = groupManager.getNode();

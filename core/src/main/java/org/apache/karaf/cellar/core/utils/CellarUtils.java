@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.karaf.cellar.core.utils;
 
 import java.util.Collection;
@@ -7,6 +20,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Generic Cellar utils class.
+ */
 public class CellarUtils {
 
     public static enum MergeType {
@@ -18,11 +34,11 @@ public class CellarUtils {
 
     private static final Pattern mergablePattern = Pattern.compile(MERGABLE_REGEX);
 
-
     /**
-     * Returns true if String is mergable.
-     * @param s
-     * @return
+     * Check if a String is "merge-able".
+     *
+     * @param s the String to check.
+     * @return true if the String is "merge-able", false else.
      */
     public static boolean isMergable(String s) {
        Matcher matcher = mergablePattern.matcher(s);
@@ -30,10 +46,10 @@ public class CellarUtils {
     }
 
     /**
-     * Converts a comma delimited String to a Set of Strings.
+     * Convert a comma delimited String to a Set of Strings.
      *
-     * @param text
-     * @return
+     * @param text the String to "split".
+     * @return the set of Strings.
      */
     public static Set<String> createSetFromString(String text) {
         if(isMergable(text)) {
@@ -56,12 +72,13 @@ public class CellarUtils {
     }
 
     /**
-     * Creates a comma delimited list of items.
+     * Convert a set of Strings into a global String.
      *
-     * @param items
-     * @return
+     * @param items the set of String.
+     * @param mergeable true if you want to use the MERRGEABLE string format, false else.
+     * @return the global String resulting of the concatenation of the Strings in the Set.
      */
-    public static String createStringFromSet(Set<String> items, boolean mergable) {
+    public static String createStringFromSet(Set<String> items, boolean mergeable) {
         StringBuilder builder = new StringBuilder();
 
         Iterator<String> iterator = items.iterator();
@@ -71,7 +88,7 @@ public class CellarUtils {
                 builder.append(",");
             }
         }
-        if (mergable) {
+        if (mergeable) {
             return String.format(MERGABLE, builder.toString());
         } else {
             return builder.toString();
@@ -79,22 +96,22 @@ public class CellarUtils {
     }
 
     /**
-     * Returns true if both {@link java.util.Collection}s contain exactly the same items (order doesn't matter).
+     * Check if two collections contain the same elements.
      *
-     * @param col1
-     * @param col2
-     * @return
+     * @param col1 the first collection.
+     * @param col2 the second collection.
+     * @return true if the two collections
      */
     public static boolean collectionEquals(Collection col1, Collection col2) {
         return collectionSubset(col1, col2) && collectionSubset(col2, col1);
     }
 
     /**
-     * Returns true if one {@link Collection} contains all items of the others
+     * Check if the a collection if a subset of another one.
      *
-     * @param source
-     * @param target
-     * @return
+     * @param source the source collection.
+     * @param target the target collection.
+     * @return true if source is a subset of the target, false else.
      */
     public static boolean collectionSubset(Collection source, Collection target) {
         if (source == null && target == null) {

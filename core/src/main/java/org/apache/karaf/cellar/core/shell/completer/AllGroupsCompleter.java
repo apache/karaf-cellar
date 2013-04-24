@@ -16,10 +16,16 @@ package org.apache.karaf.cellar.core.shell.completer;
 import org.apache.karaf.cellar.core.Group;
 
 /**
- * All groups completer.
+ * Completer for all cluster groups.
  */
 public class AllGroupsCompleter extends GroupCompleterSupport {
 
+    /**
+     * Accept all cluster groups for completion.
+     *
+     * @param group the cluster group to check.
+     * @return always return true.
+     */
     @Override
     protected boolean acceptsGroup(Group group) {
         return true;

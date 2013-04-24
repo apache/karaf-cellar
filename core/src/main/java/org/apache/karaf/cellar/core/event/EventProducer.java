@@ -16,15 +16,16 @@ package org.apache.karaf.cellar.core.event;
 import org.apache.karaf.cellar.core.Producer;
 
 /**
- * Transmits events to the cluster.
+ * Broadcast cluster events to the cluster.
  */
 public interface EventProducer<E extends Event> extends Producer<E> {
 
     /**
-     * Produce {@code Event}s to the cluster.
+     * Produce and broadcast cluster {@code Event}s to the cluster.
      *
-     * @param event
+     * @param event the cluster event to produce and broadcast.
      */
+    @Override
     public void produce(E event);
 
 }

@@ -21,6 +21,12 @@ import org.apache.karaf.cellar.core.Node;
  */
 public class OtherGroupsCompleter extends GroupCompleterSupport {
 
+    /**
+     * Accept the cluster groups which don't include the local node.
+     *
+     * @param group the cluster group to check.
+     * @return true if the cluster group doesn't include the local node, false else.
+     */
     @Override
     protected boolean acceptsGroup(Group group) {
         Node node = groupManager.getNode();

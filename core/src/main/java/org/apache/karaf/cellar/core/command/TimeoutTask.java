@@ -29,8 +29,9 @@ public class TimeoutTask implements Runnable {
     /**
      * Runs the timeout task.
      */
+    @Override
     public void run() {
-        //Check if command is still pending.
+        // check if command is still pending
         Boolean pending = store.getPending().containsKey(command);
         if (pending) {
             store.getPending().remove(command);

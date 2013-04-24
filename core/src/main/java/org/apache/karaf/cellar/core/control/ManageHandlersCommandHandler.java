@@ -42,10 +42,10 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     private Consumer consumer;
 
     /**
-     * Returns a map containing all managed {@code EventHandler}s and their status.
+     * Return a map containing all managed {@code EventHandler}s and their status.
      *
-     * @param command
-     * @return
+     * @param command the manage handlers command to execute.
+     * @return a result containing the map of event handlers (and their status).
      */
     @Override
     public ManageHandlersResult execute(ManageHandlersCommand command) {
@@ -95,7 +95,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     /**
      * Store the handler switch configuration in configuration admin.
      *
-     * @param handler the handler to store
+     * @param handler the handler to store.
      * @param switchStatus the switch status to store.
      */
     private void persist(String handler, SwitchStatus switchStatus) {

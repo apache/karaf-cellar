@@ -13,23 +13,26 @@
  */
 package org.apache.karaf.cellar.core.event;
 
+/**
+ * A factory to create producer and consumer of cluster events.
+ */
 public interface EventTransportFactory {
 
     /**
-     * Returns an Event Producer that produces {@link Event}s for a specific {@link org.apache.karaf.cellar.core.Group}.
+     * Return a cluster {@link EventProducer} that produces cluster {@link Event}s for a specific cluster {@link org.apache.karaf.cellar.core.Group}.
      *
-     * @param name
-     * @param pubsub
-     * @return
+     * @param name the event producer name.
+     * @param pubsub true to enable pubsub mode, false else.
+     * @return the cluster event producer.
      */
     public EventProducer getEventProducer(String name, Boolean pubsub);
 
     /**
-     * Returns an Event Consumer that consumes {@link Event}s for a specific {@link org.apache.karaf.cellar.core.Group}.
+     * Return a cluster {@link EventConsumer} that consumes cluster {@link Event}s for a specific cluster {@link org.apache.karaf.cellar.core.Group}.
      *
-     * @param name
-     * @param pubsub
-     * @return
+     * @param name the event consumer name.
+     * @param pubsub true to enable pubsub mode, false else.
+     * @return the cluster event consumer.
      */
     public EventConsumer getEventConsumer(String name, Boolean pubsub);
 

@@ -27,6 +27,7 @@ public abstract class NodeCompleterSupport implements Completer {
 
     private ClusterManager clusterManager;
 
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {

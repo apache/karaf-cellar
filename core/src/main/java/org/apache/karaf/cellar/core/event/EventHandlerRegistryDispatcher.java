@@ -24,9 +24,6 @@ public class EventHandlerRegistryDispatcher<E extends Event> implements EventDis
     private ExecutorService threadPool;
     private EventHandlerRegistry handlerRegistry;
 
-    /**
-     * Initialization
-     */
     public void init() {
         if (threadPool == null) {
             threadPool = Executors.newCachedThreadPool();
@@ -34,9 +31,9 @@ public class EventHandlerRegistryDispatcher<E extends Event> implements EventDis
     }
 
     /**
-     * Dispatches an {@code Event} to the appropriate {@code EventHandler}.
+     * Dispatch a cluster {@code Event} to the appropriate cluster {@code EventHandler}.
      *
-     * @param event
+     * @param event the cluster event to dispatch.
      */
     public void dispatch(E event) {
         EventDispatchTask task = new EventDispatchTask(event, handlerRegistry);
