@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 import java.util.EnumSet;
 
 /**
- * Features event handler.
+ * Handler for cluster features event.
  */
-public class FeaturesEventHandler extends FeaturesSupport implements EventHandler<RemoteFeaturesEvent> {
+public class FeaturesEventHandler extends FeaturesSupport implements EventHandler<ClusterFeaturesEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesEventHandler.class);
 
@@ -49,11 +49,12 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
     }
 
     /**
-     * Features Event.
+     * Handle received cluster features event.
      *
-     * @param event
+     * @param event the received cluster features event.
      */
-    public void handle(RemoteFeaturesEvent event) {
+    @Override
+    public void handle(ClusterFeaturesEvent event) {
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -63,7 +64,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
@@ -102,13 +103,15 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             } catch (Exception e) {
                 LOGGER.error("CELLAR FEATURES: failed to handle event", e);
             }
-        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED INBOUND", name);
+        } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, event.getSourceGroup().getName());
     }
 
-    public Class<RemoteFeaturesEvent> getType() {
-        return RemoteFeaturesEvent.class;
+    @Override
+    public Class<ClusterFeaturesEvent> getType() {
+        return ClusterFeaturesEvent.class;
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

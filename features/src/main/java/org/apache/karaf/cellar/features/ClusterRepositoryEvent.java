@@ -17,13 +17,13 @@ import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.RepositoryEvent.EventType;
 
 /**
- * Remote repository event.
+ * Cluster features repository event.
  */
-public class RemoteRepositoryEvent extends Event {
+public class ClusterRepositoryEvent extends Event {
 
     private EventType type;
 
-    public RemoteRepositoryEvent(String id, EventType type) {
+    public ClusterRepositoryEvent(String id, EventType type) {
         super(id);
         this.type = type;
     }

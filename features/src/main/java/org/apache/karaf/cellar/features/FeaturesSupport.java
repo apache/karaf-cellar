@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Features support.
+ * Generic features support. This class provides util methods used in other classes.
  */
 public class FeaturesSupport extends CellarSupport {
 
@@ -82,7 +82,7 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Push a {@code Feature} and its status to a cluster group.
+     * Push a feature in a cluster group
      *
      * @param feature the feature to push to the cluster group.
      * @param group the cluster group where to push the feature.
@@ -98,12 +98,12 @@ public class FeaturesSupport extends CellarSupport {
                     Boolean installed = featuresService.isInstalled(feature);
                     clusterFeatures.put(info, installed);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**
-     * Push a {@code Feature} and its status to a cluster group.
+     * Push a feature in a cluster group.
      * This version of the method force the bundle status, without looking the features service.
      *
      * @param feature the feature to push to the cluster group.
@@ -120,12 +120,12 @@ public class FeaturesSupport extends CellarSupport {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     clusterFeatures.put(info, force);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", feature.getName());
+            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
     /**
-     * Push a {@code Repository} to a cluster group.
+     * Push a features repository in a cluster group.
      *
      * @param repository the features repository to push.
      * @param group the cluster group where to push.
@@ -148,7 +148,7 @@ public class FeaturesSupport extends CellarSupport {
     }
 
     /**
-     * Remove a {@code Repository} from a cluster group.
+     * Remove a features repository from a cluster group.
      *
      * @param repository the features repository to remove from the cluster group.
      * @param group the cluster group where to remove from.

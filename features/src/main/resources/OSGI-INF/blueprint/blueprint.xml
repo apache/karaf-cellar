@@ -14,8 +14,8 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <!-- Cluster Configuration Listener -->
-    <bean id="featuresListener" class="org.apache.karaf.cellar.features.LocalFeaturesListener" init-method="init"
+    <!-- Features Local Listener -->
+    <bean id="localListener" class="org.apache.karaf.cellar.features.LocalFeaturesListener" init-method="init"
           destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
@@ -23,7 +23,7 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="featuresService" ref="featuresService"/>
     </bean>
-    <service ref="featuresListener" interface="org.apache.karaf.features.FeaturesListener"/>
+    <service ref="localListener" interface="org.apache.karaf.features.FeaturesListener"/>
 
     <!-- Features/Repositories Synchronizer -->
     <bean id="synchronizer" class="org.apache.karaf.cellar.features.FeaturesSynchronizer"
@@ -35,7 +35,7 @@
     </bean>
     <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
-    <!-- Features Handler -->
+    <!-- Features Event Handler -->
     <bean id="featuresHandler" class="org.apache.karaf.cellar.features.FeaturesEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
@@ -49,7 +49,7 @@
         </service-properties>
     </service>
 
-    <!-- Repository Handler -->
+    <!-- Repository Event Handler -->
     <bean id="repositoryHandler" class="org.apache.karaf.cellar.features.RepositoryEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="clusterManager" ref="clusterManager"/>
@@ -59,7 +59,6 @@
     </bean>
     <service ref="repositoryHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
-    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
