@@ -16,10 +16,15 @@ package org.apache.karaf.cellar.dosgi;
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * Handler for a remote service result.
+ * Handler for cluster remote service result event.
  */
 public class RemoteServiceResultHandler extends ResultHandler<RemoteServiceResult> {
 
+    /**
+     * Get the event type that this handler is able to handle.
+     *
+     * @return the cluster remote service result event type.
+     */
     @Override
     public Class<RemoteServiceResult> getType() {
         return RemoteServiceResult.class;

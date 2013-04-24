@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Handler for the remote service invocation.
+ * Handler for cluster remote service invocation event.
  */
 public class RemoteServiceInvocationHandler implements InvocationHandler {
 
@@ -33,13 +33,6 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
     private ClusterManager clusterManager;
     private ExecutionContext executionContext;
 
-    /**
-     * Constructor
-     * @param endpointId
-     * @param serviceClass
-     * @param clusterManager
-     * @param executionContext
-     */
     public RemoteServiceInvocationHandler(String endpointId,String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
         this.endpointId = endpointId;
         this.serviceClass = serviceClass;

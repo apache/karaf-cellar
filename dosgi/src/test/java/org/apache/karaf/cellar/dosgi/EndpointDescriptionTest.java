@@ -19,13 +19,11 @@ import org.junit.Test;
 public class EndpointDescriptionTest {
 
     String objectClass = "org.apache.karaf.cellar.dosgi.Test";
-    String frameworkUUID1 = "192.168.1.101:5701";
-    String frameworkUUID2 = "192.168.1.102:5702";
     String filterPattern = "(&(objectClass=%s))";
 
     @Test
     public void testMatches() throws Exception {
-        //This is a dummy test for testing the behaviour of matches method.
+        // this is a dummy test for testing the behaviour of matches method
         String testEndpointFilter = String.format(filterPattern, objectClass);
         String endpointId = objectClass + Constants.SEPARATOR + "1.0.0";
 

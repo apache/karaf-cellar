@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Remote service factory.
+ * Factory for remote service.
  */
 public class RemoteServiceFactory implements ServiceFactory {
 
@@ -54,6 +54,7 @@ public class RemoteServiceFactory implements ServiceFactory {
 
     @Override
     public void ungetService(Bundle bundle, ServiceRegistration registration, Object service) {
+        // nothing to do
     }
 
 }
