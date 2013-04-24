@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.karaf.cellar.hazelcast.merge;
 
 import java.util.LinkedHashSet;
@@ -6,25 +19,29 @@ import java.util.List;
 import java.util.Set;
 import com.hazelcast.core.MapEntry;
 import com.hazelcast.merge.MergePolicy;
-import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.MultiNode;
 import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A Cellar custom Hazelcast merge policy.
+ */
 public class CellarMergePolicy  implements MergePolicy {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarMergePolicy.class);
+
     /**
      * Returns the value of the entry after the merge
      * of entries with the same key. Returning value can be
      * You should consider the case where existingEntry is null.
      *
-     * @param mapName       name of the map
-     * @param mergingEntry  entry merging into the destination cluster
+     * @param mapName name of the map
+     * @param mergingEntry entry merging into the destination cluster
      * @param existingEntry existing entry in the destination cluster
      * @return final value of the entry. If returns null then no change on the entry.
      */
+    @Override
     public Object merge(String mapName, MapEntry mergingEntry, MapEntry existingEntry) {
         LOGGER.info("Cellar merge policy triggered merging entry {}, existing entry {}",mergingEntry,existingEntry);
         Object mergingDataValue = mergingEntry != null ? mergingEntry.getValue() : null;
@@ -38,7 +55,7 @@ public class CellarMergePolicy  implements MergePolicy {
             return existingDataValue;
         }
 
-        //Merge MultiNodes by merging their members.
+        // merge MultiNodes by merging their members.
         else if(MultiNode.class.isAssignableFrom(mergingDataValue.getClass())
                 && MultiNode.class.isAssignableFrom(existingDataValue.getClass())) {
 
@@ -69,23 +86,23 @@ public class CellarMergePolicy  implements MergePolicy {
     }
 
     /**
-     * Merges Sets.
-     * @param mergingSet
-     * @param existingSet
-     * @param <T>
-     * @return
+     * Merges sets.
+     *
+     * @param mergingSet the first set to merge.
+     * @param existingSet the second set to merge.
+     * @return a set resulting of the merge of the two others.
      */
     public <T> Set<T> merge(Set<T> mergingSet, Set<T> existingSet) {
        Set<T> result = new LinkedHashSet<T>();
 
-       //Copy new Set.
+       // copy new Set
        if(mergingSet != null && !mergingSet.isEmpty()) {
            for(T obj:mergingSet) {
                result.add(obj);
            }
        }
 
-       //Copy existing Set.
+       // copy existing Set
        if(existingSet != null && !existingSet.isEmpty()) {
            for(T obj:existingSet) {
                result.add(obj);
@@ -95,25 +112,24 @@ public class CellarMergePolicy  implements MergePolicy {
        return result;
     }
 
-
     /**
-     * Merges Lists.
-     * @param mergingList
-     * @param existingList
-     * @param <T>
-     * @return
+     * Merge lists.
+     *
+     * @param mergingList the first list to merge.
+     * @param existingList the second list to merge.
+     * @return a list resulting of the merge of the two others.
      */
     public <T> List<T> merge(List<T> mergingList, List<T> existingList) {
        List<T> result = new LinkedList<T>();
 
-       //Copy existing List.
+       // copy existing List
        if(existingList != null && !existingList.isEmpty()) {
            for(T obj:existingList) {
                result.add(obj);
            }
        }
 
-       //Copy new List.
+       // copy new List
        if(mergingList != null && !mergingList.isEmpty()) {
            for(T obj:mergingList) {
                result.add(obj);
@@ -124,10 +140,11 @@ public class CellarMergePolicy  implements MergePolicy {
     }
 
     /**
-     * Merges Strings.
-     * @param mergingString
-     * @param existingString
-     * @return
+     * Merge Strings.
+     *
+     * @param mergingString the first String to merge.
+     * @param existingString the second String to merge.
+     * @return a String resulting of the merge of the two others.
      */
     public String merge(String mergingString, String existingString) {
        String result = existingString;
@@ -139,4 +156,5 @@ public class CellarMergePolicy  implements MergePolicy {
        }
        return result;
     }
+
 }

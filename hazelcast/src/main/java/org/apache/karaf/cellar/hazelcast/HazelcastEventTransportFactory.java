@@ -21,9 +21,9 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 
-import java.util.HashMap;
-import java.util.Map;
-
+/**
+ * An event transport factory powered by Hazelcast.
+ */
 public class HazelcastEventTransportFactory extends HazelcastInstanceAware implements EventTransportFactory {
 
     private Dispatcher dispatcher;

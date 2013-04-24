@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Consumes messages from the distributed {@code ITopic} and calls the {@code EventDispatcher}.
+ * Consumes messages from the Hazelcast {@code ITopic} and calls the {@code EventDispatcher}.
  */
 public class TopicConsumer<E extends Event> implements EventConsumer<E>, MessageListener<E> {
 
@@ -49,9 +49,6 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
 
     private boolean isConsuming;
 
-    /**
-     * Initialization method.
-     */
     public void init() {
         if (topic == null) {
             topic = instance.getTopic(Constants.TOPIC);
@@ -59,20 +56,13 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         start();
     }
 
-    /**
-     * Destruction method.
-     */
     public void destroy() {
         stop();
     }
 
-    /**
-     * Consumes an event form the topic.
-     *
-     * @param event
-     */
+    @Override
     public void consume(E event) {
-        //Check if event has a specified destination.
+        // check if event has a specified destination.
         if ((event.getDestination() == null || event.getDestination().contains(node)) && (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce())) {
             dispatcher.dispatch(event);
         } else {
@@ -107,6 +97,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         return isConsuming;
     }
 
+    @Override
     public void onMessage(Message<E> message) {
         consume(message.getMessageObject());
     }
@@ -135,6 +126,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
         this.topic = topic;
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

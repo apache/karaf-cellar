@@ -15,20 +15,16 @@ package org.apache.karaf.cellar.hazelcast.factory;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import com.hazelcast.config.Config;
+
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A factory for a Hazelcast Instance, which integration with OSGi Service Registry and Config Admin.
+ * Factory for Hazelcast instance, including integration with OSGi ServiceRegistry and ConfigAdmin.
  */
-public class HazelcastServiceFactory  {
-
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(HazelcastServiceFactory.class);
+public class HazelcastServiceFactory {
 
     private BundleContext bundleContext;
     private CombinedClassLoader combinedClassLoader;
@@ -37,7 +33,6 @@ public class HazelcastServiceFactory  {
     private CountDownLatch initializationLatch = new CountDownLatch(1);
     private CountDownLatch instanceLatch = new CountDownLatch(1);
     private HazelcastInstance instance;
-
 
     public void init() {
         if (combinedClassLoader != null) {
@@ -57,26 +52,26 @@ public class HazelcastServiceFactory  {
     }
 
     /**
-     * Returs a Hazelcast instance from service registry.
+     * Return the local Hazelcast instance.
      *
-     * @return
+     * @return the Hazelcast instance.
      */
     public HazelcastInstance getInstance() throws InterruptedException {
         if (instance == null) {
-                initializationLatch.await();
-                this.instance = buildInstance();
+            initializationLatch.await();
+            this.instance = buildInstance();
             instanceLatch.countDown();
         }
         return instance;
     }
 
     /**
-     * Builds a {@link HazelcastInstance}
+     * Build a {@link HazelcastInstance}.
      *
-     * @return
+     * @return the Hazelcast instance.
      */
     private HazelcastInstance buildInstance() {
-        if(combinedClassLoader != null) {
+        if (combinedClassLoader != null) {
             Thread.currentThread().setContextClassLoader(combinedClassLoader);
         }
         return Hazelcast.newHazelcastInstance(configurationManager.getHazelcastConfig());
@@ -97,4 +92,5 @@ public class HazelcastServiceFactory  {
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
     }
+
 }
