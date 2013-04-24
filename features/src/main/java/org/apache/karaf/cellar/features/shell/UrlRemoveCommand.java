@@ -19,9 +19,9 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
-import org.apache.karaf.cellar.features.RemoteRepositoryEvent;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-@Command(scope = "cluster", name = "feature-url-remove", description = "Removes the given list of repository URLs for the given cluster group")
+@Command(scope = "cluster", name = "feature-url-remove", description = "Remove features repository URLs from a cluster group")
 public class UrlRemoveCommand extends FeatureCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -56,16 +56,16 @@ public class UrlRemoveCommand extends FeatureCommandSupport {
             return null;
         }
 
-        // get the distributed list
-        List<String> distributedRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-        // get the features distributed map
-        Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+        // get the repositories in the cluster group
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        // get the features in the cluster group
+        Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
         for (String url : urls) {
             // looking for the URL in the list
             boolean found = false;
-            for (String repository : distributedRepositories) {
-                if (repository.equals(url)) {
+            for (String clusterRepository : clusterRepositories) {
+                if (clusterRepository.equals(url)) {
                     found = true;
                     break;
                 }
@@ -100,21 +100,21 @@ public class UrlRemoveCommand extends FeatureCommandSupport {
                     localRegistered = true;
                 }
 
-                // update the list
-                distributedRepositories.remove(url);
+                // update the repositories in the cluster group
+                clusterRepositories.remove(url);
 
-                // update the distributed feature map
+                // update the features in the cluster group
                 for (Feature feature : repository.getFeatures()) {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                    distributedFeatures.remove(info);
+                    clusterFeatures.remove(info);
                 }
 
-                // unregister the repository if it's not local registered
+                // un-register the repository if it's not local registered
                 if (!localRegistered)
                     featuresService.removeRepository(new URI(url));
 
                 // broadcast a cluster event
-                RemoteRepositoryEvent event = new RemoteRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
+                ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {

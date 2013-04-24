@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 
 /**
- * Repository event handler.
+ * Handler for cluster repository event.
  */
-public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<RemoteRepositoryEvent> {
+public class RepositoryEventHandler extends FeaturesSupport implements EventHandler<ClusterRepositoryEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(RepositoryEventHandler.class);
 
@@ -44,7 +44,13 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         super.destroy();
     }
 
-    public void handle(RemoteRepositoryEvent event) {
+    /**
+     * Handle a received cluster repository event.
+     *
+     * @param event the received cluster repository event.
+     */
+    @Override
+    public void handle(ClusterRepositoryEvent event) {
 
         // check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
@@ -54,7 +60,7 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
@@ -82,10 +88,12 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         }
     }
 
-    public Class<RemoteRepositoryEvent> getType() {
-        return RemoteRepositoryEvent.class;
+    @Override
+    public Class<ClusterRepositoryEvent> getType() {
+        return ClusterRepositoryEvent.class;
     }
 
+    @Override
     public Switch getSwitch() {
         return eventSwitch;
     }

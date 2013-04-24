@@ -18,10 +18,10 @@ import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
+import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
-import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
-import org.apache.karaf.cellar.features.RemoteRepositoryEvent;
 import org.apache.karaf.cellar.management.CellarFeaturesMBean;
 import org.apache.karaf.features.*;
 import org.osgi.framework.BundleEvent;
@@ -162,7 +162,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -236,7 +236,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -362,7 +362,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                     featuresService.removeRepository(new URI(url));
 
                 // broadcast the cluster event
-                RemoteRepositoryEvent event = new RemoteRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
+                ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {
@@ -441,7 +441,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 featuresService.removeRepository(new URI(url));
 
             // broadcast a cluster event
-            RemoteRepositoryEvent event = new RemoteRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
+            ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
