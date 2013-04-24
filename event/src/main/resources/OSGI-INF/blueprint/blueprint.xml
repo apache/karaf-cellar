@@ -39,18 +39,17 @@
     </service>
 
     <!-- Cluster Event Handler -->
-    <bean id="remoteEventHandler" class="org.apache.karaf.cellar.event.RemoteEventHandler" init-method="init" destroy-method="destroy">
+    <bean id="clusterEventHandler" class="org.apache.karaf.cellar.event.ClusterEventHandler" init-method="init" destroy-method="destroy">
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="eventAdmin" ref="eventAdmin"/>
     </bean>
-    <service ref="remoteEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
+    <service ref="clusterEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
         <service-properties>
             <entry key="managed" value="true"/>
         </service-properties>
     </service>
 
-    <!-- Cluster Core Services -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>

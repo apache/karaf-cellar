@@ -13,6 +13,9 @@
  */
 package org.apache.karaf.cellar.event;
 
+/**
+ * Event configuration constants.
+ */
 public class Constants {
 
     public static final String CATEGORY = "event";
