@@ -20,8 +20,18 @@ import java.util.concurrent.ConcurrentMap;
  */
 public interface CommandStore {
 
+    /**
+     * Get the list of pending commands from the store.
+     *
+     * @return the map of pending commands in the store.
+     */
     public ConcurrentMap<String, Command> getPending();
 
+    /**
+     * Set the list of pending commands in the store.
+     *
+     * @param pending the map of pending commands in the store.
+     */
     public void setPending(ConcurrentMap<String, Command> pending);
 
 }

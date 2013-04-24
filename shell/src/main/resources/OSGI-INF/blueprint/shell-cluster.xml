@@ -209,7 +209,7 @@
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext" availability="optional"/>
 
     <!-- Completers -->
-    <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.completer.AllNodeCompleter">
+    <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllNodeCompleter">
         <property name="clusterManager" ref="clusterManager"/>
     </bean>
 

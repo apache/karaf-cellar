@@ -16,29 +16,32 @@ package org.apache.karaf.cellar.core.event;
 import org.apache.karaf.cellar.core.Consumer;
 
 /**
- * Event consumer.
+ * Describe a cluster event consumer.
  */
 public interface EventConsumer<E extends Event> extends Consumer<E> {
 
     /**
-     * Consumes {@code Event}s to the cluster.
+     * Consume a cluster {@code Event} from the cluster.
      *
      * @param event
      */
+    @Override
     public void consume(E event);
 
     /**
-     * Start consuming
+     * Start the consumer.
      */
     public void start();
 
     /**
-     * Stop consuming
+     * Stop the consumer.
      */
     public void stop();
 
     /**
-     * Returns true if Consumer is consuming
+     * Check if the consumer is active.
+     *
+     * @return true if the consumer is active, false else.
      */
     public Boolean isConsuming();
 

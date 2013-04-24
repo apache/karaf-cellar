@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.core.completer;
+package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
@@ -21,12 +21,13 @@ import org.apache.karaf.shell.console.completer.StringsCompleter;
 import java.util.List;
 
 /**
- * Completer on the node.
+ * Shell completer on the nodes.
  */
 public abstract class NodeCompleterSupport implements Completer {
 
     private ClusterManager clusterManager;
 
+    @Override
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {

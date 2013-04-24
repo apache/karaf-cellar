@@ -28,38 +28,17 @@ public class EventDispatchTask<E extends Event> implements Runnable {
     private long timeout = 10000;
     private long interval = 1000;
 
-    /**
-     * Constructor
-     *
-     * @param event
-     * @param handlerRegistry
-     */
     public EventDispatchTask(E event, EventHandlerRegistry handlerRegistry) {
         this.event = event;
         this.handlerRegistry = handlerRegistry;
     }
 
-    /**
-     * Constructor
-     *
-     * @param event
-     * @param handlerRegistry
-     * @param timeout
-     */
     public EventDispatchTask(E event, EventHandlerRegistry handlerRegistry, long timeout) {
         this.event = event;
         this.handlerRegistry = handlerRegistry;
         this.timeout = timeout;
     }
 
-    /**
-     * Constructor
-     *
-     * @param handlerRegistry
-     * @param timeout
-     * @param interval
-     * @param event
-     */
     public EventDispatchTask(EventHandlerRegistry handlerRegistry, long timeout, long interval, E event) {
         this.handlerRegistry = handlerRegistry;
         this.timeout = timeout;
@@ -67,6 +46,7 @@ public class EventDispatchTask<E extends Event> implements Runnable {
         this.event = event;
     }
 
+    @Override
     public void run() {
         try {
         boolean dispatched = false;
@@ -80,7 +60,7 @@ public class EventDispatchTask<E extends Event> implements Runnable {
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
-                    LOGGER.warn("Interupted while waiting for event handler", e);
+                    LOGGER.warn("Interrupted while waiting for event handler", e);
                 }
             }
         }

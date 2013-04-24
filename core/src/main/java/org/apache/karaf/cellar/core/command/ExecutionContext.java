@@ -23,13 +23,11 @@ import java.util.Map;
 public interface ExecutionContext {
 
     /**
-     * Execute {@link Command} and retrieve {@link Result}.
+     * Execute a {@link Command}
      *
-     * @param command
-     * @param <R>
-     * @param <C>
-     * @return
-     * @throws Exception
+     * @param command the {@link Command} to execute.
+     * @return the command execution {@link Result}.
+     * @throws Exception in case of command execution failure.
      */
     public <R extends Result, C extends Command<R>> Map<Node, R> execute(C command) throws Exception;
 

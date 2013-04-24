@@ -17,10 +17,17 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * Other groups completer.
+ * Shell completer on the cluster groups which are not local.
  */
 public class OtherGroupsCompleter extends GroupCompleterSupport {
 
+    /**
+     * Check a cluster group for completion.
+     * Only non local cluster groups will be accepted.
+     *
+     * @param group the cluster group to check.
+     * @return true if the cluster group is not local, false else.
+     */
     @Override
     protected boolean acceptsGroup(Group group) {
         Node node = groupManager.getNode();

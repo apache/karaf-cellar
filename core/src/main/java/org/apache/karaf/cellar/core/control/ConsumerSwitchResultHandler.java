@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
 /**
- * Consumer switch result handler.
+ * Handler for cluster consumer switch result event.
  */
 public class ConsumerSwitchResultHandler extends ResultHandler<ConsumerSwitchResult> {
 

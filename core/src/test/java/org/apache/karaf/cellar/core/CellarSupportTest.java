@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -74,4 +73,5 @@ public class CellarSupportTest {
         result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.node", EventType.INBOUND);
         assertEquals("Node config should be allowed",expectedResult,result);
     }
+
 }

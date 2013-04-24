@@ -14,29 +14,29 @@
 package org.apache.karaf.cellar.core.event;
 
 /**
- * Event tracker interface.
+ * Describe a cluster event tracker.
  */
 public interface EventTracker<E extends Event> {
 
     /**
-     * Starts tracking the occurance of an {@code Event}.
+     * Start to track a cluster event.
      *
-     * @param event
+     * @param event the cluster event to track.
      */
     public void start(E event);
 
     /**
-     * Stops tracking the occurance of an {@code Event}.
+     * Stop to track a cluster event.
      *
-     * @param event
+     * @param event the cluster event to track.
      */
     public void stop(E event);
 
     /**
-     * Returns true if the {@code Event} is being tracked.
+     * Check if a cluster event is tracked.
      *
-     * @param event
-     * @return
+     * @param event the cluster event.
+     * @return true if the cluster event is tracked, false else.
      */
     public Boolean isPending(E event);
 

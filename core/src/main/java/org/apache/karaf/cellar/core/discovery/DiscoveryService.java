@@ -15,27 +15,30 @@ package org.apache.karaf.cellar.core.discovery;
 
 import java.util.Set;
 
+/**
+ * Description of a discovery service.
+ */
 public interface DiscoveryService {
 
     /**
-     * Sign In to the {@link BlackboardDiscoveryService}.
+     * Sign in on the discovery service.
      */
     void signIn();
 
     /**
-     * Refresh to the {@link BlackboardDiscoveryService}.
+     * Refresh the discovery service.
      */
     void refresh();
 
     /**
-     * Sign Out of the {@link BlackboardDiscoveryService}.
+     * Sign out from the discovery service.
      */
     void signOut();
 
     /**
-     * Returns a {@link java.util.Set} of peers that where discovered.
+     * Get the list of peers found by the discovery service.
      *
-     * @return
+     * @return a set of peers.
      */
     Set<String> discoverMembers();
 

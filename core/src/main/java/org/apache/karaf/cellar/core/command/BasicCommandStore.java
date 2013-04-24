@@ -23,10 +23,22 @@ public class BasicCommandStore implements CommandStore {
 
     private ConcurrentMap<String, Command> pending = new ConcurrentHashMap<String, Command>();
 
+    /**
+     * Get the pending commands in the store.
+     *
+     * @return the map of pending commands.
+     */
+    @Override
     public ConcurrentMap<String, Command> getPending() {
         return pending;
     }
 
+    /**
+     * Set the pending commands in the store.
+     *
+     * @param pending the map of pending commands.
+     */
+    @Override
     public void setPending(ConcurrentMap<String, Command> pending) {
         this.pending = pending;
     }

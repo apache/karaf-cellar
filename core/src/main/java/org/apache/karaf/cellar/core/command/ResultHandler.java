@@ -19,7 +19,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 
 /**
- * An event handler class the handles result event.
+ * Cluster command execution result event handler.
  */
 public class ResultHandler<R extends Result> implements EventHandler<R> {
 
@@ -29,10 +29,12 @@ public class ResultHandler<R extends Result> implements EventHandler<R> {
     private CommandStore commandStore;
 
     /**
-     * Retrieves the correlated command from the store and sets the result on the command object.
+     * Handle a received cluster command execution result event.
+     * The method correlates the cluster result event with a pending command in the command store.
      *
-     * @param result
+     * @param result the cluster command execution result event to handle.
      */
+    @Override
     public void handle(R result) {
         if (commandStore != null && commandStore.getPending() != null) {
             String id = result.getId();
@@ -44,8 +46,14 @@ public class ResultHandler<R extends Result> implements EventHandler<R> {
         }
     }
 
+    @Override
     public Class<R> getType() {
         return null;
+    }
+
+    @Override
+    public Switch getSwitch() {
+        return handlerSwitch;
     }
 
     public CommandStore getCommandStore() {
@@ -54,10 +62,6 @@ public class ResultHandler<R extends Result> implements EventHandler<R> {
 
     public void setCommandStore(CommandStore commandStore) {
         this.commandStore = commandStore;
-    }
-
-    public Switch getSwitch() {
-        return handlerSwitch;
     }
 
 }

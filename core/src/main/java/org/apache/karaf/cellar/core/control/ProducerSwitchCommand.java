@@ -16,45 +16,34 @@ package org.apache.karaf.cellar.core.control;
 import org.apache.karaf.cellar.core.command.Command;
 
 /**
- * Producer switch command.
+ * Cluster producer switch command event.
  */
 public class ProducerSwitchCommand extends Command<ProducerSwitchResult> {
 
     private SwitchStatus status = null;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public ProducerSwitchCommand(String id) {
         super(id);
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param status
-     */
     public ProducerSwitchCommand(String id, SwitchStatus status) {
         super(id);
         this.status = status;
     }
 
     /**
-     * Returns the {@code SwitchStatus}
+     * Get the current producer switch status.
      *
-     * @return
+     * @return the current producer switch status.
      */
     public SwitchStatus getStatus() {
         return status;
     }
 
     /**
-     * Sets the {@code SwitchStatus}
+     * Set the new producer switch status.
      *
-     * @param status
+     * @param status the new producer switch status.
      */
     public void setStatus(SwitchStatus status) {
         this.status = status;

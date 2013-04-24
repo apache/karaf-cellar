@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.core.command;
 
 /**
- * A Runnable task that is used for scheduling command timeout events.
+ * Runnable task that is used for scheduling command timeout events.
  */
 public class TimeoutTask implements Runnable {
 
@@ -29,6 +29,7 @@ public class TimeoutTask implements Runnable {
     /**
      * Runs the timeout task.
      */
+    @Override
     public void run() {
         //Check if command is still pending.
         Boolean pending = store.getPending().containsKey(command);

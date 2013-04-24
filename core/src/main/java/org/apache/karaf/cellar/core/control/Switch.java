@@ -14,31 +14,31 @@
 package org.apache.karaf.cellar.core.control;
 
 /**
- * An interface that describes objects that can be turned on/off and act like a switch.
+ * Description of a switch, that it can be turned on or off.
  */
 public interface Switch {
 
     /**
-     * Returns the name of the Switch.
+     * Get the name of the switch.
      *
-     * @return
+     * @return the switch name.
      */
     public String getName();
 
     /**
-     * Turns on.
+     * Turn on the switch.
      */
     public void turnOn();
 
     /**
-     * Turns off
+     * Turn off the switch.
      */
     public void turnOff();
 
     /**
-     * Returns the status of the switch.
+     * Get the current status of the switch.
      *
-     * @return
+     * @return the current switch status.
      */
     public SwitchStatus getStatus();
 

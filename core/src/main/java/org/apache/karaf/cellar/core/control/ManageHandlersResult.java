@@ -19,17 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manage handler result.
+ * Cluster manage handlers result event.
  */
 public class ManageHandlersResult extends Result {
 
     public Map<String, String> handlers = new HashMap<String, String>();
 
-    /**
-     * Constructor.
-     *
-     * @param id
-     */
     public ManageHandlersResult(String id) {
         super(id);
     }

@@ -25,11 +25,10 @@ import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.Dictionary;
 
 /**
- * Manage handlers command handler.
+ * Handler for cluster manage handlers command handler event.
  */
 public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersCommand, ManageHandlersResult> {
 
@@ -42,10 +41,10 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     private Consumer consumer;
 
     /**
-     * Returns a map containing all managed {@code EventHandler}s and their status.
+     * Execute the cluster manage handlers command event and get the result.
      *
-     * @param command
-     * @return
+     * @param command the cluster manage handlers command event.
+     * @return the cluster manage handlers result event.
      */
     @Override
     public ManageHandlersResult execute(ManageHandlersCommand command) {
@@ -96,7 +95,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     /**
      * Store the handler switch configuration in configuration admin.
      *
-     * @param handler the handler to store
+     * @param handler the handler to store.
      * @param switchStatus the switch status to store.
      */
     private void persist(String handler, SwitchStatus switchStatus) {
@@ -123,4 +122,5 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     public Switch getSwitch() {
         return commandSwitch;
     }
+
 }

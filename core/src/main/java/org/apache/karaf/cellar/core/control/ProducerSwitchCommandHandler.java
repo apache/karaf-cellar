@@ -17,12 +17,11 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Producer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;
 
 /**
- * Producer switch command handler.
+ * Handler for cluster producer switch command event.
  */
 public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchCommand, ProducerSwitchResult> {
 
@@ -30,10 +29,12 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
     /**
-     * Handle the {@code ProducerSwitchCommand} command.
+     * Handle a received cluster producer switch command event.
      *
-     * @param command
+     * @param command the received cluster producer switch command event.
+     * @return the cluster producer switch result.
      */
+    @Override
     public ProducerSwitchResult execute(ProducerSwitchCommand command) {
         // query
         if (command.getStatus() == null) {
@@ -75,18 +76,32 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
         }
     }
 
+    /**
+     * Get the cluster event type that this handler can handle.
+     *
+     * @return the producer switch command event type.
+     */
+    @Override
     public Class<ProducerSwitchCommand> getType() {
         return ProducerSwitchCommand.class;
     }
 
+    /**
+     * Get the handler switch.
+     *
+     * @return the handler switch.
+     */
+    @Override
     public Switch getSwitch() {
         return commandSwitch;
     }
 
+    @Override
     public Producer getProducer() {
         return producer;
     }
 
+    @Override
     public void setProducer(Producer producer) {
         this.producer = producer;
     }

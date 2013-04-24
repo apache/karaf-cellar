@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.core;
 
 /**
- * Configurations.
+ * Cellar configuration constants..
  */
 public class Configurations {
 

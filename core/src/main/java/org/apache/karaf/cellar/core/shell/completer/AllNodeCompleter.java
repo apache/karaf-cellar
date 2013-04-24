@@ -11,20 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.core.completer;
+package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * A completer which includes all nodes.
+ * Shell completer for all nodes.
  */
 public class AllNodeCompleter extends NodeCompleterSupport {
 
     /**
-     * Always returns true.
+     * Check if the node should be accepted for completion.
      *
-     * @param node
-     * @return
+     * @param node the node to check.
+     * @return always return true as we accept all nodes.
      */
     @Override
     protected boolean acceptsNode(Node node) {

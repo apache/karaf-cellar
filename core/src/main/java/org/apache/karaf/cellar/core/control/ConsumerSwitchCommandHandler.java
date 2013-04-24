@@ -21,7 +21,7 @@ import org.osgi.service.cm.Configuration;
 import java.util.Dictionary;
 
 /**
- * Consumer switch command handler.
+ * Cluster consumer switch command event handler.
  */
 public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchCommand, ConsumerSwitchResult> {
 
@@ -31,10 +31,11 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
     private Consumer consumer;
 
     /**
-     * Handle the {@code ProducerSwitchCommand} command.
+     * Handle a received cluster consumer switch command event.
      *
-     * @param command
+     * @param command the received consumer switch command event to handle.
      */
+    @Override
     public ConsumerSwitchResult execute(ConsumerSwitchCommand command) {
         // query
         if (command.getStatus() == null) {
@@ -57,9 +58,9 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
     }
 
     /**
-     * Store the consumer current status in ConfigurationAdmin.
+     * Store the consumer switch status in ConfigurationAdmin.
      *
-     * @param switchStatus the producer switch status to store.
+     * @param switchStatus the consumer switch status to store.
      */
     private void persist(SwitchStatus switchStatus) {
         try {
@@ -76,10 +77,12 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
         }
     }
 
+    @Override
     public Class<ConsumerSwitchCommand> getType() {
         return ConsumerSwitchCommand.class;
     }
 
+    @Override
     public Switch getSwitch() {
         return commandSwitch;
     }

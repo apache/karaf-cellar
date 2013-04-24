@@ -13,101 +13,97 @@
  */
 package org.apache.karaf.cellar.core;
 
-import org.apache.karaf.cellar.core.event.EventConsumer;
-import org.apache.karaf.cellar.core.event.EventProducer;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Cluster manager interface.
+ * Description of a cluster manager.
  */
 public interface ClusterManager {
 
     /**
-     * Returns a named distributed map.
+     * Get a map from the cluster.
      *
-     * @param mapName
-     * @return
+     * @param mapName the map name.
+     * @return the map.
      */
     public Map getMap(String mapName);
 
     /**
-     * Returns a named distributed list.
+     * Get a list from the cluster.
      *
-     * @param listName
-     * @return
+     * @param listName the list name.
+     * @return the list.
      */
     public List getList(String listName);
 
-
     /**
-     * Returns a named distributed list.
+     * Get a set from the cluster.
      *
-     * @param setName
-     * @return
+     * @param setName the set name.
+     * @return the set.
      */
     public Set getSet(String setName);
 
-
     /**
-     * Returns a list of {@code Node}s.
+     * Get the nodes in the cluster.
      *
-     * @return
+     * @return a set of nodes in the cluster.
      */
     public Set<Node> listNodes();
 
     /**
-     * Returns the {@link Node} with specified id.
+     * Get the nodes with given IDs.
      *
-     * @return
+     * @param ids the node IDs.
+     * @return a set of nodes in the cluster matching the given IDs.
      */
     public Set<Node> listNodes(Collection<String> ids);
 
     /**
-     * Returns the {@link Node} with specified {@link Group}.
+     * Get the nodes member of a given cluster group.
      *
-     * @return
+     * @param group the cluster group.
+     * @return a set of nodes member of the cluster group.
      */
     public Set<Node> listNodesByGroup(Group group);
 
-
     /**
-     * Returns the {@link Node} with specified id.
+     * Get a node with a given ID.
      *
-     * @return
+     * @param id the node ID.
+     * @return the node.
      */
     public Node findNodeById(String id);
 
-
     /**
-     * Returns the {@link Node} on which the command was executed.
+     * Get the local node.
      *
-     * @return
+     * @return the local node.
      */
     public Node getNode();
 
     /**
-     * Generate an Id unique across the cluster.
+     * Generate an unique ID across the cluster.
      *
-     * @return
+     * @return the generated unique ID.
      */
     public String generateId();
 
     /**
-     * Start the clustering support on the {@link Node}.
+     * Start the local node.
      */
     public void start();
 
     /**
-     * Stops the node.
+     * Stop the local node.
      */
     public void stop();
 
     /**
-     * Restarts the clustering support on the {@link Node}.
+     * Restart the local node.
      */
     public void restart();
 
