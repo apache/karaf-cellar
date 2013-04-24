@@ -19,13 +19,13 @@ import org.osgi.framework.hooks.service.FindHook;
 import java.util.Collection;
 
 /**
- * Remote service finder.
+ * Hook for remote service finder.
  */
 public class RemoteServiceFindHook implements FindHook {
 
     @Override
     public void find(BundleContext context, String name, String filter, boolean allServices, Collection references) {
-
+        // nothing to do
     }
 
 }

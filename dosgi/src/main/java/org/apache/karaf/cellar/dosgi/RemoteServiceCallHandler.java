@@ -32,7 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Handler on a remote service call.
+ * Handler for cluster remote service call event.
  */
 public class RemoteServiceCallHandler extends CellarSupport implements EventHandler<RemoteServiceCall> {
 
@@ -61,25 +61,20 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
             ServiceReference[] serviceReferences = null;
             try {
-
                 serviceReferences = bundleContext.getServiceReferences(event.getServiceClass(), null);
                 if (serviceReferences != null && serviceReferences.length > 0) {
                     targetService = bundleContext.getService(serviceReferences[0]);
                     bundleContext.ungetService(serviceReferences[0]);
                 }
-
             } catch (InvalidSyntaxException e) {
                 LOGGER.error("CELLAR DOSGI: unable to lookup service", e);
             }
 
             if (targetService != null) {
-
                 Class[] classes = new Class[0];
-
                 if (event.getArguments() != null && event.getArguments().size() > 0) {
                     classes = new Class[event.getArguments().size()];
                     int i = 0;
-
                     for (Object obj : event.getArguments()) {
                         classes[i++] = obj.getClass();
                     }

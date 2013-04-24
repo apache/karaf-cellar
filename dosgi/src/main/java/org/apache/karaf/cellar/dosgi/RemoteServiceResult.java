@@ -16,17 +16,12 @@ package org.apache.karaf.cellar.dosgi;
 import org.apache.karaf.cellar.core.command.Result;
 
 /**
- * Result of a remote service call.
+ * Cluster remote service result event.
  */
 public class RemoteServiceResult extends Result {
 
     private Object result;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public RemoteServiceResult(String id) {
         super(id);
     }
