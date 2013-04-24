@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.event;
 
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
@@ -24,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,9 +65,9 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                         Map<String, Serializable> properties = getEventProperties(event);
                         if (isAllowed(group, Constants.CATEGORY, topicName, EventType.OUTBOUND)) {
                             // broascast the event
-                            RemoteEvent remoteEvent = new RemoteEvent(topicName, properties);
-                            remoteEvent.setSourceGroup(group);
-                            eventProducer.produce(remoteEvent);
+                            ClusterEvent clusterEvent = new ClusterEvent(topicName, properties);
+                            clusterEvent.setSourceGroup(group);
+                            eventProducer.produce(clusterEvent);
                         } else if (!topicName.startsWith("org/osgi/service/log/LogEntry/"))
                                 LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }

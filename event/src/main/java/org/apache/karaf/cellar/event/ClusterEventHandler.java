@@ -26,14 +26,18 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.Map;
 
-public class RemoteEventHandler extends EventSupport implements EventHandler<RemoteEvent> {
+/**
+ * Handler for cluster event.
+ */
+public class ClusterEventHandler extends EventSupport implements EventHandler<ClusterEvent> {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(RemoteEventHandler.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterEventHandler.class);
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.event.handler";
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
-    public void handle(RemoteEvent event) {
+    @Override
+    public void handle(ClusterEvent event) {
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -60,20 +64,20 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
         }
     }
 
-    /**
-     * Initialization method.
-     */
     public void init() {
+        // nothing to do
+    }
 
+    public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Destroy method.
+     * Get the handler switch.
+     *
+     * @return the handler switch.
      */
-    public void destroy() {
-
-    }
-
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {
@@ -91,9 +95,15 @@ public class RemoteEventHandler extends EventSupport implements EventHandler<Rem
         }
         return eventSwitch;
     }
-    
-    public Class<RemoteEvent> getType() {
-        return RemoteEvent.class;
+
+    /**
+     * Get the event type handled by this handler.
+     *
+     * @return the cluster event type.
+     */
+    @Override
+    public Class<ClusterEvent> getType() {
+        return ClusterEvent.class;
     }
 
 }

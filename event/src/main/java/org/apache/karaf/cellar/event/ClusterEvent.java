@@ -18,12 +18,15 @@ import org.apache.karaf.cellar.core.event.Event;
 import java.io.Serializable;
 import java.util.Map;
 
-public class RemoteEvent extends Event {
+/**
+ * Cluster event.
+ */
+public class ClusterEvent extends Event {
 
     private String topicName;
     private Map<String, Serializable> properties;
 
-    public RemoteEvent(String topicName, Map<String, Serializable> properties) {
+    public ClusterEvent(String topicName, Map<String, Serializable> properties) {
         super(topicName);
         this.topicName = topicName;
         this.properties = properties;
