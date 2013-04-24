@@ -24,7 +24,6 @@ import org.apache.karaf.features.RepositoryEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,10 +47,11 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     }
 
     /**
-     * Called when a {@code FeatureEvent} occurs.
+     * This method is called when a local feature has changed.
      *
-     * @param event
+     * @param event the local feature event.
      */
+    @Override
     public void featureEvent(FeatureEvent event) {
 
         // check if the producer is ON
@@ -73,7 +73,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
                         FeatureEvent.EventType type = event.getType();
 
-                        // update the distributed map
+                        // update the features in the cluster group
                         if (FeatureEvent.EventType.FeatureInstalled.equals(event.getType())) {
                             pushFeature(event.getFeature(), group, true);
                         } else {
@@ -81,20 +81,21 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         }
 
                         // broadcast the event
-                        RemoteFeaturesEvent featureEvent = new RemoteFeaturesEvent(name, version, type);
+                        ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         eventProducer.produce(featureEvent);
-                    } else LOGGER.warn("CELLAR FEATURES: feature {} is marked as BLOCKED OUTBOUND", name);
+                    } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
     }
 
     /**
-     * Called when a {@code RepositoryEvent} occurs.
+     * This method is called when a local features repository has changed.
      *
      * @param event
      */
+    @Override
     public void repositoryEvent(RepositoryEvent event) {
 
         // check if the producer is ON
@@ -111,48 +112,48 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
 
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
-                        RemoteRepositoryEvent repositoryEvent = new RemoteRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
-                        repositoryEvent.setSourceGroup(group);
+                        ClusterRepositoryEvent clusterRepositoryEvent = new ClusterRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
+                        clusterRepositoryEvent.setSourceGroup(group);
                         RepositoryEvent.EventType type = event.getType();
 
-                        // update the distributed map
+                        // update the features repositories in the cluster group
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                             pushRepository(event.getRepository(), group);
-                            // update the feature map
-                            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            // update the features in the cluster group
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the distributed map
                                     FeatureInfo featureInfo = null;
-                                    for (FeatureInfo distributedFeature : distributedFeatures.keySet()) {
-                                        if (distributedFeature.getName().equals(feature.getName()) && distributedFeature.getVersion().equals(feature.getVersion())) {
-                                            featureInfo = distributedFeature;
+                                    for (FeatureInfo clusterFeature : clusterFeatures.keySet()) {
+                                        if (clusterFeature.getName().equals(feature.getName()) && clusterFeature.getVersion().equals(feature.getVersion())) {
+                                            featureInfo = clusterFeature;
                                             break;
                                         }
                                     }
                                     if (featureInfo == null) {
                                         featureInfo = new FeatureInfo(feature.getName(), feature.getVersion());
-                                        distributedFeatures.put(featureInfo, false);
+                                        clusterFeatures.put(featureInfo, false);
                                     }
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
+                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
                             }
                         } else {
                             removeRepository(event.getRepository(), group);
-                            // update the feature map
-                            Map<FeatureInfo, Boolean> distributedFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            // update the features in the cluster group
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                                    distributedFeatures.remove(info);
+                                    clusterFeatures.remove(info);
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: can't update the distributed features map", e);
+                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
                             }
                         }
                         // broadcast the cluster event
-                        eventProducer.produce(repositoryEvent);
+                        eventProducer.produce(clusterRepositoryEvent);
                     }
                 }
             }

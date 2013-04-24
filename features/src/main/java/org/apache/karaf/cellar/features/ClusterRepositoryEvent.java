@@ -17,17 +17,13 @@ import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.RepositoryEvent.EventType;
 
 /**
- * Remote repository event.
+ * Cluster features repository event.
  */
-public class RemoteRepositoryEvent extends Event {
+public class ClusterRepositoryEvent extends Event {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private EventType type;
 
-    public RemoteRepositoryEvent(String id, EventType type) {
+    public ClusterRepositoryEvent(String id, EventType type) {
         super(id);
         this.type = type;
     }
@@ -36,12 +32,9 @@ public class RemoteRepositoryEvent extends Event {
         return type;
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "RemoteRepositoryEvent [type=" + type + ", id=" + id
+		return "ClusterRepositoryEvent [type=" + type + ", id=" + id
 				+ ", sourceNode=" + sourceNode + ", sourceGroup=" + sourceGroup
 				+ ", destination=" + destination + ", force=" + force
 				+ ", postPublish=" + postPublish + "]";

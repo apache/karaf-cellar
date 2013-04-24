@@ -17,22 +17,22 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.RemoteFeaturesEvent;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 
-@Command(scope = "cluster", name = "feature-uninstall", description = "Uninstall a feature assigned to a cluster group.")
+@Command(scope = "cluster", name = "feature-uninstall", description = "Uninstall a feature from a cluster group")
 public class UninstallFeatureCommand extends FeatureCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "feature", description = "The feature name.", required = true, multiValued = false)
+    @Argument(index = 1, name = "feature", description = "The feature name", required = true, multiValued = false)
     String feature;
 
-    @Argument(index = 2, name = "version", description = "The feature version.", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The feature version", required = false, multiValued = false)
     String version;
 
     private EventProducer eventProducer;
@@ -55,22 +55,22 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
         // check if the feature exists in the map
         if (!featureExists(groupName, feature, version)) {
             if (version != null)
-                System.err.println("Feature " + feature + "/" + version + " doesn't exist for the cluster group " + groupName);
-            else System.err.println("Feature " + feature + " doesn't exist for the cluster group " + groupName);
+                System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
+            else System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
             return null;
         }
 
         // check if the outbound event is allowed
         if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
-            System.err.println("Feature " + feature + " is blocked outbound");
+            System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
             return null;
         }
 
-        // update distributed set
+        // update the features in the cluster group
         updateFeatureStatus(groupName, feature, version, false);
 
         // broadcast the cluster event
-        RemoteFeaturesEvent event = new RemoteFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(feature, version, FeatureEvent.EventType.FeatureUninstalled);
         event.setForce(true);
         event.setSourceGroup(group);
         eventProducer.produce(event);
