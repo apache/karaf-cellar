@@ -22,7 +22,7 @@ import org.apache.karaf.shell.commands.Command;
 import java.util.Map;
 import java.util.Set;
 
-@Command(scope = "cluster", name = "service-list", description = "List the cluster distributed services")
+@Command(scope = "cluster", name = "service-list", description = "List the services available on the cluster")
 public class ListDistributedServicesCommand extends CellarCommandSupport {
 
     private static final String LIST_FORMAT = "%-80s %-20s";
@@ -46,7 +46,7 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                 }
 
             } else {
-                System.out.println("No distributed service");
+                System.out.println("No service available on the cluster");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
