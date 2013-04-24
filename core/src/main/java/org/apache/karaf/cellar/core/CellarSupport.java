@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Cellar support.
+ * Cellar generic support. This class provides a set of util methods used by other classes.
  */
 public class CellarSupport {
 
@@ -39,11 +39,13 @@ public class CellarSupport {
     protected ConfigurationAdmin configurationAdmin;
 
     /**
-     * Lists the BlackList for the specified feature.
+     * Get a set of resources in the Cellar cluster groups configuration.
      *
-     * @param category
-     * @param group
-     * @return
+     * @param listType the comma separated list of resources.
+     * @param group the cluster group name.
+     * @param category the resource category name.
+     * @param type the event type (inbound, outbound).
+     * @return the set of resources.
      */
     public Set<String> getListEntries(String listType, String group, String category, EventType type) {
         Set<String> result = null;
@@ -83,13 +85,13 @@ public class CellarSupport {
     }
 
     /**
-     * Lists the BlackList for the specified feature.
+     * Get the resources in the Cellar cluster groups configuration.
      *
-     * @param category
-     * @param groups
-     * @param category
-     * @param type
-     * @return
+     * @param listType the comma separated string of resources.
+     * @param groups the cluster groups names.
+     * @param category the resource category name.
+     * @param type the event type (inbound, outbound).
+     * @return the set of resources.
      */
     public Set<String> getListEntries(String listType, Collection<String> groups, String category, EventType type) {
         Set<String> result = null;
@@ -107,12 +109,13 @@ public class CellarSupport {
     }
 
     /**
-     * Lists the BlackList for the specified feature.
+     * Get a set of resources in the Cellar cluster groups configuration.
      *
-     * @param category
-     * @param category
-     * @param type
-     * @return
+     * @param listType a comma separated string of resources.
+     * @param group the cluster group.
+     * @param category the resource category name.
+     * @param type the event type (inbound, outbound).
+     * @return the set of resources.
      */
     public Set<String> getListEntries(String listType, Group group, String category, EventType type) {
         Set<String> result = null;
@@ -129,19 +132,19 @@ public class CellarSupport {
     }
 
     /**
-     * Returns true if the specified event is allowed.
+     * Check if a resource is allowed for a type of cluster event.
      *
-     * @param category
-     * @param event
-     * @param type
-     * @return
+     * @param group the cluster group.
+     * @param category the resource category name.
+     * @param event the resource name.
+     * @param type the event type (inbound, outbound).
      */
     public Boolean isAllowed(Group group, String category, String event, EventType type) {
         Boolean result = true;
         Set<String> whiteList = getListEntries(Configurations.WHITELIST, group, category, type);
         Set<String> blackList = getListEntries(Configurations.BLACKLIST, group, category, type);
 
-        //If no white listed items we assume all are accepted.
+        // if no white listed items we assume all are accepted.
         if (whiteList != null && !whiteList.isEmpty()) {
             result = false;
             for (String whiteListItem : whiteList) {
@@ -150,7 +153,7 @@ public class CellarSupport {
             }
         }
 
-        //If any blackList item matched, then false is returned.
+        // if any blackList item matched, then false is returned.
         if (blackList != null && !blackList.isEmpty()) {
             for (String blackListItem : blackList) {
                 if (wildCardMatch(event, blackListItem)) {
@@ -163,11 +166,11 @@ public class CellarSupport {
     }
 
     /**
-     * Matches text using a pattern containing wildcards.
+     * Check if a string match a regex.
      *
-     * @param item
-     * @param pattern
-     * @return
+     * @param item the string to check.
+     * @param pattern the regex pattern.
+     * @return true if the item string matches the pattern, false else.
      */
     protected boolean wildCardMatch(String item, String pattern) {
         // update the pattern to have a valid regex pattern
@@ -175,10 +178,8 @@ public class CellarSupport {
         // use the regex
         Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(item);
-
         return m.matches();
     }
-
 
     public ConfigurationAdmin getConfigurationAdmin() {
         return configurationAdmin;

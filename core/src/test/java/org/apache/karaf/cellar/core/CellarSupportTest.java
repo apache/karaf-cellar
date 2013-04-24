@@ -78,4 +78,5 @@ public class CellarSupportTest {
         result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.instance", EventType.INBOUND);
         assertEquals("Instance config should be allowed",expectedResult,result);
     }
+
 }

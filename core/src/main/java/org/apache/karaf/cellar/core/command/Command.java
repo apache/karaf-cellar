@@ -57,9 +57,9 @@ public class Command<R extends Result> extends Event {
     }
 
     /**
-     * Adds {@code Results} to the result queue.
+     * Add {@code Results} to the result queue.
      *
-     * @param results
+     * @param results the results in the queue.
      */
     public void addResults(R... results) {
         if (results != null && results.length > 0) {
@@ -78,11 +78,11 @@ public class Command<R extends Result> extends Event {
     }
 
     /**
-     * Returns the responses.
-     * If no results found it returns an empty map.
+     * Return the responses.
+     * If no result is found, it returns an empty map.
      *
-     * @return
-     * @throws Exception
+     * @return a map of results.
+     * @throws Exception in case of interruption.
      */
     public Map<Node, R> getResult() throws InterruptedException {
         Map<Node, R> nodeResults = null;
@@ -91,7 +91,6 @@ public class Command<R extends Result> extends Event {
         }
         return nodeResults;
     }
-
 
     public long getTimeout() {
         return timeout;

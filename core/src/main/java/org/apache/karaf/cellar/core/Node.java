@@ -21,23 +21,23 @@ import java.io.Serializable;
 public interface Node extends Serializable {
 
     /**
-     * Returns the identifier of the node.
+     * Get the ID of the node.
      *
-     * @return
+     * @return the node ID.
      */
     public String getId();
 
     /**
-     * Returns the name of the host
+     * Get the hostname of the node.
      *
-     * @return
+     * @return the node hostname.
      */
     public String getHost();
 
     /**
-     * Returns the Port of the host
+     * Get the port number of the node.
      *
-     * @return
+     * @return the node port number.
      */
     public int getPort();
 

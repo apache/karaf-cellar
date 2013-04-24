@@ -17,7 +17,6 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Producer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.osgi.service.cm.Configuration;
-import org.osgi.service.cm.ConfigurationAdmin;
 
 import java.util.Dictionary;
 
@@ -30,10 +29,12 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
     /**
-     * Handle the {@code ProducerSwitchCommand} command.
+     * Execute a producer switch command.
      *
-     * @param command
+     * @param command the producer switch command to execute.
+     * @return the result of the command execution.
      */
+    @Override
     public ProducerSwitchResult execute(ProducerSwitchCommand command) {
         // query
         if (command.getStatus() == null) {
@@ -75,18 +76,22 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
         }
     }
 
+    @Override
     public Class<ProducerSwitchCommand> getType() {
         return ProducerSwitchCommand.class;
     }
 
+    @Override
     public Switch getSwitch() {
         return commandSwitch;
     }
 
+    @Override
     public Producer getProducer() {
         return producer;
     }
 
+    @Override
     public void setProducer(Producer producer) {
         this.producer = producer;
     }

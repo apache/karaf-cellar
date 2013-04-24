@@ -21,10 +21,10 @@ import java.io.Serializable;
 public interface HandlerRegistry<T extends Serializable, H extends Handler<T>> {
 
     /**
-     * Returns the {@code Handler} for the given object.
+     * Get the handler that can handle a given cluster event.
      *
-     * @param obj
-     * @return
+     * @param obj the cluster event to handle.
+     * @return the handler in the registry that can handle the given cluster event.
      */
     public H getHandler(T obj);
 

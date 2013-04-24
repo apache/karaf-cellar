@@ -19,19 +19,24 @@ package org.apache.karaf.cellar.core;
 public interface Synchronizer {
 
     /**
-     * Pushes local state to the shared resource.
+     * Push local resources states in a cluster group.
+     *
+     * @param group the cluster group where to push local resources states.
      */
     public void push(Group group);
 
     /**
-     * Pull state changes from the shared resource.
+     * Pull resources states from a cluster group to update local states.
+     *
+     * @param group the cluster group where to pull the resources states.
      */
     public void pull(Group group);
 
     /**
-     * Returns true if synchronization is enabled.
+     * Check if the sync flag is enabled for a given cluster group.
      *
-     * @return
+     * @param group the cluster group.
+     * @return true if sync flag is enabled, false else.
      */
     public Boolean isSyncEnabled(Group group);
 

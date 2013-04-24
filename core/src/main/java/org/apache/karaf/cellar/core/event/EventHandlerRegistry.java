@@ -19,11 +19,12 @@ import org.apache.karaf.cellar.core.HandlerRegistry;
 public interface EventHandlerRegistry<E extends Event> extends HandlerRegistry<E, Handler<E>> {
 
     /**
-     * Returns the {@code EventHandler} for the given {@code Event}.
+     * Return the cluster {@code EventHandler} for a given cluster {@code Event}.
      *
-     * @param event
-     * @return
+     * @param event the cluster event to handle.
+     * @return the cluster event handler to use.
      */
+    @Override
     public EventHandler<E> getHandler(E event);
 
 }

@@ -17,120 +17,119 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Generic group manager interface.
+ * Generic cluster group manager interface.
  */
 public interface GroupManager {
 
     /**
-     * Returns the local {@link Node}.
+     * Get the local node.
      *
-     * @return
+     * @return the local node.
      */
     public Node getNode();
 
     /**
-     * Creates {@link Group}
+     * Create a new cluster group.
      *
-     * @param groupName
-     * @return
+     * @param groupName the new cluster group name.
+     * @return the created cluster group.
      */
     public Group createGroup(String groupName);
 
     /**
-     * Deletes {@link Group}
+     * Delete an existing cluster group.
      *
-     * @param groupName
+     * @param groupName the cluster group name to delete.
      */
     public void deleteGroup(String groupName);
 
     /**
-     * Return the {@link Group} by name.
+     * Look for a cluster group with a given name.
      *
-     * @param groupName
-     * @return
+     * @param groupName the cluster group name to look for.
+     * @return the cluster group found, or null if no cluster group found.
      */
     public Group findGroupByName(String groupName);
 
     /**
-     * Returns a map of {@link Node}s.
+     * Get the list of cluster groups.
      *
-     * @return
+     * @return a map of cluster groups name and cluster groups.
      */
     public Map<String, Group> listGroups();
 
     /**
-     * Returns the {@link Group}s of the specified {@link Node}.
+     * Get the list of local cluster groups.
+     * A "local" cluster group means a cluster group where the local node is belonging.
      *
-     * @return
+     * @return a set of local cluster groups.
      */
     public Set<Group> listLocalGroups();
 
     /**
-     * Check if the local node is part of the given group.
+     * Check if a given cluster group is a local one.
+     * A "local" clsuter group means a cluster group where the local node is belonging.
      *
-     * @param groupName the group name.
-     * @return true if the local node is part of the group, false else.
+     * @param groupName the cluster group name.
+     * @return true if the cluster group is a local one, false else.
      */
     public boolean isLocalGroup(String groupName);
 
     /**
-     * Returns the {@link Group}s of the specified {@link Node}.
+     * Get the list of all cluster groups "hosting" the local node.
      *
-     * @return
+     * @return the list of all cluster groups "hosting" the local node.
      */
     public Set<Group> listAllGroups();
 
-
     /**
-     * Returns the {@link Group}s of the specified {@link Node}.
+     * Get the cluster groups where a given node is belonging.
      *
-     * @param node
-     * @return
+     * @param node the node.
+     * @return the set of cluster groups "hosting" the node.
      */
     public Set<Group> listGroups(Node node);
 
     /**
-     * Retrurns the {@link Group} names of the current {@Node}.
+     * Get the cluster group names "hosting" the local node.
      *
-     * @return
+     * @return the set of cluster group names "hosting" the local node.
      */
     public Set<String> listGroupNames();
 
     /**
-     * Returns the {@link Group} names of the specified {@link Node}.
+     * Get the cluster group names "hosting" a given node.
      *
-     * @param node
-     * @return
+     * @param node the node.
+     * @return the set of cluster group names "hosting" the given node.
      */
     public Set<String> listGroupNames(Node node);
 
-
     /**
-     * Registers current {@link Node} to the {@link Group}.
+     * Register the local node in a given cluster group.
      *
-     * @param group
+     * @param group the cluster group to join.
      */
     public void registerGroup(Group group);
 
     /**
-     * Registers current {@link Node} to the {@link Group}.
+     * Register the locla node in a given cluster group.
      *
-     * @param groupName
+     * @param groupName the cluster group name to join.
      */
     public void registerGroup(String groupName);
 
-
     /**
-     * UnRegisters current {@link Node} to the {@link Group}.
+     * Un-register the local node from a given cluster group.
      *
-     * @param group
+     * @param group the cluster group to quit.
      */
     public void unRegisterGroup(Group group);
 
     /**
-     * UnRegisters current {@link Node} to the {@link Group}.
+     * Un-register the local node from a given cluster group.
      *
-     * @param groupName
+     * @param groupName the cluster group name to quite.
      */
     public void unRegisterGroup(String groupName);
 

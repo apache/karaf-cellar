@@ -22,40 +22,28 @@ public class ConsumerSwitchCommand extends Command<ConsumerSwitchResult> {
 
     private SwitchStatus status = null;
 
-    /**
-     * Constructor
-     *
-     * @param id
-     */
     public ConsumerSwitchCommand(String id) {
         super(id);
     }
 
-    /**
-     * Constructor
-     *
-     * @param id
-     * @param status
-     */
     public ConsumerSwitchCommand(String id, SwitchStatus status) {
         super(id);
         this.status = status;
     }
 
-
     /**
-     * Returns the {@code SwitchStatus}
+     * Return the {@code SwitchStatus}.
      *
-     * @return
+     * @return the current switch status.
      */
     public SwitchStatus getStatus() {
         return status;
     }
 
     /**
-     * Sets the {@code SwitchStatus}
+     * Set the {@code SwitchStatus}.
      *
-     * @param status
+     * @param status the new switch status.
      */
     public void setStatus(SwitchStatus status) {
         this.status = status;

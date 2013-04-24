@@ -76,10 +76,12 @@ public class ConsumerSwitchCommandHandler extends CommandHandler<ConsumerSwitchC
         }
     }
 
+    @Override
     public Class<ConsumerSwitchCommand> getType() {
         return ConsumerSwitchCommand.class;
     }
 
+    @Override
     public Switch getSwitch() {
         return commandSwitch;
     }

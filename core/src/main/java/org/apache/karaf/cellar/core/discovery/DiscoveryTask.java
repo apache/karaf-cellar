@@ -14,10 +14,8 @@
 package org.apache.karaf.cellar.core.discovery;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,18 +38,18 @@ public class DiscoveryTask implements Runnable {
     private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void init() {
-    	LOGGER.debug("CELLAR DISCOVERY: a new Task initalized");
+    	LOGGER.debug("CELLAR DISCOVERY: a new Task initialized");
         scheduler.scheduleWithFixedDelay(this, 10, 10, TimeUnit.SECONDS);
     }
 
     public void destroy() {
-    	LOGGER.debug("CELLAR DISCOVERY: task is beeing destroyed");
+    	LOGGER.debug("CELLAR DISCOVERY: task is being destroyed");
         scheduler.shutdown();
     }
 
     @Override
     public void run() {
-        LOGGER.trace("CELLAR DISCOVERY: Starting the discovery task.");
+        LOGGER.trace("CELLAR DISCOVERY: starting the discovery task");
 
         if (configurationAdmin != null) {
             Set<String> members = new LinkedHashSet<String>();
@@ -60,15 +58,15 @@ public class DiscoveryTask implements Runnable {
                     service.refresh();
                     Set<String> discovered = service.discoverMembers();
                     members.addAll(discovered);
-                    LOGGER.trace("CELLAR DISCOVERY: Service {} found members {}", service, discovered);
+                    LOGGER.trace("CELLAR DISCOVERY: service {} found members {}", service, discovered);
                 }
                 try {
                 	LOGGER.trace("CELLAR DISCOVERY: retrieving configuration for PID={}", Discovery.PID);
                     Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
                     Dictionary properties = configuration.getProperties();
                     if (properties == null) {
-                    	//this is a new configuration ...
-                    	LOGGER.trace("CELLAR DISCOVERY: configuration is new!");
+                    	// this is a new configuration ...
+                    	LOGGER.trace("CELLAR DISCOVERY: configuration is new");
                     	properties = new Hashtable();
                     }
                     String newMemberText = CellarUtils.createStringFromSet(members, true);
@@ -81,7 +79,7 @@ public class DiscoveryTask implements Runnable {
                     	LOGGER.trace("CELLAR DISCOVERY: found a valid member in the configuration will skip");
                     }
                 } catch (IOException e) {
-                    LOGGER.error("Failed to update member list", e);
+                    LOGGER.error("CELLAR DISCOVERY: failed to update member list", e);
                 }
             } else {
             	LOGGER.trace("CELLAR DISCOVERY: no discovery services found ... ");

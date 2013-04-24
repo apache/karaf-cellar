@@ -25,14 +25,14 @@ public interface Producer<T extends Serializable> {
     /**
      * Produce an object.
      *
-     * @param obj
+     * @param obj the object to produce.
      */
     public void produce(T obj);
 
     /**
-     * Returns the {@code Switch}.
+     * Get the producer switch.
      *
-     * @return
+     * @return the producer switch.
      */
     public Switch getSwitch();
 

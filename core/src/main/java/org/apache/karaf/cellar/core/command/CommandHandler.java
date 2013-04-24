@@ -30,10 +30,11 @@ public abstract class CommandHandler<C extends Command<R>, R extends Result> ext
     protected Producer producer;
 
     /**
-     * Handles the the {@code Command}.
+     * Handle a {@code Command}.
      *
-     * @param command
+     * @param command the command to handle.
      */
+    @Override
     public void handle(C command) {
         if (producer != null) {
             R result = execute(command);
@@ -47,31 +48,33 @@ public abstract class CommandHandler<C extends Command<R>, R extends Result> ext
     }
 
     /**
-     * Executes a {@code Command} and returns a {@code Result}.
+     * Execute a {@code Command} and return a {@code Result}.
      *
-     * @param command
-     * @return
+     * @param command the command to execute.
+     * @return the result of the execution.
      */
     public abstract R execute(C command);
 
+    /**
+     * Get the type of the command.
+     *
+     * @return the type class.
+     */
+    @Override
     public abstract Class<C> getType();
 
+    /**
+     * Get the switch of the command handler.
+     *
+     * @return the command handler switch.
+     */
+    @Override
     public abstract Switch getSwitch();
 
-    /**
-     * Returns the {@code Producer}.
-     *
-     * @return
-     */
     public Producer getProducer() {
         return producer;
     }
 
-    /**
-     * Sets the {@code Producer}.
-     *
-     * @param producer
-     */
     public void setProducer(Producer producer) {
         this.producer = producer;
     }

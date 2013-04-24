@@ -23,16 +23,16 @@ import java.io.Serializable;
 public interface Handler<T extends Serializable> {
 
     /**
-     * Returns the Class of the object that is to be handled.
+     * Get the type of the event handled by this handler.
      *
-     * @return
+     * @return the type of the event that the handler can handle.
      */
     public Class<T> getType();
 
     /**
-     * Returns the {@code Switch}.
+     * Get the handler switch.
      *
-     * @return
+     * @return the handler switch.
      */
     public Switch getSwitch();
 

@@ -13,9 +13,13 @@
  */
 package org.apache.karaf.cellar.core.exception;
 
+/**
+ * Exception raised when no cluster event producer has been found.
+ */
 public class ProducerNotFoundException extends Exception {
 
     public ProducerNotFoundException() {
+        // nothing to do
     }
 
     public ProducerNotFoundException(String message) {

@@ -21,24 +21,27 @@ import org.apache.karaf.cellar.core.Consumer;
 public interface EventConsumer<E extends Event> extends Consumer<E> {
 
     /**
-     * Consumes {@code Event}s to the cluster.
+     * Consume {@code Event}s to the cluster.
      *
-     * @param event
+     * @param event the cluster event to consume.
      */
+    @Override
     public void consume(E event);
 
     /**
-     * Start consuming
+     * Start to consume cluster events.
      */
     public void start();
 
     /**
-     * Stop consuming
+     * Stop to consume cluster events.
      */
     public void stop();
 
     /**
-     * Returns true if Consumer is consuming
+     * Check the current event consumer status.
+     *
+     * @return true if the consumer is consuming, false else.
      */
     public Boolean isConsuming();
 

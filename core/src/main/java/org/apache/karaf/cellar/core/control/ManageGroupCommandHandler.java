@@ -60,9 +60,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Adds the {@link Group} list to the result.
+     * Add the {@link Group} list to the result.
      *
-     * @param result
+     * @param result the result where to add the group list.
      */
     public void addGroupListToResult(ManageGroupResult result) {
         Set<Group> groups = groupManager.listAllGroups();
@@ -75,9 +75,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Adds {@link Node} to the target {@link Group}.
+     * Add {@link Node} to the target {@link Group}.
      *
-     * @param targetGroupName
+     * @param targetGroupName the target group name where to add the node.
      */
     public void joinGroup(String targetGroupName) {
         Node node = clusterManager.getNode();
@@ -95,9 +95,9 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Removes {@link Node} from the target {@link Group}.
+     * Remove a {@link Node} from the target {@link Group}.
      *
-     * @param targetGroupName
+     * @param targetGroupName the target group name where to remove the node.
      */
     public void quitGroup(String targetGroupName) {
         Node node = clusterManager.getNode();
@@ -112,7 +112,7 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
     }
 
     /**
-     * Removes {@link Node} from ALL {@link Group}s.
+     * Remove {@link Node} from all {@link Group}s.
      */
     public void purgeGroups() {
         Node node = clusterManager.getNode();
