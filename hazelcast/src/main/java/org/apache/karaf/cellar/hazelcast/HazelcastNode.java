@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.hazelcast;
 import org.apache.karaf.cellar.core.Node;
 
 /**
- * Hazelcast cluster node.
+ * Node implementation powered by Hazelcast.
  */
 public class HazelcastNode implements Node {
 
@@ -25,12 +25,6 @@ public class HazelcastNode implements Node {
     private String host;
     private int port;
 
-    /**
-     * Constructor
-     *
-     * @param host
-     * @param port
-     */
     public HazelcastNode(String host, int port) {
         StringBuilder builder = new StringBuilder();
         this.host = host;
@@ -38,10 +32,12 @@ public class HazelcastNode implements Node {
         this.id = builder.append(host).append(":").append(port).toString();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
@@ -50,6 +46,7 @@ public class HazelcastNode implements Node {
         this.host = host;
     }
 
+    @Override
     public int getPort() {
         return port;
     }

@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Produces {@code Event}s into the distributed {@code ITopic}.
+ * Produces cluster {@code Event}s into the Hazelcast {@code IQueue}.
  */
 public class QueueProducer<E extends Event> implements EventProducer<E> {
 
@@ -58,26 +58,22 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
     private Node node;
     private ConfigurationAdmin configurationAdmin;
 
-    /**
-     * Initialization method.
-     */
     public void init() {
         if (queue == null) {
             queue = instance.getQueue(Constants.QUEUE);
         }
     }
 
-    /**
-     * Destruction method.
-     */
     public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Propagates an event into the distributed {@code ITopic}.
+     * Propagate a cluster event into the Hazelcast {@code IQueue}.
      *
-     * @param event
+     * @param event the cluster event to produce.
      */
+    @Override
     public void produce(E event) {
         if (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
             event.setSourceNode(node);
@@ -93,6 +89,7 @@ public class QueueProducer<E extends Event> implements EventProducer<E> {
         }
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

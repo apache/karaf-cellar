@@ -13,17 +13,12 @@
  */
 package org.apache.karaf.cellar.hazelcast.factory;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import com.hazelcast.config.Config;
-import com.hazelcast.config.GroupConfig;
-import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.TcpIpConfig;
 import com.hazelcast.config.XmlConfigBuilder;
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.karaf.cellar.core.discovery.Discovery;
 import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.slf4j.Logger;
@@ -38,9 +33,9 @@ public class HazelcastConfigurationManager {
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
 
      /**
-     * Builds a Hazelcast {@link com.hazelcast.config.Config}
+     * Build a Hazelcast {@link com.hazelcast.config.Config}.
      *
-     * @return
+     * @return the Hazelcast config.
      */
     public Config getHazelcastConfig() {
         System.setProperty("hazelcast.config", xmlConfigLocation);
@@ -64,7 +59,7 @@ public class HazelcastConfigurationManager {
             if (properties.containsKey(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME)) {
                 Set<String> newDiscoveredMemberSet = CellarUtils.createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
                 if (!CellarUtils.collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
-                    LOGGER.info("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
+                    LOGGER.info("CELLAR HAZELCAST: Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
                     discoveredMemberSet = newDiscoveredMemberSet;
                     updated = Boolean.TRUE;
                 }
@@ -73,9 +68,6 @@ public class HazelcastConfigurationManager {
         return updated;
     }
 
-	/**
-	 * @return the discoveredMemberSet
-	 */
 	public Set<String> getDiscoveredMemberSet() {
 		return discoveredMemberSet;
 	}

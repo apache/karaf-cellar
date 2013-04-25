@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Produces {@code Event}s into the distributed {@code ITopic}.
+ * Produces cluster {@code Event}s into the Hazelcast {@code ITopic}.
  */
 public class TopicProducer<E extends Event> implements EventProducer<E> {
 
@@ -44,26 +44,22 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
     private Node node;
     private ConfigurationAdmin configurationAdmin;
 
-    /**
-     * Initialization method.
-     */
     public void init() {
         if (topic == null) {
             topic = instance.getTopic(Constants.TOPIC);
         }
     }
 
-    /**
-     * Destruction method.
-     */
     public void destroy() {
+        // nothing to do
     }
 
     /**
-     * Propagates an event into the distributed {@code ITopic}.
+     * Propagates a cluster event into the distributed {@code ITopic}.
      *
-     * @param event
+     * @param event the cluster event.
      */
+    @Override
     public void produce(E event) {
         if (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
             event.setSourceNode(node);
@@ -75,6 +71,7 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
         }
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

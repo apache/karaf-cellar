@@ -29,7 +29,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
 /**
- * A factory for a Hazelcast Instance, which integration with OSGi Service Registry and Config Admin.
+ * A factory for Hazelcast instance, integrating with OSGi ServiceRegistry and ConfigAdmin.
  */
 public class HazelcastServiceFactory  {
 
@@ -42,7 +42,6 @@ public class HazelcastServiceFactory  {
     private CountDownLatch initializationLatch = new CountDownLatch(1);
     private CountDownLatch instanceLatch = new CountDownLatch(1);
     private HazelcastInstance instance;
-
 
     public void init() {
         if (combinedClassLoader != null) {
@@ -83,9 +82,9 @@ public class HazelcastServiceFactory  {
     }
 
     /**
-     * Returs a Hazelcast instance from service registry.
+     * Get the Hazelcast instance.
      *
-     * @return
+     * @return the Hazelcast instance.
      */
     public HazelcastInstance getInstance() throws InterruptedException {
         if (instance == null) {
@@ -97,9 +96,9 @@ public class HazelcastServiceFactory  {
     }
 
     /**
-     * Builds a {@link HazelcastInstance}
+     * Build a {@link HazelcastInstance}.
      *
-     * @return
+     * @return the Hazelcast instance.
      */
     private HazelcastInstance buildInstance() {
         if(combinedClassLoader != null) {
