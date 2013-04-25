@@ -41,6 +41,7 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
         instance.getCluster().addMembershipListener(this);
     }
 
+    @Override
     public void memberAdded(MembershipEvent membershipEvent) {
         Member member = membershipEvent.getMember();
         try {
@@ -66,6 +67,7 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
         }
     }
 
+    @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
         // nothing to do
     }

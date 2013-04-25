@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.hazelcast;
 
 /**
- * Hazelcast constants.
+ * Hazelcast configuration constants.
  */
 public class Constants {
 
