@@ -16,17 +16,50 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- * Cellar Group MBean to manipule Cellar cluster group.
+ * Describe the operations and attributes of the Cellar Cluster Group MBean.
  */
 public interface CellarGroupMBean {
 
-    // Operations
+    /**
+     * Create a cluster group.
+     *
+     * @param name the cluster group name.
+     * @throws Exception in case of create failure.
+     */
     void create(String name) throws Exception;
+
+    /**
+     * Delete a cluster group.
+     *
+     * @param name the cluster group name.
+     * @throws Exception in case of delete failure.
+     */
     void delete(String name) throws Exception;
+
+    /**
+     * Join a node in a cluster group.
+     *
+     * @param name the cluster group name.
+     * @param nodeId the node ID.
+     * @throws Exception in case of join failure.
+     */
     void join(String name, String nodeId) throws Exception;
+
+    /**
+     * Quit a node from a cluster group.
+     *
+     * @param name the cluster group name.
+     * @param nodeId the node ID.
+     * @throws Exception in case of quit failure.
+     */
     void quit(String name, String nodeId) throws Exception;
 
-    // Attributes
+    /**
+     * Get the list of cluster groups.
+     *
+     * @return the list of cluster groups.
+     * @throws Exception in case of retrieval failure.
+     */
     TabularData getGroups() throws Exception;
 
 }

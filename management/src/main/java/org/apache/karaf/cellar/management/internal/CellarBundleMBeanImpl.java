@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Implementation of the Cellar bundle MBean.
+ * Implementation of the Cellar Bundle MBean.
  */
 public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundleMBean {
 
@@ -80,6 +80,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         this.eventProducer = eventProducer;
     }
 
+    @Override
     public void install(String groupName, String location) throws Exception {
         // check if cluster group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -98,7 +99,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-            throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+            throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
         }
 
         // get the name and version in the location MANIFEST
@@ -111,12 +112,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            // populate the cluster map
-            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            // update the cluster group
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             BundleState state = new BundleState();
             state.setLocation(location);
             state.setStatus(BundleEvent.INSTALLED);
-            bundles.put(name + "/" + version, state);
+            clusterBundles.put(name + "/" + version, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
@@ -127,6 +128,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         eventProducer.produce(event);
     }
 
+    @Override
     public void uninstall(String groupName, String symbolicName, String version) throws Exception {
         // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -139,22 +141,22 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
-        // update the cluster map
+        // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         String key = null;
         String location = null;
         try {
-            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            key = selector(symbolicName, version, distributedBundles);
+            key = selector(symbolicName, version, clusterBundles);
 
             if (key == null) {
                 throw new IllegalArgumentException("Bundle " + key + " is not found in cluster group " + groupName);
             }
 
-            BundleState state = distributedBundles.get(key);
+            BundleState state = clusterBundles.get(key);
             if (state == null) {
                 throw new IllegalArgumentException("Bundle " + key + " is not found in cluster group " + groupName);
             }
@@ -166,10 +168,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             support.setGroupManager(this.groupManager);
             support.setConfigurationAdmin(this.configurationAdmin);
             if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
             }
 
-            distributedBundles.remove(key);
+            clusterBundles.remove(key);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
@@ -181,6 +183,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         eventProducer.produce(event);
     }
 
+    @Override
     public void start(String groupName, String symbolicName, String version) throws Exception {
         // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -193,21 +196,21 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
-        // update the cluster map
+        // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         String key = null;
         String location = null;
         try {
-            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            key = selector(symbolicName, version, distributedBundles);
+            key = selector(symbolicName, version, clusterBundles);
 
             if (key == null) {
                 throw new IllegalStateException("Bundle " + key + " not found in cluster group " + groupName);
             }
 
-            BundleState state = distributedBundles.get(key);
+            BundleState state = clusterBundles.get(key);
             if (state == null) {
                 throw new IllegalStateException("Bundle " + key + " not found in cluster group " + groupName);
             }
@@ -219,22 +222,23 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             support.setGroupManager(this.groupManager);
             support.setConfigurationAdmin(this.configurationAdmin);
             if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
             }
 
             state.setStatus(BundleEvent.STARTED);
-            distributedBundles.put(key, state);
+            clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
-        // broadcast the event
+        // broadcast the cluster event
         String[] split = key.split("/");
         ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
+    @Override
     public void stop(String groupName, String symbolicName, String version) throws Exception {
         // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -247,48 +251,49 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
-        // update the cluster map
+        // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         String key = null;
         String location = null;
         try {
-            Map<String, BundleState> distributedBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            key = selector(symbolicName, version, distributedBundles);
+            key = selector(symbolicName, version, clusterBundles);
 
             if (key == null) {
                 throw new IllegalStateException("Bundle " + key + " not found in cluster group " + groupName);
             }
 
-            BundleState state = distributedBundles.get(key);
+            BundleState state = clusterBundles.get(key);
             if (state == null) {
                 throw new IllegalStateException("Bundle " + key + " not found in cluster group " + groupName);
             }
             location = state.getLocation();
 
-            // check if the bundle location is allowed
+            // check if the bundle location is allowed outbound
             CellarSupport support = new CellarSupport();
             support.setClusterManager(this.clusterManager);
             support.setGroupManager(this.groupManager);
             support.setConfigurationAdmin(this.configurationAdmin);
             if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound");
+                throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
             }
 
             state.setStatus(BundleEvent.STOPPED);
-            distributedBundles.put(key, state);
+            clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
-        // broadcast the event
+        // broadcast the cluster event
         String[] split = key.split("/");
         ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
+    @Override
     public TabularData getBundles(String groupName) throws Exception {
         CompositeType compositeType = new CompositeType("Bundle", "Karaf Cellar bundle",
                 new String[]{"id", "name", "version", "status", "location"},
@@ -301,9 +306,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<String, BundleState> bundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             int id = 0;
-            for (String bundle : bundles.keySet()) {
+            for (String bundle : clusterBundles.keySet()) {
                 String[] tokens = bundle.split("/");
                 String name = null;
                 String version = null;
@@ -313,7 +318,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 } else {
                     name = bundle;
                 }
-                BundleState state = bundles.get(bundle);
+                BundleState state = clusterBundles.get(bundle);
                 String status;
                 switch (state.getStatus()) {
                     case BundleEvent.INSTALLED:
@@ -356,9 +361,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     /**
      * Bundle selector.
      *
+     * @param name the bundle name, regex, or ID.
+     * @param version the bundle version.
+     * @param clusterBundles the cluster bundles map.
      * @return the bundle key is the distributed bundle map.
      */
-    private String selector(String name, String version, Map<String, BundleState> distributedBundles) {
+    private String selector(String name, String version, Map<String, BundleState> clusterBundles) {
         String key = null;
         if (version == null || version.trim().isEmpty()) {
             // looking for bundle using ID
@@ -366,9 +374,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             try {
                 id = Integer.parseInt(name);
                 int index = 0;
-                for (String bundle : distributedBundles.keySet()) {
+                for (String clusterBundle : clusterBundles.keySet()) {
                     if (index == id) {
-                        key = bundle;
+                        key = clusterBundle;
                         break;
                     }
                     index++;
@@ -382,8 +390,8 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 Pattern namePattern = Pattern.compile(name);
 
                 // looking for bundle using only the name
-                for (String bundle : distributedBundles.keySet()) {
-                    BundleState state = distributedBundles.get(bundle);
+                for (String bundle : clusterBundles.keySet()) {
+                    BundleState state = clusterBundles.get(bundle);
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex
                         Matcher matcher = namePattern.matcher(state.getName());
@@ -416,9 +424,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             // add regex support of the name
             Pattern namePattern = Pattern.compile(name);
 
-            for (String bundle : distributedBundles.keySet()) {
+            for (String bundle : clusterBundles.keySet()) {
                 String[] split = bundle.split("/");
-                BundleState state = distributedBundles.get(bundle);
+                BundleState state = clusterBundles.get(bundle);
                 if (split[1].equals(version)) {
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex
