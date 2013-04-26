@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *  Implementation of the Cellar group MBean.
+ *  Implementation of the Cellar Group MBean.
  */
 public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMBean {
 
@@ -67,6 +67,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         this.groupManager = groupManager;
     }
 
+    @Override
     public void create(String name) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(name);
@@ -76,6 +77,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         groupManager.createGroup(name);
     }
 
+    @Override
     public void delete(String name) throws Exception {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -101,6 +103,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         }
     }
 
+    @Override
     public void join(String groupName, String nodeId) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -123,6 +126,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         executionContext.execute(command);
     }
 
+    @Override
     public void quit(String groupName, String nodeId) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -144,6 +148,7 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         executionContext.execute(command);
     }
 
+    @Override
     public TabularData getGroups() throws Exception {
         Set<Group> allGroups = groupManager.listAllGroups();
 
