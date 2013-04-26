@@ -16,22 +16,89 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- *  Cellar MBean describing the core attributes and operation that you can do on Cellar.
+ * Describe the operations and attributes of the Cellar Core MBean.
  */
 public interface CellarMBean {
 
+    /**
+     * Force the sync of the nodes.
+     *
+     * @throws Exception in case of sync failure.
+     */
     void sync() throws Exception;
 
+    /**
+     * Get the status of the cluster event consumers.
+     *
+     * @return the status of the cluster event consumers.
+     * @throws Exception in case of retrieval failure.
+     */
     TabularData consumerStatus() throws Exception;
+
+    /**
+     * Start a cluster event consumer on a node.
+     *
+     * @param nodeId the node ID.
+     * @throws Exception in case of start failure.
+     */
     void consumerStart(String nodeId) throws Exception;
+
+    /**
+     * Stop a cluster event consumer on a node.
+     *
+     * @param nodeId the node ID.
+     * @throws Exception in case of stop failure.
+     */
     void consumerStop(String nodeId) throws Exception;
 
+    /**
+     * Get the status of the cluster event handlers.
+     *
+     * @return the status of the cluster event handlers.
+     * @throws Exception in case of retrieval failure.
+     */
     TabularData handlerStatus() throws Exception;
+
+    /**
+     * Start a cluster event handler on a node.
+     *
+     * @param handlerId the cluster event handler ID.
+     * @param nodeId the node ID.
+     * @throws Exception in case of start failure.
+     */
     void handlerStart(String handlerId, String nodeId) throws Exception;
+
+    /**
+     * Stop a cluster event handler on a node.
+     *
+     * @param handlerId the cluster event handler ID.
+     * @param nodeId the node ID.
+     * @throws Exception in case of stop failure.
+     */
     void handlerStop(String handlerId, String nodeId) throws Exception;
 
+    /**
+     * Get the status of the cluster event producers.
+     *
+     * @return the status of the cluster event producers.
+     * @throws Exception in case of retrieval failure.
+     */
     TabularData producerStatus() throws Exception;
+
+    /**
+     * Start a cluster event producer on a node.
+     *
+     * @param nodeId the node ID.
+     * @throws Exception in case of start failure.
+     */
     void producerStart(String nodeId) throws Exception;
+
+    /**
+     * Stop a cluster event producer on a node.
+     *
+     * @param nodeId the node ID.
+     * @throws Exception in case of stop failure.
+     */
     void producerStop(String nodeId) throws Exception;
 
 }

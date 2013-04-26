@@ -29,7 +29,7 @@ import javax.management.openmbean.*;
 import java.util.*;
 
 /**
- * Implementation of the Cellar Config MBean allowing to manipulate Cellar config admin layer.
+ * Implementation of the Cellar Config MBean.
  */
 public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfigMBean {
 
@@ -42,6 +42,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         super(CellarConfigMBean.class);
     }
 
+    @Override
     public List<String> listConfig(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -51,14 +52,15 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
 
         List<String> result = new ArrayList<String>();
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        for (String pid : distributedConfigurations.keySet()) {
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        for (String pid : clusterConfigurations.keySet()) {
             result.add(pid);
         }
 
         return result;
     }
 
+    @Override
     public void deleteConfig(String groupName, String pid) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -77,13 +79,13 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound");
+            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound for cluster group " + groupName);
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (distributedConfigurations != null) {
-            // update the distributed map
-            Properties properties = distributedConfigurations.remove(pid);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (clusterConfigurations != null) {
+            // update the cluster group
+            clusterConfigurations.remove(pid);
 
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
@@ -91,10 +93,11 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             event.setType(ConfigurationEvent.CM_DELETED);
             eventProducer.produce(event);
         } else {
-            throw new IllegalArgumentException("Configuration distributed map not found for cluster group " + groupName);
+            throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
         }
     }
 
+    @Override
     public TabularData listProperties(String group, String pid) throws Exception {
         CompositeType compositeType = new CompositeType("Property", "Karaf Cellar Config property",
                 new String[]{"key", "value"},
@@ -104,8 +107,8 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
                 compositeType, new String[]{"key"});
         TabularData table = new TabularDataSupport(tableType);
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
-        Properties properties = distributedConfigurations.get(pid);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + group);
+        Properties properties = clusterConfigurations.get(pid);
         if (properties != null) {
             Enumeration propertyNames = properties.propertyNames();
             while (propertyNames.hasMoreElements()) {
@@ -120,6 +123,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         return table;
     }
 
+    @Override
     public void setProperty(String groupName, String pid, String key, String value) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -138,28 +142,29 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound");
+            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound for cluster group " + groupName);
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (distributedConfigurations != null) {
-            // update the distributed map
-            Properties properties = distributedConfigurations.get(pid);
-            if (properties == null) {
-                properties = new Properties();
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (clusterConfigurations != null) {
+            // update the cluster group
+            Properties clusterProperties = clusterConfigurations.get(pid);
+            if (clusterProperties == null) {
+                clusterProperties = new Properties();
             }
-            properties.put(key, value);
-            distributedConfigurations.put(pid, properties);
+            clusterProperties.put(key, value);
+            clusterConfigurations.put(pid, clusterProperties);
 
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
-            throw new IllegalArgumentException("Configuration distributed map not found for cluster group " + groupName);
+            throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
         }
     }
 
+    @Override
     public void appendProperty(String groupName, String pid, String key, String value) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -169,7 +174,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
 
         // check if the producer is on
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            throw new IllegalStateException("Cluster event producer is off");
+            throw new IllegalStateException("Cluster event producer is OFF");
         }
 
         // check if the pid is allowed outbound
@@ -178,35 +183,36 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound");
+            throw new IllegalStateException("Configuration PID " + pid + " is blocked outbound for cluster group " + groupName);
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (distributedConfigurations != null) {
-            // update the distributed map
-            Properties properties = distributedConfigurations.get(pid);
-            if (properties == null) {
-                properties = new Properties();
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (clusterConfigurations != null) {
+            // update the cluster group
+            Properties clusterProperties = clusterConfigurations.get(pid);
+            if (clusterProperties == null) {
+                clusterProperties = new Properties();
             }
-            Object currentValue = properties.get(key);
+            Object currentValue = clusterProperties.get(key);
             if (currentValue == null) {
-                properties.put(key, value);
+                clusterProperties.put(key, value);
             } else if (currentValue instanceof String) {
-                properties.put(key, currentValue + value);
+                clusterProperties.put(key, currentValue + value);
             } else {
                 throw new IllegalStateException("Append failed: current value is not a String");
             }
-            distributedConfigurations.put(pid, properties);
+            clusterConfigurations.put(pid, clusterProperties);
 
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
             eventProducer.produce(event);
         } else {
-            throw new IllegalArgumentException("Configuration distributed map not found for cluster group " + groupName);
+            throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
         }
     }
 
+    @Override
     public void deleteProperty(String groupName, String pid, String key) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -216,7 +222,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
 
         // check if the event producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            throw new IllegalStateException("Cluster event producer is off");
+            throw new IllegalStateException("Cluster event producer is OFF");
         }
 
         // check if the pid is allowed outbound
@@ -225,23 +231,23 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
         if (!support.isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-            throw new IllegalArgumentException("Configuration PID " + pid + " is blocked outbound");
+            throw new IllegalArgumentException("Configuration PID " + pid + " is blocked outbound for cluster group " + groupName);
         }
 
-        Map<String, Properties> distributedConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-        if (distributedConfigurations != null) {
-            // update the distributed map
-            Properties distributedDictionary = distributedConfigurations.get(pid);
-            if (distributedDictionary != null) {
-                distributedDictionary.remove(key);
-                distributedConfigurations.put(pid, distributedDictionary);
+        Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
+        if (clusterConfigurations != null) {
+            // update the cluster group
+            Properties clusterDictionary = clusterConfigurations.get(pid);
+            if (clusterDictionary != null) {
+                clusterDictionary.remove(key);
+                clusterConfigurations.put(pid, clusterDictionary);
                 // broadcast the cluster event
                 ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }
         } else {
-            throw new IllegalArgumentException("Configuration distributed map not found for cluster group " + groupName);
+            throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
         }
     }
 

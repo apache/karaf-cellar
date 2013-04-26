@@ -41,7 +41,7 @@ import javax.management.openmbean.*;
 import java.util.*;
 
 /**
- * Implementation of the Cellar core MBean.
+ * Implementation of the Cellar Core MBean.
  */
 public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
 
@@ -86,6 +86,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         this.groupManager = groupManager;
     }
 
+    @Override
     public void sync() throws Exception {
         Set<Group> localGroups = groupManager.listLocalGroups();
         for (Group group : localGroups) {
@@ -107,6 +108,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         }
     }
 
+    @Override
     public TabularData handlerStatus() throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
         command.setDestination(clusterManager.listNodes());
@@ -142,6 +144,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         return table;
     }
 
+    @Override
     public void handlerStart(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
@@ -158,6 +161,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         command.setStatus(Boolean.TRUE);
     }
 
+    @Override
     public void handlerStop(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
@@ -174,6 +178,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         command.setStatus(Boolean.FALSE);
     }
 
+    @Override
     public TabularData consumerStatus() throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
         command.setStatus(null);
@@ -200,6 +205,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         return table;
     }
 
+    @Override
     public void consumerStart(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
@@ -216,6 +222,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         executionContext.execute(command);
     }
 
+    @Override
     public void consumerStop(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
@@ -232,6 +239,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         executionContext.execute(command);
     }
 
+    @Override
     public TabularData producerStatus() throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
         command.setStatus(null);
@@ -258,6 +266,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         return table;
     }
 
+    @Override
     public void producerStop(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 
@@ -274,6 +283,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         executionContext.execute(command);
     }
 
+    @Override
     public void producerStart(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 

@@ -16,9 +16,6 @@ package org.apache.karaf.cellar.management.internal;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
-import org.apache.karaf.cellar.core.control.ManageGroupAction;
-import org.apache.karaf.cellar.core.control.ManageGroupCommand;
-import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.management.CellarNodeMBean;
 import org.apache.karaf.cellar.utils.ping.Ping;
 
@@ -27,11 +24,10 @@ import javax.management.StandardMBean;
 import javax.management.openmbean.*;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
- * Implementation of the Cellar node MBean.
+ * Implementation of the Cellar Node MBean.
  */
 public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBean {
 
@@ -58,6 +54,7 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
         this.executionContext = executionContext;
     }
 
+    @Override
     public long pingNode(String nodeId) throws Exception {
         Node node = clusterManager.findNodeById(nodeId);
         if (node == null) {
@@ -71,6 +68,7 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
         return (stop - start);
     }
 
+    @Override
     public TabularData getNodes() throws Exception {
 
         CompositeType nodeType = new CompositeType("Node", "Karaf Cellar cluster node",
