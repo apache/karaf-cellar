@@ -16,14 +16,25 @@ package org.apache.karaf.cellar.management;
 import javax.management.openmbean.TabularData;
 
 /**
- *  Cellar Node MBean to manipulate Cellar cluster nodes.
+ * Describe the operations and attributes on the Cellar Node MBean.
  */
 public interface CellarNodeMBean {
 
-    // Operations
+    /**
+     * Ping a node.
+     *
+     * @param nodeId the node ID.
+     * @return the time (in milliseconds) to reach the node.
+     * @throws Exception in case of ping failure.
+     */
     long pingNode(String nodeId) throws Exception;
 
-    // Attributes
+    /**
+     * Get the list of nodes.
+     *
+     * @return the list of nodes.
+     * @throws Exception in case of retrieval failure.
+     */
     TabularData getNodes() throws Exception;
 
 }
