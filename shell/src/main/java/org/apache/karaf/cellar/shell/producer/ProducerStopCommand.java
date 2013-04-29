@@ -19,10 +19,10 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "producer-stop", description = "Stop an event producer")
+@Command(scope = "cluster", name = "producer-stop", description = "Stop a cluster event producer")
 public class ProducerStopCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

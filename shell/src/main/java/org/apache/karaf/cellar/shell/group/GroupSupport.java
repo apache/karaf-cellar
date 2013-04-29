@@ -25,6 +25,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Abstract cluster group shell command support.
+ */
 public abstract class GroupSupport extends ClusterCommandSupport {
 
     protected static final String HEADER_FORMAT = "   %-20s   %s";
@@ -33,11 +36,11 @@ public abstract class GroupSupport extends ClusterCommandSupport {
     /**
      * Executes the command.
      *
-     * @param action
-     * @param group
-     * @param nodes
-     * @return
-     * @throws Exception
+     * @param action the cluster group action.
+     * @param group the cluster group name.
+     * @param nodes the node IDs.
+     * @return the Object resulting of the command execution.
+     * @throws Exception in case of execution failure.
      */
     protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodes) throws Exception {
         return doExecute(action, group, source, nodes, true);
@@ -46,12 +49,12 @@ public abstract class GroupSupport extends ClusterCommandSupport {
     /**
      * Executes the command.
      *
-     * @param action
-     * @param group
-     * @param nodeIds
-     * @param suppressOutput
-     * @return
-     * @throws Exception
+     * @param action the cluster group action.
+     * @param group the cluster group name.
+     * @param nodeIds the node IDs.
+     * @param suppressOutput true to suppress command execution output, false else.
+     * @return the Object resulting of the command execution.
+     * @throws Exception in case of execution failure.
      */
     protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodeIds, Boolean suppressOutput) throws Exception {
 
