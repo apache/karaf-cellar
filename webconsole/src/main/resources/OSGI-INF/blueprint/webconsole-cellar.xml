@@ -29,7 +29,6 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
     </bean>
-
     <service ref="cellarPlugin" interface="javax.servlet.Servlet">
         <service-properties>
             <entry key="felix.webconsole.label" value="cellar"/>

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.karaf.cellar.webconsole;
 
 import org.apache.felix.webconsole.AbstractWebConsolePlugin;
@@ -36,11 +35,6 @@ import java.util.Set;
 
 public class CellarPlugin extends AbstractWebConsolePlugin {
 
-    /**
-     * Pseudo class version ID to keep the IDE quite.
-     */
-    private static final long serialVersionUID = 1L;
-
     private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarPlugin.class);
 
     public static final String NAME = "cellar";
@@ -56,10 +50,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
 
     private BundleContext bundleContext;
 
-    //
-    // Blueprint lifecycle callback methods
-    //
-
     public void start() {
         super.activate(bundleContext);
 
@@ -73,18 +63,17 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         super.deactivate();
     }
 
-    //
-    // AbstractWebConsolePlugin interface
-    //
-
+    @Override
     public String getLabel() {
         return NAME;
     }
 
+    @Override
     public String getTitle() {
         return LABEL;
     }
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean success = false;
 
@@ -117,6 +106,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         }
     }
 
+    @Override
     protected void renderContent(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // get request info from request attribute
         final PrintWriter pw = response.getWriter();
@@ -143,9 +133,6 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
         pw.println("</script>");
     }
 
-    //
-    // Additional methods
-    //
     protected URL getResource(String path) {
         path = path.substring(NAME.length() + 1);
         URL url = this.classLoader.getResource(path);
@@ -154,7 +141,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
             try {
                 ins = url.openStream();
                 if (ins == null) {
-                    this.LOGGER.error("Failed to open {}", url);
+                    this.LOGGER.error("failed to open {}", url);
                     url = null;
                 }
             } catch (IOException e) {
