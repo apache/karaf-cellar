@@ -15,6 +15,9 @@ package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.ResultHandler;
 
+/**
+ * Handler for cluster pong event.
+ */
 public class PongHandler extends ResultHandler<Pong> {
 
     @Override
