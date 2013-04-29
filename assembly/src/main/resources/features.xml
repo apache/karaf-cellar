@@ -15,7 +15,7 @@
 -->
 <features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
 
-    <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.features.version}/xml/features</repository>
+    <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
 
     <feature name="cellar-core" description="Karaf clustering core" version="${project.version}" resolver="(obr)">
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
@@ -94,9 +94,9 @@
 
     <feature name="cellar-cloud" description="Cloud blobstore support in clusters" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">cellar-core</feature>
-        <feature version="${jclouds.features.version}">jclouds</feature>
+        <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
-        <feature version="${jclouds.features.version}">jclouds-aws-s3</feature>
+        <feature version="${jclouds.version}">jclouds-aws-s3</feature>
         <bundle dependency="true">mvn:joda-time/joda-time/${joda-time.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
