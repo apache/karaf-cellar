@@ -15,16 +15,16 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
+    <!-- Handler for the cluster ping event -->
     <bean id="pingHandler" class="org.apache.karaf.cellar.utils.ping.PingHandler">
         <property name="producer" ref="producer"/>
-
     </bean>
 
+    <!-- Handler for the cluster pong event -->
     <bean id="pongHandler" class="org.apache.karaf.cellar.utils.ping.PongHandler">
         <property name="commandStore" ref="commandStore"/>
     </bean>
 
-    <!-- OSGi Services  & References -->
     <service ref="pingHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
     <service ref="pongHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
