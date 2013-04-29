@@ -105,7 +105,7 @@ function renderGroupTableData(/* array of Objects */ data) {
 }
 
 /**
- * Adds under the parent element a group/member/actions row
+ * Add under the parent element a group/member/actions row
  * @param parent
  * @param group
  */

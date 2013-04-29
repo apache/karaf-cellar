@@ -40,11 +40,6 @@ import java.util.Set;
 
 public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
-    /**
-     * Pseudo class version ID to keep the IDE quite.
-     */
-    private static final long serialVersionUID = 1L;
-
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterGroupsPlugin.class);
 
     public static final String NAME = "cluster.groups";
@@ -61,10 +56,6 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     private BundleContext bundleContext;
 
-    //
-    // Blueprint lifecycle callback methods
-    //
-
     public void start() {
         super.activate(bundleContext);
 
@@ -73,24 +64,22 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         this.LOGGER.info("{} plugin activated", LABEL);
     }
 
-
     public void stop() {
         this.LOGGER.info("{} plugin deactivated", LABEL);
         super.deactivate();
     }
 
-    //
-    // AbstractWebConsolePlugin interface
-    //
-
+    @Override
     public String getLabel() {
         return NAME;
     }
 
+    @Override
     public String getTitle() {
         return LABEL;
     }
 
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         boolean success = false;
 
@@ -148,6 +137,7 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         }
     }
 
+    @Override
     protected void renderContent(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // get request info from request attribute
         final PrintWriter pw = response.getWriter();
@@ -174,9 +164,6 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
         pw.println("</script>");
     }
 
-    //
-    // Additional methods
-    //
     protected URL getResource(String path) {
         path = path.substring(NAME.length() + 1);
         URL url = this.classLoader.getResource(path);

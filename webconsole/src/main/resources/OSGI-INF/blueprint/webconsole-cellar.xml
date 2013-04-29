@@ -31,7 +31,6 @@
         <property name="clusterManager" ref="clusterManager"/>
         <property name="executionContext" ref="executionContext"/>
     </bean>
-
     <service ref="clusterGroupPlugin" interface="javax.servlet.Servlet">
         <service-properties>
             <entry key="felix.webconsole.label" value="cluster.groups"/>
