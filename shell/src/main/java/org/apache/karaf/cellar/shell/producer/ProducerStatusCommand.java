@@ -18,10 +18,10 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "producer-status", description = "Status of an event producer.")
+@Command(scope = "cluster", name = "producer-status", description = "Status of a cluster event producer")
 public class ProducerStatusCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

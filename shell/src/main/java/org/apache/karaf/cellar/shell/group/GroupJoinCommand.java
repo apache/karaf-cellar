@@ -20,13 +20,13 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "group-join", description = "Join node(s) to a cluster group.")
+@Command(scope = "cluster", name = "group-join", description = "Join node(s) to a cluster group")
 public class GroupJoinCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = true, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID", required = true, multiValued = true)
     List<String> nodes;
 
     @Override

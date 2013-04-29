@@ -19,7 +19,7 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "consumer-stop", description = "Stop an event consumer.")
+@Command(scope = "cluster", name = "consumer-stop", description = "Stop a cluster event consumer")
 public class ConsumerStopCommand extends ConsumerSupport {
 
     @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
