@@ -15,6 +15,9 @@ package org.apache.karaf.cellar.utils.ping;
 
 import org.apache.karaf.cellar.core.command.Result;
 
+/**
+ * Cluster pong event.
+ */
 public class Pong extends Result {
 
     public Pong(String id) {
