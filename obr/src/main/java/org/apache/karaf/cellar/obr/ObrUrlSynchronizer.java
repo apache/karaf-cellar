@@ -18,7 +18,6 @@ import org.apache.felix.bundlerepository.Resource;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
-import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -26,16 +25,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Set;
 
 /**
- * Bootstrap synchronizer for the OBR URLs.
+ * OBR URL synchronizer.
  */
 public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlSynchronizer.class);
 
+    @Override
     public void init() {
         super.init();
         Set<Group> groups = groupManager.listLocalGroups();
@@ -49,24 +48,26 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         }
     }
 
+    @Override
     public void destroy() {
         super.destroy();
     }
 
     /**
-     * Pull the OBR URL from the cluster.
+     * Pull the OBR URLs from a cluster group to update the local state.
      *
      * @param group the cluster group.
      */
+    @Override
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+            Set<String> clusterUrls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                if (urls != null && !urls.isEmpty()) {
-                    for (String url : urls) {
+                if (clusterUrls != null && !clusterUrls.isEmpty()) {
+                    for (String url : clusterUrls) {
                         try {
                             obrService.addRepository(url);
                             LOGGER.debug("CELLAR OBR: add OBR repository URL {}", url);
@@ -82,14 +83,15 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     }
 
     /**
-     * Push the local OBR URLs to the cluster
+     * Push the local OBR URLs to a cluster group.
      *
      * @param group the cluster group.
      */
+    @Override
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+            Set<String> clusterUrls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -97,13 +99,13 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 Repository[] repositories = obrService.listRepositories();
                 for (Repository repository : repositories) {
                     if (isAllowed(group, Constants.URLS_CONFIG_CATEGORY, repository.getURI().toString(), EventType.OUTBOUND)) {
-                        urls.add(repository.getURI().toString());
-                        // push the bundles in the OBR distributed set
-                        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+                        clusterUrls.add(repository.getURI().toString());
+                        // update the OBR bundles in the cluster group
+                        Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
                         Resource[] resources = repository.getResources();
                         for (Resource resource : resources) {
                             ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
-                            bundles.add(info);
+                            clusterBundles.add(info);
                             // TODO fire event to the other nodes ?
                         }
                     } else {

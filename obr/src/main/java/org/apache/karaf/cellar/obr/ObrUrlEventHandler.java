@@ -24,9 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OBR URL Event handler.
+ * Handler for cluster OBR URL event.
  */
-public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUrlEvent> {
+public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ClusterObrUrlEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlEventHandler.class);
 
@@ -45,51 +45,53 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<ObrUr
     }
 
     /**
-     * Process an OBR URL event.
+     * Handle a received cluster OBR URL event.
      *
-     * @param obrUrlEvent the OBR URL Event.
+     * @param clusterObrUrlEvent the cluster OBR URL event received.
      */
     @Override
-    public void handle(ObrUrlEvent obrUrlEvent) {
+    public void handle(ClusterObrUrlEvent clusterObrUrlEvent) {
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR OBR: {} switch is OFF, cluster event not handled", SWITCH_ID);
+            LOGGER.warn("CELLAR OBR: {} switch is OFF", SWITCH_ID);
             return;
         }
 
         // check if the group is local
-        if (!groupManager.isLocalGroup(obrUrlEvent.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group");
+        if (!groupManager.isLocalGroup(clusterObrUrlEvent.getSourceGroup().getName())) {
+            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group {}", clusterObrUrlEvent.getSourceGroup().getName());
             return;
         }
 
-        String url = obrUrlEvent.getUrl();
-        String groupName = obrUrlEvent.getSourceGroup().getName();
+        String url = clusterObrUrlEvent.getUrl();
+        String groupName = clusterObrUrlEvent.getSourceGroup().getName();
         try {
-            if (isAllowed(obrUrlEvent.getSourceGroup(), Constants.URLS_CONFIG_CATEGORY, url, EventType.INBOUND) || obrUrlEvent.getForce()) {
+            if (isAllowed(clusterObrUrlEvent.getSourceGroup(), Constants.URLS_CONFIG_CATEGORY, url, EventType.INBOUND) || clusterObrUrlEvent.getForce()) {
                 LOGGER.debug("CELLAR OBR: received OBR URL {}", url);
-                if (obrUrlEvent.getType() == Constants.URL_ADD_EVENT_TYPE) {
+                if (clusterObrUrlEvent.getType() == Constants.URL_ADD_EVENT_TYPE) {
                     LOGGER.debug("CELLAR OBR: add OBR URL {}", url);
                     obrService.addRepository(url);
                 }
-                if (obrUrlEvent.getType() == Constants.URL_REMOVE_EVENT_TYPE) {
+                if (clusterObrUrlEvent.getType() == Constants.URL_REMOVE_EVENT_TYPE) {
                     LOGGER.debug("CELLAR OBR: remove OBR URL {}", url);
                     boolean removed = obrService.removeRepository(url);
                     if (!removed) {
                         LOGGER.warn("CELLAR OBR: the repository URL hasn't been removed from the OBR service");
                     }
                 }
-            } else LOGGER.warn("CELLAR OBR: repository URL {} is marked as BLOCKED INBOUND", url);
+            } else LOGGER.warn("CELLAR OBR: repository URL {} is marked BLOCKED INBOUND for cluster group {}", url, groupName);
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to register URL {}", url, e);
         }
     }
 
-    public Class<ObrUrlEvent> getType() {
-        return ObrUrlEvent.class;
+    @Override
+    public Class<ClusterObrUrlEvent> getType() {
+        return ClusterObrUrlEvent.class;
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

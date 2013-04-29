@@ -22,60 +22,61 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.obr.ClusterObrUrlEvent;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
-import org.apache.karaf.cellar.obr.ObrUrlEvent;
 
 import java.util.Set;
 
-@Command(scope = "cluster", name = "obr-add-url", description = "Register a repository URL in the distributed OBR service.")
+@Command(scope = "cluster", name = "obr-add-url", description = "Add an OBR URL in a cluster group")
 public class ObrAddUrlCommand extends ObrCommandSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "url", description = "The repository URL to register in the OBR service.", required = true, multiValued = false)
+    @Argument(index = 1, name = "url", description = "The repository URL to register in the OBR service", required = true, multiValued = false)
     String url;
 
     private EventProducer eventProducer;
 
+    @Override
     public Object doExecute() throws Exception {
         // check if the cluster group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
-            System.err.println("Cluster group " + groupName + " doesn't exist.");
+            System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            System.err.println("Cluster event producer is OFF for this node");
+            System.err.println("Cluster event producer is OFF");
             return null;
         }
 
         // check if the URL is allowed
         if (!isAllowed(group, Constants.URLS_CONFIG_CATEGORY, url, EventType.OUTBOUND)) {
-            System.err.println("OBR URL " + url + " is blocked outbound");
+            System.err.println("OBR URL " + url + " is blocked outbound for cluster group " + groupName);
             return null;
         }
 
-        // push the OBR URL in the distributed set
-        Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
-        urls.add(url);
-        // push the bundles in the OBR distributed set
-        Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+        // update the OBR URLs in the cluster group
+        Set<String> clusterUrls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+        clusterUrls.add(url);
+        // update the OBR bundles in the cluster group
+        Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
         synchronized (obrService) {
             Repository repository = obrService.addRepository(url);
             Resource[] resources = repository.getResources();
             for (Resource resource : resources) {
                 ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
-                bundles.add(info);
+                clusterBundles.add(info);
             }
             obrService.removeRepository(url);
         }
 
-        // create an cluster event and produce it
-        ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
+        // broadcast a cluster event
+        ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
         event.setForce(true);
         event.setSourceGroup(group);
         eventProducer.produce(event);
