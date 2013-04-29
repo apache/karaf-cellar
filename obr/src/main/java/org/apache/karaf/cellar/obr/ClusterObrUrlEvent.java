@@ -14,24 +14,23 @@
 package org.apache.karaf.cellar.obr;
 
 import org.apache.karaf.cellar.core.event.Event;
-import org.apache.karaf.cellar.core.event.EventType;
 
 /**
- * OBR bundle cluster event.
+ * Cluster OBR URL event.
  */
-public class ObrBundleEvent extends Event {
+public class ClusterObrUrlEvent extends Event {
 
-    private String bundleId;
+    private String url;
     private int type;
 
-    public ObrBundleEvent(String bundleId, int type) {
-        super(bundleId);
-        this.bundleId = bundleId;
+    public ClusterObrUrlEvent(String url, int type) {
+        super(url);
+        this.url = url;
         this.type = type;
     }
 
-    public String getBundleId() {
-        return this.bundleId;
+    public String getUrl() {
+        return this.url;
     }
 
     public int getType() {

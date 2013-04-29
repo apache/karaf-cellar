@@ -14,7 +14,6 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
         <command name="cluster/obr-list">
             <action class="org.apache.karaf.cellar.obr.shell.ObrListCommand">

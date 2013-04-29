@@ -20,9 +20,9 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.obr.ClusterObrUrlEvent;
 import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
-import org.apache.karaf.cellar.obr.ObrUrlEvent;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 
@@ -75,7 +75,7 @@ public class ObrRemoveUrlCommand extends ObrCommandSupport {
         }
 
         // create an event and produce it
-        ObrUrlEvent event = new ObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
+        ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 

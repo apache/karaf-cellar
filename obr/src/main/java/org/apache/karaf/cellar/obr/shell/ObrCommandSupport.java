@@ -19,6 +19,9 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 
+/**
+ * Generic cluster OBR shell command support.
+ */
 public abstract class ObrCommandSupport extends CellarCommandSupport {
 
     protected RepositoryAdmin obrService;
@@ -31,6 +34,15 @@ public abstract class ObrCommandSupport extends CellarCommandSupport {
         this.obrService = obrService;
     }
 
+    /**
+     * Check if an OBR cluster event is allowed.
+     *
+     * @param group the cluster group.
+     * @param category the OBR category name.
+     * @param id the event ID.
+     * @param type the event type (inbound, outbound).
+     * @return in case of check failure.
+     */
     public boolean isAllowed(Group group, String category, String id, EventType type) {
         CellarSupport support = new CellarSupport();
         support.setClusterManager(this.clusterManager);
@@ -39,6 +51,7 @@ public abstract class ObrCommandSupport extends CellarCommandSupport {
         return support.isAllowed(group, category, id, type);
     }
 
+    @Override
     public abstract Object doExecute() throws Exception;
 
 
