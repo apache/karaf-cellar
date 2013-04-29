@@ -23,15 +23,13 @@ import org.apache.karaf.cellar.obr.ObrBundleInfo;
 
 import java.util.Set;
 
-/**
- * cluster:obr-list command.
- */
-@Command(scope = "cluster", name = "obr-list", description = "List available bundles in the OBR of all nodes assigned to a cluster group")
+@Command(scope = "cluster", name = "obr-list", description = "List the OBR bundles in a cluster group")
 public class ObrListCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
+    @Override
     public Object doExecute() {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -44,11 +42,11 @@ public class ObrListCommand extends CellarCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Set<ObrBundleInfo> bundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+            Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
             int maxPName = 4;
             int maxSName = 13;
             int maxVersion = 7;
-            for (ObrBundleInfo bundle : bundles) {
+            for (ObrBundleInfo bundle : clusterBundles) {
                 maxPName = Math.max(maxPName, emptyIfNull(bundle.getPresentationName()).length());
                 maxSName = Math.max(maxSName, emptyIfNull(bundle.getSymbolicName()).length());
                 maxVersion = Math.max(maxVersion, emptyIfNull(bundle.getVersion()).length());
@@ -56,7 +54,7 @@ public class ObrListCommand extends CellarCommandSupport {
             String formatHeader = "  %-" + maxPName + "s  %-" + maxSName + "s   %-" + maxVersion + "s";
             String formatLine = "[%-" + maxPName + "s] [%-" + maxSName + "s] [%-" + maxVersion + "s]";
             System.out.println(String.format(formatHeader, "NAME", "SYMBOLIC NAME", "VERSION"));
-            for (ObrBundleInfo bundle : bundles) {
+            for (ObrBundleInfo bundle : clusterBundles) {
                 System.out.println(String.format(formatLine, emptyIfNull(bundle.getPresentationName()), emptyIfNull(bundle.getSymbolicName()), emptyIfNull(bundle.getVersion())));
             }
         } finally {

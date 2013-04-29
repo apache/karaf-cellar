@@ -22,15 +22,13 @@ import org.apache.karaf.cellar.obr.Constants;
 
 import java.util.Set;
 
-/**
- * cluster:obr-list command
- */
-@Command(scope = "cluster", name = "obr-list-url", description = "List repository URLs defined in the distributed OBR service assigned to a given group")
+@Command(scope = "cluster", name = "obr-list-url", description = "List the OBR URLs in a cluster group")
 public class ObrListUrlCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
+    @Override
     public Object doExecute() throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
@@ -38,10 +36,10 @@ public class ObrListUrlCommand extends CellarCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
-        // get the URLs from the distribution set
-        Set<String> urls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
-        if (urls != null) {
-            for (String url : urls) {
+        // get the OBR URLs in the cluster group
+        Set<String> clusterUrls = clusterManager.getSet(Constants.URLS_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
+        if (clusterUrls != null) {
+            for (String url : clusterUrls) {
                 System.out.println(url);
             }
         }

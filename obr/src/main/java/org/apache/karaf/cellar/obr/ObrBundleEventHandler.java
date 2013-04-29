@@ -30,9 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OBR bundles event handler.
+ * Handler for cluster OBR bundle event.
  */
-public class ObrBundleEventHandler extends ObrSupport implements EventHandler<ObrBundleEvent> {
+public class ObrBundleEventHandler extends ObrSupport implements EventHandler<ClusterObrBundleEvent> {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrBundleEventHandler.class);
 
@@ -105,22 +105,22 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
     }
 
     /**
-     * Handle an OBR bundle event.
+     * Handle a received cluster OBR bundle event.
      *
-     * @param event the OBR bundle event.
+     * @param event the cluster OBR bundle event received.
      */
     @Override
-    public void handle(ObrBundleEvent event) {
+    public void handle(ClusterObrBundleEvent event) {
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR OBR: {} switch is OFF, cluster event not handled", SWITCH_ID);
+            LOGGER.warn("CELLAR OBR: {} switch is OFF", SWITCH_ID);
             return;
         }
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR OBR: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
@@ -152,16 +152,18 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Ob
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.warn("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND", bundleId);
+            } else LOGGER.warn("CELLAR OBR: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }
     }
 
-    public Class<ObrBundleEvent> getType() {
-        return ObrBundleEvent.class;
+    @Override
+    public Class<ClusterObrBundleEvent> getType() {
+        return ClusterObrBundleEvent.class;
     }
 
+    @Override
     public Switch getSwitch() {
         // load the switch status from the config
         try {

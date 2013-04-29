@@ -16,7 +16,7 @@ package org.apache.karaf.cellar.obr;
 import java.io.Serializable;
 
 /**
- * Simple serializable wrapper for OBR bundle.
+ * Serializable wrapper for OBR bundle store in cluster groups.
  */
 public class ObrBundleInfo implements Serializable {
 

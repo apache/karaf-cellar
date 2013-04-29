@@ -14,7 +14,7 @@
 package org.apache.karaf.cellar.obr;
 
 /**
- * Cellar OBR constants
+ * Cellar OBR configuration constants.
  */
 public class Constants {
 
