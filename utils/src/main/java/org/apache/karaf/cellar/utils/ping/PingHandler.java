@@ -17,6 +17,9 @@ import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 
+/**
+ * Handler for cluster ping event.
+ */
 public class PingHandler extends CommandHandler<Ping, Pong> {
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.ping.switch";
