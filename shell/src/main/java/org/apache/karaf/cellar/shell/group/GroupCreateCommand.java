@@ -17,10 +17,10 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 
-@Command(scope = "cluster", name = "group-create", description = "Create a cluster group.")
+@Command(scope = "cluster", name = "group-create", description = "Create a cluster group")
 public class GroupCreateCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     @Override

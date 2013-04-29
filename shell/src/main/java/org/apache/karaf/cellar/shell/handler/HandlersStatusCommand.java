@@ -18,13 +18,13 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "handler-status", description = "Status of a given event handler.")
+@Command(scope = "cluster", name = "handler-status", description = "Status of a cluster event handler")
 public class HandlersStatusCommand extends HandlersSupport {
 
-    @Argument(index = 0, name = "handler", description = "The event handler ID.", required = false, multiValued = false)
+    @Argument(index = 0, name = "handler", description = "The cluster event handler", required = false, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

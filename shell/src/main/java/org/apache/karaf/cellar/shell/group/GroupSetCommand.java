@@ -20,7 +20,7 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "group-set", description = "Set the target nodes to a cluster group.")
+@Command(scope = "cluster", name = "group-set", description = "Set the target nodes to a cluster group")
 public class GroupSetCommand extends GroupSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)

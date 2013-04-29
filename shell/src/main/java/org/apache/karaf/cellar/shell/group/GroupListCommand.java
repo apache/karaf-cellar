@@ -19,10 +19,10 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "group-list", description = "List the cluster groups.")
+@Command(scope = "cluster", name = "group-list", description = "List the cluster groups")
 public class GroupListCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

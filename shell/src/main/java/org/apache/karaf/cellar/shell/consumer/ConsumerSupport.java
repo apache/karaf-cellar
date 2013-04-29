@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Generic cluster event consumer shell command support.
+ */
 public abstract class ConsumerSupport extends ClusterCommandSupport {
 
     protected static final String HEADER_FORMAT = "   %-30s   %-5s";

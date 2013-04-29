@@ -24,16 +24,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-@Command(scope = "cluster", name = "group-pick", description = "Picks a number of nodes from one cluster group and moves them into an other.")
+@Command(scope = "cluster", name = "group-pick", description = "Picks a number of nodes from one cluster group and moves them into another")
 public class GroupPickCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "sourceGroupName", description = "The source cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "sourceGroupName", description = "The source cluster group name", required = true, multiValued = false)
     String sourceGroupName;
 
-    @Argument(index = 1, name = "targetGroupName", description = "The destination cluster group name.", required = true, multiValued = false)
+    @Argument(index = 1, name = "targetGroupName", description = "The destination cluster group name", required = true, multiValued = false)
     String targetGroupName;
 
-    @Argument(index = 2, name = "count", description = "The number of nodes to transfer.", required = false, multiValued = false)
+    @Argument(index = 2, name = "count", description = "The number of nodes to transfer", required = false, multiValued = false)
     int count = 1;
 
     @Override

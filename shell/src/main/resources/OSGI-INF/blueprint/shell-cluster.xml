@@ -15,28 +15,24 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <!-- Command Bundle -->
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
         <command name="cluster/node-list">
             <action class="org.apache.karaf.cellar.shell.NodesListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
             </action>
         </command>
-
         <command name="cluster/node-ping">
             <action class="org.apache.karaf.cellar.shell.NodePingCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="executionContext" ref="executionContext"/>
             </action>
         </command>
-
         <command name="cluster/sync">
             <action class="org.apache.karaf.cellar.shell.SyncCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
         </command>
-
         <command name="cluster/consumer-start">
             <action class="org.apache.karaf.cellar.shell.consumer.ConsumerStartCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -46,7 +42,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/consumer-stop">
             <action class="org.apache.karaf.cellar.shell.consumer.ConsumerStopCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -56,7 +51,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/consumer-status">
             <action class="org.apache.karaf.cellar.shell.consumer.ConsumerStatusCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -66,7 +60,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/producer-start">
             <action class="org.apache.karaf.cellar.shell.producer.ProducerStartCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -76,7 +69,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/producer-stop">
             <action class="org.apache.karaf.cellar.shell.producer.ProducerStopCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -86,7 +78,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/producer-status">
             <action class="org.apache.karaf.cellar.shell.producer.ProducerStatusCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -96,7 +87,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/handler-start">
             <action class="org.apache.karaf.cellar.shell.handler.HandlersStartCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -106,7 +96,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/handler-stop">
             <action class="org.apache.karaf.cellar.shell.handler.HandlersStopCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -116,7 +105,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/handler-status">
             <action class="org.apache.karaf.cellar.shell.handler.HandlersStatusCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -126,7 +114,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/group-join">
             <action class="org.apache.karaf.cellar.shell.group.GroupJoinCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -138,7 +125,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/group-quit">
             <action class="org.apache.karaf.cellar.shell.group.GroupQuitCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -150,7 +136,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/group-set">
             <action class="org.apache.karaf.cellar.shell.group.GroupSetCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -162,7 +147,6 @@
                 <ref component-id="allNodesCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/group-pick">
             <action class="org.apache.karaf.cellar.shell.group.GroupPickCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -173,7 +157,6 @@
                 <ref component-id="allGroupCompleter"/>
             </completers>
         </command>
-
         <command name="cluster/group-list">
             <action class="org.apache.karaf.cellar.shell.group.GroupListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -181,7 +164,6 @@
                 <property name="executionContext" ref="executionContext"/>
             </action>
         </command>
-
         <command name="cluster/group-create">
             <action class="org.apache.karaf.cellar.shell.group.GroupCreateCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -189,7 +171,6 @@
                 <property name="executionContext" ref="executionContext"/>
             </action>
         </command>
-
         <command name="cluster/group-delete">
             <action class="org.apache.karaf.cellar.shell.group.GroupDeleteCommand">
                 <property name="clusterManager" ref="clusterManager"/>
@@ -200,27 +181,21 @@
                 <ref component-id="allGroupCompleter"/>
             </completers>
         </command>
-
     </command-bundle>
 
-    <!-- Reference to the Cluster Manager -->
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager" availability="optional"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager" availability="optional"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext" availability="optional"/>
 
-    <!-- Completers -->
     <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllNodeCompleter">
         <property name="clusterManager" ref="clusterManager"/>
     </bean>
-
     <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
-
     <bean id="localGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.LocalGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
-
     <bean id="otherGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.OtherGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
