@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Abstract cluster event handler shell command support.
+ */
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
     protected static final String HEADER_FORMAT = "   %-30s   %-5s  %s";

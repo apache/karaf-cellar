@@ -19,10 +19,10 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "consumer-start", description = "Start an event consumer.")
+@Command(scope = "cluster", name = "consumer-start", description = "Start a cluster event consumer")
 public class ConsumerStartCommand extends ConsumerSupport {
 
-    @Argument(index = 0, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

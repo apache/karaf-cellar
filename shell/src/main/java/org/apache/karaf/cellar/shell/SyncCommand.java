@@ -21,7 +21,7 @@ import org.osgi.framework.ServiceReference;
 
 import java.util.Set;
 
-@Command(scope = "cluster", name = "sync", description = "Force the call of all cluster synchronizers available.")
+@Command(scope = "cluster", name = "sync", description = "Force the call of all cluster synchronizers available")
 public class SyncCommand extends ClusterCommandSupport {
 
     @Override

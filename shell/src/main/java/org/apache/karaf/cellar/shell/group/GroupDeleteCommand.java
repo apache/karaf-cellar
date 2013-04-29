@@ -14,18 +14,13 @@
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.Node;
-import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
-import java.util.LinkedList;
-import java.util.List;
-
-@Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group.")
+@Command(scope = "cluster", name = "group-delete", description = "Delete a cluster group")
 public class GroupDeleteCommand extends GroupSupport {
 
-    @Argument(index = 0, name = "group", description = "The cluster group name.", required = true, multiValued = false)
+    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     @Override

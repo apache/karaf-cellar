@@ -18,13 +18,13 @@ import org.apache.felix.gogo.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "handler-stop", description = "Stop an event handler.")
+@Command(scope = "cluster", name = "handler-stop", description = "Stop a cluster event handler")
 public class HandlersStopCommand extends HandlersSupport {
 
-    @Argument(index = 0, name = "handler", description = "The event handler ID.", required = true, multiValued = false)
+    @Argument(index = 0, name = "handler", description = "The event handler", required = true, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID.", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override
