@@ -18,16 +18,20 @@ import org.apache.karaf.cellar.core.CellarSupport;
 import org.osgi.framework.BundleContext;
 
 /**
- * Cellar OBR support.
+ * Generic OBR support.
  */
 public class ObrSupport extends CellarSupport {
 
     protected BundleContext bundleContext;
     protected RepositoryAdmin obrService;
 
-    public void init() { }
+    public void init() {
+        // nothing to do
+    }
 
-    public void destroy() { }
+    public void destroy() {
+        // nothing to do
+    }
 
     public RepositoryAdmin getObrService() {
         return this.obrService;

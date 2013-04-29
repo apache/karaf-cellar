@@ -14,7 +14,7 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <!-- OBR Bundles Event Handler -->
+    <!-- Cluster OBR Bundle Event Handler -->
     <bean id="obrBundleEventHandler" class="org.apache.karaf.cellar.obr.ObrBundleEventHandler"
             init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>
@@ -28,7 +28,7 @@
         </service-properties>
     </service>
 
-    <!-- OBR URLS_DISTRIBUTED_SET_NAME Synchronizer -->
+    <!-- OBR URLs Synchronizer -->
     <bean id="obrUrlSynchronizer" class="org.apache.karaf.cellar.obr.ObrUrlSynchronizer"
             init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>
@@ -39,7 +39,7 @@
     </bean>
     <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
 
-    <!-- OBR URLS_DISTRIBUTED_SET_NAME Event Handler -->
+    <!-- Cluster OBR URL Event Handler -->
     <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"
           init-method="init" destroy-method="destroy">
         <property name="obrService" ref="repositoryAdmin"/>
@@ -53,7 +53,6 @@
         </service-properties>
     </service>
 
-    <!-- service references -->
     <reference id="repositoryAdmin" interface="org.apache.felix.bundlerepository.RepositoryAdmin"/>
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
