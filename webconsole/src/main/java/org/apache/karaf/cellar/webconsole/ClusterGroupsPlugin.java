@@ -38,29 +38,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * WebConsole plugin for Cellar cluster groups.
+ */
 public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ClusterGroupsPlugin.class);
 
     public static final String NAME = "cluster.groups";
-
     public static final String LABEL = "Cluster Groups";
-
     private ClassLoader classLoader;
-
     private String clusterGroupsJs = "/cluster.groups/res/ui/cluster-groups.js";
 
     private ClusterManager clusterManager;
     private ExecutionContext executionContext;
     private GroupManager groupManager;
-
     private BundleContext bundleContext;
 
     public void start() {
         super.activate(bundleContext);
-
         this.classLoader = this.getClass().getClassLoader();
-
         this.LOGGER.info("{} plugin activated", LABEL);
     }
 
@@ -129,7 +126,7 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
             try {
                 Thread.sleep(800);
             } catch (InterruptedException e) {
-                // we ignore this
+                // ignore
             }
             this.renderJSON(resp, null);
         } else {
@@ -166,13 +163,16 @@ public class ClusterGroupsPlugin extends AbstractWebConsolePlugin {
 
     protected URL getResource(String path) {
         path = path.substring(NAME.length() + 1);
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
         URL url = this.classLoader.getResource(path);
         if (url != null) {
             InputStream ins = null;
             try {
                 ins = url.openStream();
                 if (ins == null) {
-                    this.LOGGER.error("Failed to open {}", url);
+                    this.LOGGER.error("failed to open {}", url);
                     url = null;
                 }
             } catch (IOException e) {
