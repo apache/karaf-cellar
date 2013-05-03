@@ -33,28 +33,25 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.Set;
 
+/**
+ * WebConsole plugin for Cellar cluster groups.
+ */
 public class CellarPlugin extends AbstractWebConsolePlugin {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarPlugin.class);
 
     public static final String NAME = "cellar";
-
     public static final String LABEL = "Cellar";
-
     private ClassLoader classLoader;
-
     private String cellarJs = "/cellar/res/ui/cellar.js";
 
     private ClusterManager clusterManager;
     private GroupManager groupManager;
-
     private BundleContext bundleContext;
 
     public void start() {
         super.activate(bundleContext);
-
         this.classLoader = this.getClass().getClassLoader();
-
         this.LOGGER.info("{} plugin activated", LABEL);
     }
 
@@ -98,7 +95,7 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
             try {
                 Thread.sleep(800);
             } catch (InterruptedException e) {
-                // we ignore this
+                // ignore
             }
             this.renderJSON(resp, null);
         } else {
@@ -135,6 +132,9 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
 
     protected URL getResource(String path) {
         path = path.substring(NAME.length() + 1);
+        if (path == null || path.isEmpty()) {
+            return null;
+        }
         URL url = this.classLoader.getResource(path);
         if (url != null) {
             InputStream ins = null;
