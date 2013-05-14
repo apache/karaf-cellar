@@ -89,7 +89,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                         featuresService.installFeature(name, version, options);
                     } else {
                         LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
-                        featuresService.installFeature(name, "0.0.0", options);
+                        featuresService.installFeature(name, options);
                     }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
                     if (version != null) {
