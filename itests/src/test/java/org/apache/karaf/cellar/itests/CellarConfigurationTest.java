@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -32,6 +33,7 @@ public class CellarConfigurationTest extends CellarTestSupport {
     private static final String TESTPID = "org.apache.karaf.cellar.tst";
 
     @Test
+    @Ignore
     public void testCellarFeaturesModule() throws InterruptedException {
         installCellar();
         createCellarChild("child1");
