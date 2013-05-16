@@ -34,9 +34,8 @@ public abstract class ConsumerSupport extends ClusterCommandSupport {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
         // looking for nodes and check if exist
-        Set<Node> recipientList;
+        Set<Node> recipientList = new HashSet<Node>();
         if (nodeIds != null && !nodeIds.isEmpty()) {
-            recipientList = new HashSet<Node>();
             for (String nodeId : nodeIds) {
                 Node node = clusterManager.findNodeById(nodeId);
                 if (node == null) {
@@ -46,7 +45,11 @@ public abstract class ConsumerSupport extends ClusterCommandSupport {
                 }
             }
         } else {
-            recipientList = clusterManager.listNodes();
+            if (status == null) {
+                recipientList = clusterManager.listNodes();
+            } else {
+                recipientList.add(clusterManager.getNode());
+            }
         }
 
         if (recipientList.size() < 1) {
