@@ -82,14 +82,14 @@ public class LocalEventListener extends EventSupport implements EventHandler {
      * Initialization method.
      */
     public void init() {
-
+        // nothing to do
     }
 
     /**
      * Destruction method.
      */
     public void destroy() {
-
+        // nothing to do
     }
 
     public EventProducer getEventProducer() {
