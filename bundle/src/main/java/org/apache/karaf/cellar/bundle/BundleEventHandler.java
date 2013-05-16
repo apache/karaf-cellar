@@ -54,7 +54,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
 
         // check if the node is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR BUNDLE: node is not part of the event cluster group");
+            LOGGER.info("CELLAR BUNDLE: node is not part of the event cluster group");
             return;
         }
 
