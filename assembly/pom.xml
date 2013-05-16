@@ -136,6 +136,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <version>${karaf.version}</version>
+                <executions>
+                    <!--
+                    <execution>
+                        <id>features-generate-descriptor</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>features-generate-descriptor</goal>
+                        </goals>
+                        <configuration>
+                            <addBundlesToPrimaryFeature>false</addBundlesToPrimaryFeature>
+                        </configuration>
+                    </execution>
+                    -->
+                    <execution>
+                        <id>features-create-kar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>features-create-kar</goal>
+                        </goals>
+                        <configuration>
+                            <featuresFile>target/classes/features.xml</featuresFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
