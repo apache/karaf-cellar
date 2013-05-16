@@ -35,16 +35,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-mvn</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-aether</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.karaf</groupId>
             <artifactId>apache-karaf</artifactId>
             <version>${karaf.version}</version>
@@ -72,9 +62,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.openengsb.labs.paxexam.karaf</groupId>
-            <artifactId>paxexam-karaf-container</artifactId>
-            <scope>test</scope>
+            <groupId>org.apache.karaf.tooling.exam</groupId>
+            <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
+            <version>${karaf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.tooling.exam</groupId>
+            <artifactId>org.apache.karaf.tooling.exam.options</artifactId>
+            <version>${karaf.version}</version>
         </dependency>
 
         <dependency>

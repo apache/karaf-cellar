@@ -15,7 +15,7 @@ package org.apache.karaf.cellar.itests;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
-import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
+import org.apache.karaf.tooling.exam.options.LogLevelOption;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.TestProbeBuilder;
@@ -34,7 +34,7 @@ import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.*;
 
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.*;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.*;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 
 public class CellarTestSupport {
@@ -158,7 +158,9 @@ public class CellarTestSupport {
     public Option[] config() {
         return new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR),
-                editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL())};
+                editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL()),
+                editConfigurationFileExtend("etc/config.properties", "org.apache.aries.blueprint.synchronous", "true")
+        };
     }
 
     /**
