@@ -119,11 +119,11 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ManageHandlersResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Handler", "Karaf Cellar cluster event handler",
-                new String[]{ "node", "handler", "status", "local" },
-                new String[]{ "Node hosting event handler", "Name of the event handler", "Current status of the event handler", "True if the node is local" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN });
+                new String[]{"node", "handler", "status", "local"},
+                new String[]{"Node hosting event handler", "Name of the event handler", "Current status of the event handler", "True if the node is local"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN});
         TabularType tableType = new TabularType("Event Handlers", "Table of Karaf Cellar cluster event handlers",
-                compositeType, new String[]{ "node", "handler" });
+                compositeType, new String[]{"node", "handler"});
         TabularDataSupport table = new TabularDataSupport(tableType);
 
         for (Map.Entry<Node, ManageHandlersResult> handlersResultEntry : results.entrySet()) {
@@ -135,8 +135,8 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
                     String status = handlerEntry.getValue();
                     boolean local = (node.equals(clusterManager.getNode()));
                     CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                            new String[]{ "node", "handler", "status", "local" },
-                            new Object[]{ node.getId(), handler, status, local });
+                            new String[]{"node", "handler", "status", "local"},
+                            new Object[]{node.getId(), handler, status, local});
                     table.put(data);
                 }
             }
@@ -149,13 +149,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void handlerStart(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            }
+            nodes.add(node);
+        }
 
         command.setHandlerName(handlerId);
         command.setDestination(nodes);
@@ -166,13 +170,16 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void handlerStop(String handlerId, String nodeId) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            }
+            nodes.add(node);
+        }
 
         command.setHandlerName(handlerId);
         command.setDestination(nodes);
@@ -187,19 +194,19 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ConsumerSwitchResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Consumer", "Karaf Cellar cluster event consumer",
-                new String[]{ "node", "status", "local" },
-                new String[]{ "Node hosting event consumer", "Current status of the event consumer", "True if the node is local" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
+                new String[]{"node", "status", "local"},
+                new String[]{"Node hosting event consumer", "Current status of the event consumer", "True if the node is local"},
+                new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN});
         TabularType tableType = new TabularType("Event Consumers", "Table of Karaf Cellar cluster event consumers",
-                compositeType, new String[]{ "node" });
+                compositeType, new String[]{"node"});
         TabularDataSupport table = new TabularDataSupport(tableType);
 
         for (Node node : results.keySet()) {
             boolean local = (node.equals(clusterManager.getNode()));
             ConsumerSwitchResult consumerSwitchResult = results.get(node);
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                    new String[]{ "node", "status", "local" },
-                    new Object[]{ node.getId(), consumerSwitchResult.getStatus(), local });
+                    new String[]{"node", "status", "local"},
+                    new Object[]{node.getId(), consumerSwitchResult.getStatus(), local});
             table.put(data);
         }
 
@@ -210,13 +217,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void consumerStart(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            }
+            nodes.add(node);
+        }
 
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.ON);
@@ -227,13 +238,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void consumerStop(String nodeId) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            }
+            nodes.add(node);
+        }
 
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.OFF);
@@ -248,19 +263,19 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         Map<Node, ProducerSwitchResult> results = executionContext.execute(command);
 
         CompositeType compositeType = new CompositeType("Event Producer", "Karaf Cellar cluster event producer",
-                new String[]{ "node", "status", "local" },
-                new String[]{ "Node hosting event producer", "Current status of the event producer", "True if the node is local" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN });
+                new String[]{"node", "status", "local"},
+                new String[]{"Node hosting event producer", "Current status of the event producer", "True if the node is local"},
+                new OpenType[]{SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.BOOLEAN});
         TabularType tableType = new TabularType("Event Producers", "Table of Karaf Cellar cluster event producers",
-                compositeType, new String[]{ "node" });
+                compositeType, new String[]{"node"});
         TabularDataSupport table = new TabularDataSupport(tableType);
 
         for (Node node : results.keySet()) {
             boolean local = (node.equals(clusterManager.getNode()));
             ProducerSwitchResult producerSwitchResult = results.get(node);
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                    new String[]{ "node", "status", "local" },
-                    new Object[]{ node.getId(), producerSwitchResult.getStatus(), local });
+                    new String[]{"node", "status", "local"},
+                    new Object[]{node.getId(), producerSwitchResult.getStatus(), local});
             table.put(data);
         }
 
@@ -271,13 +286,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void producerStop(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            }
+            nodes.add(node);
+        }
 
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.OFF);
@@ -288,13 +307,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     public void producerStart(String nodeId) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 
-        Node node = clusterManager.findNodeById(nodeId);
-        if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist)");
-        }
-
         Set<Node> nodes = new HashSet<Node>();
-        nodes.add(node);
+
+        if (nodeId == null || nodeId.isEmpty()) {
+            nodes.add(clusterManager.getNode());
+        } else {
+            Node node = clusterManager.findNodeById(nodeId);
+            if (node == null) {
+                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist)");
+            }
+            nodes.add(node);
+        }
 
         command.setDestination(nodes);
         command.setStatus(SwitchStatus.ON);
