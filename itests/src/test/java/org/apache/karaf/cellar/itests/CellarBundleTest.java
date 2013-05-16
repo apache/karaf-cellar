@@ -18,6 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.features.FeaturesService;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -29,6 +30,7 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 public class CellarBundleTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testCellarBundleModule() throws Exception {
     	FeaturesService featuresService = getOsgiService(FeaturesService.class);
     	assertNotNull(featuresService);

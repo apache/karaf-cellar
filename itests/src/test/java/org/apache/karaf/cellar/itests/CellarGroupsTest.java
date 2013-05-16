@@ -24,6 +24,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.ExamReactorStrategy;
@@ -35,6 +36,7 @@ import org.ops4j.pax.exam.spi.reactors.AllConfinedStagedReactorFactory;
 public class CellarGroupsTest extends CellarTestSupport {
 
     @Test
+    @Ignore
     public void testGroupsWithChildNodes() throws InterruptedException {
         installCellar();
         createCellarChild("child1");
