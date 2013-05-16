@@ -49,7 +49,14 @@ public abstract class ConsumerSupport extends ClusterCommandSupport {
                 }
             }
         } else {
-            recipientList = clusterManager.listNodes();
+            if (status == null) {
+                // in case of status display, select all nodes
+                recipientList = clusterManager.listNodes();
+            } else {
+                // in case of status change, select only the local node
+                recipientList = new HashSet<Node>();
+                recipientList.add(clusterManager.getNode());
+            }
         }
 
         if (recipientList.size() < 1) {

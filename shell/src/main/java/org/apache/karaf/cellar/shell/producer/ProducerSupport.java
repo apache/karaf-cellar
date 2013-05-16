@@ -19,10 +19,7 @@ import org.apache.karaf.cellar.core.control.ProducerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract cluster event producer shell command support.
@@ -49,7 +46,14 @@ public abstract class ProducerSupport extends ClusterCommandSupport {
                 }
             }
         } else {
-            recipientList = clusterManager.listNodes();
+            if (status == null) {
+                // in case of status display, select all nodes
+                recipientList = clusterManager.listNodes();
+            } else {
+                // in case of status change, select only the local node
+                recipientList = new HashSet<Node>();
+                recipientList.add(clusterManager.getNode());
+            }
         }
 
         if (recipientList.size() < 1) {
