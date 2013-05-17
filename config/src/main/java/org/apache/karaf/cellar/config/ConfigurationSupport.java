@@ -28,7 +28,7 @@ import java.util.*;
  */
 public class ConfigurationSupport extends CellarSupport {
 
-    private static String[] EXCLUDED_PROPERTIES = {"felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories"};
+    private static String[] EXCLUDED_PROPERTIES = {"service.factoryPid", "felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories"};
 
     private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
 
