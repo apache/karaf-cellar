@@ -137,6 +137,13 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
                         BundleState bundleState = new BundleState();
+                        // get the bundle name or location.
+                        String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
+                        // if there is no name, then default to symbolic name.
+                        name = (name == null) ? bundle.getSymbolicName() : name;
+                        // if there is no symbolic name, resort to location.
+                        name = (name == null) ? bundle.getLocation() : name;
+                        bundleState.setName(name);
                         bundleState.setLocation(bundleLocation);
 
                         if (status == Bundle.ACTIVE)

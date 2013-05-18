@@ -146,6 +146,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             // update the bundle distributed map
             try {
                 // update the distributed bundles map
+                // TODO does it make sense ?
                 List<BundleInfo> bundles = featuresService.getFeature(feature.getName(), version).getBundles();
                 Map<String, BundleState> bundlesMap = clusterManager.getMap(org.apache.karaf.cellar.bundle.Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                 for (BundleInfo bundle : bundles) {
