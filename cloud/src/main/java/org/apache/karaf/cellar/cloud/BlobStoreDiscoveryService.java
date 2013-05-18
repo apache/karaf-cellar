@@ -103,8 +103,10 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
 			}
             String ip = md.getName();
             Object obj = readBlob(container, ip);
-            if (obj == null)
-            	continue;
+            if (obj == null) {
+                LOGGER.debug("CELLAR CLOUD: no valid object found, skipping it");
+                continue;
+            }
             // check if the IP hasn't been updated recently
             if (obj instanceof DateTime) {
             	LOGGER.debug("CELLAR CLOUD: retrieved a DateTime from blog store");
@@ -181,9 +183,9 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
             ois = new ObjectInputStream(is);
             result = ois.readObject();
         } catch (IOException e) {
-            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
+            LOGGER.warn("CELLAR CLOUD: error while reading blob", e);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("CELLAR CLOUD: error while reading blob", e);
+            LOGGER.warn("CELLAR CLOUD: error while reading blob", e);
         } finally {
             if (ois != null) {
                 try {
