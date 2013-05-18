@@ -150,7 +150,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         // if there is no symbolic name, resort to location.
                         name = (name == null) ? bundle.getLocation() : name;
                         bundleState.setName(name);
-                        bundleState.setName(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
                         bundleState.setLocation(bundleLocation);
 
                         if (status == Bundle.ACTIVE)
