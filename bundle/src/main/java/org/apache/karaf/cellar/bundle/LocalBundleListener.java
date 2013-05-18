@@ -70,7 +70,12 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
             if (groups != null && !groups.isEmpty()) {
                 for (Group group : groups) {
 
+                    // get the bundle name or location.
                     String name = (String) event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
+                    // if there is no name, then default to symbolic name.
+                    name = (name == null) ? event.getBundle().getSymbolicName() : name;
+                    // if there is no symbolic name, resort to location.
+                    name = (name == null) ? event.getBundle().getLocation() : name;
                     String symbolicName = event.getBundle().getSymbolicName();
                     String version = event.getBundle().getVersion().toString();
                     String bundleLocation = event.getBundle().getLocation();
