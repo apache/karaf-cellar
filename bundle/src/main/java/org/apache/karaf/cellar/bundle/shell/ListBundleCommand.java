@@ -70,6 +70,7 @@ public class ListBundleCommand extends CellarCommandSupport {
                         version = "";
                     }
                     BundleState state = bundles.get(bundle);
+
                     String status;
                     switch (state.getStatus()) {
                         case BundleEvent.INSTALLED:

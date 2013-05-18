@@ -80,6 +80,9 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 if (name == null) {
                     name = symbolicName;
                 }
+                if (name == null) {
+                    name = url;
+                }
                 String version = manifest.getMainAttributes().getValue("Bundle-Version");
                 jarInputStream.close();
 
