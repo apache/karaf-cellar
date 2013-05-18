@@ -106,6 +106,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
         Manifest manifest = jarInputStream.getManifest();
         String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+        if (name == null) {
+            name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+        }
+        if (name == null) {
+            name = location;
+        }
         String version = manifest.getMainAttributes().getValue("Bundle-Version");
         jarInputStream.close();
 
@@ -115,6 +121,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             // update the cluster group
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             BundleState state = new BundleState();
+            state.setName(name);
             state.setLocation(location);
             state.setStatus(BundleEvent.INSTALLED);
             clusterBundles.put(name + "/" + version, state);
