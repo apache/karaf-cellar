@@ -15,6 +15,49 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.2.6
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
+ representing a major update to Apache Karaf Cellar 2.2.5. It contains important
+ bug fixes.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes included in this release:
+
+** Bug
+    * [KARAF-1486] - When a new member enters a custom group, it does not install the features that should be installed in that group
+    * [KARAF-1625] - Pax Web uses port 8080 rather than the configured value
+    * [KARAF-2033] - Cellar local listeners have to check if sync is enabled
+    * [KARAF-2057] - NOTICE and LICENSE files are not correct
+    * [KARAF-2133] - Generated title contain unresolved placeholder
+    * [KARAF-2141] - cluster:producer/handler/consumer should display the local node
+    * [KARAF-2142] - cluster:producer-start/stop (and handler/consumer) change the status on all nodes
+    * [KARAF-2202] - Cellar WebConsole import version range should be extended
+    * [KARAF-2218] - Fix manual links on website
+    * [KARAF-2251] - Cellar: features:install ignores incoming and outgoing blacklist
+    * [KARAF-2262] - cellar-cloud: The IP is not enough, sometimes the IP is hidden but a valid dns name is available
+    * [KARAF-2263] - Cellar-Cloud: discover member removes member information which isn't re-generated
+    * [KARAF-2268] - cellar-cloud: If other "Objects" are available at the bucket they sometimes are not "readable"
+    * [KARAF-2272] - Bundle name is not populated in the Cellar bundles map
+    * [KARAF-2274] - Cellar doesn't work with Felix framework
+    * [KARAF-2277] - Cellar WebConsole doesn't install
+    * [KARAF-2280] - cellar-config: The default group config should include org.ops4j.pax.web as blacklist for configuration
+    * [KARAF-2281] - Cellar-Cloud: Exclude cloud configurations when installed
+    * [KARAF-2286] - Cellar-Cloud: If the configured store contains unknown Blob this causes unpleasant exceptions
+    * [KARAF-2287] - CellarFeaturesSynchronizer should check the local states before adding a repository
+    * [KARAF-2318] - Exclude service.factoryPid from Cellar sync
+
+** Dependency upgrade
+    * [KARAF-1184] - Upgrade to JUnit 4.10
+    * [KARAF-1745] - Upgrade to Felix WebConsole 4.0.0
+    * [KARAF-2055] - Upgrade to Apache POM 12
+
                     Apache Karaf Cellar 2.2.5
                     =========================
 
@@ -24,7 +67,6 @@
  This release of Apache Karaf Cellar is based off of the 2.2.x series branch,
  representing a major update to Apache Karaf Cellar 2.2.4. It contains bug fixes
  identified in the prior release, and introduces new features.
- group support.
 
   Changelog
   ---------
