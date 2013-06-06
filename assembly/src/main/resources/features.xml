@@ -76,24 +76,24 @@
     </feature>
 
     <feature name="cellar-dosgi" description="DOSGi support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
+        <feature version="${project.version}">cellar-hazelcast</feature>
         <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.dosgi/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-obr" description="OBR cluster support" version="${project.version}" resolver="(obr)">
         <feature>obr</feature>
-        <feature version="${project.version}">cellar-core</feature>
+        <feature version="${project.version}">cellar-hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-event" description="OSGi events broadcasting in clusters" version="${project.version}" resolver="(obr)">
         <feature>eventadmin</feature>
-        <feature version="${project.version}">cellar-core</feature>
+        <feature version="${project.version}">cellar-hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.event/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-cloud" description="Cloud blobstore support in clusters" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
+        <feature version="${project.version}">cellar-hazelcast</feature>
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
         <feature version="${jclouds.version}">jclouds-aws-s3</feature>
