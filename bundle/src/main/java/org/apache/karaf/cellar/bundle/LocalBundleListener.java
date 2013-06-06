@@ -49,6 +49,10 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
             return;
         }
 
+        if (event.getBundle().getBundleId() == 0) {
+            return;
+        }
+
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
