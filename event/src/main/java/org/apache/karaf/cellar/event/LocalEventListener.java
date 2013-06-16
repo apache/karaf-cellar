@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +35,10 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
     @Override
     public void handleEvent(Event event) {
+
+        // ignore log entry event
+        if (event.getTopic().startsWith("org/osgi/service/log/LogEntry"))
+            return;
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -64,12 +69,11 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                         String topicName = event.getTopic();
                         Map<String, Serializable> properties = getEventProperties(event);
                         if (isAllowed(group, Constants.CATEGORY, topicName, EventType.OUTBOUND)) {
-                            // broascast the event
+                            // broadcast the event
                             ClusterEvent clusterEvent = new ClusterEvent(topicName, properties);
                             clusterEvent.setSourceGroup(group);
                             eventProducer.produce(clusterEvent);
-                        } else if (!topicName.startsWith("org/osgi/service/log/LogEntry/"))
-                                LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
+                        } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }
                 }
             }

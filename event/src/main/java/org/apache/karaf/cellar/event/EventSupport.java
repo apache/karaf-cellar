@@ -25,7 +25,7 @@ import java.util.Map;
  * Generic event support.
  */
 public class EventSupport extends CellarSupport {
-    
+
     protected EventAdmin eventAdmin;
 
     /**
@@ -35,17 +35,20 @@ public class EventSupport extends CellarSupport {
      * @return the map.
      */
     public Map<String, Serializable> getEventProperties(Event event) {
+
         String[] propertyNames = event.getPropertyNames();
 
         Map<String, Serializable> properties = new HashMap<String, Serializable>();
 
         for (String propertyName : propertyNames) {
-            Object property = event.getProperty(propertyName);
-            if (property instanceof Serializable) {
-                properties.put(propertyName, (Serializable) property);
+            // event property (org.osgi.framework.ServiceEvent for instance) contains non serializable objects (like source or service reference)
+            if (!propertyName.equals("event")) {
+                Object property = event.getProperty(propertyName);
+                if (property instanceof Serializable)
+                    properties.put(propertyName, (Serializable) property);
             }
         }
-        
+
         return properties;
     }
 
@@ -71,7 +74,7 @@ public class EventSupport extends CellarSupport {
     /**
      * Post events via {@link EventAdmin}.
      *
-     * @param topicName the topic name.
+     * @param topicName  the topic name.
      * @param properties the event properties.
      */
     public void postEvent(String topicName, Map<String, Serializable> properties) {
@@ -87,7 +90,7 @@ public class EventSupport extends CellarSupport {
     /**
      * Send events via {@link EventAdmin}.
      *
-     * @param topicName the topic name.
+     * @param topicName  the topic name.
      * @param properties the event properties.
      */
     public void sendEvent(String topicName, Map<String, Serializable> properties) {
