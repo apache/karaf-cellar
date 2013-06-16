@@ -25,7 +25,7 @@ import java.util.Map;
  * Generic Cellar OSGi event support.
  */
 public class EventSupport extends CellarSupport {
-    
+
     protected EventAdmin eventAdmin;
 
     /**
@@ -40,12 +40,14 @@ public class EventSupport extends CellarSupport {
         Map<String, Serializable> properties = new HashMap<String, Serializable>();
 
         for (String propertyName : propertyNames) {
-            Object property = event.getProperty(propertyName);
-            if (property instanceof Serializable) {
-                properties.put(propertyName, (Serializable) property);
+            // event property (org.osgi.framework.ServiceEvent for instance) contains non serializable objects (like source or service reference)
+            if (!propertyName.equals("event")) {
+                Object property = event.getProperty(propertyName);
+                if (property instanceof Serializable)
+                    properties.put(propertyName, (Serializable) property);
             }
         }
-        
+
         return properties;
     }
 
@@ -56,6 +58,7 @@ public class EventSupport extends CellarSupport {
      * @param name  the property name to check.
      * @return true if the property exists in the event, false else.
      */
+
     public boolean hasEventProperty(Event event, String name) {
         String[] propertyNames = event.getPropertyNames();
 
@@ -71,7 +74,7 @@ public class EventSupport extends CellarSupport {
     /**
      * Post events via {@link EventAdmin}.
      *
-     * @param topicName the topic name.
+     * @param topicName  the topic name.
      * @param properties the event properties.
      */
     public void postEvent(String topicName, Map<String, Serializable> properties) {
@@ -87,7 +90,7 @@ public class EventSupport extends CellarSupport {
     /**
      * Send events via {@link EventAdmin}.
      *
-     * @param topicName the topic name.
+     * @param topicName  the topic name.
      * @param properties the event properties.
      */
     public void sendEvent(String topicName, Map<String, Serializable> properties) {

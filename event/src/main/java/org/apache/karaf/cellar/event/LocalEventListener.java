@@ -35,6 +35,10 @@ public class LocalEventListener extends EventSupport implements EventHandler {
     @Override
     public void handleEvent(Event event) {
 
+        // ignore log entry event
+        if (event.getTopic().startsWith("org/osgi/service/log/LogEntry"))
+            return;
+
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR EVENT: cluster event producer is OFF");
@@ -53,7 +57,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
                 // filter already processed events
                 if (hasEventProperty(event, Constants.EVENT_PROCESSED_KEY)) {
-                    if (event.getProperty(Constants.EVENT_PROCESSED_KEY).equals(Constants.EVENT_PROCESSED_VALUE)){
+                    if (event.getProperty(Constants.EVENT_PROCESSED_KEY).equals(Constants.EVENT_PROCESSED_VALUE)) {
                         LOGGER.debug("CELLAR EVENT: filtered out event {}", event.getTopic());
                         return;
                     }
@@ -68,8 +72,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                             ClusterEvent clusterEvent = new ClusterEvent(topicName, properties);
                             clusterEvent.setSourceGroup(group);
                             eventProducer.produce(clusterEvent);
-                        } else if (!topicName.startsWith("org/osgi/service/log/LogEntry/"))
-                                LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
+                        } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }
                 }
             }
