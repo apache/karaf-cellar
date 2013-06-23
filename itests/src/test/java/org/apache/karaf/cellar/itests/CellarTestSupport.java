@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.itests;
 
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.apache.karaf.tooling.exam.options.LogLevelOption;
 import org.ops4j.pax.exam.MavenUtils;
 import org.ops4j.pax.exam.Option;
@@ -156,11 +157,18 @@ public class CellarTestSupport {
 
     @Configuration
     public Option[] config() {
-        return new Option[]{
+        Option[] options = new Option[]{
                 cellarDistributionConfiguration(), keepRuntimeFolder(), logLevel(LogLevelOption.LogLevel.ERROR),
                 editConfigurationFileExtend("etc/system.properties", "cellar.feature.url", maven().groupId("org.apache.karaf.cellar").artifactId("apache-karaf-cellar").versionAsInProject().classifier("features").type("xml").getURL()),
                 editConfigurationFileExtend("etc/config.properties", "org.apache.aries.blueprint.synchronous", "true")
         };
+        String debug = System.getProperty("debugMain");
+        if (debug != null) {
+            int l = options.length;
+            options = Arrays.copyOf(options, l + 1);
+            options[l] = KarafDistributionOption.debugConfiguration();
+        }
+        return options;
     }
 
     /**
