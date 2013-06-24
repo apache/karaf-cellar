@@ -21,10 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Generic configuration support.
@@ -45,13 +42,11 @@ public class ConfigurationSupport extends CellarSupport {
      */
     public Properties dictionaryToProperties(Dictionary dictionary) {
         Properties properties = new Properties();
-        if (dictionary != null && dictionary.keys() != null) {
-
+        if (dictionary != null) {
             Enumeration keys = dictionary.keys();
             while (keys.hasMoreElements()) {
-                String key = (String) keys.nextElement();
+                Object key = keys.nextElement();
                 if (key != null && dictionary.get(key) != null) {
-                    String value = (String) dictionary.get(key);
                     properties.put(key, dictionary.get(key));
                 }
             }
@@ -76,11 +71,14 @@ public class ConfigurationSupport extends CellarSupport {
         if (source.isEmpty() && target.isEmpty())
             return true;
 
+        if (source.size() != target.size())
+            return false;
+
         Enumeration sourceKeys = source.keys();
         while (sourceKeys.hasMoreElements()) {
-            String key = (String) sourceKeys.nextElement();
-            String sourceValue = String.valueOf(source.get(key));
-            String targetValue = String.valueOf(target.get(key));
+            Object key = sourceKeys.nextElement();
+            Object sourceValue = source.get(key);
+            Object targetValue = target.get(key);
             if (sourceValue != null && targetValue == null)
                 return false;
             if (sourceValue == null && targetValue != null)
@@ -88,9 +86,6 @@ public class ConfigurationSupport extends CellarSupport {
             if (!sourceValue.equals(targetValue))
                 return false;
         }
-
-        if (source.size() != target.size())
-            return false;
 
         return true;
     }
@@ -108,7 +103,7 @@ public class ConfigurationSupport extends CellarSupport {
             while (sourceKeys.hasMoreElements()) {
                 String key = (String) sourceKeys.nextElement();
                 if (!isExcludedProperty(key)) {
-                    String value = String.valueOf(dictionary.get(key));
+                    Object value = dictionary.get(key);
                     result.put(key, value);
                 }
             }
@@ -158,31 +153,35 @@ public class ConfigurationSupport extends CellarSupport {
                         storageFile = new File(new URL((String) val).toURI());
                     }
                 } catch (Exception e) {
-                    throw (IOException) new IOException(e.getMessage()).initCause(e);
+                    throw new IOException(e.getMessage(), e);
                 }
             }
+
             org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
-            for (Enumeration keys = props.keys(); keys.hasMoreElements(); ) {
-                Object key = keys.nextElement();
+            List<String> propertiesToRemove = new ArrayList<String>();
+            Set<String> set = p.keySet();
+
+            for (String key : set) {
                 if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
                         && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
                         && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
-                    p.put((String) key, (String) props.get(key));
+                    propertiesToRemove.add(key);
                 }
             }
-            // remove "removed" properties from the file
-            ArrayList<String> propertiesToRemove = new ArrayList<String>();
-            for (Object key : p.keySet()) {
-                if (props.get(key) == null
-                        && !org.osgi.framework.Constants.SERVICE_PID.equals(key)
-                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
-                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
-                    propertiesToRemove.add(key.toString());
-                }
-            }
+
             for (String key : propertiesToRemove) {
                 p.remove(key);
             }
+
+            for (Enumeration<String> keys = props.keys(); keys.hasMoreElements(); ) {
+                String key = keys.nextElement();
+                if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
+                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
+                    p.put(key, (String) props.get(key));
+                }
+            }
+
             // save the cfg file
             storage.mkdirs();
             p.save();
