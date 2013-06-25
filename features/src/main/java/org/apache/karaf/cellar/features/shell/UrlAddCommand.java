@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.features.shell;
 
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -38,6 +39,9 @@ public class UrlAddCommand extends FeatureCommandSupport {
 
     @Argument(index = 1, name = "urls", description = "One or more features repository URLs separated by whitespaces", required = true, multiValued = true)
     List<String> urls;
+
+    @Option(name = "-i", aliases = { "--install-all" }, description = "Install all features contained in the repository URLs", required = false, multiValued = false)
+    boolean install;
 
     private EventProducer eventProducer;
 
@@ -119,6 +123,7 @@ public class UrlAddCommand extends FeatureCommandSupport {
                     // broadcast the cluster event
                     ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
                     event.setSourceGroup(group);
+                    event.setInstall(install);
                     eventProducer.produce(event);
                 } else {
                     System.err.println("Repository URL " + url + " already registered");

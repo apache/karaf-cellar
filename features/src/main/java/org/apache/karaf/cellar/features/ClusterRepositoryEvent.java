@@ -23,6 +23,9 @@ public class ClusterRepositoryEvent extends Event {
 
     private EventType type;
 
+    private Boolean install;
+    private Boolean uninstall;
+
     public ClusterRepositoryEvent(String id, EventType type) {
         super(id);
         this.type = type;
@@ -30,6 +33,22 @@ public class ClusterRepositoryEvent extends Event {
 
     public EventType getType() {
         return type;
+    }
+
+    public Boolean getInstall() {
+        return install;
+    }
+
+    public void setInstall(Boolean install) {
+        this.install = install;
+    }
+
+    public Boolean getUninstall() {
+        return uninstall;
+    }
+
+    public void setUninstall(Boolean uninstall) {
+        this.uninstall = uninstall;
     }
 
 }
