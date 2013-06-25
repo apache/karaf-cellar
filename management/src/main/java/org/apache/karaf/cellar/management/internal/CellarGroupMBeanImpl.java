@@ -165,8 +165,11 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
         for (Group group : allGroups) {
             StringBuffer members = new StringBuffer();
             for (Node node : group.getNodes()) {
-                members.append(node.getId());
-                members.append(" ");
+                // display only the nodes up and running in the cluster
+                if (clusterManager.findNodeById(node.getId()) != null) {
+                    members.append(node.getId());
+                    members.append(" ");
+                }
             }
             CompositeData data = new CompositeDataSupport(groupType,
                     new String[]{ "name", "members" },
