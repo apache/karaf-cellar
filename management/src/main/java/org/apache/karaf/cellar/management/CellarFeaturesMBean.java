@@ -31,13 +31,34 @@ public interface CellarFeaturesMBean {
     void addUrl(String group, String url) throws Exception;
 
     /**
-     * Remove a features repository URL in a cluster group.
+     * Add a features repository URL in a cluster group, eventually installing all features
+     * defined in the repository.
+     *
+     * @param group the cluster group name.
+     * @param url the features repository URL.
+     * @param install true to install all features defined in the repository, false else.
+     * @throws Exception in case of add failure.
+     */
+    void addUrl(String group, String url, boolean install) throws Exception;
+
+    /**
+     * Remove a features repository URL from a cluster group.
      *
      * @param group the cluster group name.
      * @param url the features repository URL.
      * @throws Exception in case of remove failure.
      */
     void removeUrl(String group, String url) throws Exception;
+
+    /**
+     * Remove a features repository URL from a cluster group.
+     *
+     * @param group the cluster group name.
+     * @param url the features repository URL.
+     * @param uninstall true to uninstall all features defined in the repository, false else.
+     * @throws Exception in case of remove failure.
+     */
+    void removeUrl(String group, String url, boolean uninstall) throws Exception;
 
     /**
      * Install a feature in a cluster group.
