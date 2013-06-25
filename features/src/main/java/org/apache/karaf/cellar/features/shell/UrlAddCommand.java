@@ -25,6 +25,7 @@ import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
 
 import java.net.URI;
 import java.util.List;
@@ -38,6 +39,9 @@ public class UrlAddCommand extends FeatureCommandSupport {
 
     @Argument(index = 1, name = "urls", description = "One or more features repository URLs separated by whitespaces", required = true, multiValued = true)
     List<String> urls;
+
+    @Option(name = "-i", aliases = { "--install-all" }, description = "Install all features contained in the repository URLs", required = false, multiValued = false)
+    boolean install;
 
     private EventProducer eventProducer;
 
@@ -118,6 +122,7 @@ public class UrlAddCommand extends FeatureCommandSupport {
 
                     // broadcast the cluster event
                     ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
+                    event.setInstall(install);
                     event.setSourceGroup(group);
                     eventProducer.produce(event);
                 } else {
