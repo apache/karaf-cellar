@@ -15,6 +15,41 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.1
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+ It includes several bug fixes, including critical ones.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-1461] - Fail to install cellar feature using equinox if cxf-sts feature is installed before
+    * [KARAF-2252] - synchornized features do not care about bundle status
+    * [KARAF-2253] - karaf becomes out of memory when executing cluster:feature-install war with group.bundle.sync=true.
+    * [KARAF-2317] - cluster:group-list still display a node which is down
+    * [KARAF-2340] - Huge CPU consumption with Felix framework
+    * [KARAF-2343] - Installing Cellar 2.3.0 cellar-event crashes Karaf 2.3.1 after a few seconds...
+    * [KARAF-2345] - Can't start second instance of Karaf 2.3.1 with Cellar 2.3.0
+
+** Dependency upgrade
+    * [KARAF-2337] - Upgrade to Apache POM 13
+    * [KARAF-2353] - Upgrade to Hazelcast 2.6
+
+** Improvement
+    * [KARAF-2204] - Cellar features repository should support install/uninstall all
+    * [KARAF-2347] - Performance improvements for ConfigurationSupport class
+    * [KARAF-2354] - Rename cellar-event feature to cellar-eventadmin
+
+** Test
+    * [KARAF-2349] - Patch to add debugging capability for the main test karaf container when building itests
+
                     Apache Karaf Cellar 2.3.0
                     =========================
 
