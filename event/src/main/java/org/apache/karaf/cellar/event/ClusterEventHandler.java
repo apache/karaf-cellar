@@ -41,7 +41,7 @@ public class ClusterEventHandler extends EventSupport implements EventHandler<Cl
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR EVENT: {} is OFF, cluster event not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR EVENT: {} is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
 
@@ -58,7 +58,7 @@ public class ClusterEventHandler extends EventSupport implements EventHandler<Cl
                 properties.put(Constants.EVENT_SOURCE_GROUP_KEY, event.getSourceGroup());
                 properties.put(Constants.EVENT_SOURCE_NODE_KEY, event.getSourceNode());
                 postEvent(event.getTopicName(), properties);
-            } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED INBOUND", event.getTopicName());
+            } else LOGGER.debug("CELLAR EVENT: event {} is marked as BLOCKED INBOUND", event.getTopicName());
         } catch (Exception e) {
             LOGGER.error("CELLAR EVENT: failed to handle event", e);
         }

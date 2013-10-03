@@ -48,13 +48,13 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
     public void handle(ClusterBundleEvent event) {
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR BUNDLE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
 
         // check if the node is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.info("CELLAR BUNDLE: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR BUNDLE: node is not part of the event cluster group");
             return;
         }
 
@@ -65,7 +65,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
             	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
-						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED INBOUND in cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
+						LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in the feature {} marked as BLOCKED INBOUND in cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
 						return;
 					}
 				}

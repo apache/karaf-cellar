@@ -14,7 +14,6 @@
 package org.apache.karaf.cellar.core.control;
 
 import org.apache.karaf.cellar.core.Configurations;
-import org.apache.karaf.cellar.core.Consumer;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.osgi.framework.BundleContext;
@@ -37,8 +36,6 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     public static final String SWITCH_ID = "org.apache.karaf.cellar.command.listhandlers.switch";
 
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
-
-    private Consumer consumer;
 
     /**
      * Execute the cluster manage handlers command event and get the result.
@@ -109,7 +106,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
                 }
             }
         } catch (Exception e) {
-            LOGGER.warn("Can't persist the handler " + handler + " status", e);
+            LOGGER.warn("Can't persist the handler {} status", handler, e);
         }
     }
 

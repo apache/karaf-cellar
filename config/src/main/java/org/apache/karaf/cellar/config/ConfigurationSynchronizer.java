@@ -51,7 +51,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR CONFIG: sync is disabled for cluster group {}", group.getName());
+                } else LOGGER.debug("CELLAR CONFIG: sync is disabled for cluster group {}", group.getName());
             }
         }
     }
@@ -95,7 +95,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
                         }
                     }
-                    LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterPID, groupName);
+                    LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterPID, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -112,7 +112,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR CONFIG: cluster event producer is OFF");
+            LOGGER.debug("CELLAR CONFIG: cluster event producer is OFF");
             return;
         }
 
@@ -138,7 +138,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             event.setSourceGroup(group);
                             eventProducer.produce(event);
                         } else
-                            LOGGER.warn("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
+                            LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to update configuration (IO error)", ex);

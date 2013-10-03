@@ -43,7 +43,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR OBR: sync is disabled for group {}", group.getName());
+                } else LOGGER.debug("CELLAR OBR: sync is disabled for group {}", group.getName());
             }
         }
     }
@@ -109,7 +109,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                             // TODO fire event to the other nodes ?
                         }
                     } else {
-                        LOGGER.warn("CELLAR OBR: URL " + repository.getURI().toString() + " is blocked outbound");
+                        LOGGER.debug("CELLAR OBR: URL {} is BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);
                     }
                 }
             } finally {

@@ -59,7 +59,7 @@ public class HazelcastConfigurationManager {
             if (properties.containsKey(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME)) {
                 Set<String> newDiscoveredMemberSet = CellarUtils.createSetFromString((String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME));
                 if (!CellarUtils.collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
-                    LOGGER.info("CELLAR HAZELCAST: Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
+                    LOGGER.debug("CELLAR HAZELCAST: Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
                     discoveredMemberSet = newDiscoveredMemberSet;
                     updated = Boolean.TRUE;
                 }

@@ -56,7 +56,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
             return;
         }
 
@@ -84,7 +84,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         eventProducer.produce(featureEvent);
-                    } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
+                    } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
@@ -100,7 +100,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
             return;
         }
 

@@ -36,7 +36,6 @@ public class ManageGroupCommandHandler extends CommandHandler<ManageGroupCommand
         ManageGroupAction action = command.getAction();
 
         String targetGroupName = command.getGroupName();
-        Node node = clusterManager.getNode();
 
         if (ManageGroupAction.JOIN.equals(action)) {
             joinGroup(targetGroupName);

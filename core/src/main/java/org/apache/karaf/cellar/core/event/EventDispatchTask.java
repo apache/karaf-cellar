@@ -49,26 +49,26 @@ public class EventDispatchTask<E extends Event> implements Runnable {
     @Override
     public void run() {
         try {
-        boolean dispatched = false;
+            boolean dispatched = false;
 
-        for (long delay = 0; delay < timeout && !dispatched; delay += interval) {
-            EventHandler handler = handlerRegistry.getHandler(event);
-            if (handler != null) {
-                handler.handle(event);
-                dispatched = true;
-            } else {
-                try {
-                    Thread.sleep(interval);
-                } catch (InterruptedException e) {
-                    LOGGER.warn("Interrupted while waiting for event handler", e);
+            for (long delay = 0; delay < timeout && !dispatched; delay += interval) {
+                EventHandler handler = handlerRegistry.getHandler(event);
+                if (handler != null) {
+                    handler.handle(event);
+                    dispatched = true;
+                } else {
+                    try {
+                        Thread.sleep(interval);
+                    } catch (InterruptedException e) {
+                        LOGGER.warn("Interrupted while waiting for event handler", e);
+                    }
                 }
             }
-        }
-        if (!dispatched) {
-            LOGGER.warn("Failed to retrieve handler for event {}", event.getClass());
-        }
-        }catch(Exception ex) {
-            LOGGER.error("Error while dispatching task",ex);
+            if (!dispatched) {
+                LOGGER.warn("Failed to retrieve handler for event {}", event.getClass());
+            }
+        } catch (Exception ex) {
+            LOGGER.error("Error while dispatching task", ex);
         }
     }
 

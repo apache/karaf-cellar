@@ -54,7 +54,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR OBR: {} switch is OFF", SWITCH_ID);
+            LOGGER.debug("CELLAR OBR: {} switch is OFF", SWITCH_ID);
             return;
         }
 
@@ -80,7 +80,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
                         LOGGER.warn("CELLAR OBR: the repository URL hasn't been removed from the OBR service");
                     }
                 }
-            } else LOGGER.warn("CELLAR OBR: repository URL {} is marked BLOCKED INBOUND for cluster group {}", url, groupName);
+            } else LOGGER.debug("CELLAR OBR: repository URL {} is marked BLOCKED INBOUND for cluster group {}", url, groupName);
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to register URL {}", url, e);
         }

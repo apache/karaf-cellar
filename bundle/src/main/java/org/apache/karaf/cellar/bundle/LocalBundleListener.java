@@ -58,7 +58,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
+            LOGGER.debug("CELLAR BUNDLE: cluster event producer is OFF");
             return;
         }
 
@@ -109,7 +109,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                         	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
                         	for (Feature feature : matchingFeatures) {
             					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
-            						LOGGER.warn("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
+            						LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
             						return;
             					}
             				}
@@ -124,7 +124,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                             Thread.currentThread().setContextClassLoader(originalClassLoader);
                         }
 
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
+                    } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
                 }
             }
         }
