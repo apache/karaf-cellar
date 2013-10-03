@@ -50,7 +50,8 @@
         </osgi.import>
         <osgi.dynamic.import>
             org.apache.felix.bundlerepository,
-            org.osgi.service.obr
+            org.osgi.service.obr,
+            *
         </osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.obr*;version="${project.version}"

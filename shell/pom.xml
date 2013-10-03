@@ -46,7 +46,7 @@
             org.apache.karaf.shell.commands;version="[3,4)",
             org.osgi*
         </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
+        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.shell*;version="${project.version}"
         </osgi.export>

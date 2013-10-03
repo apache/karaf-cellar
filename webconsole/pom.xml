@@ -40,7 +40,7 @@
             org.osgi.service.blueprint,
             org.slf4j;resolution:=optional
         </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*</osgi.dynamic.import>
+        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
         <osgi.export>
             org.apache.karaf.cellar.webconsole*;version="${project.version}"
         </osgi.export>
