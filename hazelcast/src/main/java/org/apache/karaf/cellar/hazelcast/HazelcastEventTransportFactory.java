@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.event.EventConsumer;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * A cluster event transport factory powered by Hazelcast.
@@ -28,6 +29,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
 
     private Dispatcher dispatcher;
     private CombinedClassLoader combinedClassLoader;
+    private ConfigurationAdmin configurationAdmin;
 
     @Override
     public EventProducer getEventProducer(String name, Boolean pubsub) {
@@ -37,6 +39,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
             producer.setInstance(instance);
             producer.setTopic(topic);
             producer.setNode(getNode());
+            producer.setConfigurationAdmin(configurationAdmin);
             producer.init();
             return producer;
         } else {
@@ -44,6 +47,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
             QueueProducer producer = new QueueProducer();
             producer.setQueue(queue);
             producer.setNode(getNode());
+            producer.setConfigurationAdmin(configurationAdmin);
             producer.init();
             return producer;
         }
@@ -58,6 +62,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
             consumer.setInstance(instance);
             consumer.setNode(getNode());
             consumer.setDispatcher(dispatcher);
+            consumer.setConfigurationAdmin(configurationAdmin);
             consumer.init();
             return consumer;
         } else {
@@ -66,6 +71,7 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
             consumer.setQueue(queue);
             consumer.setNode(getNode());
             consumer.setDispatcher(dispatcher);
+            consumer.setConfigurationAdmin(configurationAdmin);
             consumer.init();
             return consumer;
         }
@@ -85,6 +91,14 @@ public class HazelcastEventTransportFactory extends HazelcastInstanceAware imple
 
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
+    }
+
+    public ConfigurationAdmin getConfigurationAdmin() {
+        return configurationAdmin;
+    }
+
+    public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
+        this.configurationAdmin = configurationAdmin;
     }
 
 }

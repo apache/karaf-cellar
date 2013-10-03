@@ -73,6 +73,7 @@
         <property name="dispatcher" ref="dispatcher"/>
         <property name="instance" ref="hazelcast"/>
         <property name="combinedClassLoader" ref="combinedClassLoader"/>
+        <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
     <service ref="eventTransportFactory" interface="org.apache.karaf.cellar.core.event.EventTransportFactory"/>
 
