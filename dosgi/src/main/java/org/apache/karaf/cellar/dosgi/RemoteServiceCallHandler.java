@@ -36,9 +36,9 @@ import java.lang.reflect.Method;
  */
 public class RemoteServiceCallHandler extends CellarSupport implements EventHandler<RemoteServiceCall> {
 
-    public static final String SWITCH_ID = "org.apache.karaf.cellar.dosgi.switch";
-
     private static final transient Logger LOGGER = LoggerFactory.getLogger(RemoteServiceCallHandler.class);
+
+    public static final String SWITCH_ID = "org.apache.karaf.cellar.dosgi.switch";
 
     private final Switch dosgiSwitch = new BasicSwitch(SWITCH_ID);
 
@@ -51,7 +51,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR DOSGI: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR DOSGI: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
 

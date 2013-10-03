@@ -50,7 +50,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR BUNDLE: sync is disabled for cluster group {}", group.getName());
+                } else LOGGER.debug("CELLAR BUNDLE: sync is disabled for cluster group {}", group.getName());
             }
         }
     }
@@ -95,7 +95,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                                 }
-                            } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
+                            } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
                         }
                     }
                 }
@@ -115,7 +115,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
+            LOGGER.debug("CELLAR BUNDLE: cluster event producer is OFF");
             return;
         }
 
@@ -180,7 +180,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             eventProducer.produce(event);
                         }
 
-                    } else LOGGER.warn("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
+                    } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -208,7 +208,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 result = Boolean.parseBoolean(propertyValue);
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR BUNDLE: failed to check if sync is enabled", e);
+            LOGGER.warn("CELLAR BUNDLE: failed to check if sync is enabled", e);
         }
         return result;
     }

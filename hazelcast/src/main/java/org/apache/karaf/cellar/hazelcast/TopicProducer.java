@@ -66,7 +66,7 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
             topic.publish(event);
         } else {
             if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-                LOGGER.warn("CELLAR HAZELCAST: {} switch is OFF, don't produce the event", SWITCH_ID);
+                LOGGER.debug("CELLAR HAZELCAST: {} switch is OFF, don't produce the event", SWITCH_ID);
             }
         }
     }

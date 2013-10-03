@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR EVENT: cluster event producer is OFF");
+            LOGGER.debug("CELLAR EVENT: cluster event producer is OFF");
             return;
         }
 
@@ -73,7 +72,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                             ClusterEvent clusterEvent = new ClusterEvent(topicName, properties);
                             clusterEvent.setSourceGroup(group);
                             eventProducer.produce(clusterEvent);
-                        } else LOGGER.warn("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
+                        } else LOGGER.debug("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND", topicName);
                     }
                 }
             }

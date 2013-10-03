@@ -79,7 +79,7 @@ public class EventSupport extends CellarSupport {
      */
     public void postEvent(String topicName, Map<String, Serializable> properties) {
         if (topicName == null) {
-            LOGGER.error("CELLAR EVENT: failed to post event");
+            LOGGER.warn("CELLAR EVENT: failed to post event");
             return;
         }
 
@@ -95,7 +95,7 @@ public class EventSupport extends CellarSupport {
      */
     public void sendEvent(String topicName, Map<String, Serializable> properties) {
         if (topicName == null) {
-            LOGGER.error("CELLAR EVENT: failed to send event");
+            LOGGER.warn("CELLAR EVENT: failed to send event");
             return;
         }
 

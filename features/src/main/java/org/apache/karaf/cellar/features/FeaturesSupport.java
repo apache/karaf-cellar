@@ -98,7 +98,7 @@ public class FeaturesSupport extends CellarSupport {
                     Boolean installed = featuresService.isInstalled(feature);
                     clusterFeatures.put(info, installed);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
+            } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
@@ -120,7 +120,7 @@ public class FeaturesSupport extends CellarSupport {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     clusterFeatures.put(info, force);
                 }
-            } else LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
+            } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 

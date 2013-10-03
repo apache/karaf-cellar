@@ -43,7 +43,7 @@ public class CellarMergePolicy  implements MergePolicy {
      */
     @Override
     public Object merge(String mapName, MapEntry mergingEntry, MapEntry existingEntry) {
-        LOGGER.info("CELLAR HAZELCAST: merge policy triggered merging entry {}, existing entry {}",mergingEntry,existingEntry);
+        LOGGER.debug("CELLAR HAZELCAST: merge policy triggered merging entry {}, existing entry {}",mergingEntry,existingEntry);
         Object mergingDataValue = mergingEntry != null ? mergingEntry.getValue() : null;
         Object existingDataValue = existingEntry != null ? existingEntry.getValue() : null;
 

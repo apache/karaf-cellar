@@ -118,7 +118,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
             dispatcher.dispatch(event);
         } else {
             if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-                LOGGER.warn("CELLAR HAZELCAST: {} switch if OFF, event is not consumed", SWITCH_ID);
+                LOGGER.debug("CELLAR HAZELCAST: {} switch if OFF, event is not consumed", SWITCH_ID);
             }
         }
     }

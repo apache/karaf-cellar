@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class Command<R extends Result> extends Event {
 
-    protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Command.class);
 
     protected long timeout = 10000;
     protected final BlockingQueue<Map<Node, R>> resultQueue = new LinkedBlockingQueue<Map<Node, R>>();
@@ -57,7 +57,7 @@ public class Command<R extends Result> extends Event {
         try {
             resultQueue.put(nodeResults);
         } catch (InterruptedException e) {
-            logger.error("Error adding result to result queue", e);
+            LOGGER.error("Error adding result to result queue", e);
         }
     }
 
@@ -76,7 +76,7 @@ public class Command<R extends Result> extends Event {
                 try {
                     resultQueue.put(nodeResults);
                 } catch (InterruptedException e) {
-                    logger.error("Error adding result to result queue", e);
+                    LOGGER.error("Error adding result to result queue", e);
                 }
             }
         }

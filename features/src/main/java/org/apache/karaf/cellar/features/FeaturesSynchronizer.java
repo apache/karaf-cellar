@@ -47,7 +47,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (isSyncEnabled(group)) {
                     pull(group);
                     push(group);
-                } else LOGGER.warn("CELLAR FEATURES: sync is disabled for cluster group {}", group.getName());
+                } else LOGGER.debug("CELLAR FEATURES: sync is disabled for cluster group {}", group.getName());
             }
         }
     }
@@ -141,7 +141,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            LOGGER.info("CELLAR FEATURES: pushing features repositories and features in cluster group {}.",groupName);
+            LOGGER.debug("CELLAR FEATURES: pushing features repositories and features in cluster group {}.",groupName);
             clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
