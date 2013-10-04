@@ -343,7 +343,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             String groupName = group.getName();
             createGroup(groupName);
 
-            LOGGER.info("CELLAR HAZELCAST: registering cluster group {}.", groupName);
+            LOGGER.debug("CELLAR HAZELCAST: registering cluster group {}.", groupName);
             Properties serviceProperties = new Properties();
             serviceProperties.put("type", "group");
             serviceProperties.put("name", groupName);
@@ -649,7 +649,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      */
     @Override
     public void entryUpdated(EntryEvent entryEvent) {
-        LOGGER.info("CELLAR HAZELCAST: cluster group configuration has been updated, updating local configuration");
+        LOGGER.debug("CELLAR HAZELCAST: cluster group configuration has been updated, updating local configuration");
         try {
             Configuration conf = configurationAdmin.getConfiguration(GROUPS);
             Dictionary props = conf.getProperties();

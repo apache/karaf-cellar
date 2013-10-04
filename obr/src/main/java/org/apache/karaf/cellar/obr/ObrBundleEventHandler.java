@@ -115,7 +115,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR OBR: {} switch is OFF", SWITCH_ID);
+            LOGGER.debug("CELLAR OBR: {} switch is OFF", SWITCH_ID);
             return;
         }
 
@@ -159,7 +159,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.warn("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND", bundleId);
+            } else LOGGER.debug("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }
