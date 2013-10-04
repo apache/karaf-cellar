@@ -19,7 +19,6 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.InvalidSyntaxException;
 
-import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -32,7 +31,6 @@ import java.util.Set;
  */
 public class EndpointDescription implements MultiNode {
 
-    //Id is {package}-{version}.
     private final String id;
     private final Set<Node> nodes = new LinkedHashSet<Node>();
     private final Map<String, Object> properties = new HashMap<String, Object>();

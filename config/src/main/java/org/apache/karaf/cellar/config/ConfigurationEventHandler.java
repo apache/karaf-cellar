@@ -46,7 +46,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR CONFIG: {} switch is OFF, cluster event not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR CONFIG: {} switch is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
         
@@ -96,7 +96,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             } catch (IOException ex) {
                 LOGGER.error("CELLAR CONFIG: failed to read cluster configuration", ex);
             }
-        } else LOGGER.warn("CELLAR CONFIG: configuration PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
+        } else LOGGER.debug("CELLAR CONFIG: configuration PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
     }
 
     public void init() {

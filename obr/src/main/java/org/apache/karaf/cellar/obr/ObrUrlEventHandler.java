@@ -54,7 +54,7 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.warn("CELLAR OBR: switch is OFF", SWITCH_ID);
+            LOGGER.debug("CELLAR OBR: {} switch is OFF", SWITCH_ID);
             return;
         }
 

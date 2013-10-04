@@ -113,7 +113,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                             // TODO fire event to the other nodes ?
                         }
                     } else {
-                        LOGGER.warn("CELLAR OBR: URL {} is blocked outbound for cluster group {}", repository.getURI().toString(), groupName);
+                        LOGGER.debug("CELLAR OBR: URL {} is marked BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);
                     }
                 }
             } finally {

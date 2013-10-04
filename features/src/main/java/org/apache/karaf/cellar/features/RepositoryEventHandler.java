@@ -54,7 +54,7 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     	
     	// check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.error("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
         
