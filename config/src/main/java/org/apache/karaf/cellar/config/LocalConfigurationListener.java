@@ -55,17 +55,6 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
         String pid = event.getPid();
 
-        Dictionary localDictionary = null;
-        if (event.getType() != ConfigurationEvent.CM_DELETED) {
-            try {
-                Configuration conf = configurationAdmin.getConfiguration(pid, null);
-                localDictionary = conf.getProperties();
-            } catch (Exception e) {
-                LOGGER.error("CELLAR CONFIG: can't retrieve configuration with PID {}", pid, e);
-                return;
-            }
-        }
-
         Set<Group> groups = groupManager.listLocalGroups();
 
         if (groups != null && !groups.isEmpty()) {
@@ -77,15 +66,22 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
                     try {
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                            // update the configurations in the cluster group
-                            clusterConfigurations.remove(pid);
-                            // broadcast the cluster event
-                            ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
-                            clusterConfigurationEvent.setType(ConfigurationEvent.CM_DELETED);
-                            clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
-                            clusterConfigurationEvent.setSourceGroup(group);
-                            eventProducer.produce(clusterConfigurationEvent);
+
+                            if (clusterConfigurations.containsKey(pid)) {
+                                // update the configurations in the cluster group
+                                clusterConfigurations.remove(pid);
+                                // broadcast the cluster event
+                                ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
+                                clusterConfigurationEvent.setType(event.getType());
+                                clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
+                                clusterConfigurationEvent.setSourceGroup(group);
+                                eventProducer.produce(clusterConfigurationEvent);
+                            }
                         } else {
+
+                            Configuration conf = configurationAdmin.getConfiguration(pid, null);
+                            Dictionary localDictionary = conf.getProperties();
+
                             localDictionary = filter(localDictionary);
 
                             Properties distributedDictionary = clusterConfigurations.get(pid);
@@ -95,6 +91,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                                 clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                                 // broadcast the cluster event
                                 ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
+                                clusterConfigurationEvent.setType(event.getType());
                                 clusterConfigurationEvent.setSourceGroup(group);
                                 clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
                                 eventProducer.produce(clusterConfigurationEvent);
