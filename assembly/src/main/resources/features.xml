@@ -32,7 +32,7 @@
         <configfile finalname="/etc/hazelcast.xml">
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
         </configfile>
-        <bundle start-level="32" dependency="true">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
+        <bundle start-level="32">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
     <feature name="cellar-hazelcast" description="Cellar implementation based on Hazelcast" version="${project.version}" resolver="(obr)">
@@ -97,7 +97,7 @@
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
         <feature version="${jclouds.version}">jclouds-aws-s3</feature>
-        <bundle dependency="true">mvn:joda-time/joda-time/${joda-time.version}</bundle>
+        <bundle>mvn:joda-time/joda-time/${joda-time.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
 
