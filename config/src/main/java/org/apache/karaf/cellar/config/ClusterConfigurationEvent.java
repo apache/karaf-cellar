@@ -20,17 +20,17 @@ import org.apache.karaf.cellar.core.event.Event;
  */
 public class ClusterConfigurationEvent extends Event {
 
-	private int type;
+	private Integer type;
 
     public ClusterConfigurationEvent(String id) {
         super(id);
     }
 
-    public int getType() {
+    public Integer getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public void setType(Integer type) {
         this.type = type;
     }
 
