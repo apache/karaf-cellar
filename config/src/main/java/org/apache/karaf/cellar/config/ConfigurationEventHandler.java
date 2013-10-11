@@ -65,18 +65,18 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
 
             Properties clusterDictionary = clusterConfigurations.get(pid);
-            Configuration localConfiguration;
             try {
                 // update the local configuration
-                localConfiguration = configurationAdmin.getConfiguration(pid, null);
+                Configuration[] localConfigurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
                 if (event.getType() == ConfigurationEvent.CM_DELETED) {
-                    if (localConfiguration.getProperties() != null) {
-                        // delete the properties
-                        localConfiguration.delete();
+                    // delete the configuration
+                    if (localConfigurations != null && localConfigurations.length > 0) {
+                        localConfigurations[0].delete();
                         deleteStorage(pid);
                     }
                 } else {
                     if (clusterDictionary != null) {
+                        Configuration localConfiguration = configurationAdmin.getConfiguration(pid, null);
                         Dictionary localDictionary = localConfiguration.getProperties();
                         if (localDictionary == null)
                             localDictionary = new Properties();
@@ -87,7 +87,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                         }
                     }
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
             }
         } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
