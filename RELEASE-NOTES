@@ -15,6 +15,32 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.2
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+ It includes several bug fixes, including critical ones.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-2432] - Unable to install cellar when features' OBR support is enabled
+    * [KARAF-2478] - Producer status is ignored when config is updated on cluster
+    * [KARAF-2480] - cellar-event throws a HazelcastSerializationException caused by a 
+		     ClassNotFoundException when an event has an instance of a class 
+	             stored in the event properties
+    * [KARAF-2514] - Config sync issue in some cases
+
+** Improvement
+    * [KARAF-2498] - Change log level to DEBUG for Cellar blacklist/whitelist message
+
+
                     Apache Karaf Cellar 2.3.1
                     =========================
 
