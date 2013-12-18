@@ -72,9 +72,9 @@
     </modules>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</developerConnection>
-        <url>http://svn.apache.org/repos/asf/karaf/cellar/branches/cellar-2.3.x</url>
+        <connection>scm:git:https://git-wip-us.apache.org/repos/asf/karaf-cellar.git</connection>
+        <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/karaf-cellar.git</developerConnection>
+        <url>https://git-wip-us.apache.org/repos/asf?p=karaf-cellar.git;a=summary</url>
     </scm>
 
     <issueManagement>
