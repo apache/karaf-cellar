@@ -136,12 +136,12 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
                 <version>${karaf.version}</version>
                 <executions>
-                    <!--
                     <execution>
                         <id>features-generate-descriptor</id>
                         <phase>compile</phase>
@@ -152,7 +152,6 @@
                             <addBundlesToPrimaryFeature>false</addBundlesToPrimaryFeature>
                         </configuration>
                     </execution>
-                    -->
                     <execution>
                         <id>features-create-kar</id>
                         <phase>package</phase>
@@ -165,6 +164,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 
