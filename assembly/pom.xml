@@ -153,6 +153,9 @@
                         </configuration>
                     </execution>
                     -->
+                    <!-- TODO: temporarily remove this execution so that builds don't fail
+                               builds pass from within the assembly directory, but give a
+                               throw a file not foud from the root (parent) directory
                     <execution>
                         <id>features-create-kar</id>
                         <phase>package</phase>
@@ -163,6 +166,7 @@
                             <featuresFile>target/classes/features.xml</featuresFile>
                         </configuration>
                     </execution>
+                    -->
                 </executions>
             </plugin>
         </plugins>
