@@ -28,6 +28,10 @@ public class HazelcastServiceFactoryTest {
 
     @Test
     public void testDefaultInstance() throws InterruptedException {
+        // Joining a cluster may not work with the default configuration on
+        // networks where multicast is disabled. Use a custom hazelcast.xml
+        // configuration that disables multicast and enables tcp on 127.0.0.1
+        System.setProperty("karaf.home", "src/test/resources");
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.init();
         factory.getInstance();
