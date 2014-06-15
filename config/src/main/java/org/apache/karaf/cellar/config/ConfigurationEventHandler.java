@@ -68,7 +68,7 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             try {
                 // update the local configuration
                 Configuration[] localConfigurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
-                if (event.getType() == ConfigurationEvent.CM_DELETED) {
+                if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
                     // delete the configuration
                     if (localConfigurations != null && localConfigurations.length > 0) {
                         localConfigurations[0].delete();
