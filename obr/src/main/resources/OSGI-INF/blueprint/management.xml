@@ -14,23 +14,17 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <reference id="mbeanServer" interface="javax.management.MBeanServer">
-        <reference-listener ref="mbeanRegister" bind-method="registerMBeanServer" unbind-method="unregisterMBeanServer"/>
-    </reference>
-
+    <!-- Cellar OBR MBean -->
     <bean id="cellarOBRMBean" class="org.apache.karaf.cellar.obr.management.internal.CellarOBRMBeanImpl">
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="eventProducer" ref="eventProducer"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
-
-    <bean id="mbeanRegister" class="org.apache.karaf.management.MBeanRegistrer">
-        <property name="mbeans">
-            <map>
-                <entry value="org.apache.karaf.cellar:type=obr,name=${karaf.name}" key-ref="cellarOBRMBean"/>
-            </map>
-        </property>
-    </bean>
+    <service ref="cellarOBRMBean" auto-export="interfaces">
+        <service-properties>
+            <entry key="jmx.objectname" value="org.apache.karaf.cellar:type=obr,name=${karaf.name}"/>
+        </service-properties>
+    </service>
 
 </blueprint>
