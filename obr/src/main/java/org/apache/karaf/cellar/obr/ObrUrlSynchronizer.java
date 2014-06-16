@@ -36,8 +36,6 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlSynchronizer.class);
 
-    private List<EventProducer> producerList;
-
     @Override
     public void init() {
         super.init();
@@ -137,14 +135,6 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
             LOGGER.error("CELLAR OBR: error while checking if sync is enabled", e);
         }
         return result;
-    }
-
-    public List<EventProducer> getProducerList() {
-        return producerList;
-    }
-
-    public void setProducerList(List<EventProducer> producerList) {
-        this.producerList = producerList;
     }
 
 }
