@@ -43,6 +43,7 @@
           init-method="init" destroy-method="destroy">
         <property name="featuresService" ref="featuresService"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
     <service ref="featuresEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler">
@@ -56,6 +57,7 @@
           init-method="init" destroy-method="destroy">
         <property name="featuresService" ref="featuresService"/>
         <property name="clusterManager" ref="clusterManager"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
     <service ref="repositoryEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
