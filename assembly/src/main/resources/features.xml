@@ -61,18 +61,12 @@
         <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-management" description="Cellar management" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.management/${project.version}</bundle>
-    </feature>
-
     <feature name="cellar" description="Karaf clustering" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">cellar-hazelcast</feature>
         <feature version="${project.version}">cellar-shell</feature>
         <feature version="${project.version}">cellar-config</feature>
         <feature version="${project.version}">cellar-bundle</feature>
         <feature version="${project.version}">cellar-features</feature>
-        <feature version="${project.version}">cellar-management</feature>
     </feature>
 
     <feature name="cellar-dosgi" description="DOSGi support" version="${project.version}" resolver="(obr)">

@@ -25,12 +25,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.management.internal;
+package org.apache.karaf.cellar.hazelcast.management.internal;
 
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.*;
-import org.apache.karaf.cellar.management.CellarMBean;
+import org.apache.karaf.cellar.core.management.CellarMBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;

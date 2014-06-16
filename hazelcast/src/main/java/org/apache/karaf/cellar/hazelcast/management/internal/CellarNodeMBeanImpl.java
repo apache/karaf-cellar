@@ -11,12 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.management.internal;
+package org.apache.karaf.cellar.hazelcast.management.internal;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
-import org.apache.karaf.cellar.management.CellarNodeMBean;
+import org.apache.karaf.cellar.core.management.CellarNodeMBean;
 import org.apache.karaf.cellar.utils.ping.Ping;
 
 import javax.management.NotCompliantMBeanException;
@@ -72,7 +72,7 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
         CompositeType nodeType = new CompositeType("Node", "Karaf Cellar cluster node",
                 new String[]{ "id", "hostname", "port", "local" },
                 new String[]{ "ID of the node", "Hostname of the node", "Port number of the node", "Flag defining if the node is local" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER });
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER, SimpleType.BOOLEAN });
 
         TabularType tableType = new TabularType("Nodes", "Table of all Karaf Cellar nodes", nodeType, new String[]{ "id" });
 

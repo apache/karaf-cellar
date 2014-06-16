@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.management.internal;
+package org.apache.karaf.cellar.bundle.management.internal;
 
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
@@ -20,7 +20,7 @@ import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.cellar.management.CellarBundleMBean;
+import org.apache.karaf.cellar.bundle.management.CellarBundleMBean;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 

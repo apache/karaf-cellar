@@ -11,9 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.management.internal;
+package org.apache.karaf.cellar.features.management.internal;
 
-import org.apache.karaf.cellar.bundle.BundleState;
+// import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -22,9 +22,9 @@ import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
-import org.apache.karaf.cellar.management.CellarFeaturesMBean;
+import org.apache.karaf.cellar.features.management.CellarFeaturesMBean;
 import org.apache.karaf.features.*;
-import org.osgi.framework.BundleEvent;
+// import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
@@ -146,6 +146,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             clusterFeatures.put(feature, true);
             try {
                 // TODO does it make sense ?
+                /*
                 List<BundleInfo> bundles = featuresService.getFeature(feature.getName(), version).getBundles();
                 Map<String, BundleState> clusterBundles = clusterManager.getMap(org.apache.karaf.cellar.bundle.Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                 for (BundleInfo bundle : bundles) {
@@ -154,6 +155,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                     state.setStatus(BundleEvent.STARTED);
                     clusterBundles.put(bundle.toString(), state);
                 }
+                */
             } catch (Exception e) {
                 // ignore
             }

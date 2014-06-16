@@ -48,6 +48,9 @@
         <osgi.export>
             org.apache.karaf.cellar.hazelcast*;version="${project.version}"
         </osgi.export>
+        <osgi.private>
+            org.apache.karaf.cellar.hazelcast.management.internal
+        </osgi.private>
     </properties>
 
     <dependencies>
@@ -55,10 +58,13 @@
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
         </dependency>
-        <!-- Internal Dependencies -->
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.cellar</groupId>
+            <artifactId>org.apache.karaf.cellar.utils</artifactId>
         </dependency>
 
         <!-- Logging Dependencies -->

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.management.internal;
+package org.apache.karaf.cellar.hazelcast.management.internal;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Group;
@@ -20,7 +20,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
-import org.apache.karaf.cellar.management.CellarGroupMBean;
+import org.apache.karaf.cellar.core.management.CellarGroupMBean;
 
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;

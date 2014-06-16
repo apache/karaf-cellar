@@ -51,6 +51,9 @@
         <osgi.export>
             org.apache.karaf.cellar.bundle*;version="${project.version}"
         </osgi.export>
+        <osgi.private>
+            org.apache.karaf.cellar.bundle.management.internal
+        </osgi.private>
     </properties>
 
     <dependencies>

@@ -51,6 +51,7 @@
             org.apache.karaf.cellar.config*;version="${project.version}"
         </osgi.export>
         <osgi.private>
+            org.apache.karaf.cellar.config.management.internal,
             org.apache.felix.utils*;-split-package:=merge-first,
             !*
         </osgi.private>
