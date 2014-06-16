@@ -41,6 +41,7 @@
     <!-- Cluster Event Handler -->
     <bean id="clusterEventHandler" class="org.apache.karaf.cellar.event.ClusterEventHandler" init-method="init" destroy-method="destroy">
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="eventAdmin" ref="eventAdmin"/>
     </bean>
