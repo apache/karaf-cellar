@@ -26,7 +26,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-propdel", description = "Delete a property from a configuration in a cluster group")
+@Command(scope = "cluster", name = "config-property-delete", description = "Delete a property from a configuration in a cluster group")
 public class PropDelCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)

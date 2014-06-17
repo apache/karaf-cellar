@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.config.management;
 
 import javax.management.openmbean.TabularData;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Describe the operations and attributes available on the Cellar configuration MBean.
@@ -28,7 +29,7 @@ public interface CellarConfigMBean {
      * @return the list of configuration PID.
      * @throws Exception in case of retrieval failure.
      */
-    List<String> listConfig(String group) throws Exception;
+    List<String> getConfigs(String group) throws Exception;
 
     /**
      * Delete a configuration from a cluster group.
@@ -37,7 +38,7 @@ public interface CellarConfigMBean {
      * @param pid the configuration PID to delete.
      * @throws Exception in case of deletion failure.
      */
-    void deleteConfig(String group, String pid) throws Exception;
+    void delete(String group, String pid) throws Exception;
 
     /**
      * List the properties of a configuration in a cluster group.
@@ -47,7 +48,7 @@ public interface CellarConfigMBean {
      * @return the list of properties for the configuration.
      * @throws Exception in case of retrieval failure.
      */
-    TabularData listProperties(String group, String pid) throws Exception;
+    Map<String, String> listProperties(String group, String pid) throws Exception;
 
     /**
      * Set the value of a property for a configuration in a cluster group.

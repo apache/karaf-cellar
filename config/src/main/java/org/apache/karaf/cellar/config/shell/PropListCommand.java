@@ -23,10 +23,8 @@ import org.apache.karaf.shell.commands.Command;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-proplist", description = "List the configurations in a cluster group")
+@Command(scope = "cluster", name = "config-property-list", description = "List the configurations in a cluster group")
 public class PropListCommand extends CellarCommandSupport {
-
-    protected static final String OUTPUT_FORMAT = "%-40s %s";
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -51,11 +49,10 @@ public class PropListCommand extends CellarCommandSupport {
                 System.err.println("Configuration PID " + pid + " not found in cluster group " + groupName);
             } else {
                 System.out.println(String.format("Property list for configuration PID " + pid + " for cluster group " + groupName));
-                System.out.println(String.format(OUTPUT_FORMAT, "Key", "Value"));
 
                 for (Object key : properties.keySet()) {
                     String value = properties.getProperty((String) key);
-                    System.out.println(String.format(OUTPUT_FORMAT, key, value));
+                    System.out.println("   " + key + " = " + value);
                 }
             }
         } else System.err.println("No configuration found in cluster group " + groupName);

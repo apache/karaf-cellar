@@ -43,7 +43,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
     }
 
     @Override
-    public List<String> listConfig(String groupName) throws Exception {
+    public List<String> getConfigs(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -61,7 +61,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
     }
 
     @Override
-    public void deleteConfig(String groupName, String pid) throws Exception {
+    public void delete(String groupName, String pid) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -98,15 +98,8 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
     }
 
     @Override
-    public TabularData listProperties(String groupName, String pid) throws Exception {
-
-        CompositeType compositeType = new CompositeType("Property", "Cellar Config Property",
-                new String[]{"key", "value"},
-                new String[]{"Property key", "Property value"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING});
-        TabularType tableType = new TabularType("Properties", "Table of all properties in the configuration PID",
-                compositeType, new String[]{"key"});
-        TabularData table = new TabularDataSupport(tableType);
+    public Map<String, String> listProperties(String groupName, String pid) throws Exception {
+        Map<String, String> properties = new HashMap<String, String>();
 
         Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         Properties clusterProperties = clusterConfigurations.get(pid);
@@ -115,13 +108,10 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             while (propertyNames.hasMoreElements()) {
                 String key = (String) propertyNames.nextElement();
                 String value = (String) clusterProperties.get(key);
-                CompositeDataSupport data = new CompositeDataSupport(compositeType,
-                        new String[]{"key", "value"},
-                        new String[]{key, value});
-                table.put(data);
+                properties.put(key, value);
             }
         }
-        return table;
+        return properties;
     }
 
     @Override

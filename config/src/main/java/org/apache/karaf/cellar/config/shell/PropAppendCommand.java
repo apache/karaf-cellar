@@ -26,7 +26,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import java.util.Map;
 import java.util.Properties;
 
-@Command(scope = "cluster", name = "config-propappend", description = "Append to the property value for a configuration PID in a cluster group")
+@Command(scope = "cluster", name = "config-property-append", description = "Append to the property value for a configuration PID in a cluster group")
 public class PropAppendCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
