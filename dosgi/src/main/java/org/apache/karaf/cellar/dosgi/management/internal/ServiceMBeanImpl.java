@@ -11,48 +11,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.karaf.cellar.dosgi.shell;
+package org.apache.karaf.cellar.dosgi.management.internal;
 
+import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
-import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.dosgi.Constants;
 import org.apache.karaf.cellar.dosgi.EndpointDescription;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.cellar.dosgi.management.ServiceMBean;
 
-import java.util.Map;
-import java.util.Set;
+import javax.management.NotCompliantMBeanException;
+import javax.management.StandardMBean;
+import java.util.*;
 
-@Command(scope = "cluster", name = "service-list", description = "List the services available on the cluster")
-public class ListDistributedServicesCommand extends CellarCommandSupport {
+public class ServiceMBeanImpl extends StandardMBean implements ServiceMBean {
 
-    @Override
-    protected Object doExecute() throws Exception {
+    private ClusterManager clusterManager;
+
+    public ServiceMBeanImpl() throws NotCompliantMBeanException {
+        super(ServiceMBean.class);
+    }
+
+    public Map<String, List<String>> getServices() {
+        Map<String, List<String>> services = new HashMap<String, List<String>>();
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Map<String, EndpointDescription> remoteEndpoints = clusterManager.getMap(Constants.REMOTE_ENDPOINTS);
             if (remoteEndpoints != null && !remoteEndpoints.isEmpty()) {
-                ShellTable table = new ShellTable();
-                table.column("Service Class");
-                table.column("Provider Node");
                 for (Map.Entry<String, EndpointDescription> entry : remoteEndpoints.entrySet()) {
                     EndpointDescription endpointDescription = entry.getValue();
                     String serviceClass = endpointDescription.getServiceClass();
                     Set<Node> nodes = endpointDescription.getNodes();
+                    LinkedList<String> providers = new LinkedList<String>();
                     for (Node node : nodes) {
-                        table.addRow().addContent(serviceClass, node.getId());
-                        serviceClass = "";
+                        providers.add(node.getId());
                     }
+                    services.put(serviceClass, providers);
                 }
-                table.print(System.out);
-            } else {
-                System.out.println("No service available on the cluster");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-        return null;
+        return services;
+    }
+
+    public ClusterManager getClusterManager() {
+        return this.clusterManager;
+    }
+
+    public void setClusterManager(ClusterManager clusterManager) {
+        this.clusterManager = clusterManager;
     }
 
 }
