@@ -74,6 +74,7 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.configadmin</artifactId>
         </dependency>
+
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>

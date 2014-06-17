@@ -17,6 +17,8 @@ import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.shell.commands.Argument;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,11 +28,8 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "id", description = "The bundle ID or name", required = true, multiValued = false)
-    String name;
-
-    @Argument(index = 2, name = "version", description = "The bundle version", required = false, multiValued = false)
-    String version;
+    @Argument(index = 1, name = "ids", description = "The list of bundle (identified by IDs or name or name/version) separated by whitespaces", required = true, multiValued = true)
+    List<String> ids;
 
     protected abstract Object doExecute() throws Exception;
 
@@ -39,95 +38,121 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
      *
      * @return the bundle key is the distributed bundle map.
      */
-    protected String selector(Map<String, BundleState> clusterBundles) {
-        String key = null;
-        if (version == null) {
-            // looking for bundle using ID
-            int id = -1;
-            try {
-                id = Integer.parseInt(name);
-                int index = 0;
-                for (String bundle : clusterBundles.keySet()) {
-                    if (index == id) {
-                        key = bundle;
-                        break;
-                    }
-                    index++;
+    protected List<String> selector(Map<String, BundleState> clusterBundles) {
+        List<String> bundles = new ArrayList<String>();
+
+        if (ids != null && !ids.isEmpty()) {
+            for (String id : ids) {
+                if (id == null) {
+                    continue;
                 }
-            } catch (NumberFormatException nfe) {
-                // ignore
+
+                addMatchingBundles(id, bundles, clusterBundles);
+
             }
-            if (id == -1) {
+        }
+        return bundles;
+    }
 
-                // add regex support
-                Pattern namePattern = Pattern.compile(name);
+    protected void addMatchingBundles(String id, List<String> bundles, Map<String, BundleState> clusterBundles) {
 
-                // looking for bundle using only the name
+        // id is a number
+        Pattern pattern = Pattern.compile("^\\d+$");
+        Matcher matcher = pattern.matcher(id);
+        if (matcher.find()) {
+            int idInt = Integer.parseInt(id);
+            int index = 0;
+            for (String bundle : clusterBundles.keySet()) {
+                if (index == idInt) {
+                    bundles.add(bundle);
+                    break;
+                }
+                index++;
+            }
+            return;
+        }
+
+        // id as a number range
+        pattern = Pattern.compile("^(\\d+)-(\\d+)$");
+        matcher = pattern.matcher(id);
+        if (matcher.find()) {
+            int index = id.indexOf('-');
+            long startId = Long.parseLong(id.substring(0, index));
+            long endId = Long.parseLong(id.substring(index + 1));
+            if (startId < endId) {
+                int bundleIndex = 0;
                 for (String bundle : clusterBundles.keySet()) {
+                    if (bundleIndex >= startId && bundleIndex <= endId) {
+                        bundles.add(bundle);
+                    }
+                    bundleIndex++;
+                }
+            }
+            return;
+        }
+
+        int index = id.indexOf('/');
+        if (index != -1) {
+            // id is name/version
+            String[] idSplit = id.split("/");
+            String name = idSplit[0];
+            String version = idSplit[1];
+            for (String bundle : clusterBundles.keySet()) {
+                String[] bundleSplit = bundle.split("/");
+                if (bundleSplit[1].equals(version)) {
+                    // regex on the name
+                    Pattern namePattern = Pattern.compile(name);
                     BundleState state = clusterBundles.get(bundle);
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex
-                        Matcher matcher = namePattern.matcher(state.getName());
+                        matcher = namePattern.matcher(state.getName());
                         if (matcher.find()) {
-                            key = bundle;
-                            break;
+                            bundles.add(bundle);
                         } else {
-                            // not matched on bundle name, fall back to symbolic name and check if it matches the regex
-                            String split[] = bundle.split("/");
-                            matcher = namePattern.matcher(split[0]);
+                            // no match on bundle name, fall back to symbolic name and check if it matches the regex
+                            matcher = namePattern.matcher(name);
                             if (matcher.find()) {
-                                key = bundle;
-                                break;
+                                bundles.add(bundle);
                             }
                         }
                     } else {
                         // no bundle name, fall back to symbolic name and check if it matches the regex
-                        String split[] = bundle.split("/");
-                        System.out.println("Bundle-SymbolicName: " + split[0]);
-                        Matcher matcher = namePattern.matcher(split[0]);
+                        matcher = namePattern.matcher(name);
                         if (matcher.find()) {
-                            key = bundle;
-                            break;
+                            bundles.add(bundle);
                         }
                     }
                 }
             }
-        } else {
-            // looking for the bundle using name and version
+            return;
+        }
 
-            // add regex support of the name
-            Pattern namePattern = Pattern.compile(name);
-
-            for (String bundle : clusterBundles.keySet()) {
-                String[] split = bundle.split("/");
-                BundleState state = clusterBundles.get(bundle);
-                if (split[1].equals(version)) {
-                    if (state.getName() != null) {
-                        // bundle name is populated, check if it matches the regex
-                        Matcher matcher = namePattern.matcher(state.getName());
-                        if (matcher.find()) {
-                            key = bundle;
-                            break;
-                        } else {
-                            // no match on bundle name, fall back to symbolic name and check if it matches the regex
-                            matcher = namePattern.matcher(split[0]);
-                            if (matcher.find()) {
-                                key = bundle;
-                                break;
-                            }
-                        }
-                    } else {
-                        // no bundle name, fall back to symbolic name and check if it matches the regex
-                        Matcher matcher = namePattern.matcher(split[0]);
-                        if (matcher.find()) {
-                            key = bundle;
-                            break;
-                        }
+        // id is just name
+        // regex support on the name
+        Pattern namePattern = Pattern.compile(id);
+        // looking for bundle using only the name
+        for (String bundle : clusterBundles.keySet()) {
+            BundleState state = clusterBundles.get(bundle);
+            if (state.getName() != null) {
+                // bundle name is populated, check if it matches the regex
+                matcher = namePattern.matcher(state.getName());
+                if (matcher.find()) {
+                    bundles.add(bundle);
+                } else {
+                    // no match on bundle name, fall back to symbolic name and check if it matches the regex
+                    matcher = namePattern.matcher(bundle);
+                    if (matcher.find()) {
+                        bundles.add(bundle);
                     }
+                }
+            } else {
+                // no bundle name, fall back to symbolic name and check if it matches the regex
+                matcher = namePattern.matcher(bundle);
+                if (matcher.find()) {
+                    bundles.add(bundle);
                 }
             }
         }
-        return key;
     }
 
 }

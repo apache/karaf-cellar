@@ -21,15 +21,13 @@ import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.table.ShellTable;
 import org.osgi.framework.BundleEvent;
 
 import java.util.Map;
 
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
 public class ListBundleCommand extends CellarCommandSupport {
-
-    protected static final String HEADER_FORMAT = " %-4s   %-11s  %s";
-    protected static final String OUTPUT_FORMAT = "[%-4s] [%-11s] %s";
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -56,7 +54,19 @@ public class ListBundleCommand extends CellarCommandSupport {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             if (clusterBundles != null && !clusterBundles.isEmpty()) {
                 System.out.println(String.format("Bundles in cluster group " + groupName));
-                System.out.println(String.format(HEADER_FORMAT, "ID", "State", "Name"));
+
+                ShellTable table = new ShellTable();
+                table.column("ID").alignRight();
+                table.column("State");
+                table.column("Version");
+                if (showLocation) {
+                    table.column("Location");
+                } else if (showSymbolicName) {
+                    table.column("Symbolic Name");
+                } else {
+                    table.column("Name");
+                }
+
                 int id = 0;
                 for (String bundle : clusterBundles.keySet()) {
                     String[] tokens = bundle.split("/");
@@ -99,16 +109,18 @@ public class ListBundleCommand extends CellarCommandSupport {
                             break;
                     }
                     if (showLocation) {
-                        System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getLocation()));
+                        table.addRow().addContent(id, status, version, state.getLocation());
                     } else {
                         if (showSymbolicName) {
-                            System.out.println(String.format(OUTPUT_FORMAT, id, status, symbolicName + " (" + version + ")"));
+                            table.addRow().addContent(id, status, version, symbolicName);
                         } else {
-                            System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getName() + " (" + version + ")"));
+                            table.addRow().addContent(id, status, version, state.getName());
                         }
                     }
                     id++;
                 }
+
+                table.print(System.out);
             } else {
                 System.err.println("No bundle found in cluster group " + groupName);
             }

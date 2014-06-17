@@ -25,9 +25,10 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.shell.commands.Command;
 import org.osgi.framework.BundleEvent;
 
+import java.util.List;
 import java.util.Map;
 
-@Command(scope = "cluster", name = "bundle-start", description = "Start a bundle in a cluster group")
+@Command(scope = "cluster", name = "bundle-start", description = "Start bundles in a cluster group")
 public class StartBundleCommand extends BundleCommandSupport {
 
     private EventProducer eventProducer;
@@ -51,45 +52,40 @@ public class StartBundleCommand extends BundleCommandSupport {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        String location;
-        String key = null;
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            key = selector(clusterBundles);
+            List<String> bundles = selector(clusterBundles);
 
-            if (key == null) {
-                System.err.println("Bundle " + key + " not found in cluster group " + groupName);
+            for (String bundle : bundles) {
+                BundleState state = clusterBundles.get(bundle);
+                if (state == null) {
+                    System.err.println("Bundle " + state + " not found in cluster group " + groupName);
+                }
+                String location = state.getLocation();
+
+                // check if the bundle is allowed
+                CellarSupport support = new CellarSupport();
+                support.setClusterManager(this.clusterManager);
+                support.setGroupManager(this.groupManager);
+                support.setConfigurationAdmin(this.configurationAdmin);
+                if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                    System.err.println("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
+                }
+
+                // update the cluster state
+                state.setStatus(BundleEvent.STARTED);
+                clusterBundles.put(bundle, state);
+
+                // broadcast the cluster event
+                String[] split = bundle.split("/");
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
+                event.setSourceGroup(group);
+                eventProducer.produce(event);
             }
-
-            BundleState state = clusterBundles.get(key);
-            if (state == null) {
-                System.err.println("Bundle " + key + " not found in cluster group " + groupName);
-                return null;
-            }
-            location = state.getLocation();
-
-            // check if the bundle is allowed
-            CellarSupport support = new CellarSupport();
-            support.setClusterManager(this.clusterManager);
-            support.setGroupManager(this.groupManager);
-            support.setConfigurationAdmin(this.configurationAdmin);
-            if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
-                System.err.println("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
-                return null;
-            }
-
-            state.setStatus(BundleEvent.STARTED);
-            clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
-
-        // broadcast the cluster event
-        String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
-        event.setSourceGroup(group);
-        eventProducer.produce(event);
 
         return null;
     }

@@ -75,6 +75,12 @@
             <artifactId>org.apache.karaf.features.core</artifactId>
         </dependency>
 
+        <!-- Shell table -->
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.table</artifactId>
+        </dependency>
+
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>

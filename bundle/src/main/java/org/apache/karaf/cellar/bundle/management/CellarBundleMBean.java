@@ -30,34 +30,41 @@ public interface CellarBundleMBean {
     void install(String group, String location) throws Exception;
 
     /**
+     * Install and eventually start a bundle in a cluster group.
+     *
+     * @param group the cluster group name.
+     * @param location the bundle location.
+     * @param start true to start the bundle, false else.
+     * @throws Exception
+     */
+    void install(String group, String location, boolean start) throws Exception;
+
+    /**
      * Uninstall a bundle from a cluster group.
      *
      * @param group the cluster group name.
-     * @param symbolicName the bundle symbolic name.
-     * @param version the bundle version.
+     * @param id the bundle id.
      * @throws Exception in case of uninstall failure.
      */
-    void uninstall(String group, String symbolicName, String version) throws Exception;
+    void uninstall(String group, String id) throws Exception;
 
     /**
      * Start a bundle in a cluster group.
      *
      * @param group the cluster group name.
-     * @param symbolicName the bundle symbolic name.
-     * @param version the bundle version.
+     * @param id the bundle id.
      * @throws Exception in case of start failure.
      */
-    void start(String group, String symbolicName, String version) throws Exception;
+    void start(String group, String id) throws Exception;
 
     /**
      * Stop a bundle in a cluster group.
      *
      * @param group the cluster group name.
-     * @param symbolicName the bundle symbolic name.
-     * @param version the bundle version.
+     * @param id the bundle id.
      * @throws Exception in case of stop failure.
      */
-    void stop(String group, String symbolicName, String version) throws Exception;
+    void stop(String group, String id) throws Exception;
 
     /**
      * Get the bundles in a cluster group.
