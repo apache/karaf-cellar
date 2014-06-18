@@ -27,6 +27,7 @@ public class ClusterFeaturesEvent extends Event {
     private String version;
     private Boolean noClean;
     private Boolean noRefresh;
+    private Boolean noStart;
     private EventType type;
 
     public ClusterFeaturesEvent(String name, String version, EventType type) {
@@ -35,15 +36,17 @@ public class ClusterFeaturesEvent extends Event {
         this.version = version;
         this.noClean = false;
         this.noRefresh = false;
+        this.noStart = false;
         this.type = type;
     }
 
-    public ClusterFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, EventType type) {
+    public ClusterFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, Boolean noStart, EventType type) {
         super(name + separator + version);
         this.name = name;
         this.version = version;
         this.noClean = noClean;
         this.noRefresh = noRefresh;
+        this.noStart = noStart;
         this.type = type;
     }
 
@@ -61,6 +64,10 @@ public class ClusterFeaturesEvent extends Event {
 
     public Boolean getNoRefresh() {
         return noRefresh;
+    }
+
+    public Boolean getNoStart() {
+        return noStart;
     }
 
     public EventType getType() {

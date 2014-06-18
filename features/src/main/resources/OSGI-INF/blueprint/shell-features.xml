@@ -53,7 +53,7 @@
             </completers>
         </command>
         <command name="cluster/feature-url-list">
-            <action class="org.apache.karaf.cellar.features.shell.UrlListCommand">
+            <action class="org.apache.karaf.cellar.features.shell.RepoListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
@@ -62,7 +62,7 @@
             </completers>
         </command>
         <command name="cluster/feature-url-add">
-            <action class="org.apache.karaf.cellar.features.shell.UrlAddCommand">
+            <action class="org.apache.karaf.cellar.features.shell.RepoAddCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
                 <property name="eventProducer" ref="eventProducer"/>
@@ -73,7 +73,7 @@
             </completers>
         </command>
         <command name="cluster/feature-url-remove">
-            <action class="org.apache.karaf.cellar.features.shell.UrlRemoveCommand">
+            <action class="org.apache.karaf.cellar.features.shell.RepoRemoveCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
                 <property name="eventProducer" ref="eventProducer"/>

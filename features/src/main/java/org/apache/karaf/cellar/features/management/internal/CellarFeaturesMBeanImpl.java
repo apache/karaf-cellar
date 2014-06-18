@@ -91,7 +91,12 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void install(String groupName, String name, String version, boolean noClean, boolean noRefresh) throws Exception {
+    public void installFeature(String groupName, String name, String version, boolean noClean, boolean noRefresh) throws Exception {
+        this.installFeature(groupName, name, version, noClean, noRefresh, false);
+    }
+
+    @Override
+    public void installFeature(String groupName, String name, String version, boolean noClean, boolean noRefresh, boolean noStart) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -164,28 +169,38 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
     @Override
-    public void install(String groupName, String name, String version) throws Exception {
-        this.install(groupName, name, version, false, false);
+    public void installFeature(String groupName, String name, String version) throws Exception {
+        this.installFeature(groupName, name, version, false, false);
     }
 
     @Override
-    public void install(String groupName, String name) throws Exception {
-        this.install(groupName, name, null);
+    public void installFeature(String groupName, String name) throws Exception {
+        this.installFeature(groupName, name, null);
     }
 
     @Override
-    public void install(String groupName, String name, boolean noClean, boolean noRefresh) throws Exception {
-        this.install(groupName, name, null, noClean, noRefresh);
+    public void installFeature(String groupName, String name, boolean noClean, boolean noRefresh) throws Exception {
+        this.installFeature(groupName, name, null, noClean, noRefresh, false);
     }
 
     @Override
-    public void uninstall(String groupName, String name, String version) throws Exception {
+    public void installFeature(String groupName, String name, boolean noClean, boolean noRefresh, boolean noStart) throws Exception {
+        this.installFeature(groupName, name, null, noClean, noRefresh, noStart);
+    }
+
+    @Override
+    public void uninstallFeature(String groupName, String name, String version) throws Exception {
+        this.uninstallFeature(groupName, name, version, false);
+    }
+
+    @Override
+    public void uninstallFeature(String groupName, String name, String version, boolean noRefresh) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -243,14 +258,19 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, FeatureEvent.EventType.FeatureUninstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, false, noRefresh, false, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
     @Override
-    public void uninstall(String groupName, String name) throws Exception {
-        this.uninstall(groupName, name, null);
+    public void uninstallFeature(String groupName, String name) throws Exception {
+        this.uninstallFeature(groupName, name, null, false);
+    }
+
+    @Override
+    public void uninstallFeature(String groupName, String name, boolean noRefresh) throws Exception {
+        this.uninstallFeature(groupName, name, null, noRefresh);
     }
 
     @Override
@@ -285,7 +305,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public List<String> getUrls(String groupName) throws Exception {
+    public List<String> getRepositories(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -304,12 +324,12 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void addUrl(String groupName, String url) throws Exception {
-        this.addUrl(groupName, url, false);
+    public void addRepository(String groupName, String url) throws Exception {
+        this.addRepository(groupName, url, false);
     }
 
     @Override
-    public void addUrl(String groupName, String url, boolean install) throws Exception {
+    public void addRepository(String groupName, String url, boolean install) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -392,12 +412,12 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void removeUrl(String groupName, String url) throws Exception {
-        this.removeUrl(groupName, url, false);
+    public void removeRepository(String groupName, String url) throws Exception {
+        this.removeRepository(groupName, url, false);
     }
 
     @Override
-    public void removeUrl(String groupName, String url, boolean uninstall) throws Exception {
+    public void removeRepository(String groupName, String url, boolean uninstall) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {

@@ -31,16 +31,16 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-@Command(scope = "cluster", name = "feature-url-add", description = "Add a list of features repository URLs in a cluster group")
-public class UrlAddCommand extends FeatureCommandSupport {
+@Command(scope = "cluster", name = "feature-repo-add", description = "Add a features repository to a cluster group")
+public class RepoAddCommand extends FeatureCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "urls", description = "One or more features repository URLs separated by whitespaces", required = true, multiValued = true)
+    @Argument(index = 1, name = "urls", description = "URLs of the feature repositories separated by whitespaces", required = true, multiValued = true)
     List<String> urls;
 
-    @Option(name = "-i", aliases = { "--install-all" }, description = "Install all features contained in the repository URLs", required = false, multiValued = false)
+    @Option(name = "-i", aliases = { "--install" }, description = "Install all features contained in the features repository", required = false, multiValued = false)
     boolean install;
 
     private EventProducer eventProducer;

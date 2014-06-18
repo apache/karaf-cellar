@@ -24,6 +24,8 @@ import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 
+import java.util.List;
+
 @Command(scope = "cluster", name = "feature-install", description = "Install a feature in a cluster group")
 public class InstallFeatureCommand extends FeatureCommandSupport {
 
@@ -33,14 +35,14 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
     @Option(name = "-r", aliases = { "--no-auto-refresh" }, description = "Do not automatically refresh bundles", required = false, multiValued = false)
     boolean noRefresh;
 
+    @Option(name = "-s", aliases = { "--no-auto-start" }, description = "Do not automatically start bundles", required = false, multiValued = false)
+    boolean noStart;
+
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "feature", description = "The feature name", required = true, multiValued = false)
-    String feature;
-
-    @Argument(index = 2, name = "version", description = "The feature version", required = false, multiValued = false)
-    String version;
+    @Argument(index = 1, name = "features", description = "The name and version of the features to install. A feature id looks like name/version. The version is optional.", required = true, multiValued = true)
+    List<String> features;
 
     private EventProducer eventProducer;
 
@@ -59,27 +61,38 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
-        // check if the feature exists in the map
-        if (!featureExists(groupName, feature, version)) {
-            if (version != null)
-                System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
-            else System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
-            return null;
+        for (String feature : features) {
+            String[] split = feature.split("/");
+            String name = split[0];
+            String version = null;
+            if (split.length == 2) {
+                version = split[1];
+            }
+
+            // check if the feature exists in the map
+            if (!featureExists(groupName, name, version)) {
+                if (version != null) {
+                    System.err.println("Feature " + name + "/" + version + " doesn't exist in the cluster group " + groupName);
+                } else {
+                    System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
+                }
+                continue;
+            }
+
+            // check if the feature is allowed (outbound)
+            if (!isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+                System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
+                continue;
+            }
+
+            // update the cluster state
+            updateFeatureStatus(groupName, name, version, true);
+
+            // broadcast the cluster event
+            ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
         }
-
-        // check if the outbound event is allowed
-        if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
-            System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
-            return null;
-        }
-
-        // update the features in the cluster group
-        updateFeatureStatus(groupName, feature, version, true);
-
-        // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(feature, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
-        event.setSourceGroup(group);
-        eventProducer.produce(event);
 
         return null;
     }

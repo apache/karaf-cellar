@@ -18,14 +18,19 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "feature-url-list", description = "List the features repository URLs in a cluster group")
-public class UrlListCommand extends FeatureCommandSupport {
+@Command(scope = "cluster", name = "feature-repo-list", description = "List the features repositories in a cluster group")
+public class RepoListCommand extends FeatureCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
+
+    @Option(name = "--no-format", description = "Disable table rendered output", required = false, multiValued = false)
+    boolean noFormat;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -39,9 +44,12 @@ public class UrlListCommand extends FeatureCommandSupport {
         // get the features repositories in the cluster group
         List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
 
+        ShellTable table = new ShellTable();
+        table.column("URL");
         for (String repository : clusterRepositories) {
-            System.out.println(repository);
+            table.addRow().addContent(repository);
         }
+        table.print(System.out, !noFormat);
 
         return null;
     }

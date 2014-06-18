@@ -81,12 +81,16 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
                     boolean noClean = event.getNoClean();
                     boolean noRefresh = event.getNoRefresh();
+                    boolean noStart = event.getNoStart();
                     EnumSet<FeaturesService.Option> options = EnumSet.noneOf(FeaturesService.Option.class);
                     if (noClean) {
                         options.add(FeaturesService.Option.NoCleanIfFailure);
                     }
                     if (noRefresh) {
                         options.add(FeaturesService.Option.NoAutoRefreshBundles);
+                    }
+                    if (noStart) {
+                        options.add(FeaturesService.Option.NoAutoStartBundles);
                     }
                     if (version != null) {
                         LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
@@ -96,12 +100,17 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                         featuresService.installFeature(name, options);
                     }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
+                    boolean noRefresh = event.getNoRefresh();
+                    EnumSet<FeaturesService.Option> options = EnumSet.noneOf(FeaturesService.Option.class);
+                    if (noRefresh) {
+                        options.add(FeaturesService.Option.NoAutoRefreshBundles);
+                    }
                     if (version != null) {
                         LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
-                        featuresService.uninstallFeature(name, version);
+                        featuresService.uninstallFeature(name, version, options);
                     } else {
                         LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
-                        featuresService.uninstallFeature(name);
+                        featuresService.uninstallFeature(name, options);
                     }
                 }
             } catch (Exception e) {

@@ -31,16 +31,16 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-@Command(scope = "cluster", name = "feature-url-remove", description = "Remove features repository URLs from a cluster group")
-public class UrlRemoveCommand extends FeatureCommandSupport {
+@Command(scope = "cluster", name = "feature-repo-remove", description = "Remove features repository URLs from a cluster group")
+public class RepoRemoveCommand extends FeatureCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "urls", description = "One or more features repository URLs separated by whitespaces", required = true, multiValued = true)
+    @Argument(index = 1, name = "urls", description = "The features repository URLs separated by whitespaces", required = true, multiValued = true)
     List<String> urls;
 
-    @Option(name = "-u", aliases = { "--uninstall-all" }, description = "Uninstall all features contained in the repository URLs", required = false, multiValued = false)
+    @Option(name = "-u", aliases = { "--uninstall-all" }, description = "Uninstall all features contained in the features repositories", required = false, multiValued = false)
     boolean uninstall;
 
     private EventProducer eventProducer;

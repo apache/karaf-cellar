@@ -20,20 +20,24 @@ import org.apache.karaf.cellar.features.FeatureInfo;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.table.ShellTable;
 
-import java.util.Map;
+import java.util.*;
 
 @Command(scope = "cluster", name = "feature-list", description = "List the features in a cluster group")
 public class ListGroupFeatures extends FeatureCommandSupport {
-
-    protected static final String HEADER_FORMAT = " %-11s   %-15s   %s";
-    protected static final String OUTPUT_FORMAT = "[%-11s] [%-15s] %s";
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
     @Option(name = "-i", aliases = { "--installed" }, description = "Display only installed features", required = false, multiValued = false)
     boolean installed;
+
+    @Option(name = "-o", aliases = { "--ordered" }, description = "Display a list using alphabetical order", required = false, multiValued = false)
+    boolean ordered;
+
+    @Option(name = "--no-format", description = "Disable table rendered output", required = false, multiValued = false)
+    boolean noFormat;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -42,35 +46,51 @@ public class ListGroupFeatures extends FeatureCommandSupport {
             System.err.println("Cluster group " + groupName + " doesn't exist");
             return null;
         }
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+
             if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
-                System.out.println(String.format("Features in cluster group " + groupName));
-                System.out.println(String.format(HEADER_FORMAT, "Status", "Version", "Name"));
-                for (FeatureInfo info : clusterFeatures.keySet()) {
+
+                ShellTable table = new ShellTable();
+                table.column("Name");
+                table.column("Version");
+                table.column("Installed");
+
+                List<FeatureInfo> featureInfos = new ArrayList<FeatureInfo>(clusterFeatures.keySet());
+                if (ordered) {
+                    Collections.sort(featureInfos, new FeatureComparator());
+                }
+                for (FeatureInfo info : featureInfos) {
+
                     String name = info.getName();
                     String version = info.getVersion();
-                    String statusString = "";
                     boolean status = clusterFeatures.get(info);
-                    if (status) {
-                        statusString = "installed";
-                    } else {
-                        statusString = "uninstalled";
-                    }
                     if (version == null)
                         version = "";
                     if (!installed || (installed && status)) {
-                        System.out.println(String.format(OUTPUT_FORMAT, statusString, version, name));
+                        table.addRow().addContent(
+                                name,
+                                version,
+                                status ? "x" : "");
                     }
                 }
+
+                table.print(System.out, !noFormat);
             } else System.err.println("No features in cluster group " + groupName);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
         return null;
+    }
+
+    class FeatureComparator implements Comparator<FeatureInfo> {
+        public int compare(FeatureInfo f1, FeatureInfo f2) {
+            return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
+        }
     }
 
 }
