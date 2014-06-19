@@ -35,6 +35,9 @@ public class ObrDeployCommand extends ObrCommandSupport {
     @Option(name = "-s", aliases = { "--start" }, description = "Start the deployed bundles.", required = false, multiValued = false)
     boolean start = false;
 
+    @Option(name = "-d", aliases = { "--deployOptional" }, description = "Deploy optional bundles", required = false, multiValued = false)
+    boolean deployOptional = false;
+
     private EventProducer eventProducer;
 
     @Override
@@ -59,9 +62,7 @@ public class ObrDeployCommand extends ObrCommandSupport {
         }
 
         // broadcast a cluster event
-        int type = 0;
-        if (start) type = Constants.BUNDLE_START_EVENT_TYPE;
-        ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, type);
+        ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, start, deployOptional);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 

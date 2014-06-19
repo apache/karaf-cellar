@@ -27,6 +27,4 @@ public class Constants {
     public static final int URL_ADD_EVENT_TYPE = 1;
     public static final int URL_REMOVE_EVENT_TYPE = 0;
 
-    public static final int BUNDLE_START_EVENT_TYPE = 1;
-
 }

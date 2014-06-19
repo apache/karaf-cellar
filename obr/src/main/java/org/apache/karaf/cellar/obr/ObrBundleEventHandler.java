@@ -132,22 +132,23 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
         }
 
         String bundleId = event.getBundleId();
+        boolean deployOptional = event.getDeployOptional();
+        boolean start = event.getStart();
         try {
             if (isAllowed(event.getSourceGroup(), Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.INBOUND)) {
                 Resolver resolver = obrService.resolver();
                 String[] target = getTarget(bundleId);
                 Resource resource = selectNewestVersion(searchRepository(target[0], target[1]));
-                if (resource != null) {
-                    resolver.add(resource);
-                } else {
+                if (resource == null) {
                     LOGGER.warn("CELLAR OBR: bundle {} unknown", target[0]);
+                    return;
                 }
+                resolver.add(resource);
+
                 if ((resolver.getAddedResources() != null) &&
                         (resolver.getAddedResources().length > 0)) {
-                    if (resolver.resolve()) {
-                        if (event.getType() == Constants.BUNDLE_START_EVENT_TYPE)
-                            resolver.deploy(Resolver.START);
-                        else resolver.deploy(0);
+                    if (resolver.resolve(deployOptional ? 0 : Resolver.NO_OPTIONAL_RESOURCES)) {
+                        resolver.deploy(start ? Resolver.START : 0);
                     }
                 } else {
                     Reason[] reqs = resolver.getUnsatisfiedRequirements();

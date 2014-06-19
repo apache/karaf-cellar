@@ -20,6 +20,8 @@ import org.apache.karaf.cellar.obr.Constants;
 import org.apache.karaf.cellar.obr.ObrBundleInfo;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.Set;
 
@@ -28,6 +30,9 @@ public class ObrListCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
+
+    @Option(name = "--no-format", description = "Disable table rendered output", required = false, multiValued = false)
+    boolean noFormat;
 
     @Override
     public Object doExecute() {
@@ -42,20 +47,17 @@ public class ObrListCommand extends CellarCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
-            int maxPName = 4;
-            int maxSName = 13;
-            int maxVersion = 7;
+
+            ShellTable table = new ShellTable();
+            table.column("Name");
+            table.column("Symbolic Name");
+            table.column("Version");
+
             for (ObrBundleInfo bundle : clusterBundles) {
-                maxPName = Math.max(maxPName, emptyIfNull(bundle.getPresentationName()).length());
-                maxSName = Math.max(maxSName, emptyIfNull(bundle.getSymbolicName()).length());
-                maxVersion = Math.max(maxVersion, emptyIfNull(bundle.getVersion()).length());
+                table.addRow().addContent(emptyIfNull(bundle.getPresentationName()), emptyIfNull(bundle.getSymbolicName()), emptyIfNull(bundle.getVersion()));
             }
-            String formatHeader = "  %-" + maxPName + "s  %-" + maxSName + "s   %-" + maxVersion + "s";
-            String formatLine = "[%-" + maxPName + "s] [%-" + maxSName + "s] [%-" + maxVersion + "s]";
-            System.out.println(String.format(formatHeader, "NAME", "SYMBOLIC NAME", "VERSION"));
-            for (ObrBundleInfo bundle : clusterBundles) {
-                System.out.println(String.format(formatLine, emptyIfNull(bundle.getPresentationName()), emptyIfNull(bundle.getSymbolicName()), emptyIfNull(bundle.getVersion())));
-            }
+
+            table.print(System.out, !noFormat);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }

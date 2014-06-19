@@ -21,20 +21,26 @@ import org.apache.karaf.cellar.core.event.Event;
 public class ClusterObrBundleEvent extends Event {
 
     private String bundleId;
-    private int type;
+    private Boolean start;
+    private Boolean deployOptional;
 
-    public ClusterObrBundleEvent(String bundleId, int type) {
+    public ClusterObrBundleEvent(String bundleId, boolean start, boolean deployOptional) {
         super(bundleId);
         this.bundleId = bundleId;
-        this.type = type;
+        this.start = start;
+        this.deployOptional = deployOptional;
     }
 
     public String getBundleId() {
         return this.bundleId;
     }
 
-    public int getType() {
-        return this.type;
+    public boolean getStart() {
+        return this.start;
+    }
+
+    public boolean getDeployOptional() {
+        return this.deployOptional;
     }
 
 }

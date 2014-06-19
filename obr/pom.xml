@@ -62,14 +62,17 @@
     </properties>
 
     <dependencies>
-
-        <!-- Cellar Core -->
+        <!-- Core dependencies -->
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.table</artifactId>
+        </dependency>
 
-        <!-- OBR -->
+        <!-- OBR dependency -->
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.bundlerepository</artifactId>

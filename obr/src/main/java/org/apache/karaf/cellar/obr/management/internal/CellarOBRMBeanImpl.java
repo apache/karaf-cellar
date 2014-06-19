@@ -50,7 +50,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
     }
 
     @Override
-    public List<String> listUrls(String groupName) throws Exception {
+    public List<String> getUrls(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -66,7 +66,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
     }
 
     @Override
-    public TabularData listBundles(String groupName) throws Exception {
+    public TabularData getBundles(String groupName) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -186,7 +186,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
     }
 
     @Override
-    public void deploy(String groupName, String bundleId) throws Exception {
+    public void deployBundle(String groupName, String bundleId, boolean start, boolean deployOptional) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -208,11 +208,14 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
         }
 
         // broadcast a cluster event
-        int type = 0;
-        ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, type);
-        event.setForce(true);
+        ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, start, deployOptional);
         event.setSourceGroup(group);
         eventProducer.produce(event);
+    }
+
+    @Override
+    public void deployBundle(String groupName, String bundleId) throws Exception {
+        this.deployBundle(groupName, bundleId, false, false);
     }
 
     public ClusterManager getClusterManager() {
