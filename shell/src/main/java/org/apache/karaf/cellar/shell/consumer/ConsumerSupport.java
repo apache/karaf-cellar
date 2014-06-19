@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.control.ConsumerSwitchCommand;
 import org.apache.karaf.cellar.core.control.ConsumerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,9 +29,6 @@ import java.util.Set;
  * Generic cluster event consumer shell command support.
  */
 public abstract class ConsumerSupport extends ClusterCommandSupport {
-
-    protected static final String HEADER_FORMAT = "   %-30s   %-5s";
-    protected static final String OUTPUT_FORMAT = "%1s [%-30s] [%-5s]";
 
     protected Object doExecute(List<String> nodeIds, SwitchStatus status) throws Exception {
 
@@ -68,19 +66,23 @@ public abstract class ConsumerSupport extends ClusterCommandSupport {
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
-            System.out.println(String.format(HEADER_FORMAT, "Node", "Status"));
+            ShellTable table = new ShellTable();
+            table.column(" ");
+            table.column("Node");
+            table.column("Status");
             for (Node node : results.keySet()) {
-                String local = " ";
+                String local = "";
                 if (node.equals(clusterManager.getNode())) {
-                    local = "*";
+                    local = "x";
                 }
                 ConsumerSwitchResult result = results.get(node);
                 String statusString = "OFF";
                 if (result.getStatus()) {
                     statusString = "ON";
                 }
-                System.out.println(String.format(OUTPUT_FORMAT, local, node.getId(), statusString));
+                table.addRow().addContent(local, node.getId(), statusString);
             }
+            table.print(System.out);
         }
         return null;
     }

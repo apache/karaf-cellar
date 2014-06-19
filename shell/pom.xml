@@ -71,6 +71,10 @@
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.utils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.table</artifactId>
+        </dependency>
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>

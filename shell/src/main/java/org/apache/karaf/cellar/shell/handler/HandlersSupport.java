@@ -17,6 +17,7 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ManageHandlersCommand;
 import org.apache.karaf.cellar.core.control.ManageHandlersResult;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -27,9 +28,6 @@ import java.util.Set;
  * Generic cluster event handler shell command support.
  */
 public abstract class HandlersSupport extends ClusterCommandSupport {
-
-    protected static final String HEADER_FORMAT = "   %-30s   %-5s  %s";
-    protected static final String OUTPUT_FORMAT = "%1s [%-30s] [%-5s] %s";
 
     protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
 
@@ -68,12 +66,16 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
         if (results == null || results.isEmpty()) {
             System.out.println("No result received within given timeout");
         } else {
-            System.out.println(String.format(HEADER_FORMAT, "Node", "Status", "Event Handler"));
+            ShellTable table = new ShellTable();
+            table.column(" ");
+            table.column("Node");
+            table.column("Status");
+            table.column("Event Handler");
             for (Map.Entry<Node,ManageHandlersResult> handlersResultEntry : results.entrySet()) {
                 Node node = handlersResultEntry.getKey();
-                String local = " ";
+                String local = "";
                 if (node.equals(clusterManager.getNode())) {
-                    local = "*";
+                    local = "x";
                 }
                 ManageHandlersResult result = handlersResultEntry.getValue();
                 if (result != null && result.getHandlers() != null) {
@@ -81,10 +83,11 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
                     for (Map.Entry<String,String>  handlerEntry: result.getHandlers().entrySet()) {
                         String handler =  handlerEntry.getKey();
                         String s = handlerEntry.getValue();
-                        System.out.println(String.format(OUTPUT_FORMAT, local, node.getId(), s, handler));
+                        table.addRow().addContent(local, node.getId(), s, handler);
                     }
                 }
             }
+            table.print(System.out);
         }
         return null;
     }

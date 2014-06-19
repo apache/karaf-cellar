@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,9 +30,6 @@ import java.util.Set;
  * Generic cluster group shell command support.
  */
 public abstract class GroupSupport extends ClusterCommandSupport {
-
-    protected static final String HEADER_FORMAT = "   %-20s   %s";
-    protected static final String OUTPUT_FORMAT = "%1s [%-20s] [%s]";
 
     protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodes) throws Exception {
         return doExecute(action, group, source, nodes, true);
@@ -86,30 +84,34 @@ public abstract class GroupSupport extends ClusterCommandSupport {
             if (results == null || results.isEmpty()) {
                 System.out.println("No result received within given timeout");
             } else {
-                System.out.println(String.format(HEADER_FORMAT, "Group", "Members"));
+                ShellTable table = new ShellTable();
+                table.column(" ");
+                table.column("Group");
+                table.column("Members");
                 for (Node node : results.keySet()) {
                     ManageGroupResult result = results.get(node);
                     if (result != null && result.getGroups() != null) {
                         for (Group g : result.getGroups()) {
                             StringBuffer buffer = new StringBuffer();
                             if (g.getNodes() != null && !g.getNodes().isEmpty()) {
-                                String mark = " ";
+                                String local = "";
                                 for (Node member : g.getNodes()) {
                                     // display only up and running nodes in the cluster
                                     if (clusterManager.findNodeById(member.getId()) != null) {
                                         buffer.append(member.getId());
                                         if (member.equals(clusterManager.getNode())) {
-                                            mark = "*";
-                                            buffer.append(mark);
+                                            local = "x";
+                                            buffer.append("(x)");
                                         }
                                         buffer.append(" ");
                                     }
                                 }
-                                System.out.println(String.format(OUTPUT_FORMAT, mark, g.getName(), buffer.toString()));
-                            } else System.out.println(String.format(OUTPUT_FORMAT, "", g.getName(), ""));
+                                table.addRow().addContent(local, g.getName(), buffer.toString());
+                            } else table.addRow().addContent("", g.getName(), "");
                         }
                     }
                 }
+                table.print(System.out);
             }
         }
         return null;

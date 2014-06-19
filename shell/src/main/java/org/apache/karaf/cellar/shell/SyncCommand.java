@@ -38,7 +38,7 @@ public class SyncCommand extends ClusterCommandSupport {
                             System.out.print("    sync " + synchronizer.getClass() + " ...");
                             synchronizer.pull(group);
                             synchronizer.push(group);
-                            System.out.println("OK");
+                            System.out.println("done");
                         }
                         bundleContext.ungetService(ref);
                     }

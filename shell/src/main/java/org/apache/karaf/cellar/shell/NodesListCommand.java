@@ -15,26 +15,30 @@ package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.Set;
 
 @Command(scope = "cluster", name = "node-list", description = "List the nodes in the cluster")
 public class NodesListCommand extends ClusterCommandSupport {
 
-    private static final String HEADER_FORMAT = "   %-30s   %-20s   %-5s";
-    private static final String OUTPUT_FORMAT = "%1s [%-30s] [%-20s] [%5s]";
 
     @Override
     protected Object doExecute() throws Exception {
         Set<Node> nodes = clusterManager.listNodes();
         if (nodes != null && !nodes.isEmpty()) {
-            System.out.println(String.format(HEADER_FORMAT, "ID", "Host Name", "Port"));
+            ShellTable table = new ShellTable();
+            table.column(" ");
+            table.column("Id");
+            table.column("Host Name");
+            table.column("Port");
             for (Node node : nodes) {
-                String mark = " ";
+                String local = "";
                 if (node.equals(clusterManager.getNode()))
-                    mark = "*";
-                System.out.println(String.format(OUTPUT_FORMAT, mark, node.getId(), node.getHost(), node.getPort()));
+                    local = "x";
+                table.addRow().addContent(local, node.getId(), node.getHost(), node.getPort());
             }
+            table.print(System.out);
         } else {
             System.err.println("No node found in the cluster");
         }
