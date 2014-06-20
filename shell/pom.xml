@@ -40,10 +40,10 @@
             org.apache.karaf.cellar*;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[3,4)",
-            org.apache.karaf.shell.console.commands;version="[3,4)",
-            org.apache.karaf.shell.console.completer;version="[3,4)",
-            org.apache.karaf.shell.commands;version="[3,4)",
+            org.apache.karaf.shell.console;version="[3,5)",
+            org.apache.karaf.shell.console.commands;version="[3,5)",
+            org.apache.karaf.shell.console.completer;version="[3,5)",
+            org.apache.karaf.shell.commands;version="[3,5)",
             org.osgi*
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
@@ -53,8 +53,12 @@
     </properties>
 
     <dependencies>
-
         <!-- Internal Dependencies -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
@@ -75,10 +79,12 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.table</artifactId>
         </dependency>
+
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

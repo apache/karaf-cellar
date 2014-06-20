@@ -34,19 +34,18 @@
     <name>Apache Karaf :: Cellar :: OBR</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <osgi.import>
             org.apache.karaf.cellar.core*;version=${project.version},
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[3,4)",
-            org.apache.karaf.shell.console.commands;version="[3,4)",
-            org.apache.karaf.shell.console.completer;version="[3,4)",
-            org.apache.karaf.shell.commands;version="[3,4)",
-            org.apache.karaf.management;version="[3,4)",
+            org.apache.karaf.shell.console;version="[3,5)",
+            org.apache.karaf.shell.console.commands;version="[3,5)",
+            org.apache.karaf.shell.console.completer;version="[3,5)",
+            org.apache.karaf.shell.commands;version="[3,5)",
+            org.apache.karaf.management;version="[3,5)",
             javax.management*,
             org.osgi*,
-            org.slf4j;resolution:=optional
+            org.slf4j;version="[1.6,2)";resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>
             org.apache.felix.bundlerepository,
@@ -70,6 +69,16 @@
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.table</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- OBR dependency -->

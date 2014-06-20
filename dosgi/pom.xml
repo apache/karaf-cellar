@@ -39,12 +39,12 @@
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[3,4)",
-            org.apache.karaf.shell.console.commands;version="[3,4)",
-            org.apache.karaf.shell.console.completer;version="[3,4)",
-            org.apache.karaf.shell.commands;version="[3,4)",
+            org.apache.karaf.shell.console;version="[3,5)",
+            org.apache.karaf.shell.console.commands;version="[3,5)",
+            org.apache.karaf.shell.console.completer;version="[3,5)",
+            org.apache.karaf.shell.commands;version="[3,5)",
             org.osgi*,
-            org.slf4j;resolution:=optional
+            org.slf4j;version="[1.6,2)";resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
         <osgi.export>
@@ -62,17 +62,29 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.table</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Logging Dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- JUnit dependencies -->
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

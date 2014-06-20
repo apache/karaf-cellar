@@ -102,9 +102,4 @@ public interface ClusterManager {
      */
     public void stop();
 
-    /**
-     * Restart the local node.
-     */
-    public void restart();
-
 }

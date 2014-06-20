@@ -40,7 +40,7 @@
         <felix.configadmin.version>1.6.0</felix.configadmin.version>
         <felix.utils.version>1.6.0</felix.utils.version>
         <felix.webconsole.version>4.2.0</felix.webconsole.version>
-        <hazelcast.version>2.6</hazelcast.version>
+        <hazelcast.version>3.2.3</hazelcast.version>
         <jclouds.version>1.4.0</jclouds.version>
         <joda-time.version>2.1</joda-time.version>
         <junit.version>4.11</junit.version>

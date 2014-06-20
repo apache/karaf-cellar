@@ -40,7 +40,7 @@
             org.joda.time.chrono;version="${joda-time.version}",
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.osgi*,
-            org.slf4j;resolution:=optional
+            org.slf4j;version="[1.6,2)";resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,org.jclouds.*,*</osgi.dynamic.import>
         <osgi.export>
@@ -72,28 +72,33 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Misc Dependencies -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+            <scope>provided</scope>
         </dependency>
 
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Testing -->
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

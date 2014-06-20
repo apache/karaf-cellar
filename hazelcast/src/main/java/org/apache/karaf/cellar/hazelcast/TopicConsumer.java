@@ -41,6 +41,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
 
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
+    private String registrationId;
     private HazelcastInstance instance;
     private ITopic topic;
     private Dispatcher dispatcher;
@@ -76,10 +77,10 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     public void start() {
         isConsuming = true;
         if (topic != null) {
-            topic.addMessageListener(this);
+            registrationId = topic.addMessageListener(this);
         } else {
             topic = instance.getTopic(Constants.TOPIC);
-            topic.addMessageListener(this);
+            registrationId = topic.addMessageListener(this);
         }
 
     }
@@ -88,7 +89,7 @@ public class TopicConsumer<E extends Event> implements EventConsumer<E>, Message
     public void stop() {
         isConsuming = false;
         if (topic != null) {
-            topic.removeMessageListener(this);
+            topic.removeMessageListener(registrationId);
         }
     }
 

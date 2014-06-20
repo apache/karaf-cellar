@@ -13,10 +13,7 @@
  */
 package org.apache.karaf.cellar.hazelcast;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.Member;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
+import com.hazelcast.core.*;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Synchronizer;
@@ -67,6 +64,11 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
 
     @Override
     public void memberRemoved(MembershipEvent membershipEvent) {
+        // nothing to do
+    }
+
+    @Override
+    public void memberAttributeChanged(MemberAttributeEvent event) {
         // nothing to do
     }
 

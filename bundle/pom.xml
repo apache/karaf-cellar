@@ -39,13 +39,13 @@
             org.apache.karaf.cellar.core*;version="${project.version}",
             org.apache.felix.service.command,
             org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[3,4)",
-            org.apache.karaf.shell.console.commands;version="[3,4)",
-            org.apache.karaf.shell.console.completer;version="[3,4)",
-            org.apache.karaf.shell.commands;version="[3,4)",
-            org.apache.karaf.features;version="[3,4)",
+            org.apache.karaf.shell.console;version="[3,5)",
+            org.apache.karaf.shell.console.commands;version="[3,5)",
+            org.apache.karaf.shell.console.completer;version="[3,5)",
+            org.apache.karaf.shell.commands;version="[3,5)",
+            org.apache.karaf.features;version="[3,5)",
             org.osgi*,
-            org.slf4j;resolution:=optional
+            org.slf4j;version="[1.6,2)";resolution:=optional
         </osgi.import>
         <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
         <osgi.export>
@@ -61,18 +61,24 @@
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+            <scope>provided</scope>
         </dependency>
-
-        <!-- Configuration Admin -->
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.configadmin</artifactId>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <!-- Karaf features -->
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
             <artifactId>org.apache.karaf.features.core</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Shell table -->
@@ -85,6 +91,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

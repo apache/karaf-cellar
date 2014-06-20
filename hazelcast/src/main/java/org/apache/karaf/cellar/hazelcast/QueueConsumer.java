@@ -49,6 +49,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
 
     private Boolean isConsuming = Boolean.TRUE;
 
+    private String registrationId;
     private HazelcastInstance instance;
     private IQueue queue;
     private Dispatcher dispatcher;
@@ -66,10 +67,10 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
 
     public void init() {
         if (queue != null) {
-            queue.addItemListener(this, true);
+            registrationId = queue.addItemListener(this, true);
         } else {
             queue = instance.getQueue(Constants.QUEUE);
-            queue.addItemListener(this, true);
+            registrationId = queue.addItemListener(this, true);
         }
         executorService.execute(this);
     }
@@ -77,7 +78,7 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     public void destroy() {
         isConsuming = false;
         if (queue != null) {
-            queue.removeItemListener(this);
+            queue.removeItemListener(registrationId);
         }
         executorService.shutdown();
     }
