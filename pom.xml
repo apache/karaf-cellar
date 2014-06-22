@@ -48,8 +48,6 @@
         <karaf.version>3.0.1</karaf.version>
         <osgi.version>4.3.1</osgi.version>
         <osgi.compendium.version>4.3.1</osgi.compendium.version>
-        <pax.exam.version>2.6.0</pax.exam.version>
-        <pax.exam.karaf.version>2.3.1</pax.exam.karaf.version>
         <servlet.api.version>2.5</servlet.api.version>
         <slf4j.version>1.7.7</slf4j.version>
     </properties>
@@ -315,19 +313,6 @@
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
                 <version>${easymock.version}</version>
-            </dependency>
-
-            <!-- Pax Exam -->
-            <dependency>
-                <groupId>org.ops4j.pax.exam</groupId>
-                <artifactId>pax-exam-junit4</artifactId>
-                <version>${pax.exam.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf.tooling.exam</groupId>
-                <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
-                <version>${pax.exam.karaf.version}</version>
-                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
