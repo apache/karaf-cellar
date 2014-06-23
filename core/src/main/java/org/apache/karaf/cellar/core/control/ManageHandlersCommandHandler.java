@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.core.control;
 
+import org.apache.aries.proxy.ProxyManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.command.CommandHandler;
 import org.apache.karaf.cellar.core.event.EventHandler;
@@ -37,6 +38,8 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
 
     private final Switch commandSwitch = new BasicSwitch(SWITCH_ID);
 
+    private ProxyManager proxyManager;
+
     /**
      * Return a map containing all managed {@code EventHandler}s and their status.
      *
@@ -54,6 +57,11 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
             if (references != null && references.length > 0) {
                 for (ServiceReference ref : references) {
                     EventHandler handler = (EventHandler) bundleContext.getService(ref);
+
+                    // unproxy if required (due to the Service Guard of Karaf 3.0.x)
+                    if (proxyManager.isProxy(handler)) {
+                        handler = (EventHandler) proxyManager.unwrap(handler).call();
+                    }
 
                     if (command.getHandlerName() == null) {
                         result.getHandlers().put(handler.getClass().getName(), handler.getSwitch().getStatus().name());
@@ -76,8 +84,8 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
                     }
                 }
             }
-        } catch (InvalidSyntaxException e) {
-            LOGGER.error("Syntax error looking up service {} using filter {}", EventHandler.class.getName(), EventHandler.MANAGED_FILTER);
+        } catch (Exception e) {
+            LOGGER.error("Can't get the current handlers status", e);
         } finally {
             if (references != null) {
                 for (ServiceReference ref : references) {
@@ -117,6 +125,10 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
     @Override
     public Switch getSwitch() {
         return commandSwitch;
+    }
+
+    public void setProxyManager(ProxyManager proxyManager) {
+        this.proxyManager = proxyManager;
     }
 
 }

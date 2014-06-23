@@ -51,6 +51,12 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.console</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.aries.proxy</groupId>
+            <artifactId>org.apache.aries.proxy.api</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Logging Dependencies -->
         <dependency>
