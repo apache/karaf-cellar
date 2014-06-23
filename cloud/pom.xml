@@ -33,22 +33,6 @@
     <packaging>bundle</packaging>
     <name>Apache Karaf :: Cellar :: Cloud</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <osgi.import>
-            org.joda.time;version="${joda-time.version}",
-            org.joda.time.chrono;version="${joda-time.version}",
-            org.apache.karaf.cellar.core*;version="${project.version}",
-            org.osgi*,
-            org.slf4j;version="[1.6,2)";resolution:=optional
-        </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,org.jclouds.*,*</osgi.dynamic.import>
-        <osgi.export>
-            org.apache.karaf.cellar.cloud*;version="${project.version}"
-        </osgi.export>
-        <osgi.bundle.activator>org.apache.karaf.cellar.cloud.Activator</osgi.bundle.activator>
-    </properties>
-
     <dependencies>
 
         <!-- Internal Dependencies -->
@@ -101,5 +85,30 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.karaf.cellar.cloud*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            org.joda.time;version="${joda-time.version}",
+                            org.joda.time.chrono;version="${joda-time.version}",
+                            org.apache.karaf.cellar.core*;version="${project.version}",
+                            org.osgi*,
+                            org.slf4j;version="[1.6,2)";resolution:=optional
+                        </Import-Package>
+                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,org.jclouds.*,*</DynamicImport-Package>
+                        <Bundle-Activator>org.apache.karaf.cellar.cloud.Activator</Bundle-Activator>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

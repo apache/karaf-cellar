@@ -33,29 +33,6 @@
     <packaging>bundle</packaging>
     <name>Apache Karaf :: Cellar :: Bundle</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <osgi.import>
-            org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.felix.service.command,
-            org.apache.felix.gogo.commands,
-            org.apache.karaf.shell.console;version="[3,5)",
-            org.apache.karaf.shell.console.commands;version="[3,5)",
-            org.apache.karaf.shell.console.completer;version="[3,5)",
-            org.apache.karaf.shell.commands;version="[3,5)",
-            org.apache.karaf.features;version="[3,5)",
-            org.osgi*,
-            org.slf4j;version="[1.6,2)";resolution:=optional
-        </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
-        <osgi.export>
-            org.apache.karaf.cellar.bundle*;version="${project.version}"
-        </osgi.export>
-        <osgi.private>
-            org.apache.karaf.cellar.bundle.management.internal
-        </osgi.private>
-    </properties>
-
     <dependencies>
         <!-- Internal Dependencies -->
         <dependency>
@@ -94,5 +71,37 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.karaf.cellar.bundle*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            org.apache.karaf.cellar.core*;version="${project.version}",
+                            org.apache.felix.service.command,
+                            org.apache.felix.gogo.commands,
+                            org.apache.karaf.shell.console;version="[3,5)",
+                            org.apache.karaf.shell.console.commands;version="[3,5)",
+                            org.apache.karaf.shell.console.completer;version="[3,5)",
+                            org.apache.karaf.shell.commands;version="[3,5)",
+                            org.apache.karaf.features;version="[3,5)",
+                            org.osgi*,
+                            org.slf4j;version="[1.6,2)";resolution:=optional
+                        </Import-Package>
+                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
+                        <Private-Package>
+                            org.apache.karaf.cellar.bundle.management.internal
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

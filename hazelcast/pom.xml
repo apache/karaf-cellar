@@ -33,24 +33,6 @@
     <packaging>bundle</packaging>
     <name>Apache Karaf :: Cellar :: Hazelcast</name>
 
-    <properties>
-        <osgi.import>
-            com.hazelcast*,
-            org.apache.karaf.cellar.core*;version="${project.version}",
-            org.apache.karaf.cellar.utils.ping;version="${project.version}",
-            org.apache.karaf.features;version="[3,5)",
-            org.osgi*,
-            org.slf4j;version="[1.6,2)";resolution:=optional
-        </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
-        <osgi.export>
-            org.apache.karaf.cellar.hazelcast*;version="${project.version}"
-        </osgi.export>
-        <osgi.private>
-            org.apache.karaf.cellar.hazelcast.management.internal
-        </osgi.private>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.hazelcast</groupId>
@@ -89,5 +71,33 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.karaf.cellar.hazelcast*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            com.hazelcast*,
+                            org.apache.karaf.cellar.core*;version="${project.version}",
+                            org.apache.karaf.cellar.utils.ping;version="${project.version}",
+                            org.apache.karaf.features;version="[3,5)",
+                            org.osgi*,
+                            org.slf4j;version="[1.6,2)";resolution:=optional
+                        </Import-Package>
+                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
+                        <Private-Package>
+                            org.apache.karaf.cellar.hazelcast.management.internal
+                        </Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

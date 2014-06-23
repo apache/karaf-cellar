@@ -33,19 +33,6 @@
     <packaging>bundle</packaging>
     <name>Apache Karaf :: Cellar :: Samples :: DOSGi Greeter :: Client</name>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <osgi.import>
-            org.apache.karaf.cellar.samples.dosgi.greeter.api,
-            org.apache.karaf.shell.commands;version="[3,4)",
-            org.apache.karaf.shell.console;version="[3,4)",
-            org.osgi*
-        </osgi.import>
-        <osgi.export>
-            org.apache.karaf.cellar.samples.dosgi.greeter.client*;version="${project.version}"
-        </osgi.export>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
@@ -57,5 +44,27 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.karaf.cellar.samples.dosgi.greeter.client*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            org.apache.karaf.cellar.samples.dosgi.greeter.api,
+                            org.apache.karaf.shell.commands;version="[3,5)",
+                            org.apache.karaf.shell.console;version="[3,5)",
+                            org.osgi*
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

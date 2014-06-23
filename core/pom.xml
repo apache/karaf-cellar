@@ -33,29 +33,6 @@
     <name>Apache Karaf :: Cellar :: Core</name>
     <packaging>bundle</packaging>
 
-    <properties>
-        <osgi.import>
-            org.apache.karaf.shell.console*;version="[3,5)",
-            org.osgi*,
-            org.slf4j;version="[1.6,2)";resolution:=optional
-        </osgi.import>
-        <osgi.dynamic.import>javax.*,org.w3c.*,org.xml.*,*</osgi.dynamic.import>
-        <osgi.export>
-            org.apache.karaf.cellar.core*;version="${project.version}"
-        </osgi.export>
-    </properties>
-
-    <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources/</directory>
-                <includes>
-                    <include>**/*</include>
-                </includes>
-            </testResource>
-        </testResources>
-    </build>
-
     <dependencies>
         <!-- OSGi dependencies -->
         <dependency>
@@ -99,5 +76,35 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            org.apache.karaf.cellar.core*;version="${project.version}"
+                        </Export-Package>
+                        <Import-Package>
+                            org.apache.karaf.shell.console*;version="[3,5)",
+                            org.osgi*,
+                            org.slf4j;version="[1.6,2)";resolution:=optional
+                        </Import-Package>
+                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources/</directory>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </testResource>
+        </testResources>
+    </build>
 
 </project>
