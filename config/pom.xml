@@ -88,8 +88,7 @@
                         <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.config.management.internal,
-                            org.apache.felix.utils*;-split-package:=merge-first,
-                            !*
+                            org.apache.felix.utils*;-split-package:=merge-first
                         </Private-Package>
                     </instructions>
                 </configuration>

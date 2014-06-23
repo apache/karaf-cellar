@@ -21,15 +21,15 @@ Building Apache Karaf Cellar
 Initial Setup
 -------------
 
-1) Install J2SE 6.0 SDK (or later), which can be downloaded from
-   http://www.oracle.com/technetwork/java/javase/downloads/index-jdk6-jsp-142662.html.
-   Use version of "JDK 6.0 Update 24" (or later).
+1) Install J2SE 7.0 SDK, which can be downloaded from
+   http://www.oracle.com/technetwork/java/javase/downloads/index.html
+   Use version of "JDK 7.0 Update 55" (or later, but not Java8).
 
 2) Make sure that your JAVA_HOME environment variable is set to the newly installed
    JDK location, and that your PATH includes %JAVA_HOME%\bin (windows) or
    $JAVA_HOME$/bin (unix).
 
-3) Install Maven 3.0.3 (or later), which can be downloaded from
+3) Install Maven 3.0.3 (or later, but not Maven 3.2.x), which can be downloaded from
    http://maven.apache.org/download.html. Make sure that your PATH includes
    the MVN_HOME/bin directory.
 
@@ -43,7 +43,7 @@ Building
 
 3) Run
 
-         $> mvn install
+         $> mvn clean install
 
    This will compile Apache Karaf Cellar and run all of the tests in the
    Apache Karaf Cellar source distribution.
