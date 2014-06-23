@@ -1,0 +1,43 @@
+Camel Hazelcast App is a sample application that demonstrate the usage of the camel-hazelcast component with Cellar
+to provide remote communication between Camel routes.
+
+Use Case
+--------
+The producer bundle periodically (every 5 seconds) create a message "Hello Cellar" and send it into the distributed
+Hazelcast/Cellar queue "yet.another.queue".
+On the other hand, the consumer bundle consumes the messages from the "yet.another.queue" Hazelcast queue and display
+the message body in the log file
+
+Installation
+------------
+To show the remote Camel routes communication, your Cellar cluster should contain at least two nodes.
+
+NodeA
+-----
+On NodeA, we install the Camel blueprint and hazelcast features:
+
+karaf@root()> feature:repo-add camel
+karaf@root()> feature:install camel-blueprint
+karaf@root()> feature:install camel-hazelcast
+
+We can now install the producer bundle:
+
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.camel.hazelcast/producer/3.0.0
+
+The Camel producer route starts automatically.
+
+NodeB
+-----
+As for NodeA, we install the Camel blueprint and hazelcast features on NodeB:
+
+karaf@root()> feature:repo-add camel
+karaf@root()> feature:install camel-blueprint
+karaf@root()> feature:install camel-hazelcast
+
+We can now install the consumer bundle:
+
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.camel.hazelcast/consumer/3.0.0
+
+The Camel consumer route starts automatically.
+
+On the NodeB log, using log:tail, we can see the messages "coming" from NodeA.

@@ -27,7 +27,7 @@
         <route id="timerToLog">
             <from uri="timer:foo?period=5000"/>
             <setBody>
-                <constant>Hallo Cellar</constant>
+                <constant>Hello Cellar</constant>
             </setBody>
             <to uri="hazelcast:seda:yet.another.queue"/>
         </route>

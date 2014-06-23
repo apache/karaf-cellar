@@ -1,34 +1,35 @@
 DOSGi Greeter is a sample application that demonstrates the DOSGi feature of Cellar.
 
-Requirements / Setup
---------------------
-It requires a cellar cluster of at least two nodes, say node A and B.
-
-Node B will export the Greeter service and node A will import the service.
-
-192.168.1.101:5701 (Node A)
-192.168.1.101:5702 (Node B)
+Use Case
+--------
+A service bundle expose an OSGi service on the cluster using Cellar DOSGi.
+On the other hand, a client bundle provides a shell command to call the service bundle.
+The call is remote using DOSGi.
 
 Installation
-------------
-1. Start the two nodes.
-2. Connect to the shell of node A.
+-------------
+To show the remote service call, your Cellar cluster should contain at least two nodes.
 
-   Node A Shell:
-   -------------
-   karaf@root> feature:add-url mvn:org.apache.karaf.cellar.samples/dosgi-greeter/3.0.0-SNAPSHOT/xml/features
-   karaf@root> cluster:group-set greeter-exporter-group 192.168.1.1:5702
-   Node                 Group
-   * 192.168.1.101:5701   greeter-exporter-group
-     192.168.1.101:5702   greeter-exporter-group
-   karaf@root> cluster:group-set greeter-importer-group 192.168.1.1:5701
-   Node                 Group
-   * 192.168.1.101:5701   greeter-importer-group
-   karaf@root> cluster:feature-install greeter-exporter-group greeter-service
-   karaf@root> cluster:feature-install greeter-importer-group greeter-client
+NodeA
+-----
+On NodeA, we install the API bundle (providing the OSGi service description), and the service bundle (providing the
+actual service implementation):
 
-3. Executing the greet (Pass a greet message and the number of iterations).
-   karaf@root> dosgi-greeter:greet Halo 2
-   Hello.Hello from node 192.168.1.101:5702 count 0.
-   Hello.Hello from node 192.168.1.101:5702 count 1.
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.dosgi.greeter/org.apache.karaf.cellar.samples.dosgi.greeter.api/3.0.0
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.dosgi.greeter/org.apache.karaf.cellar.samples.dosgi.greeter.service/3.0.0
 
+We can see the service exposed on the cluster using the cluster:service-list command.
+
+NodeB
+-----
+On NodeB, we install the API bundle (to get the description of the OSGi service), and the client bundle (providing a shell
+command to call the service):
+
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.dosgi.greeter/org.apache.karaf.cellar.samples.dosgi.greeter.api/3.0.0
+karaf@root()> bundle:install -s mvn:org.apache.karaf.cellar.samples.dosgi.greeter/org.apache.karaf.cellar.samples.dosgi.greeter.client/3.0.0
+
+The client bundle provides a new shell command that we can use to call the OSGi service (remotely):
+
+karaf@root> dosgi-greeter:greet Hello 2
+Hello.Hello from node 192.168.1.101:5702 count 0.
+Hello.Hello from node 192.168.1.101:5702 count 1.

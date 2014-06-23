@@ -1,3 +1,4 @@
 This sample intends to demonstrate how to use the HazelcastInstance created by Cellar.
 
-Mostly it intends to point out that currently Hazelcast requires the user to set the Thread Context ClassLoader, in order to be able to serialize/deserialize user created objects.
+Mostly it intends to point out that currently Hazelcast requires the user to set the Thread Context ClassLoader,
+in order to be able to serialize/deserialize user created objects.
