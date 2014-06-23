@@ -14,17 +14,17 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/bundle-list">
+    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
+        <command>
             <action class="org.apache.karaf.cellar.bundle.shell.ListBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
             </completers>
         </command>
-        <command name="cluster/bundle-install">
+        <command>
             <action class="org.apache.karaf.cellar.bundle.shell.InstallBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -32,10 +32,10 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
             </completers>
         </command>
-        <command name="cluster/bundle-uninstall">
+        <command>
             <action class="org.apache.karaf.cellar.bundle.shell.UninstallBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -43,12 +43,12 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <ref component-id="allBundlesNameCompleter"/>
                 <ref component-id="allBundlesVersionCompleter"/>
             </completers>
         </command>
-        <command name="cluster/bundle-start">
+        <command>
             <action class="org.apache.karaf.cellar.bundle.shell.StartBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -56,12 +56,12 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <ref component-id="allBundlesNameCompleter"/>
                 <ref component-id="allBundlesVersionCompleter"/>
             </completers>
         </command>
-        <command name="cluster/bundle-stop">
+        <command>
             <action class="org.apache.karaf.cellar.bundle.shell.StopBundleCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -69,14 +69,14 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <ref component-id="allBundlesNameCompleter"/>
                 <ref component-id="allBundlesVersionCompleter"/>
             </completers>
         </command>
     </command-bundle>
 
-    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
+    <bean id="allGroupsCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 

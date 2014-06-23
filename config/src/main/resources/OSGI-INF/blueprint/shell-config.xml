@@ -16,26 +16,27 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
     <!-- Command Bundle -->
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/config-list">
+    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.ListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
             </completers>
         </command>
-        <command name="cluster/config-proplist">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.PropListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
-        <command name="cluster/config-propset">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.PropSetCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -43,10 +44,11 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
-        <command name="cluster/config-propappend">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.PropAppendCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -54,10 +56,11 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
-        <command name="cluster/config-propdel">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.PropDelCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -65,10 +68,11 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
-        <command name="cluster/config-delete">
+        <command>
             <action class="org.apache.karaf.cellar.config.shell.DeleteCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -76,16 +80,17 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
     </command-bundle>
 
-    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
+    <bean id="allGroupsCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
-    <bean id="allFeatureCompleter" class="org.apache.karaf.cellar.config.shell.completers.ClusterConfigCompleter">
+    <bean id="clusterConfigCompleter" class="org.apache.karaf.cellar.config.shell.completers.ClusterConfigCompleter">
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
     </bean>

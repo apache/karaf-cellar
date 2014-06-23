@@ -18,8 +18,8 @@
     <reference id="greeter" interface="org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter"/>
 
     <!-- Command Bundle -->
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="dosgi-greeter/greet">
+    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
+        <command>
             <action class="org.apache.karaf.cellar.samples.dosgi.greeter.client.GreetCommand">
                 <property name="greeter" ref="greeter"/>
             </action>

@@ -14,18 +14,18 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="cluster/obr-list">
+    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
+        <command>
             <action class="org.apache.karaf.cellar.obr.shell.ObrListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-deploy">
+        <command>
             <action class="org.apache.karaf.cellar.obr.shell.ObrDeployCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -33,21 +33,21 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-list-url">
+        <command>
             <action class="org.apache.karaf.cellar.obr.shell.ObrListUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-add-url">
+        <command>
             <action class="org.apache.karaf.cellar.obr.shell.ObrAddUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -56,11 +56,11 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <null/>
             </completers>
         </command>
-        <command name="cluster/obr-remove-url">
+        <command>
             <action class="org.apache.karaf.cellar.obr.shell.ObrRemoveUrlCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
@@ -69,13 +69,13 @@
                 <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
-                <ref component-id="allGroupCompleter"/>
+                <ref component-id="allGroupsCompleter"/>
                 <null/>
             </completers>
         </command>
     </command-bundle>
 
-    <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
+    <bean id="allGroupsCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
