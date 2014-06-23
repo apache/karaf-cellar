@@ -551,10 +551,10 @@
                                 <configuration>
                                     <rules>
                                         <requireMavenVersion>
-                                            <version>[2.2.1,3)</version>
+                                            <version>[3,4)</version>
                                         </requireMavenVersion>
                                         <requireJavaVersion>
-                                            <version>1.6</version>
+                                            <version>[1.7,1.9)</version>
                                         </requireJavaVersion>
                                     </rules>
                                 </configuration>
