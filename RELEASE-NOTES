@@ -15,6 +15,37 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.3
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+ It includes several bug fixes, including critical ones.
+
+  Changelog
+  ---------
+
+ The following list shows the bug fixes and enhancements included in this release:
+
+** Bug
+    * [KARAF-1309] - Cellar causes Karaf container to freeze if system got network interface changes between container restarts
+    * [KARAF-1474] - Fix Cellar itests
+    * [KARAF-2550] - At first sync, cellar-config raises NPE
+    * [KARAF-2591] - cluster group is not persistent anymore
+    * [KARAF-3014] - Hazelcast tests fail on networks where multicast is disabled
+
+** Dependency upgrade
+    * [KARAF-3296] - Upgrade to joda-time 2.5
+    * [KARAF-3297] - Upgrade to Felix BundleRepository 2.0.2
+    * [KARAF-3356] - Upgrade to Karaf 2.3.9
+    * [KARAF-3357] - Upgrade to Hazelcast 2.6.9
+
+** Improvement
+    * [KARAF-2205] - Cellar cluster event handler should check the local status before performing an operation
+
+
                     Apache Karaf Cellar 2.3.2
                     =========================
 
