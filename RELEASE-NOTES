@@ -44,6 +44,7 @@
 
 ** Improvement
     * [KARAF-2205] - Cellar cluster event handler should check the local status before performing an operation
+    * [KARAF-3341] - Blacklist "XML bundles" by default
 
 
                     Apache Karaf Cellar 2.3.2
