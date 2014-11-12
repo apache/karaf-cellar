@@ -75,6 +75,7 @@
         <connection>scm:git:https://git-wip-us.apache.org/repos/asf/karaf-cellar.git</connection>
         <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/karaf-cellar.git</developerConnection>
         <url>https://git-wip-us.apache.org/repos/asf?p=karaf-cellar.git;a=summary</url>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
