@@ -21,9 +21,11 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.RepositoryEvent;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,6 +55,11 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
      */
     @Override
     public void featureEvent(FeatureEvent event) {
+
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR FEATURES: local listener is disabled");
+            return;
+        }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -97,6 +104,11 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
      */
     @Override
     public void repositoryEvent(RepositoryEvent event) {
+
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR FEATURES: local listener is disabled");
+            return;
+        }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -160,6 +172,25 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+    }
+
+    /**
+     * Check if the local feature listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
+     *
+     * @return true if enabled, false else.
+     */
+    private boolean isEnabled() {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                String value = properties.get("feature.listener").toString();
+                return Boolean.parseBoolean(value);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR FEATURE: can't check listener configuration", e);
+        }
+        return false;
     }
 
     public EventProducer getEventProducer() {
