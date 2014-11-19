@@ -80,7 +80,7 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             }
 
             // check if the feature is allowed (outbound)
-            if (!isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+            if (!isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
                 System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
                 continue;
             }

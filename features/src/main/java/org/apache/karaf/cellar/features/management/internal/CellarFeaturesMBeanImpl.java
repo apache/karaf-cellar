@@ -113,7 +113,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         support.setClusterManager(this.clusterManager);
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
-        if (!support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+        if (!support.isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
             throw new IllegalArgumentException("Feature " + name + " is blocked outbound for cluster group " + groupName);
         }
 
@@ -122,7 +122,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             // get the features in the cluster group
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             // check if the feature exist
             FeatureInfo feature = null;
@@ -217,7 +217,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         support.setClusterManager(this.clusterManager);
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
-        if (!support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+        if (!support.isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
             throw new IllegalArgumentException("Feature " + name + " is blocked outbound for cluster group " + groupName);
         }
 
@@ -226,7 +226,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             // get the features in the cluster group
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             // check if the feature exist
             FeatureInfo feature = null;
@@ -287,7 +287,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group);
             if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
                 for (FeatureInfo feature : clusterFeatures.keySet()) {
                     boolean installed = clusterFeatures.get(feature);
@@ -313,7 +313,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // get the features repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         List<String> result = new ArrayList<String>();
         for (String clusterRepository : clusterRepositories) {
@@ -345,9 +345,9 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             // get the features repositories in the cluster group
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             // check if the URL is already registered
             boolean found = false;
@@ -430,9 +430,9 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // get the features repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
         // get the features in the cluster group
-        Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+        Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
         // looking for the URL in the list
         boolean found = false;

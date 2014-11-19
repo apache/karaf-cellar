@@ -144,10 +144,10 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
      */
     private boolean isEnabled() {
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
-                String value = properties.get("bundle.listener").toString();
+                String value = properties.get(Constants.CATEGORY + Configurations.SEPARATOR + Configurations.LISTENER).toString();
                 return Boolean.parseBoolean(value);
             }
         } catch (Exception e) {

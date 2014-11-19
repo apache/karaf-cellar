@@ -90,9 +90,9 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-            if (isAllowed(group, Constants.FEATURES_CATEGORY, feature.getName(), EventType.OUTBOUND)) {
+            if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
                 if (featuresService != null && clusterFeatures != null) {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     Boolean installed = featuresService.isInstalled(feature);
@@ -113,9 +113,9 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-            if (isAllowed(group, Constants.FEATURES_CATEGORY, feature.getName(), EventType.OUTBOUND)) {
+            if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
                 if (featuresService != null && clusterFeatures != null) {
                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                     clusterFeatures.put(info, force);
@@ -132,7 +132,7 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         boolean found = false;
         for (String clusterRepository : clusterRepositories) {
@@ -155,7 +155,7 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         if (featuresService != null && clusterRepositories != null) {
             URI uri = repository.getURI();

@@ -42,7 +42,7 @@ public class RepoListCommand extends FeatureCommandSupport {
         }
 
         // get the features repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         ShellTable table = new ShellTable();
         table.column("URL");

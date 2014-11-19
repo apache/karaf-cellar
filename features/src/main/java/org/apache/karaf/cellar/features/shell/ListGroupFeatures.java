@@ -51,7 +51,7 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
 

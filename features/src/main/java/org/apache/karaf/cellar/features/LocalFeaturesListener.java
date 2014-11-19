@@ -77,7 +77,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     String name = feature.getName();
                     String version = feature.getVersion();
 
-                    if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+                    if (isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
                         FeatureEvent.EventType type = event.getType();
 
                         // update the features in the cluster group
@@ -132,7 +132,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                             pushRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the distributed map
@@ -154,7 +154,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         } else {
                             removeRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
@@ -175,16 +175,16 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     }
 
     /**
-     * Check if the local feature listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
+     * Check if the local node feature listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
      *
      * @return true if enabled, false else.
      */
     private boolean isEnabled() {
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
-                String value = properties.get("feature.listener").toString();
+                String value = properties.get(Constants.CATEGORY + Configurations.SEPARATOR + Configurations.LISTENER).toString();
                 return Boolean.parseBoolean(value);
             }
         } catch (Exception e) {

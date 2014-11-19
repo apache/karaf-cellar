@@ -67,9 +67,9 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES: pulling features repositories and features from cluster group {}", groupName);
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
-            clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -94,7 +94,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     for (FeatureInfo info : clusterFeatures.keySet()) {
                         String name = info.getName();
                         // check if feature is blocked
-                        if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.INBOUND)) {
+                        if (isAllowed(group, Constants.CATEGORY, name, EventType.INBOUND)) {
                             Boolean remotelyInstalled = clusterFeatures.get(info);
                             Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
 
@@ -142,7 +142,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES: pushing features repositories and features in cluster group {}", groupName);
-            clusterManager.getList(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -192,7 +192,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
-                String propertyKey = groupName + Configurations.SEPARATOR + Constants.FEATURES_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
+                String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
                 String propertyValue = (String) properties.get(propertyKey);
                 result = Boolean.parseBoolean(propertyValue);
             }

@@ -74,7 +74,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
 
         String name = event.getName();
         String version = event.getVersion();
-        if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
+        if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, name, EventType.INBOUND) || event.getForce()) {
             FeatureEvent.EventType type = event.getType();
             Boolean isInstalled = isFeatureInstalledLocally(name, version);
             try {
