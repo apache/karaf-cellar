@@ -34,12 +34,7 @@ public class SyncCommand extends ClusterCommandSupport {
                 if (serviceReferences != null && serviceReferences.length > 0) {
                     for (ServiceReference ref : serviceReferences) {
                         Synchronizer synchronizer = (Synchronizer) bundleContext.getService(ref);
-                        if (synchronizer.isSyncEnabled(group)) {
-                            System.out.print("    sync " + synchronizer.getClass() + " ...");
-                            synchronizer.pull(group);
-                            synchronizer.push(group);
-                            System.out.println("done");
-                        }
+                        synchronizer.sync(group);
                         bundleContext.ungetService(ref);
                     }
                 }

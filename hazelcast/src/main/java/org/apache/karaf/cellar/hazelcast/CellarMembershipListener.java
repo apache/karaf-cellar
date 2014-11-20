@@ -49,10 +49,7 @@ public class CellarMembershipListener extends HazelcastInstanceAware implements 
                 if (groups != null && !groups.isEmpty()) {
                     for (Group group : groups) {
                         for (Synchronizer synchronizer : synchronizers) {
-                            if (synchronizer.isSyncEnabled(group)) {
-                                synchronizer.pull(group);
-                                synchronizer.push(group);
-                            }
+                            synchronizer.sync(group);
                         }
                     }
                 }

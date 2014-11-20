@@ -33,11 +33,18 @@ public interface Synchronizer {
     public void pull(Group group);
 
     /**
-     * Check if the sync flag is enabled for a given cluster group.
+     * Sync the node and the cluster, depending of the sync policy.
+     *
+     * @param group the target cluster group.
+     */
+    public void sync(Group group);
+
+    /**
+     * Get the sync policy for a given cluster group.
      *
      * @param group the cluster group.
-     * @return true if sync flag is enabled, false else.
+     * @return the current sync policy for the given cluster group.
      */
-    public Boolean isSyncEnabled(Group group);
+    public String getSyncPolicy(Group group);
 
 }

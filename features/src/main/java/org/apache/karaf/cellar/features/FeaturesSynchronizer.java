@@ -40,14 +40,10 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     @Override
     public void init() {
-        super.init();
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                if (isSyncEnabled(group)) {
-                    pull(group);
-                    push(group);
-                } else LOGGER.debug("CELLAR FEATURES: sync is disabled for cluster group {}", group.getName());
+                sync(group);
             }
         }
     }
@@ -55,6 +51,30 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    /**
+     * Sync node and cluster states, depending of the sync policy.
+     *
+     * @param group the target cluster group.
+     */
+    @Override
+    public void sync(Group group) {
+        String policy = getSyncPolicy(group);
+        if (policy != null && policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
+                LOGGER.debug("CELLAR FEATURE: node is the first and only member of the group, pushing state");
+                push(group);
+            } else {
+                LOGGER.debug("CELLAR FEATURE: pulling state");
+                pull(group);
+            }
+        }
+        if (policy != null && policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            push(group);
+        }
     }
 
     /**
@@ -178,28 +198,26 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     }
 
     /**
-     * Check if the sync flag is enabled for a cluster group.
+     * Get the bundle sync policy for the given cluster group.
      *
      * @param group the cluster group.
-     * @return true if the sync flag is enabled, false else.
+     * @return the current bundle sync policy for the given cluster group.
      */
     @Override
-    public Boolean isSyncEnabled(Group group) {
-        Boolean result = Boolean.FALSE;
+    public String getSyncPolicy(Group group) {
         String groupName = group.getName();
-
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = (String) properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
+                return properties.get(propertyKey).toString();
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR FEATURES: error while checking if sync is enabled", e);
+            LOGGER.error("CELLAR FEATURE: error while retrieving the sync policy", e);
         }
-        return result;
+
+        return "disabled";
     }
 
 }

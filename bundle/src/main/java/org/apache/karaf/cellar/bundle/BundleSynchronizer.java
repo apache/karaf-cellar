@@ -47,16 +47,37 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                if (isSyncEnabled(group)) {
-                    pull(group);
-                    push(group);
-                } else LOGGER.debug("CELLAR BUNDLE: sync is disabled for cluster group {}", group.getName());
+                sync(group);
             }
         }
     }
 
     public void destroy() {
         // nothing to do
+    }
+
+    /**
+     * Sync the node and cluster states, depending of the sync policy.
+     *
+     * @param group the target cluster group.
+     */
+    @Override
+    public void sync(Group group) {
+        String policy = getSyncPolicy(group);
+        if (policy != null && policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
+                LOGGER.debug("CELLAR BUNDLE: node is the first and only member of the group, pushing state");
+                push(group);
+            } else {
+                LOGGER.debug("CELLAR BUNDLE: pulling state");
+                pull(group);
+            }
+        }
+        if (policy != null && policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            push(group);
+        }
     }
 
     /**
@@ -190,28 +211,26 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     }
 
     /**
-     * Check if the bundle sync flag is enabled for a cluster group.
+     * Get the bundle sync policy for the given cluster group.
      *
-     * @param group the cluster group to check.
-     * @return true if the sync flag is enabled, false else.
+     * @param group the cluster group.
+     * @return the current bundle sync policy for the given cluster group.
      */
     @Override
-    public Boolean isSyncEnabled(Group group) {
-        Boolean result = Boolean.FALSE;
+    public String getSyncPolicy(Group group) {
         String groupName = group.getName();
-
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = (String) properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
+                return properties.get(propertyKey).toString();
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR BUNDLE: error while checking if sync is enabled", e);
+            LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
         }
-        return result;
+
+        return "disabled";
     }
 
     public EventProducer getEventProducer() {

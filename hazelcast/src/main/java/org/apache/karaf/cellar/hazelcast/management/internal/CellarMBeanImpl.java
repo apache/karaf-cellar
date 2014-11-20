@@ -95,10 +95,7 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
                 if (serviceReferences != null && serviceReferences.length > 0) {
                     for (ServiceReference ref : serviceReferences) {
                         Synchronizer synchronizer = (Synchronizer) bundleContext.getService(ref);
-                        if (synchronizer.isSyncEnabled(group)) {
-                            synchronizer.pull(group);
-                            synchronizer.push(group);
-                        }
+                        synchronizer.sync(group);
                         bundleContext.ungetService(ref);
                     }
                 }
