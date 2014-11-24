@@ -90,15 +90,14 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
                 if (featuresService != null && clusterFeatures != null) {
-                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                    Boolean installed = featuresService.isInstalled(feature);
-                    clusterFeatures.put(info, installed);
+                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion() , state);
                 }
-            } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
+            } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
@@ -113,14 +112,14 @@ public class FeaturesSupport extends CellarSupport {
     public void pushFeature(Feature feature, Group group, Boolean force) {
         if (feature != null) {
             String groupName = group.getName();
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
                 if (featuresService != null && clusterFeatures != null) {
-                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                    clusterFeatures.put(info, force);
+                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), force);
+                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), state);
                 }
-            } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
+            } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
         } else LOGGER.warn("CELLAR FEATURES: feature is null");
     }
 
@@ -132,10 +131,10 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void pushRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         boolean found = false;
-        for (String clusterRepository : clusterRepositories) {
+        for (String clusterRepository : clusterRepositories.keySet()) {
             if (clusterRepository.equals(repository.getURI().toString())) {
                 found = true;
                 break;
@@ -143,7 +142,7 @@ public class FeaturesSupport extends CellarSupport {
         }
 
         if (!found) {
-            clusterRepositories.add(repository.getURI().toString());
+            clusterRepositories.put(repository.getURI().toString(), repository.getName());
         }
     }
 
@@ -155,7 +154,7 @@ public class FeaturesSupport extends CellarSupport {
      */
     public void removeRepository(Repository repository, Group group) {
         String groupName = group.getName();
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         if (featuresService != null && clusterRepositories != null) {
             URI uri = repository.getURI();

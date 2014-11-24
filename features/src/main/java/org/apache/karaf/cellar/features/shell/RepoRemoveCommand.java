@@ -17,10 +17,12 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.apache.karaf.shell.commands.Argument;
@@ -32,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-repo-remove", description = "Remove features repository URLs from a cluster group")
-public class RepoRemoveCommand extends FeatureCommandSupport {
+public class RepoRemoveCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -44,6 +46,7 @@ public class RepoRemoveCommand extends FeatureCommandSupport {
     boolean uninstall;
 
     private EventProducer eventProducer;
+    private FeaturesService featuresService;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -61,15 +64,15 @@ public class RepoRemoveCommand extends FeatureCommandSupport {
         }
 
         // get the features repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
         // get the features in the cluster group
-        Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
         for (String url : urls) {
             // looking for the URL in the list
             boolean found = false;
-            for (String repository : clusterRepositories) {
-                if (repository.equals(url)) {
+            for (String repository : clusterRepositories.keySet()) {
+                if (repository.equals(repository)) {
                     found = true;
                     break;
                 }
@@ -109,8 +112,7 @@ public class RepoRemoveCommand extends FeatureCommandSupport {
 
                 // update the features in the cluster group
                 for (Feature feature : repository.getFeatures()) {
-                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                    clusterFeatures.remove(info);
+                    clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                 }
 
                 // un-register the repository if it's not local registered
@@ -138,4 +140,11 @@ public class RepoRemoveCommand extends FeatureCommandSupport {
         this.eventProducer = eventProducer;
     }
 
+    public FeaturesService getFeaturesService() {
+        return featuresService;
+    }
+
+    public void setFeaturesService(FeaturesService featuresService) {
+        this.featuresService = featuresService;
+    }
 }

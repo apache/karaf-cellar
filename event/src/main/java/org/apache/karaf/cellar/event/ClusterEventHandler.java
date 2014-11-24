@@ -64,7 +64,7 @@ public class ClusterEventHandler extends EventSupport implements EventHandler<Cl
                 properties.put(Constants.EVENT_SOURCE_GROUP_KEY, event.getSourceGroup());
                 properties.put(Constants.EVENT_SOURCE_NODE_KEY, event.getSourceNode());
                 postEvent(event.getTopicName(), properties);
-            } else LOGGER.debug("CELLAR EVENT: event {} is marked BLOCKED INBOUND for cluster group {}", event.getTopicName(), event.getSourceGroup().getName());
+            } else LOGGER.trace("CELLAR EVENT: event {} is marked BLOCKED INBOUND for cluster group {}", event.getTopicName(), event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR EVENT: failed to handle event", e);
         }
@@ -87,7 +87,7 @@ public class ClusterEventHandler extends EventSupport implements EventHandler<Cl
     public Switch getSwitch() {
         // load the switch status from the config
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
                 if (status) {

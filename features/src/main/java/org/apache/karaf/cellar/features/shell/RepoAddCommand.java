@@ -17,10 +17,12 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.apache.karaf.shell.commands.Argument;
@@ -32,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-repo-add", description = "Add a features repository to a cluster group")
-public class RepoAddCommand extends FeatureCommandSupport {
+public class RepoAddCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -44,6 +46,7 @@ public class RepoAddCommand extends FeatureCommandSupport {
     boolean install;
 
     private EventProducer eventProducer;
+    private FeaturesService featuresService;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -61,23 +64,23 @@ public class RepoAddCommand extends FeatureCommandSupport {
         }
 
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             // get the features repositories in the cluster group
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             for (String url : urls) {
                 // check if the URL is already registered
-                boolean found = false;
-                for (String repository : clusterRepositories) {
+                String name = null;
+                for (String repository : clusterRepositories.keySet()) {
                     if (repository.equals(url)) {
-                        found = true;
+                        name = clusterRepositories.get(url);
                         break;
                     }
                 }
-                if (!found) {
+                if (name == null) {
                     // update the repository temporary locally
                     Repository repository  = null;
                     boolean localRegistered = false;
@@ -108,12 +111,12 @@ public class RepoAddCommand extends FeatureCommandSupport {
                     }
 
                     // update the features repositories in the cluster group
-                    clusterRepositories.add(url);
+                    clusterRepositories.put(url, repository.getName());
 
                     // update the features in the cluster group
                     for (Feature feature : repository.getFeatures()) {
-                        FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                        clusterFeatures.put(info, false);
+                        FeatureState featureState = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                        clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
                     }
 
                     // un-register the repository if it's not local registered
@@ -144,4 +147,11 @@ public class RepoAddCommand extends FeatureCommandSupport {
         this.eventProducer = eventProducer;
     }
 
+    public FeaturesService getFeaturesService() {
+        return featuresService;
+    }
+
+    public void setFeaturesService(FeaturesService featuresService) {
+        this.featuresService = featuresService;
+    }
 }

@@ -34,7 +34,6 @@
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
                 <property name="configurationAdmin" ref="configurationAdmin"/>
-                <property name="featuresService" ref="featuresService"/>
                 <property name="eventProducer" ref="eventProducer"/>
             </action>
             <completers>
@@ -43,10 +42,9 @@
             </completers>
         </command>
         <command>
-            <action class="org.apache.karaf.cellar.features.shell.ListGroupFeatures">
+            <action class="org.apache.karaf.cellar.features.shell.ListFeaturesCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
-                <property name="featuresService" ref="featuresService"/>
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>

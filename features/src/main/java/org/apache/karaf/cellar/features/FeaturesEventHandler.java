@@ -116,7 +116,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             } catch (Exception e) {
                 LOGGER.error("CELLAR FEATURES: failed to handle cluster feature event", e);
             }
-        } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, event.getSourceGroup().getName());
+        } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, event.getSourceGroup().getName());
     }
 
     /**
@@ -138,7 +138,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
     public Switch getSwitch() {
         // load the switch status from the config
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
                 if (status) {

@@ -87,15 +87,15 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES: pulling features repositories and features from cluster group {}", groupName);
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
             clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 // get the features repositories URLs from the cluster group
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
-                    for (String url : clusterRepositories) {
+                    for (String url : clusterRepositories.keySet()) {
                         try {
                             if (!isRepositoryRegisteredLocally(url)) {
                                 LOGGER.debug("CELLAR FEATURES: adding new features repository {}", url);
@@ -111,11 +111,11 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
                 // get the features from the cluster group
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
-                    for (FeatureInfo info : clusterFeatures.keySet()) {
+                    for (FeatureState info : clusterFeatures.values()) {
                         String name = info.getName();
                         // check if feature is blocked
                         if (isAllowed(group, Constants.CATEGORY, name, EventType.INBOUND)) {
-                            Boolean remotelyInstalled = clusterFeatures.get(info);
+                            Boolean remotelyInstalled = info.isInstalled();
                             Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
 
                             // prevent NPE
@@ -143,7 +143,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                     LOGGER.error("CELLAR FEATURES: failed to uninstall feature {}/{} ", new Object[]{info.getName(), info.getVersion()}, e);
                                 }
                             }
-                        } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
+                        } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
                     }
                 }
             } finally {
@@ -162,12 +162,10 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES: pushing features repositories and features in cluster group {}", groupName);
-            clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             try {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-
                 Repository[] repositoryList = new Repository[0];
                 Feature[] featuresList = new Feature[0];
 

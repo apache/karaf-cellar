@@ -44,7 +44,7 @@ public class CellarSupportTest {
         InputStream is = getClass().getResourceAsStream("groups.properties");
         props.load(is);
         is.close();
-        expect(configurationAdmin.getConfiguration(EasyMock.<String>anyObject())).andReturn(configuration).anyTimes();
+        expect(configurationAdmin.getConfiguration(EasyMock.<String>anyObject(), EasyMock.anyString())).andReturn(configuration).anyTimes();
         Dictionary propsDictionary = (Dictionary) props;
         expect(configuration.getProperties()).andReturn(propsDictionary).anyTimes();
         replay(configuration);

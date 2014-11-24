@@ -131,7 +131,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                             // TODO fire event to the other nodes ?
                         }
                     } else {
-                        LOGGER.debug("CELLAR OBR: URL {} is marked BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);
+                        LOGGER.trace("CELLAR OBR: URL {} is marked BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);
                     }
                 }
             } finally {

@@ -104,7 +104,7 @@ public class ManageHandlersCommandHandler extends CommandHandler<ManageHandlersC
      */
     private void persist(String handler, SwitchStatus switchStatus) {
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties != null) {

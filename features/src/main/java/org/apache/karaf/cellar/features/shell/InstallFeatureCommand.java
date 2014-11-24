@@ -13,29 +13,35 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.core.CellarSupport;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
 import org.apache.karaf.cellar.features.Constants;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.FeatureEvent;
+import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 
 import java.util.List;
+import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-install", description = "Install a feature in a cluster group")
-public class InstallFeatureCommand extends FeatureCommandSupport {
+public class InstallFeatureCommand extends CellarCommandSupport {
 
-    @Option(name = "-c", aliases = { "--no-clean" }, description = "Do not uninstall bundles on failure", required = false, multiValued = false)
+    @Option(name = "-c", aliases = {"--no-clean"}, description = "Do not uninstall bundles on failure", required = false, multiValued = false)
     boolean noClean;
 
-    @Option(name = "-r", aliases = { "--no-auto-refresh" }, description = "Do not automatically refresh bundles", required = false, multiValued = false)
+    @Option(name = "-r", aliases = {"--no-auto-refresh"}, description = "Do not automatically refresh bundles", required = false, multiValued = false)
     boolean noRefresh;
 
-    @Option(name = "-s", aliases = { "--no-auto-start" }, description = "Do not automatically start bundles", required = false, multiValued = false)
+    @Option(name = "-s", aliases = {"--no-auto-start"}, description = "Do not automatically start bundles", required = false, multiValued = false)
     boolean noStart;
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
@@ -45,6 +51,7 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
     List<String> features;
 
     private EventProducer eventProducer;
+    private FeaturesService featuresService;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -61,37 +68,68 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
-        for (String feature : features) {
-            String[] split = feature.split("/");
-            String name = split[0];
-            String version = null;
-            if (split.length == 2) {
-                version = split[1];
-            }
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            // check if the feature exists in the map
-            if (!featureExists(groupName, name, version)) {
-                if (version != null) {
-                    System.err.println("Feature " + name + "/" + version + " doesn't exist in the cluster group " + groupName);
-                } else {
-                    System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
+        try {
+
+            // get cluster feature
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(clusterManager);
+            support.setConfigurationAdmin(configurationAdmin);
+            support.setGroupManager(groupManager);
+
+            for (String feature : features) {
+                String[] split = feature.split("/");
+                String name = split[0];
+                String version = null;
+                if (split.length == 2) {
+                    // use the version provided by the user
+                    version = split[1];
                 }
-                continue;
+                FeatureState found = null;
+                String foundKey = null;
+                for (String k : clusterFeatures.keySet()) {
+                    FeatureState f = clusterFeatures.get(k);
+                    foundKey = k;
+                    if (version == null) {
+                        if (f.getName().equals(name)) {
+                            found = f;
+                            break;
+                        }
+                    } else {
+                        if (f.getName().equals(name) && f.getVersion().equals(version)) {
+                            found = f;
+                            break;
+                        }
+                    }
+                }
+                if (found == null) {
+                    if (version == null)
+                        throw new IllegalArgumentException("Feature " + name + " doesn't exist in cluster group " + groupName);
+                    else
+                        throw new IllegalArgumentException("Feature " + name + "/" + version + " doesn't exist in cluster group " + groupName);
+                }
+
+                // check if the feature is allowed
+                if (support.isAllowed(group, Constants.CATEGORY, found.getName(), EventType.OUTBOUND)) {
+
+                    // update the cluster group
+                    found.setInstalled(true);
+                    clusterFeatures.put(foundKey, found);
+
+                    // broadcast the cluster event
+                    ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
+                    event.setSourceGroup(group);
+                    eventProducer.produce(event);
+                } else {
+                    System.err.println("Feature name " + found.getName() + " is blocked outbound for cluster group " + groupName);
+                }
             }
-
-            // check if the feature is allowed (outbound)
-            if (!isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
-                System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
-                continue;
-            }
-
-            // update the cluster state
-            updateFeatureStatus(groupName, name, version, true);
-
-            // broadcast the cluster event
-            ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
-            event.setSourceGroup(group);
-            eventProducer.produce(event);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         return null;
@@ -105,4 +143,11 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
         this.eventProducer = eventProducer;
     }
 
+    public FeaturesService getFeaturesService() {
+        return featuresService;
+    }
+
+    public void setFeaturesService(FeaturesService featuresService) {
+        this.featuresService = featuresService;
+    }
 }

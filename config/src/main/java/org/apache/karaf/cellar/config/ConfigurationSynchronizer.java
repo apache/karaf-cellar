@@ -115,7 +115,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read local configuration", ex);
                         }
-                    } else  LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterConfiguration, groupName);
+                    } else  LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterConfiguration, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -160,7 +160,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             event.setSourceGroup(group);
                             eventProducer.produce(event);
                         } else
-                            LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
+                            LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read configuration (IO error)", ex);

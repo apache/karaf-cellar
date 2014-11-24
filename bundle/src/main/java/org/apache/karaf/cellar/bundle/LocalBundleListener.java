@@ -116,7 +116,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                         	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
                         	for (Feature feature : matchingFeatures) {
             					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
-            						LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
+            						LOGGER.trace("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
             						return;
             					}
             				}
@@ -131,7 +131,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                             Thread.currentThread().setContextClassLoader(originalClassLoader);
                         }
 
-                    } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
+                    } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
                 }
             }
         }

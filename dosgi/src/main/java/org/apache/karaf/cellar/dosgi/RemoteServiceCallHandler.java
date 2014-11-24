@@ -129,7 +129,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
     public Switch getSwitch() {
         // load the switch status from the config
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
                 if (status) {

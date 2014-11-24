@@ -51,7 +51,7 @@ public class CellarSupport {
         Set<String> result = null;
         if (group != null) {
             try {
-                Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+                Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
                 Dictionary<String, Object> dictionary = configuration.getProperties();
                 if (dictionary != null) {
                     String parent = (String) dictionary.get(group + Configurations.SEPARATOR + Configurations.PARENT);

@@ -160,7 +160,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.debug("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
+            } else LOGGER.trace("CELLAR OBR: bundle {} is marked as BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }
@@ -175,7 +175,7 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
     public Switch getSwitch() {
         // load the switch status from the config
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
                 if (status) {

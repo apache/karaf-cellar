@@ -63,7 +63,7 @@ public class ProducerSwitchCommandHandler extends CommandHandler<ProducerSwitchC
      */
     private void persist(SwitchStatus switchStatus) {
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties != null) {

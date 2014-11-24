@@ -91,7 +91,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         eventProducer.produce(featureEvent);
-                    } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
+                    } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
@@ -132,20 +132,21 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                             pushRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the distributed map
-                                    FeatureInfo featureInfo = null;
-                                    for (FeatureInfo clusterFeature : clusterFeatures.keySet()) {
+                                    FeatureState featureState = null;
+                                    for (String k : clusterFeatures.keySet()) {
+                                        FeatureState clusterFeature = clusterFeatures.get(k);
                                         if (clusterFeature.getName().equals(feature.getName()) && clusterFeature.getVersion().equals(feature.getVersion())) {
-                                            featureInfo = clusterFeature;
+                                            featureState = clusterFeature;
                                             break;
                                         }
                                     }
-                                    if (featureInfo == null) {
-                                        featureInfo = new FeatureInfo(feature.getName(), feature.getVersion());
-                                        clusterFeatures.put(featureInfo, false);
+                                    if (featureState == null) {
+                                        featureState = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                                        clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
                                     }
                                 }
                             } catch (Exception e) {
@@ -154,11 +155,11 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         } else {
                             removeRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
-                                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                                    clusterFeatures.remove(info);
+                                    FeatureState info = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                                    clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                                 }
                             } catch (Exception e) {
                                 LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);

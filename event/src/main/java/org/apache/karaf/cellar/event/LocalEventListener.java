@@ -80,7 +80,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
                             ClusterEvent clusterEvent = new ClusterEvent(topicName, properties);
                             clusterEvent.setSourceGroup(group);
                             eventProducer.produce(clusterEvent);
-                        } else LOGGER.debug("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND for cluster group {}", topicName, group.getName());
+                        } else LOGGER.trace("CELLAR EVENT: event {} is marked as BLOCKED OUTBOUND for cluster group {}", topicName, group.getName());
                     }
                 }
             }

@@ -74,7 +74,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         groupConfiguration.addEntryListener(this, true);
         try {
             // create group stored in configuration admin
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             if (configuration != null) {
                 Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties == null) {
@@ -93,7 +93,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
         }
         try {
             // add group membership from configuration
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Dictionary<String, Object> properties = configuration.getProperties();
                 if (properties == null) {
@@ -204,7 +204,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      * @throws Exception in case of storage failure.
      */
     private void persist(Map<String, Group> groups) throws Exception {
-        Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+        Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
         if (configuration != null) {
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties == null) {
@@ -376,7 +376,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
 
             // add group to configuration
             try {
-                Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+                Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
                 if (configuration != null) {
                     Dictionary<String, Object> properties = configuration.getProperties();
                     if (properties != null) {
@@ -483,7 +483,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
 
             // remove cluster group from configuration
             try {
-                Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+                Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
                 Dictionary<String, Object> properties = configuration.getProperties();
                 String groups = (String) properties.get(Configurations.GROUPS_KEY);
                 if (groups == null || groups.isEmpty()) {
@@ -514,7 +514,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
      */
     public void copyGroupConfiguration(String sourceGroupName, String targetGroupName) {
         try {
-            Configuration conf = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration conf = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             if (conf != null) {
 
                 // get configuration from config admin
@@ -605,7 +605,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             Map groupConfiguration = instance.getMap(GROUPS_CONFIG);
 
             try {
-                Configuration conf = configurationAdmin.getConfiguration(GROUPS);
+                Configuration conf = configurationAdmin.getConfiguration(GROUPS, null);
                 Dictionary properties = conf.getProperties();
                 Enumeration keyEnumeration = properties.keys();
                 while (keyEnumeration.hasMoreElements()) {
@@ -650,7 +650,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     public void entryUpdated(EntryEvent entryEvent) {
         LOGGER.debug("CELLAR HAZELCAST: cluster group configuration has been updated, updating local configuration");
         try {
-            Configuration conf = configurationAdmin.getConfiguration(GROUPS);
+            Configuration conf = configurationAdmin.getConfiguration(GROUPS, null);
             Dictionary props = conf.getProperties();
             Object key = entryEvent.getKey();
             Object value = entryEvent.getValue();

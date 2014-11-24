@@ -72,7 +72,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
             	List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
             	for (Feature feature : matchingFeatures) {
 					if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
-						LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
+						LOGGER.trace("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
 						return;
 					}
 				}
@@ -92,7 +92,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     updateBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: updating {}/{}", event.getSymbolicName(), event.getVersion());
                 }
-            } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", event.getSymbolicName(), event.getSourceGroup().getName());
+            } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", event.getSymbolicName(), event.getSourceGroup().getName());
         } catch (BundleException e) {
             LOGGER.error("CELLAR BUNDLE: failed to install bundle {}/{}.", new Object[]{event.getSymbolicName(), event.getVersion()}, e);
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
     public Switch getSwitch() {
         // load the switch status from the config
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
             if (configuration != null) {
                 Boolean status = new Boolean((String) configuration.getProperties().get(Configurations.HANDLER + "." + this.getClass().getName()));
                 if (status) {

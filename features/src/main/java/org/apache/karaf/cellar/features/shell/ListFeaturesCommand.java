@@ -15,8 +15,9 @@ package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
@@ -25,7 +26,7 @@ import org.apache.karaf.shell.table.ShellTable;
 import java.util.*;
 
 @Command(scope = "cluster", name = "feature-list", description = "List the features in a cluster group")
-public class ListGroupFeatures extends FeatureCommandSupport {
+public class ListFeaturesCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -51,8 +52,8 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+;
             if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
 
                 ShellTable table = new ShellTable();
@@ -60,22 +61,22 @@ public class ListGroupFeatures extends FeatureCommandSupport {
                 table.column("Version");
                 table.column("Installed");
 
-                List<FeatureInfo> featureInfos = new ArrayList<FeatureInfo>(clusterFeatures.keySet());
+                List<FeatureState> featureStates = new ArrayList<FeatureState>(clusterFeatures.values());
                 if (ordered) {
-                    Collections.sort(featureInfos, new FeatureComparator());
+                    Collections.sort(featureStates, new FeatureComparator());
                 }
-                for (FeatureInfo info : featureInfos) {
+                for (FeatureState info : featureStates) {
 
                     String name = info.getName();
                     String version = info.getVersion();
-                    boolean status = clusterFeatures.get(info);
+                    boolean isInstalled = info.isInstalled();
                     if (version == null)
                         version = "";
-                    if (!installed || (installed && status)) {
+                    if (!installed || (installed && isInstalled)) {
                         table.addRow().addContent(
                                 name,
                                 version,
-                                status ? "x" : "");
+                                isInstalled ? "x" : "");
                     }
                 }
 
@@ -87,8 +88,8 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         return null;
     }
 
-    class FeatureComparator implements Comparator<FeatureInfo> {
-        public int compare(FeatureInfo f1, FeatureInfo f2) {
+    class FeatureComparator implements Comparator<FeatureState> {
+        public int compare(FeatureState f1, FeatureState f2) {
             return f1.getName().toLowerCase().compareTo(f2.getName().toLowerCase());
         }
     }

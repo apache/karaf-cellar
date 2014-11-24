@@ -62,7 +62,7 @@ public class DiscoveryTask implements Runnable {
                 }
                 try {
                 	LOGGER.trace("CELLAR DISCOVERY: retrieving configuration for PID={}", Discovery.PID);
-                    Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID);
+                    Configuration configuration = configurationAdmin.getConfiguration(Discovery.PID, null);
                     Dictionary properties = configuration.getProperties();
                     if (properties == null) {
                     	// this is a new configuration ...

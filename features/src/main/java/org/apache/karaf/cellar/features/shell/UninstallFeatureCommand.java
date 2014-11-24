@@ -13,21 +13,26 @@
  */
 package org.apache.karaf.cellar.features.shell;
 
+import org.apache.karaf.cellar.core.CellarSupport;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
 import org.apache.karaf.cellar.features.Constants;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 
 import java.util.List;
+import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-uninstall", description = "Uninstall a feature from a cluster group")
-public class UninstallFeatureCommand extends FeatureCommandSupport {
+public class UninstallFeatureCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -55,37 +60,68 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
-        for (String feature : features) {
-            String[] split = feature.split("/");
-            String name = split[0];
-            String version = null;
-            if (split.length == 2) {
-                version = split[1];
-            }
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            // check if the feature exists in the map
-            if (!featureExists(groupName, name, version)) {
-                if (version != null) {
-                    System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
-                } else {
-                    System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
+        try {
+
+            // get cluster features
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+
+            CellarSupport support = new CellarSupport();
+            support.setGroupManager(groupManager);
+            support.setClusterManager(clusterManager);
+            support.setConfigurationAdmin(configurationAdmin);
+
+            for (String feature : features) {
+                String[] split = feature.split("/");
+                String name = split[0];
+                String version = null;
+                if (split.length == 2) {
+                    version = split[1];
                 }
-                continue;
+
+                FeatureState found = null;
+                String foundKey = null;
+                for (String k : clusterFeatures.keySet()) {
+                    FeatureState f = clusterFeatures.get(k);
+                    foundKey = k;
+                    if (version == null) {
+                        if (f.getName().equals(name)) {
+                            found = f;
+                            break;
+                        }
+                    } else {
+                        if (f.getName().equals(name) && f.getVersion().equals(version)) {
+                            found = f;
+                            break;
+                        }
+                    }
+                }
+                if (found == null) {
+                    if (version == null)
+                        throw new IllegalArgumentException("Feature " + name + " doesn't exist in cluster group " + groupName);
+                    else
+                        throw new IllegalArgumentException("Feature " + name + "/" + version + " doesn't exist in cluster group " + groupName);
+                }
+
+                // check if the feature is allowed (outbound)
+                if (!support.isAllowed(group, Constants.CATEGORY, found.getName(), EventType.OUTBOUND)) {
+                    System.err.println("Feature " + found.getName() + " is blocked outbound for cluster group " + groupName);
+                    continue;
+                }
+
+                // update the cluster state
+                found.setInstalled(false);
+                clusterFeatures.put(foundKey, found);
+
+                // broadcast the cluster event
+                ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), false, noRefresh, false, FeatureEvent.EventType.FeatureUninstalled);
+                event.setSourceGroup(group);
+                eventProducer.produce(event);
             }
-
-            // check if the feature is allowed (outbound)
-            if (!isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
-                System.err.println("Feature " + name + " is blocked outbound for cluster group " + groupName);
-                continue;
-            }
-
-            // update the cluster state
-            updateFeatureStatus(groupName, name, version, false);
-
-            // broadcast the cluster event
-            ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, false, noRefresh, false, FeatureEvent.EventType.FeatureUninstalled);
-            event.setSourceGroup(group);
-            eventProducer.produce(event);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         return null;

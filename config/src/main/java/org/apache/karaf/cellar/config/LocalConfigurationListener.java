@@ -101,7 +101,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                     } catch (Exception e) {
                         LOGGER.error("CELLAR CONFIG: failed to update configuration with PID {} in the cluster group {}", pid, group.getName(), e);
                     }
-                } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, group.getName());
+                } else LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, group.getName());
             }
         }
     }

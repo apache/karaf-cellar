@@ -18,14 +18,18 @@ import java.io.Serializable;
 /**
  * Feature info to store in the cluster.
  */
-public class FeatureInfo implements Serializable {
+public class FeatureState implements Serializable {
 
     private String name;
     private String version;
+    private boolean installed;
 
-    public FeatureInfo(String name, String version) {
+    public FeatureState() { }
+
+    public FeatureState(String name, String version, boolean installed) {
         this.name = name;
         this.version = version;
+        this.installed = installed;
     }
 
     public String getName() {
@@ -44,12 +48,20 @@ public class FeatureInfo implements Serializable {
         this.version = version;
     }
 
+    public boolean isInstalled() {
+        return installed;
+    }
+
+    public void setInstalled(boolean installed) {
+        this.installed = installed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FeatureInfo info = (FeatureInfo) o;
+        FeatureState info = (FeatureState) o;
 
         if (name != null ? !name.equals(info.name) : info.name != null) return false;
         if (version != null ? !version.equals(info.version) : info.version != null) return false;

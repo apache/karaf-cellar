@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.features.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
@@ -22,9 +23,10 @@ import org.apache.karaf.shell.commands.Option;
 import org.apache.karaf.shell.table.ShellTable;
 
 import java.util.List;
+import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-repo-list", description = "List the features repositories in a cluster group")
-public class RepoListCommand extends FeatureCommandSupport {
+public class RepoListCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
@@ -42,12 +44,13 @@ public class RepoListCommand extends FeatureCommandSupport {
         }
 
         // get the features repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         ShellTable table = new ShellTable();
+        table.column("Repository");
         table.column("URL");
-        for (String repository : clusterRepositories) {
-            table.addRow().addContent(repository);
+        for (String url : clusterRepositories.keySet()) {
+            table.addRow().addContent(clusterRepositories.get(url), url);
         }
         table.print(System.out, !noFormat);
 
