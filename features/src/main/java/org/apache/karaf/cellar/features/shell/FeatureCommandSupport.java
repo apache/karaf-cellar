@@ -57,7 +57,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
             if (group == null || group.getNodes().isEmpty()) {
 
                 FeatureInfo info = new FeatureInfo(feature, version);
-                Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+                Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
                 // check the existing configuration
                 if (version == null || (version.trim().length() < 1)) {
                     for (FeatureInfo f : clusterFeatures.keySet()) {
@@ -103,7 +103,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + groupName);
+            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             if (clusterFeatures == null)
                 return false;
@@ -138,7 +138,7 @@ public abstract class FeatureCommandSupport extends CellarCommandSupport {
         support.setClusterManager(this.clusterManager);
         support.setGroupManager(this.groupManager);
         support.setConfigurationAdmin(this.configurationAdmin);
-        return support.isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND);
+        return support.isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND);
     }
 
     public FeaturesService getFeaturesService() {

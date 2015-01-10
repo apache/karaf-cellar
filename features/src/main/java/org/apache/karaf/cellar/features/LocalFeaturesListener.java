@@ -21,9 +21,11 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.RepositoryEvent;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,9 +56,14 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     @Override
     public void featureEvent(FeatureEvent event) {
 
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR FEATURES_MAP: local listener is disabled");
+            return;
+        }
+
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES_MAP: cluster event producer is OFF");
             return;
         }
 
@@ -70,7 +77,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     String name = feature.getName();
                     String version = feature.getVersion();
 
-                    if (isAllowed(group, Constants.FEATURES_CATEGORY, name, EventType.OUTBOUND)) {
+                    if (isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND)) {
                         FeatureEvent.EventType type = event.getType();
 
                         // update the features in the cluster group
@@ -84,7 +91,8 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         eventProducer.produce(featureEvent);
-                    } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
+                    } else
+                        LOGGER.debug("CELLAR FEATURES_MAP: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
@@ -98,9 +106,14 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     @Override
     public void repositoryEvent(RepositoryEvent event) {
 
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR FEATURES_MAP: local listener is disabled");
+            return;
+        }
+
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES_MAP: cluster event producer is OFF");
             return;
         }
 
@@ -120,7 +133,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                             // update the repositories in the cluster group
                             pushRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the cluster group
@@ -137,20 +150,20 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                     }
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURES_MAP: failed to update the cluster group", e);
                             }
                         } else {
                             // update the repositories in the cluster group
                             removeRepository(event.getRepository(), group);
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES + Configurations.SEPARATOR + group.getName());
+                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
                                     clusterFeatures.remove(info);
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURES_MAP: failed to update the cluster group", e);
                             }
                         }
 
@@ -162,6 +175,25 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+    }
+
+    /**
+     * Check if the local node feature listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
+     *
+     * @return true if enabled, false else.
+     */
+    private boolean isEnabled() {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                String value = properties.get(Constants.CATEGORY + Configurations.SEPARATOR + Configurations.LISTENER).toString();
+                return Boolean.parseBoolean(value);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR FEATURE: can't check listener configuration", e);
+        }
+        return false;
     }
 
     public EventProducer getEventProducer() {

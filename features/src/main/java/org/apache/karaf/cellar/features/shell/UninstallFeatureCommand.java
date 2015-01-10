@@ -61,7 +61,7 @@ public class UninstallFeatureCommand extends FeatureCommandSupport {
         }
 
         // check if the outbound event is allowed
-        if (!isAllowed(group, Constants.FEATURES_CATEGORY, feature, EventType.OUTBOUND)) {
+        if (!isAllowed(group, Constants.CATEGORY, feature, EventType.OUTBOUND)) {
             System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
             return null;
         }

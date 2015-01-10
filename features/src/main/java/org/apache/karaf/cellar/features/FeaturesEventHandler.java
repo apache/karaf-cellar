@@ -58,19 +58,19 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR FEATURES_MAP: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group {}", event.getSourceGroup().getName());
+            LOGGER.debug("CELLAR FEATURES_MAP: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
         String name = event.getName();
         String version = event.getVersion();
-        if (isAllowed(event.getSourceGroup(), Constants.FEATURES_CATEGORY, name, EventType.INBOUND) || event.getForce()) {
+        if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, name, EventType.INBOUND) || event.getForce()) {
             FeatureEvent.EventType type = event.getType();
             Boolean isInstalled = isFeatureInstalledLocally(name, version);
             try {
@@ -85,25 +85,25 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                         options.add(FeaturesService.Option.NoAutoRefreshBundles);
                     }
                     if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", name, version);
+                        LOGGER.debug("CELLAR FEATURES_MAP: installing feature {}/{}", name, version);
                         featuresService.installFeature(name, version, options);
                     } else {
-                        LOGGER.debug("CELLAR FEATURES: installing feature {}", name);
+                        LOGGER.debug("CELLAR FEATURES_MAP: installing feature {}", name);
                         featuresService.installFeature(name, options);
                     }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
                     if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
+                        LOGGER.debug("CELLAR FEATURES_MAP: un-installing feature {}/{}", name, version);
                         featuresService.uninstallFeature(name, version);
                     } else {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                        LOGGER.debug("CELLAR FEATURES_MAP: un-installing feature {}", name);
                         featuresService.uninstallFeature(name);
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("CELLAR FEATURES: failed to handle event", e);
+                LOGGER.error("CELLAR FEATURES_MAP: failed to handle event", e);
             }
-        } else LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, event.getSourceGroup().getName());
+        } else LOGGER.debug("CELLAR FEATURES_MAP: feature {} is marked BLOCKED INBOUND for cluster group {}", name, event.getSourceGroup().getName());
     }
 
     @Override

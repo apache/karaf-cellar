@@ -21,9 +21,11 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Dictionary;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +47,11 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
      */
     @Override
     public void bundleChanged(BundleEvent event) {
+
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR BUNDLE: local listener is disabled");
+            return;
+        }
 
         if (event.getBundle().getBundleId() == 0 && (event.getType() == BundleEvent.STOPPING || event.getType() == BundleEvent.STOPPED)) {
             LOGGER.debug("CELLAR BUNDLE: Karaf shutdown detected, removing Cellar LocalBundleListener");
@@ -106,28 +113,48 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                             }
 
                             // check the features first
-                        	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
-                        	for (Feature feature : matchingFeatures) {
-            					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
-            						LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
-            						return;
-            					}
-            				}
-                            
+                            List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
+                            for (Feature feature : matchingFeatures) {
+                                if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
+                                    LOGGER.debug("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
+                                    return;
+                                }
+                            }
+
                             // broadcast the cluster bundle event
                             ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, type);
                             clusterBundleEvent.setSourceGroup(group);
                             eventProducer.produce(clusterBundleEvent);
                         } catch (Exception e) {
-                        	LOGGER.error("CELLAR BUNDLE: failed to create cluster bundle event", e);
-						} finally {
+                            LOGGER.error("CELLAR BUNDLE: failed to create cluster bundle event", e);
+                        } finally {
                             Thread.currentThread().setContextClassLoader(originalClassLoader);
                         }
 
-                    } else LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
+                    } else
+                        LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, group.getName());
                 }
             }
         }
+    }
+
+    /**
+     * Check if the local node bundle listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
+     *
+     * @return true if enabled, false else.
+     */
+    private boolean isEnabled() {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                String value = properties.get(Constants.CATEGORY + Configurations.SEPARATOR + Configurations.LISTENER).toString();
+                return Boolean.parseBoolean(value);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR BUNDLE: can't check listener configuration", e);
+        }
+        return false;
     }
 
     public void init() {

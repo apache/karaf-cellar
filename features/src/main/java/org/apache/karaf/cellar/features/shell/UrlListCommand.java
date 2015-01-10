@@ -37,7 +37,7 @@ public class UrlListCommand extends FeatureCommandSupport {
         }
 
         // get the repositories in the cluster group
-        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES + Configurations.SEPARATOR + groupName);
+        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
         for (String clusterRepository : clusterRepositories) {
             System.out.println(clusterRepository);

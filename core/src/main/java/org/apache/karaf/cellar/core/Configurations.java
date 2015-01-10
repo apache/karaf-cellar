@@ -26,6 +26,7 @@ public class Configurations {
     public static final String CONSUMER = "consumer";
     public static final String HANDLER = "handler";
 
+    public static final String LISTENER = "listener";
     public static final String SEPARATOR = ".";
     public static final String DELIMETER = ",";
     public static final String SYNC = "sync";
