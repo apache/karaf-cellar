@@ -34,6 +34,7 @@
             <action class="org.apache.karaf.cellar.shell.SyncCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
+                <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
         </command>
         <command>
@@ -189,6 +190,7 @@
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager" availability="optional"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager" availability="optional"/>
     <reference id="executionContext" interface="org.apache.karaf.cellar.core.command.ExecutionContext" availability="optional"/>
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
     <bean id="allNodesCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllNodeCompleter">
         <property name="clusterManager" ref="clusterManager"/>

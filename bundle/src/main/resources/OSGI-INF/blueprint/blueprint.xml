@@ -37,7 +37,11 @@
         <property name="bundleContext" ref="blueprintBundleContext"/>
         <property name="eventProducer" ref="eventProducer"/>
     </bean>
-    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">
+        <service-properties>
+            <entry key="resource" value="bundle"/>
+        </service-properties>
+    </service>
 
     <!-- Cluster Bundle Event Handler -->
     <bean id="eventHandler" class="org.apache.karaf.cellar.bundle.BundleEventHandler"
