@@ -397,9 +397,8 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 if (serviceReferences != null && serviceReferences.length > 0) {
                     for (ServiceReference ref : serviceReferences) {
                         Synchronizer synchronizer = (Synchronizer) bundleContext.getService(ref);
-                        if (synchronizer != null && synchronizer.isSyncEnabled(group)) {
-                            synchronizer.pull(group);
-                            synchronizer.push(group);
+                        if (synchronizer != null) {
+                            synchronizer.sync(group);
                         }
                         bundleContext.ungetService(ref);
                     }

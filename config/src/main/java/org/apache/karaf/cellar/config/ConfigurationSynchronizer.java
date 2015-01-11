@@ -48,16 +48,37 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                if (isSyncEnabled(group)) {
-                    pull(group);
-                    push(group);
-                } else LOGGER.debug("CELLAR CONFIG: sync is disabled for cluster group {}", group.getName());
+                sync(group);
             }
         }
     }
 
     public void destroy() {
         // nothing to do
+    }
+
+    /**
+     * Sync node and cluster states, depending of the sync policy.
+     *
+     * @param group the target cluster group.
+     */
+    @Override
+    public void sync(Group group) {
+        String policy = getSyncPolicy(group);
+        if (policy != null && policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'cluster' for cluster group " + group.getName());
+            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
+                LOGGER.debug("CELLAR CONFIG: node is the first and only member of the group, pushing state");
+                push(group);
+            } else {
+                LOGGER.debug("CELLAR CONFIG: pulling state");
+                pull(group);
+            }
+        }
+        if (policy != null && policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'cluster' for cluster group " + group.getName());
+            push(group);
+        }
     }
 
     /**
@@ -152,27 +173,26 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Check if configuration sync flag is enabled for a cluster group.
+     * Get the bundle sync policy for the given cluster group.
      *
      * @param group the cluster group.
-     * @return true if the configuration sync flag is enabled for the cluster group, false else.
+     * @return the current configuration sync policy for the given cluster group
      */
     @Override
-    public Boolean isSyncEnabled(Group group) {
+    public String getSyncPolicy(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                String propertyValue = (String) properties.get(propertyKey);
-                result = Boolean.parseBoolean(propertyValue);
+                return properties.get(propertyKey).toString();
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR CONFIG: failed to check if sync is enabled", e);
+            LOGGER.error("CELLAR CONFIG: error while retrieving the sync policy", e);
         }
-        return result;
+        return "disabled";
     }
 
     public EventProducer getEventProducer() {

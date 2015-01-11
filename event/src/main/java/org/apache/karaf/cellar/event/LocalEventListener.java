@@ -13,16 +13,19 @@
  */
 package org.apache.karaf.cellar.event;
 
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.osgi.service.cm.Configuration;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +37,11 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
     @Override
     public void handleEvent(Event event) {
+
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR EVENT: local listener is disabled");
+            return;
+        }
 
         // ignore log entry event
         if (event.getTopic().startsWith("org/osgi/service/log/LogEntry"))
@@ -57,7 +65,7 @@ public class LocalEventListener extends EventSupport implements EventHandler {
 
                 // filter already processed events
                 if (hasEventProperty(event, Constants.EVENT_PROCESSED_KEY)) {
-                    if (event.getProperty(Constants.EVENT_PROCESSED_KEY).equals(Constants.EVENT_PROCESSED_VALUE)){
+                    if (event.getProperty(Constants.EVENT_PROCESSED_KEY).equals(Constants.EVENT_PROCESSED_VALUE)) {
                         LOGGER.debug("CELLAR EVENT: filtered out event {}", event.getTopic());
                         return;
                     }
@@ -79,6 +87,25 @@ public class LocalEventListener extends EventSupport implements EventHandler {
         } catch (Exception e) {
             LOGGER.error("CELLAR EVENT: failed to handle event", e);
         }
+    }
+
+    /**
+     * Check if the local config listener is enabled in the etc/org.apache.karaf.cellar.groups.cfg.
+     *
+     * @return true if enabled, false else.
+     */
+    private boolean isEnabled() {
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                String value = properties.get(Constants.CATEGORY + Configurations.SEPARATOR + Configurations.LISTENER).toString();
+                return Boolean.parseBoolean(value);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR EVENT: can't check listener configuration", e);
+        }
+        return false;
     }
 
     /**

@@ -36,14 +36,10 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
 
     @Override
     public void init() {
-        super.init();
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
-                if (isSyncEnabled(group)) {
-                    pull(group);
-                    push(group);
-                } else LOGGER.debug("CELLAR OBR: sync is disabled for group {}", group.getName());
+                sync(group);
             }
         }
     }
@@ -51,6 +47,30 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     @Override
     public void destroy() {
         super.destroy();
+    }
+
+    /**
+     * Sync node and cluster states, depending of the sync policy.
+     *
+     * @param group the target cluster group.
+     */
+    @Override
+    public void sync(Group group) {
+        String policy = getSyncPolicy(group);
+        if (policy != null && policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR OBR: sync policy is set as 'cluster' for cluster group " + group.getName());
+            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
+                LOGGER.debug("CELLAR OBR: node is the first and only member of the group, pushing state");
+                push(group);
+            } else {
+                LOGGER.debug("CELLAR OBR: pulling state");
+                pull(group);
+            }
+        }
+        if (policy != null && policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR OBR: sync policy is set as 'cluster' for cluster group " + group.getName());
+            push(group);
+        }
     }
 
     /**
@@ -118,21 +138,27 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         }
     }
 
+    /**
+     * Get the OBR sync policy for the given cluster group.
+     *
+     * @param group the cluster group.
+     * @return the current OBR sync policy.
+     */
     @Override
-    public Boolean isSyncEnabled(Group group) {
+    public String getSyncPolicy(Group group) {
         Boolean result = Boolean.FALSE;
         String groupName = group.getName();
-
         try {
-            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP);
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, Object> properties = configuration.getProperties();
-            String propertyKey = groupName + Configurations.SEPARATOR + Constants.URLS_CONFIG_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-            String propertyValue = (String) properties.get(propertyKey);
-            result = Boolean.parseBoolean(propertyValue);
+            if (properties != null) {
+                String propertyKey = groupName + Configurations.SEPARATOR + Constants.URLS_CONFIG_CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
+                return properties.get(propertyKey).toString();
+            }
         } catch (IOException e) {
-            LOGGER.error("CELLAR OBR: error while checking if sync is enabled", e);
+            LOGGER.error("CELLAR OBR: error while retrieving the sync policy", e);
         }
-        return result;
+        return "disabled";
     }
 
 }
