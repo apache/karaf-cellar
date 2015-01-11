@@ -36,7 +36,11 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
     </bean>
-    <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
+    <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">
+        <service-properties>
+            <entry key="resource" value="obr.urls"/>
+        </service-properties>
+    </service>
 
     <!-- OBR URL Event Handler -->
     <bean id="obrUrlEventHandler" class="org.apache.karaf.cellar.obr.ObrUrlEventHandler"

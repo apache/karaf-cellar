@@ -36,7 +36,11 @@
         <property name="eventProducer" ref="eventProducer"/>
         <property name="storage" value="${storage}"/>
     </bean>
-    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">
+        <service-properties>
+            <entry key="resource" value="config"/>
+        </service-properties>
+    </service>
 
     <!-- Cluster Event Handler -->
     <bean id="eventHandler" class="org.apache.karaf.cellar.config.ConfigurationEventHandler"

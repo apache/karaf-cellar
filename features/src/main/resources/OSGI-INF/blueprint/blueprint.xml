@@ -33,7 +33,11 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="featuresService" ref="featuresService"/>
     </bean>
-    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer"/>
+    <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">
+        <service-properties>
+            <entry key="resource" value="feature"/>
+        </service-properties>
+    </service>
 
     <!-- Features Event Handler -->
     <bean id="featuresHandler" class="org.apache.karaf.cellar.features.FeaturesEventHandler"
