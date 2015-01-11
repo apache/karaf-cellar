@@ -44,8 +44,8 @@
         <joda-time.version>2.5</joda-time.version>
         <junit.version>4.11</junit.version>
         <karaf.version>3.0.1</karaf.version>
-        <osgi.version>4.3.1</osgi.version>
-        <osgi.compendium.version>4.3.1</osgi.compendium.version>
+        <osgi.version>5.0.0</osgi.version>
+        <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j.version>1.7.7</slf4j.version>
     </properties>
 
