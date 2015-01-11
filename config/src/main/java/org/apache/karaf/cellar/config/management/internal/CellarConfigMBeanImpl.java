@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.config.management.CellarConfigMBean;
+import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationEvent;
 
@@ -239,6 +240,30 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             }
         } else {
             throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
+        }
+    }
+
+    @Override
+    public String getExcludedProperties() throws Exception {
+        Configuration nodeConfiguration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+        if (nodeConfiguration != null) {
+            Dictionary properties = nodeConfiguration.getProperties();
+            if (properties != null) {
+                return properties.get("config.filtered.properties").toString();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setExcludedProperties(String excludedProperties) throws Exception {
+        Configuration nodeConfiguration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+        if (nodeConfiguration != null) {
+            Dictionary properties = nodeConfiguration.getProperties();
+            if (properties == null)
+                properties = new Properties();
+            properties.put("config.filtered.properties", excludedProperties);
+            nodeConfiguration.update(properties);
         }
     }
 

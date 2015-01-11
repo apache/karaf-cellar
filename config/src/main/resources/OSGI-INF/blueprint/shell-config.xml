@@ -84,6 +84,11 @@
                 <ref component-id="clusterConfigCompleter"/>
             </completers>
         </command>
+        <command>
+            <action class="org.apache.karaf.cellar.config.shell.PropExcludedCommand">
+                <property name="configurationAdmin" ref="configurationAdmin"/>
+            </action>
+        </command>
     </command-bundle>
 
     <bean id="allGroupsCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">

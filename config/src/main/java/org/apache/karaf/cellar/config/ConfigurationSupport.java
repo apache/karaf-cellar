@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
+import org.apache.karaf.cellar.core.Configurations;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -27,8 +28,6 @@ import java.util.*;
  * Generic configuration support.
  */
 public class ConfigurationSupport extends CellarSupport {
-
-    private static String[] EXCLUDED_PROPERTIES = {"service.factoryPid", "felix.fileinstall.filename", "felix.fileinstall.dir", "felix.fileinstall.tmpdir", "org.ops4j.pax.url.mvn.defaultRepositories"};
 
     private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
 
@@ -118,9 +117,21 @@ public class ConfigurationSupport extends CellarSupport {
      * @return true is the property is excluded, false else.
      */
     public boolean isExcludedProperty(String propertyName) {
-        for (int i = 0; i < EXCLUDED_PROPERTIES.length; i++) {
-            if (EXCLUDED_PROPERTIES[i].equals(propertyName))
-                return true;
+        try {
+            Configuration nodeConfiguration = configurationAdmin.getConfiguration(Configurations.NODE, null);
+            if (nodeConfiguration != null) {
+                Dictionary properties = nodeConfiguration.getProperties();
+                if (properties != null) {
+                    String property = properties.get("config.filtered.properties").toString();
+                    String[] excludedProperties = property.split(",");
+                    for (int i = 0; i < excludedProperties.length; i++) {
+                        if (excludedProperties[i].trim().equals(propertyName))
+                            return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR CONFIG: can't check excluded properties", e);
         }
         return false;
     }
