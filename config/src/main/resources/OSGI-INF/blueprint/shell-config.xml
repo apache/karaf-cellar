@@ -79,7 +79,11 @@
                 <ref component-id="allGroupCompleter"/>
             </completers>
         </command>
-
+        <command name="cluster/config-propexcluded">
+            <action class="org.apache.karaf.cellar.config.shell.PropExcludedCommand">
+                <property name="configurationAdmin" ref="configurationAdmin"/>
+            </action>
+        </command>
     </command-bundle>
 
     <bean id="allGroupCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">

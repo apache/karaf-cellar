@@ -81,4 +81,8 @@ public interface CellarConfigMBean {
      */
     void deleteProperty(String group, String pid, String key) throws Exception;
 
+    String getExcludedProperties() throws Exception;
+
+    void setExcludedProperties(String excludedProperties) throws Exception;
+
 }
