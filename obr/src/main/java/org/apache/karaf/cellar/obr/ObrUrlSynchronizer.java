@@ -141,10 +141,10 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     }
 
     /**
-     * Get the bundle sync policy for the given cluster group.
+     * Get the OBR sync policy for the given cluster group.
      *
      * @param group the cluster group.
-     * @return the current bundle sync policy for the given cluster group.
+     * @return the current OBR sync policy for the given cluster group.
      */
     @Override
     public String getSyncPolicy(Group group) {

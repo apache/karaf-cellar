@@ -174,10 +174,10 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     /**
-     * Get the bundle sync policy for the given cluster group.
+     * Get the configuration sync policy for the given cluster group.
      *
      * @param group the cluster group.
-     * @return the current bundle sync policy for the given cluster group.
+     * @return the current configuration sync policy for the given cluster group.
      */
     @Override
     public String getSyncPolicy(Group group) {

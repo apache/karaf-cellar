@@ -196,10 +196,10 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     }
 
     /**
-     * Get the bundle sync policy for the given cluster group.
+     * Get the features sync policy for the given cluster group.
      *
      * @param group the cluster group.
-     * @return the current bundle sync policy for the given cluster group.
+     * @return the current features sync policy for the given cluster group.
      */
     @Override
     public String getSyncPolicy(Group group) {
