@@ -258,7 +258,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         if (nodeConfiguration != null) {
             Dictionary properties = nodeConfiguration.getProperties();
             if (properties != null) {
-                return properties.get("config.filtered.properties").toString();
+                return properties.get("config.excluded.properties").toString();
             }
         }
         return null;
@@ -271,7 +271,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             Dictionary properties = nodeConfiguration.getProperties();
             if (properties == null)
                 properties = new Properties();
-            properties.put("config.filtered.properties", excludedProperties);
+            properties.put("config.excluded.properties", excludedProperties);
             nodeConfiguration.update(properties);
         }
     }

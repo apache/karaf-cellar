@@ -122,7 +122,7 @@ public class ConfigurationSupport extends CellarSupport {
             if (nodeConfiguration != null) {
                 Dictionary properties = nodeConfiguration.getProperties();
                 if (properties != null) {
-                    String property = properties.get("config.filtered.properties").toString();
+                    String property = properties.get("config.excluded.properties").toString();
                     String[] excludedProperties = property.split(",");
                     for (int i = 0; i < excludedProperties.length; i++) {
                         if (excludedProperties[i].trim().equals(propertyName))

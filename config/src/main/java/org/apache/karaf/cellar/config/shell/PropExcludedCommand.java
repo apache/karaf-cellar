@@ -39,7 +39,7 @@ public class PropExcludedCommand extends CellarCommandSupport {
             if (nodeConfiguration != null) {
                 Dictionary properties = nodeConfiguration.getProperties();
                 if (properties != null) {
-                    System.out.println(properties.get("config.filtered.properties"));
+                    System.out.println(properties.get("config.excluded.properties"));
                 }
             }
         } else {
@@ -48,7 +48,7 @@ public class PropExcludedCommand extends CellarCommandSupport {
                 Dictionary properties = nodeConfiguration.getProperties();
                 if (properties == null)
                     properties = new Properties();
-                properties.put("config.filtered.properties", excludedProperties);
+                properties.put("config.excluded.properties", excludedProperties);
                 nodeConfiguration.update(properties);
             }
         }
