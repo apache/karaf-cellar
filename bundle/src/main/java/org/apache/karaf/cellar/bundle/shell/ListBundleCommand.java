@@ -13,12 +13,10 @@
  */
 package org.apache.karaf.cellar.bundle.shell;
 
-import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
-import org.apache.karaf.cellar.core.Configurations;
+import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 import org.apache.karaf.shell.table.ShellTable;
@@ -27,16 +25,22 @@ import org.osgi.framework.BundleEvent;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
-public class ListBundleCommand extends CellarCommandSupport {
-
-    @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
-    String groupName;
+public class ListBundleCommand extends  BundleCommandSupport {
 
     @Option(name = "-s", aliases = {}, description = "Shows the symbolic name", required = false, multiValued = false)
     boolean showSymbolicName;
 
     @Option(name = "-l", aliases = {}, description = "Shows the location", required = false, multiValued = false)
     boolean showLocation;
+
+    @Option(name = "--cluster", description = "Shows only bundles on the cluster", required = false, multiValued = false)
+    boolean onlyCluster;
+
+    @Option(name = "--local", description = "Shows only bundles on the local node", required = false, multiValued = false)
+    boolean onlyLocal;
+
+    @Option(name = "--blocked", description = "Shows only blocked bundles", required = false, multiValued = false)
+    boolean onlyBlocked;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -47,17 +51,24 @@ public class ListBundleCommand extends CellarCommandSupport {
             return null;
         }
 
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setGroupManager(groupManager);
+        support.setConfigurationAdmin(configurationAdmin);
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         try {
-            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            if (clusterBundles != null && !clusterBundles.isEmpty()) {
+            Map<String, ExtendedBundleState> bundles = gatherBundles();
+            if (bundles != null && !bundles.isEmpty()) {
                 System.out.println(String.format("Bundles in cluster group " + groupName));
 
                 ShellTable table = new ShellTable();
                 table.column("ID").alignRight();
                 table.column("State");
+                table.column("Located");
+                table.column("Blocked");
                 table.column("Version");
                 if (showLocation) {
                     table.column("Location");
@@ -68,7 +79,7 @@ public class ListBundleCommand extends CellarCommandSupport {
                 }
 
                 int id = 0;
-                for (String bundle : clusterBundles.keySet()) {
+                for (String bundle : bundles.keySet()) {
                     String[] tokens = bundle.split("/");
                     String symbolicName = null;
                     String version = null;
@@ -79,8 +90,7 @@ public class ListBundleCommand extends CellarCommandSupport {
                         symbolicName = bundle;
                         version = "";
                     }
-                    BundleState state = clusterBundles.get(bundle);
-
+                    ExtendedBundleState state = bundles.get(bundle);
                     String status;
                     switch (state.getStatus()) {
                         case BundleEvent.INSTALLED:
@@ -108,13 +118,48 @@ public class ListBundleCommand extends CellarCommandSupport {
                             status = "";
                             break;
                     }
+
+                    String located = "";
+                    boolean cluster = state.isCluster();
+                    boolean local = state.isLocal();
+                    if (cluster && local)
+                        located = "cluster/local";
+                    if (cluster && !local) {
+                        located = "cluster";
+                        if (onlyLocal) {
+                            id++;
+                            continue;
+                        }
+                    }
+                    if (local && !cluster) {
+                        located = "local";
+                        if (onlyCluster) {
+                            id++;
+                            continue;
+                        }
+                    }
+
+                    String blocked = "";
+                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.INBOUND);
+                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.OUTBOUND);
+                    if (inbound && outbound && onlyBlocked) {
+                        id++;
+                        continue;
+                    }
+                    if (!inbound && !outbound)
+                        blocked = "in/out";
+                    if (!inbound && outbound)
+                        blocked = "in";
+                    if (outbound && !inbound)
+                        blocked = "out";
+
                     if (showLocation) {
-                        table.addRow().addContent(id, status, version, state.getLocation());
+                        table.addRow().addContent(id, status, located, blocked, version, state.getLocation());
                     } else {
                         if (showSymbolicName) {
-                            table.addRow().addContent(id, status, version, symbolicName);
+                            table.addRow().addContent(id, status, located, blocked, version, symbolicName);
                         } else {
-                            table.addRow().addContent(id, status, version, state.getName());
+                            table.addRow().addContent(id, status, located, blocked, version, state.getName());
                         }
                     }
                     id++;

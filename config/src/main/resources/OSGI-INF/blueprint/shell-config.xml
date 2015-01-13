@@ -21,6 +21,7 @@
             <action class="org.apache.karaf.cellar.config.shell.ListCommand">
                 <property name="clusterManager" ref="clusterManager"/>
                 <property name="groupManager" ref="groupManager"/>
+                <property name="configurationAdmin" ref="configurationAdmin"/>
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>

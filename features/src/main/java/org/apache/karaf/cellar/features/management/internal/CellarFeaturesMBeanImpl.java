@@ -32,6 +32,7 @@ import javax.management.StandardMBean;
 import javax.management.openmbean.*;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -267,10 +268,23 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public TabularData getFeatures(String group) throws Exception {
+    public TabularData getFeatures(String groupName) throws Exception {
+
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setGroupManager(groupManager);
+        support.setConfigurationAdmin(configurationAdmin);
+
         CompositeType featuresType = new CompositeType("Feature", "Karaf Cellar feature",
-                new String[]{"name", "version", "installed"},
-                new String[]{"Name of the feature", "Version of the feature", "Whether the feature is installed or not"},
+                new String[]{"name", "version", "installed", "located", "blocked"},
+                new String[]{"Name of the feature", "Version of the feature", "Whether the feature is installed or not",
+                        "Location of the feature (on the cluster or the local node)",
+                        "Feature block policy"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN});
 
         TabularType tabularType = new TabularType("Features", "Table of all Karaf Cellar features",
@@ -280,12 +294,33 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group);
-            if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
-                for (FeatureState feature : clusterFeatures.values()) {
+            Map<String, ExtendedFeatureState> features = gatherFeatures(groupName);
+            if (features != null && !features.isEmpty()) {
+                for (ExtendedFeatureState feature : features.values()) {
+
+                    String located = "";
+                    boolean cluster = feature.isCluster();
+                    boolean local = feature.isLocal();
+                    if (cluster && local)
+                        located = "cluster/local";
+                    if (cluster && !local)
+                        located = "cluster";
+                    if (local && !cluster)
+                        located = "local";
+
+                    String blocked = "";
+                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, feature.getName() + "/" + feature.getVersion(), EventType.INBOUND);
+                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, feature.getName() + "/" + feature.getVersion(), EventType.OUTBOUND);
+                    if (!inbound && !outbound)
+                        blocked = "in/out";
+                    if (!inbound && outbound)
+                        blocked = "in";
+                    if (!outbound && inbound)
+                        blocked = "out";
+
                     CompositeData data = new CompositeDataSupport(featuresType,
-                            new String[]{"name", "version", "installed"},
-                            new Object[]{feature.getName(), feature.getVersion(), feature.isInstalled()});
+                            new String[]{"name", "version", "installed", "located", "blocked"},
+                            new Object[]{feature.getName(), feature.getVersion(), feature.isInstalled(), located, blocked});
                     table.put(data);
                 }
             }
@@ -294,6 +329,44 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         return table;
+    }
+
+    private Map<String, ExtendedFeatureState> gatherFeatures(String groupName) throws Exception {
+        Map<String, ExtendedFeatureState> features = new HashMap<String, ExtendedFeatureState>();
+
+        // get cluster features
+        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+        for (String key : clusterFeatures.keySet()) {
+            FeatureState state = clusterFeatures.get(key);
+            ExtendedFeatureState extendedState = new ExtendedFeatureState();
+            extendedState.setName(state.getName());
+            extendedState.setInstalled(state.isInstalled());
+            extendedState.setVersion(state.getVersion());
+            extendedState.setCluster(true);
+            extendedState.setLocal(true);
+            features.put(key, extendedState);
+        }
+
+        // get local features
+        for (Feature feature : featuresService.listFeatures()) {
+            String key = feature.getName() + "/" + feature.getVersion();
+            if (features.containsKey(key)) {
+                ExtendedFeatureState extendedState = features.get(key);
+                extendedState.setLocal(true);
+            } else {
+                ExtendedFeatureState extendedState = new ExtendedFeatureState();
+                extendedState.setCluster(false);
+                extendedState.setLocal(true);
+                extendedState.setName(feature.getName());
+                extendedState.setVersion(feature.getVersion());
+                if (featuresService.isInstalled(feature))
+                    extendedState.setInstalled(true);
+                else extendedState.setInstalled(false);
+                features.put(key, extendedState);
+            }
+        }
+
+        return features;
     }
 
     @Override
@@ -483,6 +556,28 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             eventProducer.produce(event);
         } else {
             throw new IllegalArgumentException("Features repository URL " + url + " not found in cluster group " + groupName);
+        }
+    }
+
+    class ExtendedFeatureState extends FeatureState {
+
+        private boolean cluster;
+        private boolean local;
+
+        public boolean isCluster() {
+            return cluster;
+        }
+
+        public void setCluster(boolean cluster) {
+            this.cluster = cluster;
+        }
+
+        public boolean isLocal() {
+            return local;
+        }
+
+        public void setLocal(boolean local) {
+            this.local = local;
         }
     }
 

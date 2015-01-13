@@ -17,10 +17,13 @@ import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.core.*;
+import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.bundle.management.CellarBundleMBean;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -29,6 +32,7 @@ import javax.management.StandardMBean;
 import javax.management.openmbean.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarInputStream;
@@ -45,6 +49,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     private GroupManager groupManager;
     private ConfigurationAdmin configurationAdmin;
     private EventProducer eventProducer;
+    private BundleContext bundleContext;
 
     public CellarBundleMBeanImpl() throws NotCompliantMBeanException {
         super(CellarBundleMBean.class);
@@ -80,6 +85,14 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
     public void setEventProducer(EventProducer eventProducer) {
         this.eventProducer = eventProducer;
+    }
+
+    public BundleContext getBundleContext() {
+        return bundleContext;
+    }
+
+    public void setBundleContext(BundleContext bundleContext) {
+        this.bundleContext = bundleContext;
     }
 
     @Override
@@ -164,6 +177,11 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+
         // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -171,7 +189,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(id, clusterBundles);
+            List<String> bundles = selector(id, gatherBundles(groupName));
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
@@ -181,10 +199,6 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String location = state.getLocation();
 
                 // check if the bundle location is allowed outbound
-                CellarSupport support = new CellarSupport();
-                support.setClusterManager(this.clusterManager);
-                support.setGroupManager(this.groupManager);
-                support.setConfigurationAdmin(this.configurationAdmin);
                 if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
                     continue;
                 }
@@ -218,6 +232,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+
         // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -225,7 +243,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(id, clusterBundles);
+            List<String> bundles = selector(id, gatherBundles(groupName));
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
@@ -235,9 +253,6 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String location = state.getLocation();
 
                 // check if the bundle location is allowed
-                CellarSupport support = new CellarSupport();
-                support.setClusterManager(this.clusterManager);
-                support.setGroupManager(this.groupManager);
                 support.setConfigurationAdmin(this.configurationAdmin);
                 if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
                     continue;
@@ -271,13 +286,18 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             throw new IllegalStateException("Cluster event producer is OFF for this node");
         }
 
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+
         // update the cluster group
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(id, clusterBundles);
+            List<String> bundles = selector(id, gatherBundles(groupName));
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
@@ -287,10 +307,6 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String location = state.getLocation();
 
                 // check if the bundle location is allowed outbound
-                CellarSupport support = new CellarSupport();
-                support.setClusterManager(this.clusterManager);
-                support.setGroupManager(this.groupManager);
-                support.setConfigurationAdmin(this.configurationAdmin);
                 if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
                     continue;
                 }
@@ -313,19 +329,29 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     @Override
     public TabularData getBundles(String groupName) throws Exception {
         CompositeType compositeType = new CompositeType("Bundle", "Karaf Cellar bundle",
-                new String[]{"id", "name", "version", "status", "location"},
-                new String[]{"ID of the bundle", "Name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle"},
-                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+                new String[]{"id", "name", "version", "status", "location", "located", "blocked"},
+                new String[]{"ID of the bundle", "Name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle", "Where the bundle is located (cluster or local node)", "The bundle blocked policy"},
+                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
         TabularType tableType = new TabularType("Bundles", "Table of all Karaf Cellar bundles", compositeType,
                 new String[]{"name", "version"});
         TabularData table = new TabularDataSupport(tableType);
 
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setConfigurationAdmin(configurationAdmin);
+        support.setGroupManager(groupManager);
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, ExtendedBundleState> bundles = gatherBundles(groupName);
             int id = 0;
-            for (String bundle : clusterBundles.keySet()) {
+            for (String bundle : bundles.keySet()) {
                 String[] tokens = bundle.split("/");
                 String name = null;
                 String version = null;
@@ -335,7 +361,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 } else {
                     name = bundle;
                 }
-                BundleState state = clusterBundles.get(bundle);
+                ExtendedBundleState state = bundles.get(bundle);
                 String status;
                 switch (state.getStatus()) {
                     case BundleEvent.INSTALLED:
@@ -363,9 +389,30 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                         status = "";
                         break;
                 }
+
+                String located = "";
+                boolean local = state.isLocal();
+                boolean cluster = state.isCluster();
+                if (local && cluster)
+                    located = "cluster/local";
+                if (local && !cluster)
+                    located = "local";
+                if (cluster && !local)
+                    located = "cluster";
+
+                String blocked = "";
+                boolean inbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.INBOUND);
+                boolean outbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.OUTBOUND);
+                if (!inbound && !outbound)
+                    blocked = "in/out";
+                if (!inbound && outbound)
+                    blocked = "in";
+                if (outbound && !inbound)
+                    blocked = "out";
+
                 CompositeData data = new CompositeDataSupport(compositeType,
-                        new String[]{"id", "name", "version", "status", "location"},
-                        new Object[]{id, name, version, status, state.getLocation()});
+                        new String[]{"id", "name", "version", "status", "location", "located", "blocked"},
+                        new Object[]{id, name, version, status, state.getLocation(), located, blocked});
                 table.put(data);
                 id++;
             }
@@ -380,7 +427,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
      *
      * @return the bundle key is the distributed bundle map.
      */
-    protected List<String> selector(String id, Map<String, BundleState> clusterBundles) {
+    protected List<String> selector(String id, Map<String, ExtendedBundleState> clusterBundles) {
         List<String> bundles = new ArrayList<String>();
 
         addMatchingBundles(id, bundles, clusterBundles);
@@ -388,7 +435,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         return bundles;
     }
 
-    protected void addMatchingBundles(String id, List<String> bundles, Map<String, BundleState> clusterBundles) {
+    protected void addMatchingBundles(String id, List<String> bundles, Map<String, ExtendedBundleState> clusterBundles) {
 
         // id is a number
         Pattern pattern = Pattern.compile("^\\d+$");
@@ -486,6 +533,85 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                     bundles.add(bundle);
                 }
             }
+        }
+    }
+
+    private Map<String, ExtendedBundleState> gatherBundles(String groupName) {
+        Map<String, ExtendedBundleState> bundles = new HashMap<String, ExtendedBundleState>();
+
+        // retrieve bundles from the cluster
+        Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+        for (String key : clusterBundles.keySet()) {
+            BundleState state = clusterBundles.get(key);
+            ExtendedBundleState extendedState = new ExtendedBundleState();
+            extendedState.setName(state.getName());
+            extendedState.setStatus(state.getStatus());
+            extendedState.setLocation(state.getLocation());
+            extendedState.setData(state.getData());
+            extendedState.setCluster(true);
+            extendedState.setLocal(false);
+            bundles.put(key, extendedState);
+        }
+
+        // retrieve local bundles
+        for (Bundle bundle : bundleContext.getBundles()) {
+            String key = bundle.getSymbolicName() + "/" + bundle.getVersion().toString();
+            if (bundles.containsKey(key)) {
+                ExtendedBundleState extendedState = bundles.get(key);
+                extendedState.setLocal(true);
+            } else {
+                ExtendedBundleState extendedState = new ExtendedBundleState();
+
+                // get the bundle name or location.
+                String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
+                // if there is no name, then default to symbolic name.
+                name = (name == null) ? bundle.getSymbolicName() : name;
+                // if there is no symbolic name, resort to location.
+                name = (name == null) ? bundle.getLocation() : name;
+                extendedState.setName(name);
+                extendedState.setLocation(bundle.getLocation());
+                int status = bundle.getState();
+                if (status == Bundle.ACTIVE)
+                    status = BundleEvent.STARTED;
+                if (status == Bundle.INSTALLED)
+                    status = BundleEvent.INSTALLED;
+                if (status == Bundle.RESOLVED)
+                    status = BundleEvent.RESOLVED;
+                if (status == Bundle.STARTING)
+                    status = BundleEvent.STARTING;
+                if (status == Bundle.UNINSTALLED)
+                    status = BundleEvent.UNINSTALLED;
+                if (status == Bundle.STOPPING)
+                    status = BundleEvent.STARTED;
+                extendedState.setStatus(status);
+                extendedState.setCluster(false);
+                extendedState.setLocal(true);
+                bundles.put(key, extendedState);
+            }
+        }
+
+        return bundles;
+    }
+
+    class ExtendedBundleState extends BundleState {
+
+        private boolean cluster;
+        private boolean local;
+
+        public boolean isCluster() {
+            return cluster;
+        }
+
+        public void setCluster(boolean cluster) {
+            this.cluster = cluster;
+        }
+
+        public boolean isLocal() {
+            return local;
+        }
+
+        public void setLocal(boolean local) {
+            this.local = local;
         }
     }
 

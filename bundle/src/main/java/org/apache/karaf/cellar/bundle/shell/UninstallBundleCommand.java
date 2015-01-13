@@ -55,7 +55,7 @@ public class UninstallBundleCommand extends BundleCommandSupport {
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(clusterBundles);
+            List<String> bundles = selector(gatherBundles());
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
