@@ -75,6 +75,10 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 // get the name and version in the location MANIFEST
                 JarInputStream jarInputStream = new JarInputStream(new URL(url).openStream());
                 Manifest manifest = jarInputStream.getManifest();
+                if (manifest == null) {
+                    System.err.println("Bundle location " + url + " doesn't seem correct");
+                    continue;
+                }
                 String name = manifest.getMainAttributes().getValue("Bundle-Name");
                 String symbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
                 if (name == null) {

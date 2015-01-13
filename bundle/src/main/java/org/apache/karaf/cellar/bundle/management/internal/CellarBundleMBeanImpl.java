@@ -125,6 +125,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         // get the name and version in the location MANIFEST
         JarInputStream jarInputStream = new JarInputStream(new URL(location).openStream());
         Manifest manifest = jarInputStream.getManifest();
+        if (manifest == null) {
+            throw new IllegalArgumentException("Bundle location " + location + " doesn't seem correct");
+        }
         String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
         if (name == null) {
             name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
