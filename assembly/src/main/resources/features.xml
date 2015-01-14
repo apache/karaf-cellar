@@ -15,7 +15,7 @@
 -->
 <features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
-    <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
+    <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
     
     <feature name="cellar-core" description="Karaf clustering core" version="${project.version}" resolver="(obr)">
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">

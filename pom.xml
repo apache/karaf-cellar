@@ -40,7 +40,7 @@
         <felix.utils.version>1.6.0</felix.utils.version>
         <felix.webconsole.version>4.2.2</felix.webconsole.version>
         <hazelcast.version>3.4</hazelcast.version>
-        <jclouds.version>1.4.0</jclouds.version>
+        <jclouds.version>1.8.1</jclouds.version>
         <joda-time.version>2.5</joda-time.version>
         <junit.version>4.11</junit.version>
         <karaf.version>3.0.2</karaf.version>
@@ -269,13 +269,13 @@
 
             <!-- JClouds -->
             <dependency>
-                <groupId>org.jclouds</groupId>
+                <groupId>org.apache.jclouds</groupId>
                 <artifactId>jclouds-blobstore</artifactId>
                 <version>${jclouds.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.jclouds</groupId>
+                <groupId>org.apache.jclouds</groupId>
                 <artifactId>jclouds-allblobstore</artifactId>
                 <version>${jclouds.version}</version>
             </dependency>

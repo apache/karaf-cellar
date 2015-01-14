@@ -14,9 +14,9 @@
 package org.apache.karaf.cellar.cloud;
 
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -62,7 +62,7 @@ public class BlobStoreDiscoveryService implements DiscoveryService {
         try {
             if (blobStore == null) {
                 if (context == null) {
-                    context = new BlobStoreContextFactory().createContext(provider, identity, credential);
+                    context = ContextBuilder.newBuilder(provider).credentials(identity, credential).buildView(BlobStoreContext.class);
                 }
                 blobStore = context.getBlobStore();
                 signIn();
