@@ -16,12 +16,7 @@ package org.apache.karaf.cellar.hazelcast;
 import java.io.IOException;
 import java.util.*;
 
-import com.hazelcast.core.Cluster;
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import com.hazelcast.core.Member;
+import com.hazelcast.core.*;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
@@ -671,6 +666,16 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
     @Override
     public void entryEvicted(EntryEvent entryEvent) {
         entryUpdated(entryEvent);
+    }
+
+    @Override
+    public void mapCleared(MapEvent mapEvent) {
+        // nothing to do
+    }
+
+    @Override
+    public void mapEvicted(MapEvent mapEvent) {
+        // nothing to do
     }
 
     public HazelcastInstance getInstance() {
