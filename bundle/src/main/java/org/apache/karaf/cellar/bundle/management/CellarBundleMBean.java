@@ -67,6 +67,19 @@ public interface CellarBundleMBean {
     void stop(String group, String id) throws Exception;
 
     /**
+     * Updating blocking policy for a given bundle pattern.
+     *
+     * @param group the cluster group name where to apply the blocking policy.
+     * @param pattern the bundle pattern.
+     * @param whitelist true to allow bundle by updating the whitelist.
+     * @param blacklist true to block bundle by updating the blacklist.
+     * @param in true to update the inbound policy.
+     * @param out true to update the outbound policy.
+     * @throws Exception
+     */
+    void block(String group, String pattern, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception;
+
+    /**
      * Get the bundles in a cluster group.
      *
      * @param group the cluster group name.

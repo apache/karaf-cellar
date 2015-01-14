@@ -309,8 +309,8 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                         located = "local";
 
                     String blocked = "";
-                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, feature.getName() + "/" + feature.getVersion(), EventType.INBOUND);
-                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, feature.getName() + "/" + feature.getVersion(), EventType.OUTBOUND);
+                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.INBOUND);
+                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND);
                     if (!inbound && !outbound)
                         blocked = "in/out";
                     if (!inbound && outbound)
@@ -557,6 +557,34 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         } else {
             throw new IllegalArgumentException("Features repository URL " + url + " not found in cluster group " + groupName);
         }
+    }
+
+    @Override
+    public void block(String groupName, String featurePattern, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception {
+
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setGroupManager(groupManager);
+        support.setConfigurationAdmin(configurationAdmin);
+
+        if (in) {
+            if (whitelist)
+                support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND, featurePattern);
+            if (blacklist)
+                support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND, featurePattern);
+        }
+        if (out) {
+            if (whitelist)
+                support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, featurePattern);
+            if (blacklist)
+                support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, featurePattern);
+        }
+
     }
 
     class ExtendedFeatureState extends FeatureState {

@@ -82,8 +82,33 @@ public interface CellarConfigMBean {
      */
     void deleteProperty(String group, String pid, String key) throws Exception;
 
+    /**
+     * Get the list of config properties excluded from the sync.
+     *
+     * @return the properties excluded from the sync.
+     * @throws Exception
+     */
     String getExcludedProperties() throws Exception;
 
+    /**
+     * Define the list of config properties excluded from the sync.
+     *
+     * @param excludedProperties the properties excluded from the sync.
+     * @throws Exception
+     */
     void setExcludedProperties(String excludedProperties) throws Exception;
+
+    /**
+     * Change the blocking policy for the given config PID pattern.
+     *
+     * @param groupName the cluster group name.
+     * @param pid the config PID pattern.
+     * @param whitelist true to allow the PID pattern by updating the whitelist.
+     * @param blacklist true to block the PID pattern by updating the blacklist.
+     * @param in true to change inbound blocking policy.
+     * @param out true to change outbound blocking policy.
+     * @throws Exception
+     */
+    void block(String groupName, String pid, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception;
 
 }

@@ -267,6 +267,27 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
         }
     }
 
+    @Override
+    public void block(String groupName, String pid, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception {
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setGroupManager(groupManager);
+        support.setConfigurationAdmin(configurationAdmin);
+
+        if (in) {
+            if (whitelist)
+                support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND, pid);
+            if (blacklist)
+                support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND, pid);
+        }
+        if (out) {
+            if (whitelist)
+                support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pid);
+            if (blacklist)
+                support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pid);
+        }
+    }
+
     public ClusterManager getClusterManager() {
         return this.clusterManager;
     }

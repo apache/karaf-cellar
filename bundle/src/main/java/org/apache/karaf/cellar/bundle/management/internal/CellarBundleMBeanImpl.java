@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.bundle.management.internal;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
+import org.apache.karaf.cellar.bundle.shell.BundleCommandSupport;
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
@@ -326,6 +327,41 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    @Override
+    public void block(String groupName, String bundlePattern, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception {
+        List<String> patterns = new ArrayList<String>();
+
+        Map<String, ExtendedBundleState> bundles = gatherBundles(groupName);
+        List<String> selectedBundles = selector(bundlePattern, bundles);
+        for (String selectedBundle : selectedBundles) {
+            patterns.add(bundles.get(selectedBundle).getLocation());
+        }
+
+        if (patterns.isEmpty()) {
+            patterns.add(bundlePattern);
+        }
+
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(clusterManager);
+        support.setGroupManager(groupManager);
+        support.setConfigurationAdmin(configurationAdmin);
+
+        for (String pattern : patterns) {
+            if (in) {
+                if (whitelist)
+                    support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+                if (blacklist)
+                    support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+            }
+            if (out) {
+                if (whitelist)
+                    support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+                if (blacklist)
+                    support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+            }
         }
     }
 

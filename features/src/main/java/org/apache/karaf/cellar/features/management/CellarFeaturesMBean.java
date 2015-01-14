@@ -167,6 +167,19 @@ public interface CellarFeaturesMBean {
     void uninstallFeature(String group, String name, String version, boolean noRefresh) throws Exception;
 
     /**
+     * Change the blocking policy for a feature pattern.
+     *
+     * @param group the cluster group name.
+     * @param pattern the feature pattern.
+     * @param whitelist true to allow the feature by updating the whitelist.
+     * @param blacklist true to block the feature by updating the blacklist
+     * @param in true to change the inbound blocking policy.
+     * @param out true to change the outbound blocking policy.
+     * @throws Exception
+     */
+    void block(String group, String pattern, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception;
+
+    /**
      * Get the list of features repository URLs in a cluster group.
      *
      * @param group the cluster group name.

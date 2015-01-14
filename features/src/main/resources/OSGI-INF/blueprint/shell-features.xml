@@ -84,6 +84,17 @@
                 <ref component-id="allGroupsCompleter"/>
             </completers>
         </command>
+        <command>
+            <action class="org.apache.karaf.cellar.features.shell.BlockCommand">
+                <property name="clusterManager" ref="clusterManager"/>
+                <property name="groupManager" ref="groupManager"/>
+                <property name="configurationAdmin" ref="configurationAdmin"/>
+            </action>
+            <completers>
+                <ref component-id="allGroupsCompleter"/>
+                <ref component-id="allFeaturesCompleter"/>
+            </completers>
+        </command>
     </command-bundle>
 
     <bean id="allGroupsCompleter" class="org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter">

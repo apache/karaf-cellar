@@ -20,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +34,41 @@ public class CellarSupport {
     protected ClusterManager clusterManager;
     protected GroupManager groupManager;
     protected ConfigurationAdmin configurationAdmin;
+
+    /**
+     * If the entry is not present in the list, add it. If the entry is present in the list, remove it.
+     *
+     * @param listType the comma separated list of resources.
+     * @param group the cluster group name.
+     * @param category the resource category name.
+     * @param entry the entry to switch.
+     */
+    public void switchListEntry(String listType, String group, String category, EventType type, String entry) throws Exception {
+        if (group != null) {
+            Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
+            Dictionary dictionary = configuration.getProperties();
+            if (dictionary == null) {
+                dictionary = new Properties();
+            }
+            String key = group + Configurations.SEPARATOR + category + Configurations.SEPARATOR + listType + Configurations.SEPARATOR + type.name().toLowerCase();
+            if (dictionary.get(key) != null) {
+                String value = dictionary.get(key).toString();
+                if (value.contains(entry)) {
+                    value = value.replace(entry, "");
+                } else {
+                    value = value + "," + entry;
+                }
+                if (value.startsWith(",")) value = value.substring(1);
+                if (value.endsWith(",")) value = value.substring(0, value.length() - 1);
+                value = value.replace("\n\n", "");
+                value = value.replace(",,", ",");
+                dictionary.put(key, value);
+            } else {
+                dictionary.put(key, entry);
+            }
+            configuration.update(dictionary);
+        }
+    }
 
     /**
      * Get a set of resources in the Cellar cluster groups configuration.
