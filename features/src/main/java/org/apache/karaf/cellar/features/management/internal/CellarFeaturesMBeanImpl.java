@@ -352,6 +352,8 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             String key = feature.getName() + "/" + feature.getVersion();
             if (features.containsKey(key)) {
                 ExtendedFeatureState extendedState = features.get(key);
+                if (featuresService.isInstalled(feature))
+                    extendedState.setInstalled(true);
                 extendedState.setLocal(true);
             } else {
                 ExtendedFeatureState extendedState = new ExtendedFeatureState();
