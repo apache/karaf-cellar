@@ -179,7 +179,8 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
 
         // retrieve local bundles
         for (Bundle bundle : bundleContext.getBundles()) {
-            String key = bundle.getSymbolicName() + "/" + bundle.getVersion().toString();
+            String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+            String key = bundle.getSymbolicName() + "/" + version;
             if (bundles.containsKey(key)) {
                 ExtendedBundleState extendedState = bundles.get(key);
                 extendedState.setLocal(true);
