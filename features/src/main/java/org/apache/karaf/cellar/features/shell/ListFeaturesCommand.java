@@ -110,8 +110,8 @@ public class ListFeaturesCommand extends CellarCommandSupport {
                     }
 
                     String blocked = "";
-                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, name + "/" + version, EventType.INBOUND);
-                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, name + "/" + version, EventType.OUTBOUND);
+                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, name, EventType.INBOUND);
+                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, name, EventType.OUTBOUND);
                     if (inbound && outbound && onlyBlocked)
                         continue;
                     if (!inbound && !outbound)
