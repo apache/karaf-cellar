@@ -15,6 +15,52 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 3.0.1
+                    =========================
+
+  Overview
+  --------
+
+ Apache Karaf Cellar 3.0.1 is a major new release of Cellar designed to work with Karaf 3.0.x versions.
+ It includes a lot of new features and bug fixes, especially a complete refactoring of the internal sync behavior.
+ It provides a more reliable, predictable and secure cluster support.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-1474] - Fix Cellar itests
+    * [KARAF-1486] - When a new member enters a custom group, it does not install the features that should be installed in that group
+    * [KARAF-2250] - duplicated bundle found in cluster:bundle-list when cluster:bundle-install a bundle version like 1.02.12-SNAPSHOT.
+    * [KARAF-2288] - CellarFeaturesSynchronizer ignores the features.repository sync flag
+    * [KARAF-2490] - Cellar should maintain the resources deployment order on the cluster
+    * [KARAF-2597] - Overlap between features with the same name (but different versions) in Cellar FeaturesSynchronizer
+    * [KARAF-3337] - Cellar needs to blacklist configuration for "org.apache.aries.transaction" per default
+    * [KARAF-3442] - cluster:bundle-install raise a NPE if the bundle location is not correct
+
+** Dependency upgrade
+    * [KARAF-3294] - Upgrade to Hazelcast 3.4
+    * [KARAF-3296] - Upgrade to joda-time 2.5
+    * [KARAF-3297] - Upgrade to Felix BundleRepository 2.0.2
+    * [KARAF-3298] - Upgrade to Felix WebConsole 4.2.2
+    * [KARAF-3299] - Upgrade to Apache jclouds 1.8.1
+    * [KARAF-3300] - Upgrade to OSGi 5.0.0
+    * [KARAF-3301] - Upgrade to Aries Proxy API 1.0.1
+
+
+
+** Improvement
+    * [KARAF-1157] - Add new cluster:sync commands
+    * [KARAF-2168] - Rename sync property
+    * [KARAF-2169] - Introduce *.listener property
+    * [KARAF-2172] - Be able to define the priority between cluster data and local data
+    * [KARAF-2241] - Mark feature not distributable 
+    * [KARAF-2242] - Easy listing of distributable features
+    * [KARAF-3341] - Blacklist "XML bundles" by default
+
+** New Feature
+    * [KARAF-1469] - User definition of excluded config properties
+
+
                     Apache Karaf Cellar 3.0.0
                     =========================
 
