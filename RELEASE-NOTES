@@ -38,7 +38,7 @@
     * [KARAF-3442] - cluster:bundle-install raise a NPE if the bundle location is not correct
 
 ** Dependency upgrade
-    * [KARAF-3294] - Upgrade to Hazelcast 3.4
+    * [KARAF-3294] - Upgrade to Hazelcast 3.3.4
     * [KARAF-3296] - Upgrade to joda-time 2.5
     * [KARAF-3297] - Upgrade to Felix BundleRepository 2.0.2
     * [KARAF-3298] - Upgrade to Felix WebConsole 4.2.2
