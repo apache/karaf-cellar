@@ -41,6 +41,7 @@
         <felix.webconsole.version>4.2.2</felix.webconsole.version>
         <hazelcast.version>3.3.4</hazelcast.version>
         <jclouds.version>1.8.1</jclouds.version>
+        <fabric8.version>2.0.19</fabric8.version>
         <joda-time.version>2.5</joda-time.version>
         <junit.version>4.11</junit.version>
         <karaf.version>3.0.2</karaf.version>
@@ -61,6 +62,7 @@
         <module>hazelcast</module>
         <module>utils</module>
         <module>cloud</module>
+        <module>kubernetes</module>
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
@@ -278,6 +280,13 @@
                 <groupId>org.apache.jclouds</groupId>
                 <artifactId>jclouds-allblobstore</artifactId>
                 <version>${jclouds.version}</version>
+            </dependency>
+
+            <!-- Fabric8 Kubernetes API -->
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-api</artifactId>
+                <version>${fabric8.version}</version>
             </dependency>
 
             <!-- Joda Time -->

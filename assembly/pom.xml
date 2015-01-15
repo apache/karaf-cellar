@@ -91,6 +91,11 @@
                                     <classifier>node</classifier>
                                 </artifact>
                                 <artifact>
+                                    <file>target/classes/kubernetes.cfg</file>
+                                    <type>cfg</type>
+                                    <classifier>kubernetes</classifier>
+                                </artifact>
+                                <artifact>
                                     <file>target/classes/hazelcast.xml</file>
                                     <type>xml</type>
                                     <classifier>hazelcast</classifier>
