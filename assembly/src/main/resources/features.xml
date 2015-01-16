@@ -16,7 +16,7 @@
 <features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
 
     <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
-    <repository>mvn:org.apache.cxf.karaf/apache-cxf/3.0.2/xml/features</repository>
+    <repository>mvn:io.fabric8/karaf-features/${fabric8.version}/xml/features</repository>
     
     <feature name="cellar-core" description="Karaf clustering core" version="${project.version}" resolver="(obr)">
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
@@ -103,19 +103,7 @@
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/kubernetes
         </configfile>
         <feature version="${project.version}">cellar-core</feature>
-        <feature>cxf-jaxrs</feature>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/2.4.1</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/2.4.1</bundle>
-        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/2.4.1</bundle>
-        <bundle>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/2.4.1</bundle>
-        <bundle>mvn:javax.validation/validation-api/1.1.0.Final</bundle>
-        <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/2.4.1</bundle>
-        <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/2.4.1</bundle>
-        <bundle>mvn:io.fabric8/fabric-utils/${fabric8.version}</bundle>
-        <bundle>mvn:commons-lang/commons-lang/2.6</bundle>
-        <bundle>wrap:mvn:org.yaml/snakeyaml/1.5</bundle>
-        <bundle>wrap:mvn:org.json/json/20140107</bundle>
-        <bundle>mvn:io.fabric8/kubernetes-api/${fabric8.version}</bundle>
+        <feature>fabric8-kubernetes-api</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
     </feature>
 
