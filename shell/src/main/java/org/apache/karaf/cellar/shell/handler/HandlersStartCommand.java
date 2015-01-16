@@ -18,7 +18,7 @@ import org.apache.karaf.shell.commands.Command;
 
 import java.util.List;
 
-@Command(scope = "cluster", name = "handlers", description = "Start a cluster event handler")
+@Command(scope = "cluster", name = "handler-start", description = "Start a cluster event handler")
 public class HandlersStartCommand extends HandlersSupport {
 
     @Argument(index = 0, name = "handler", description = "The cluster event handler ID", required = true, multiValued = false)
