@@ -54,7 +54,7 @@ public class BlockCommand extends BundleCommandSupport {
             patterns.add(bundles.get(selectedBundle).getLocation());
         }
 
-        if (patterns.isEmpty()) {
+        if (patterns.isEmpty() && ids != null) {
             for (String id : ids) {
                 patterns.add(id);
             }
