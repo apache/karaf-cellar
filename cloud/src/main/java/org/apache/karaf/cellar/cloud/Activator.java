@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.cloud;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ManagedServiceFactory;
 
 import java.util.Hashtable;
@@ -25,17 +26,21 @@ import java.util.Hashtable;
  */
 public class Activator implements BundleActivator {
 
+    private ServiceRegistration serviceRegistration;
+
     @Override
     public void start(BundleContext context) throws Exception {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(Constants.SERVICE_PID, "org.apache.karaf.cellar.cloud");
         BlobStoreDiscoveryServiceFactory blobStoreDiscoveryServiceFactory = new BlobStoreDiscoveryServiceFactory(context);
-        context.registerService(ManagedServiceFactory.class.getName(), blobStoreDiscoveryServiceFactory, properties);
+        serviceRegistration = context.registerService(ManagedServiceFactory.class.getName(), blobStoreDiscoveryServiceFactory, properties);
     }
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        // nothing to do
+        if (serviceRegistration != null) {
+            serviceRegistration.unregister();
+        }
     }
 
 }
