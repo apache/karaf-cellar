@@ -36,6 +36,7 @@
 
     <properties>
         <easymock.version>3.2</easymock.version>
+        <fabric8.version>2.0.20</fabric8.version>
         <felix.bundlerepository.version>2.0.2</felix.bundlerepository.version>
         <felix.utils.version>1.6.0</felix.utils.version>
         <felix.webconsole.version>4.2.2</felix.webconsole.version>
@@ -61,6 +62,7 @@
         <module>hazelcast</module>
         <module>utils</module>
         <module>cloud</module>
+        <module>kubernetes</module>
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
@@ -285,6 +287,13 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+
+            <!-- Kubernetes -->
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>kubernetes-api</artifactId>
+                <version>${fabric8.version}</version>
             </dependency>
 
             <!-- Testing -->
