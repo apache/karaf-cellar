@@ -15,6 +15,41 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.4
+                    =========================
+
+  Overview
+  --------
+
+ This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+ It includes several bug fixes, including critical ones.
+ It also includes a complete refactoring of synchronizers and listeners, allowing
+ a more secure and predictable behavior. Take a look on the user guide for details.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-1486] - When a new member enters a custom group, it does not install the features that should be installed in that group
+    * [KARAF-2250] - duplicated bundle found in cluster:bundle-list when cluster:bundle-install a bundle version like 1.02.12-SNAPSHOT.
+    * [KARAF-2288] - CellarFeaturesSynchronizer ignores the features.repository sync flag
+    * [KARAF-2490] - Cellar should maintain the resources deployment order on the cluster
+    * [KARAF-2597] - Overlap between features with the same name (but different versions) in Cellar FeaturesSynchronizer
+    * [KARAF-2653] - Local and Cluster Bundle Lists Don't Match After Feature Installation
+    * [KARAF-3337] - Cellar needs to blacklist configuration for "org.apache.aries.transaction" per default
+    * [KARAF-3442] - cluster:bundle-install raise a NPE if the bundle location is not correct
+
+** Dependency upgrade
+    * [KARAF-3298] - Upgrade to Felix WebConsole 4.2.2
+
+** Improvement
+    * [KARAF-1157] - Add new cluster:sync commands
+    * [KARAF-2168] - Rename sync property
+    * [KARAF-2169] - Introduce *.listener property
+    * [KARAF-2172] - Be able to define the priority between cluster data and local data
+
+** New Feature
+    * [KARAF-1469] - User definition of excluded config properties
+
                     Apache Karaf Cellar 2.3.3
                     =========================
 
