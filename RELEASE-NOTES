@@ -46,8 +46,6 @@
     * [KARAF-3300] - Upgrade to OSGi 5.0.0
     * [KARAF-3301] - Upgrade to Aries Proxy API 1.0.1
 
-
-
 ** Improvement
     * [KARAF-1157] - Add new cluster:sync commands
     * [KARAF-2168] - Rename sync property
@@ -59,7 +57,7 @@
 
 ** New Feature
     * [KARAF-1469] - User definition of excluded config properties
-
+    * [KARAF-3447] - Add cellar-kubernetes feature
 
                     Apache Karaf Cellar 3.0.0
                     =========================
