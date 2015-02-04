@@ -97,17 +97,21 @@ public class RepoListCommand extends CellarCommandSupport {
         }
 
         // get the local features repositories
-        for (Repository localRepository : featuresService.listRepositories()) {
-            if (repositories.containsKey(localRepository.getURI().toString())) {
-                RepositoryState state = repositories.get(localRepository.getURI().toString());
-                state.setLocal(true);
-            } else {
-                RepositoryState state = new RepositoryState();
-                state.setCluster(false);
-                state.setLocal(true);
-                state.setName(localRepository.getName());
-                repositories.put(localRepository.getURI().toString(), state);
+        try {
+            for (Repository localRepository : featuresService.listRepositories()) {
+                if (repositories.containsKey(localRepository.getURI().toString())) {
+                    RepositoryState state = repositories.get(localRepository.getURI().toString());
+                    state.setLocal(true);
+                } else {
+                    RepositoryState state = new RepositoryState();
+                    state.setCluster(false);
+                    state.setLocal(true);
+                    state.setName(localRepository.getName());
+                    repositories.put(localRepository.getURI().toString(), state);
+                }
             }
+        } catch (Exception e) {
+            // nothing to do
         }
 
         return repositories;

@@ -53,13 +53,17 @@ public class FeaturesSupport extends CellarSupport {
      */
     public Boolean isFeatureInstalledLocally(String name, String version) {
         if (featuresService != null) {
-            Feature[] localFeatures = featuresService.listInstalledFeatures();
+            try {
+                Feature[] localFeatures = featuresService.listInstalledFeatures();
 
-            if (localFeatures != null && localFeatures.length > 0) {
-                for (Feature localFeature : localFeatures) {
-                    if (localFeature.getName().equals(name) && (localFeature.getVersion().equals(version) || version == null))
-                        return true;
+                if (localFeatures != null && localFeatures.length > 0) {
+                    for (Feature localFeature : localFeatures) {
+                        if (localFeature.getName().equals(name) && (localFeature.getVersion().equals(version) || version == null))
+                            return true;
+                    }
                 }
+            } catch (Exception e) {
+                LOGGER.warn("CELLAR FEATURES: can't check if the feature {}/{} is installed locally", name, version, e);
             }
         }
         return false;
@@ -72,11 +76,15 @@ public class FeaturesSupport extends CellarSupport {
      * @return true if the features repository is already registered locally, false else.
      */
     public Boolean isRepositoryRegisteredLocally(String uri) {
-        Repository[] localRepositories = featuresService.listRepositories();
-        for (Repository localRepository : localRepositories) {
-            if (localRepository.getURI().toString().equals(uri)) {
-                return true;
+        try {
+            Repository[] localRepositories = featuresService.listRepositories();
+            for (Repository localRepository : localRepositories) {
+                if (localRepository.getURI().toString().equals(uri)) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            LOGGER.warn("CELLAR FEATURES: can't check if the feature repository {} is registered locally", uri, e);
         }
         return false;
     }
@@ -142,7 +150,11 @@ public class FeaturesSupport extends CellarSupport {
         }
 
         if (!found) {
-            clusterRepositories.put(repository.getURI().toString(), repository.getName());
+            try {
+                clusterRepositories.put(repository.getURI().toString(), repository.getName());
+            } catch (Exception e) {
+                LOGGER.warn("CELLAR FEATURES: can't push features repository on the cluster", e);
+            }
         }
     }
 

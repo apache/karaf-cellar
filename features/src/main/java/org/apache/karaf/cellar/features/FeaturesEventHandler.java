@@ -79,13 +79,9 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             Boolean isInstalled = isFeatureInstalledLocally(name, version);
             try {
                 if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
-                    boolean noClean = event.getNoClean();
                     boolean noRefresh = event.getNoRefresh();
                     boolean noStart = event.getNoStart();
                     EnumSet<FeaturesService.Option> options = EnumSet.noneOf(FeaturesService.Option.class);
-                    if (noClean) {
-                        options.add(FeaturesService.Option.NoCleanIfFailure);
-                    }
                     if (noRefresh) {
                         options.add(FeaturesService.Option.NoAutoRefreshBundles);
                     }

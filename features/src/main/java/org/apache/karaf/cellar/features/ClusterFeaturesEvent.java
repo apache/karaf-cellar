@@ -25,7 +25,6 @@ public class ClusterFeaturesEvent extends Event {
 
     private String name;
     private String version;
-    private Boolean noClean;
     private Boolean noRefresh;
     private Boolean noStart;
     private EventType type;
@@ -34,7 +33,6 @@ public class ClusterFeaturesEvent extends Event {
         super(name + separator + version);
         this.name = name;
         this.version = version;
-        this.noClean = false;
         this.noRefresh = false;
         this.noStart = false;
         this.type = type;
@@ -44,7 +42,6 @@ public class ClusterFeaturesEvent extends Event {
         super(name + separator + version);
         this.name = name;
         this.version = version;
-        this.noClean = noClean;
         this.noRefresh = noRefresh;
         this.noStart = noStart;
         this.type = type;
@@ -56,10 +53,6 @@ public class ClusterFeaturesEvent extends Event {
 
     public String getVersion() {
         return version;
-    }
-
-    public Boolean getNoClean() {
-        return noClean;
     }
 
     public Boolean getNoRefresh() {
