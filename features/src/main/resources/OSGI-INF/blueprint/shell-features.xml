@@ -26,7 +26,7 @@
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>
-                <ref component-id="allFeaturesCompleter"/>
+                <!-- <ref component-id="allFeaturesCompleter"/> -->
             </completers>
         </command>
         <command>
@@ -38,7 +38,7 @@
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>
-                <ref component-id="allFeaturesCompleter"/>
+                <!-- <ref component-id="allFeaturesCompleter"/> -->
             </completers>
         </command>
         <command>
@@ -92,7 +92,7 @@
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>
-                <ref component-id="allFeaturesCompleter"/>
+                <!-- <ref component-id="allFeaturesCompleter"/> -->
             </completers>
         </command>
     </command-bundle>
@@ -101,8 +101,10 @@
         <property name="groupManager" ref="groupManager"/>
     </bean>
 
+    <!--
     <bean id="allFeaturesCompleter" class="org.apache.karaf.features.command.completers.AllFeatureCompleter">
         <property name="featuresService" ref="featuresService"/>
     </bean>
+    -->
 
 </blueprint>
