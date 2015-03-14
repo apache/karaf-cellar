@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,11 +82,16 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         FeatureEvent.EventType type = event.getType();
 
                         // update the features in the cluster group
+                        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                        FeatureState clusterFeatureState = new FeatureState();
+                        clusterFeatureState.setName(event.getFeature().getName());
+                        clusterFeatureState.setVersion(event.getFeature().getVersion());
                         if (FeatureEvent.EventType.FeatureInstalled.equals(event.getType())) {
-                            pushFeature(event.getFeature(), group, true);
+                            clusterFeatureState.setInstalled(Boolean.TRUE);
                         } else {
-                            pushFeature(event.getFeature(), group, false);
+                            clusterFeatureState.setInstalled(Boolean.FALSE);
                         }
+                        clusterFeatures.put(event.getFeature().getName() + "/" + event.getFeature().getVersion(), clusterFeatureState);
 
                         // broadcast the cluster event
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
@@ -129,41 +135,38 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         repositoryEvent.setSourceGroup(group);
                         RepositoryEvent.EventType type = event.getType();
 
+                        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + group.getName());
+
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                             // update the repositories in the cluster group
-                            pushRepository(event.getRepository(), group);
+                            if (!clusterRepositories.contains(event.getRepository().getURI().toString())) {
+                                clusterRepositories.add(event.getRepository().getURI().toString());
+                            }
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the cluster group
-                                    FeatureInfo featureInfo = null;
-                                    for (FeatureInfo clusterFeature : clusterFeatures.keySet()) {
-                                        if (clusterFeature.getName().equals(feature.getName()) && clusterFeature.getVersion().equals(feature.getVersion())) {
-                                            featureInfo = clusterFeature;
-                                            break;
-                                        }
-                                    }
-                                    if (featureInfo == null) {
-                                        featureInfo = new FeatureInfo(feature.getName(), feature.getVersion());
-                                        clusterFeatures.put(featureInfo, false);
-                                    }
+                                    FeatureState clusterFeatureState = new FeatureState();
+                                    clusterFeatureState.setName(feature.getName());
+                                    clusterFeatureState.setVersion(feature.getVersion());
+                                    clusterFeatureState.setInstalled(Boolean.FALSE);
+                                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES_MAP: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
                             }
                         } else {
                             // update the repositories in the cluster group
-                            removeRepository(event.getRepository(), group);
+                            clusterRepositories.remove(event.getRepository().getURI().toString());
                             // update the features in the cluster group
-                            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
-                                    FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                                    clusterFeatures.remove(info);
+                                    clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES_MAP: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
                             }
                         }
 

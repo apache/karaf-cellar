@@ -19,7 +19,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.osgi.framework.BundleContext;
@@ -33,96 +33,8 @@ import java.util.Map;
  */
 public abstract class FeatureCommandSupport extends CellarCommandSupport {
 
-    protected static final transient Logger LOGGER = LoggerFactory.getLogger(FeatureCommandSupport.class);
-
     protected FeaturesService featuresService;
     protected BundleContext bundleContext;
-
-    /**
-     * Forces the features status for a specific group.
-     * Why? Its required if no group member currently in the cluster.
-     * If a member of the group joins later, it won't find the change, unless we force it.
-     *
-     * @param groupName the cluster group name.
-     * @param feature the feature name.
-     * @param version the feature version.
-     * @param status true to installed, false to uninstalled.
-     */
-    public Boolean updateFeatureStatus(String groupName, String feature, String version, Boolean status) {
-        Boolean result = Boolean.FALSE;
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            Group group = groupManager.findGroupByName(groupName);
-            if (group == null || group.getNodes().isEmpty()) {
-
-                FeatureInfo info = new FeatureInfo(feature, version);
-                Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-                // check the existing configuration
-                if (version == null || (version.trim().length() < 1)) {
-                    for (FeatureInfo f : clusterFeatures.keySet()) {
-                        if (f.getName().equals(feature)) {
-                            version = f.getVersion();
-                            info.setVersion(version);
-                        }
-                    }
-                }
-
-                // check the features service
-                try {
-                    for (Feature f : featuresService.listFeatures()) {
-                        if (f.getName().equals(feature)) {
-                            version = f.getVersion();
-                            info.setVersion(version);
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Error while browsing features", e);
-                }
-
-                if (info.getVersion() != null && (info.getVersion().trim().length() > 0)) {
-                    clusterFeatures.put(info, status);
-                    result = Boolean.TRUE;
-                }
-            }
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
-        return result;
-    }
-
-    /**
-     * Check if a feature is present in a cluster group.
-     *
-     * @param groupName the cluster group.
-     * @param feature the feature name.
-     * @param version the feature version.
-     * @return true if the feature exists in the cluster group, false else.
-     */
-    public boolean featureExists(String groupName, String feature, String version) {
-        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-
-            if (clusterFeatures == null)
-                return false;
-
-            for (FeatureInfo clusterFeature : clusterFeatures.keySet()) {
-                if (version == null) {
-                    if (clusterFeature.getName().equals(feature))
-                        return true;
-                } else {
-                    if (clusterFeature.getName().equals(feature) && clusterFeature.getVersion().equals(version))
-                        return true;
-                }
-            }
-
-            return false;
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
-        }
-    }
 
     /**
      * Check if a feature event is allowed.

@@ -17,7 +17,7 @@ import org.apache.felix.gogo.commands.Option;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 
@@ -47,23 +47,22 @@ public class ListGroupFeatures extends FeatureCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
             if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
                 System.out.println("Features in cluster group " + groupName);
                 System.out.println(String.format(HEADER_FORMAT, "Status", "Version", "Name"));
-                for (FeatureInfo info : clusterFeatures.keySet()) {
-                    String name = info.getName();
-                    String version = info.getVersion();
+                for (FeatureState state : clusterFeatures.values()) {
+                    String name = state.getName();
+                    String version = state.getVersion();
                     String statusString = "";
-                    boolean status = clusterFeatures.get(info);
-                    if (status) {
+                    if (state.getInstalled()) {
                         statusString = "installed";
                     } else {
                         statusString = "uninstalled";
                     }
                     if (version == null)
                         version = "";
-                    if (!installed || (installed && status)) {
+                    if (!installed || (installed && state.getInstalled())) {
                         System.out.println(String.format(OUTPUT_FORMAT, statusString, version, name));
                     }
                 }

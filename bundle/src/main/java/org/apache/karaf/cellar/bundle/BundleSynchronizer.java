@@ -75,7 +75,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }

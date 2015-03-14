@@ -72,7 +72,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }
@@ -87,37 +87,37 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES_MAP: pulling features repositories and features from cluster group {}", groupName);
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-            clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+                List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
+                Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
                 // get features URLs from the cluster group
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
                     for (String url : clusterRepositories) {
                         try {
                             if (!isRepositoryRegisteredLocally(url)) {
-                                LOGGER.debug("CELLAR FEATURES_MAP: adding repository {}", url);
+                                LOGGER.debug("CELLAR FEATURES: adding repository {}", url);
                                 featuresService.addRepository(new URI(url));
                             }
                         } catch (MalformedURLException e) {
-                            LOGGER.warn("CELLAR FEATURES_MAP: failed to add clusterFeatures repository {} (URL is malformed)", url, e);
+                            LOGGER.warn("CELLAR FEATURES: failed to add clusterFeatures repository {} (URL is malformed)", url, e);
                         } catch (Exception e) {
-                            LOGGER.warn("CELLAR FEATURES_MAP: failed to add clusterFeatures repository {}", url, e);
+                            LOGGER.warn("CELLAR FEATURES: failed to add clusterFeatures repository {}", url, e);
                         }
                     }
                 }
 
                 // get features status from the cluster group
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
-                    for (FeatureInfo info : clusterFeatures.keySet()) {
-                        String name = info.getName();
+                    for (FeatureState state : clusterFeatures.values()) {
+                        String name = state.getName();
                         // check if feature is blocked
                         if (isAllowed(group, Constants.CATEGORY, name, EventType.INBOUND)) {
-                            Boolean clusterInstalled = clusterFeatures.get(info);
-                            Boolean locallyInstalled = isFeatureInstalledLocally(info.getName(), info.getVersion());
+                            Boolean clusterInstalled = state.getInstalled();
+                            Boolean locallyInstalled = isFeatureInstalledLocally(state.getName(), state.getVersion());
 
                             // prevent NPE
                             if (clusterInstalled == null) {
@@ -129,22 +129,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             // if feature has to be installed locally
                             if (clusterInstalled && !locallyInstalled) {
                                 try {
-                                    LOGGER.debug("CELLAR FEATURES_MAP: installing feature {}/{}", info.getName(), info.getVersion());
-                                    featuresService.installFeature(info.getName(), info.getVersion());
+                                    LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", state.getName(), state.getVersion());
+                                    featuresService.installFeature(state.getName(), state.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.warn("CELLAR FEATURES_MAP: failed to install feature {}/{} ", new Object[]{info.getName(), info.getVersion()}, e);
-                                }
-                                // if feature has to be uninstalled locally
-                            } else if (!clusterInstalled && locallyInstalled) {
-                                try {
-                                    LOGGER.debug("CELLAR FEATURES_MAP: un-installing feature {}/{}", info.getName(), info.getVersion());
-                                    featuresService.uninstallFeature(info.getName(), info.getVersion());
-                                } catch (Exception e) {
-                                    LOGGER.warn("CELLAR FEATURES_MAP: failed to uninstall feature {}/{} ", new Object[]{info.getName(), info.getVersion()}, e);
+                                    LOGGER.warn("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{state.getName(), state.getVersion()}, e);
                                 }
                             }
                         } else
-                            LOGGER.warn("CELLAR FEATURES_MAP: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
+                            LOGGER.warn("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
                     }
                 }
             } finally {
@@ -163,11 +155,13 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES_MAP: pushing features repositories and features in cluster group {}.", groupName);
-            clusterManager.getList(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+                List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
+                Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
                 Repository[] repositoryList = new Repository[0];
                 Feature[] featuresList = new Feature[0];
@@ -176,22 +170,34 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     repositoryList = featuresService.listRepositories();
                     featuresList = featuresService.listFeatures();
                 } catch (Exception e) {
-                    LOGGER.warn("CELLAR FEATURES_MAP: unable to list features", e);
+                    LOGGER.warn("CELLAR FEATURES: unable to list features", e);
                 }
 
                 // push the local features repositories to the cluster group
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
-                        pushRepository(repository, group);
-                        LOGGER.debug("CELLAR FEATURES_MAP: pushing repository {} in cluster group {}", repository.getName(), group.getName());
+                        if (!clusterRepositories.contains(repository.getURI().toString())) {
+                            clusterRepositories.add(repository.getURI().toString());
+                            LOGGER.debug("CELLAR FEATURES: pushing repository {} in cluster group {}", repository.getName(), groupName);
+                        } else {
+                            LOGGER.debug("CELLAR FEATURES: repository {} is already in cluster group {}", repository.getName(), groupName);
+                        }
                     }
                 }
 
                 // push the local features status to the cluster group
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
-                        pushFeature(feature, group);
-                        LOGGER.debug("CELLAR FEATURES_MAP: pushing feature {} in cluster group {}", feature.getName(), group.getName());
+                        if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
+                            FeatureState clusterFeatureState = new FeatureState();
+                            clusterFeatureState.setName(feature.getName());
+                            clusterFeatureState.setVersion(feature.getVersion());
+                            clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
+                            clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
+                            LOGGER.debug("CELLAR FEATURES: pushing feature {} in cluster group {}", feature.getName(), group.getName());
+                        } else {
+                            LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), group.getName());
+                        }
                     }
                 }
             } finally {

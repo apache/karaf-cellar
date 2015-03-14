@@ -22,7 +22,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureInfo;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
@@ -64,9 +64,9 @@ public class UrlAddCommand extends FeatureCommandSupport {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             // get the repositories in the cluster group
-            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
-            Map<FeatureInfo, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
             for (String url : urls) {
                 // check if the URL is already registered
@@ -112,8 +112,11 @@ public class UrlAddCommand extends FeatureCommandSupport {
 
                     // update the features in the cluster group
                     for (Feature feature : repository.getFeatures()) {
-                        FeatureInfo info = new FeatureInfo(feature.getName(), feature.getVersion());
-                        clusterFeatures.put(info, false);
+                        FeatureState state = new FeatureState();
+                        state.setName(feature.getName());
+                        state.setVersion(feature.getVersion());
+                        state.setInstalled(Boolean.FALSE);
+                        clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), state);
                     }
 
                     // un-register the repository if it's not local registered

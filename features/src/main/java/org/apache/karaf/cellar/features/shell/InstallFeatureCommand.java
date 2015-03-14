@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features.shell;
 
 import org.apache.felix.gogo.commands.Option;
+import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -22,7 +23,10 @@ import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.FeatureEvent;
+
+import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-install", description = "Install a feature in a cluster group")
 public class InstallFeatureCommand extends FeatureCommandSupport {
@@ -59,8 +63,19 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
+        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+
+        // try to resolve the feature version if not provided
+        if (version == null) {
+            for (FeatureState state : clusterFeatures.values()) {
+                if (state.getName().equals(feature)) {
+                    version = state.getVersion();
+                }
+            }
+        }
+
         // check if the feature exists in the map
-        if (!featureExists(groupName, feature, version)) {
+        if (!clusterFeatures.containsKey(feature + "/" + version)) {
             if (version != null)
                 System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
             else System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
@@ -74,7 +89,15 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
         }
 
         // update the features in the cluster group
-        updateFeatureStatus(groupName, feature, version, true);
+        FeatureState clusterFeatureState = clusterFeatures.get(feature + "/" + version);
+        if (clusterFeatureState == null) {
+            clusterFeatureState = new FeatureState();
+            clusterFeatureState.setName(feature);
+            clusterFeatureState.setVersion(version);
+        }
+        clusterFeatureState.setInstalled(Boolean.TRUE);
+        clusterFeatures.put(feature + "/" + version, clusterFeatureState);
+        // TODO does it make sense to also update the cluster bundles, I don't think so ...
 
         // broadcast the cluster event
         ClusterFeaturesEvent event = new ClusterFeaturesEvent(feature, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);

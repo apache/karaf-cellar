@@ -58,13 +58,13 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES_MAP: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR FEATURES_MAP: node is not part of the event cluster group {}", event.getSourceGroup().getName());
+            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group {}", event.getSourceGroup().getName());
             return;
         }
 
@@ -93,10 +93,10 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                     }
                 } else if (FeatureEvent.EventType.FeatureUninstalled.equals(type) && isInstalled) {
                     if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES_MAP: un-installing feature {}/{}", name, version);
+                        LOGGER.debug("CELLAR FEATURES_MAP: uninstalling feature {}/{}", name, version);
                         featuresService.uninstallFeature(name, version);
                     } else {
-                        LOGGER.debug("CELLAR FEATURES_MAP: un-installing feature {}", name);
+                        LOGGER.debug("CELLAR FEATURES_MAP: uninstalling feature {}", name);
                         featuresService.uninstallFeature(name);
                     }
                 }
