@@ -16,8 +16,10 @@ package org.apache.karaf.cellar.features;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.Repository;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -37,6 +39,8 @@ import java.util.Set;
 public class FeaturesSynchronizer extends FeaturesSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
+
+    private EventProducer eventProducer;
 
     @Override
     public void init() {
@@ -185,16 +189,24 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     }
                 }
 
-                // push the local features status to the cluster group
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
+                            // push the local features status to the cluster group
                             FeatureState clusterFeatureState = new FeatureState();
                             clusterFeatureState.setName(feature.getName());
                             clusterFeatureState.setVersion(feature.getVersion());
                             clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
                             clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
                             LOGGER.debug("CELLAR FEATURES: pushing feature {} in cluster group {}", feature.getName(), group.getName());
+                            // broadcast the cluster event
+                            ClusterFeaturesEvent event;
+                            if (featuresService.isInstalled(feature)) {
+                                event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureInstalled);
+                            } else {
+                                event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureUninstalled);
+                            }
+                            eventProducer.produce(event);
                         } else {
                             LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), group.getName());
                         }
@@ -228,6 +240,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.warn("CELLAR FEATURES_MAP: error while checking if sync is enabled", e);
         }
         return "disabled";
+    }
+
+    public EventProducer getEventProducer() {
+        return eventProducer;
+    }
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
 }
