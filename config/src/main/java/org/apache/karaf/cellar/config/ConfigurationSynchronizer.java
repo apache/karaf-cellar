@@ -76,7 +76,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }
@@ -97,26 +97,26 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                for (String clusterPID : clusterConfigurations.keySet()) {
-                    if (isAllowed(group, Constants.CATEGORY, clusterPID, EventType.INBOUND)) {
-                        Dictionary clusterDictionary = clusterConfigurations.get(clusterPID);
+                for (String pid : clusterConfigurations.keySet()) {
+                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                        Dictionary clusterDictionary = clusterConfigurations.get(pid);
                         try {
                             // update the local configuration if needed
-                            Configuration localConfiguration = configurationAdmin.getConfiguration(clusterPID, null);
+                            Configuration localConfiguration = configurationAdmin.getConfiguration(pid, null);
                             Dictionary localDictionary = localConfiguration.getProperties();
                             if (localDictionary == null)
                                 localDictionary = new Properties();
 
                             localDictionary = filter(localDictionary);
-                            if (!equals(localDictionary, clusterDictionary)) {
-                                localConfiguration.update(localDictionary);
-                                persistConfiguration(configurationAdmin, clusterPID, localDictionary);
+                            if (!equals(clusterDictionary, localDictionary)) {
+                                localConfiguration.update((Dictionary) clusterDictionary);
+                                persistConfiguration(configurationAdmin, pid, clusterDictionary);
                             }
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
                         }
                     }
-                    LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", clusterPID, groupName);
+                    LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -147,10 +147,10 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 Configuration[] localConfigurations;
                 try {
                     localConfigurations = configurationAdmin.listConfigurations(null);
-                    for (Configuration conf : localConfigurations) {
-                        String pid = conf.getPid();
+                    for (Configuration localConfiguration : localConfigurations) {
+                        String pid = localConfiguration.getPid();
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            Dictionary localDictionary = conf.getProperties();
+                            Dictionary localDictionary = localConfiguration.getProperties();
                             localDictionary = filter(localDictionary);
                             // update the configurations in the cluster group
                             clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
