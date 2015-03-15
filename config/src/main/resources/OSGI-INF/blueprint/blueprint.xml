@@ -33,7 +33,6 @@
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
-        <property name="eventProducer" ref="eventProducer"/>
         <property name="storage" value="${storage}"/>
     </bean>
     <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">

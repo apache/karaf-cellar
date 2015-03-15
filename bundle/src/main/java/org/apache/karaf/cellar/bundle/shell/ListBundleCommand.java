@@ -23,7 +23,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.osgi.framework.BundleEvent;
 
-import java.util.Map;
+import java.util.*;
 
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
 public class ListBundleCommand extends CellarCommandSupport {
@@ -57,22 +57,13 @@ public class ListBundleCommand extends CellarCommandSupport {
             if (clusterBundles != null && !clusterBundles.isEmpty()) {
                 System.out.println(String.format("Bundles in cluster group " + groupName));
                 System.out.println(String.format(HEADER_FORMAT, "ID", "State", "Name"));
-                int id = 0;
-                for (String bundle : clusterBundles.keySet()) {
-                    String[] tokens = bundle.split("/");
-                    String symbolicName = null;
-                    String version = null;
-                    if (tokens.length == 2) {
-                        symbolicName = tokens[0];
-                        version = tokens[1];
-                    } else {
-                        symbolicName = bundle;
-                        version = "";
-                    }
-                    BundleState state = clusterBundles.get(bundle);
+                List<BundleState> bundles = new ArrayList<BundleState>(clusterBundles.values());
+                Collections.sort(bundles, new BundleStateComparator());
+
+                for (BundleState bundle : bundles) {
 
                     String status;
-                    switch (state.getStatus()) {
+                    switch (bundle.getStatus()) {
                         case BundleEvent.INSTALLED:
                             status = "Installed";
                             break;
@@ -99,15 +90,14 @@ public class ListBundleCommand extends CellarCommandSupport {
                             break;
                     }
                     if (showLocation) {
-                        System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getLocation()));
+                        System.out.println(String.format(OUTPUT_FORMAT, bundle.getId(), status, bundle.getLocation()));
                     } else {
                         if (showSymbolicName) {
-                            System.out.println(String.format(OUTPUT_FORMAT, id, status, symbolicName + " (" + version + ")"));
+                            System.out.println(String.format(OUTPUT_FORMAT, bundle.getId(), status, bundle.getSymbolicName() + " (" + bundle.getVersion() + ")"));
                         } else {
-                            System.out.println(String.format(OUTPUT_FORMAT, id, status, state.getName() + " (" + version + ")"));
+                            System.out.println(String.format(OUTPUT_FORMAT, bundle.getId(), status, bundle.getName() + " (" + bundle.getVersion() + ")"));
                         }
                     }
-                    id++;
                 }
             } else {
                 System.err.println("No bundle found in cluster group " + groupName);
@@ -117,6 +107,12 @@ public class ListBundleCommand extends CellarCommandSupport {
         }
 
         return null;
+    }
+
+    class BundleStateComparator implements Comparator<BundleState> {
+        public int compare(BundleState b1, BundleState b2) {
+            return (int)(b1.getId() - b2.getId());
+        }
     }
 
 }

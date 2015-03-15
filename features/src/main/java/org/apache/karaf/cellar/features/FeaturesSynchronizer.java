@@ -40,8 +40,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
 
-    private EventProducer eventProducer;
-
     @Override
     public void init() {
         Set<Group> groups = groupManager.listLocalGroups();
@@ -160,9 +158,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURES_MAP: pushing features repositories and features in cluster group {}.", groupName);
 
-            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-            try {
-                Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
                 List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
@@ -192,30 +187,19 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
+                            LOGGER.debug("CELLAR FEATURES: pushing feature {} in cluster group {}", feature.getName(), group.getName());
                             // push the local features status to the cluster group
                             FeatureState clusterFeatureState = new FeatureState();
                             clusterFeatureState.setName(feature.getName());
                             clusterFeatureState.setVersion(feature.getVersion());
                             clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
                             clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
-                            LOGGER.debug("CELLAR FEATURES: pushing feature {} in cluster group {}", feature.getName(), group.getName());
-                            // broadcast the cluster event
-                            ClusterFeaturesEvent event;
-                            if (featuresService.isInstalled(feature)) {
-                                event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureInstalled);
-                            } else {
-                                event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureUninstalled);
-                            }
-                            eventProducer.produce(event);
                         } else {
                             LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), group.getName());
                         }
                     }
                 }
-            } finally {
-                Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
-        }
     }
 
     /**
@@ -240,14 +224,6 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.warn("CELLAR FEATURES_MAP: error while checking if sync is enabled", e);
         }
         return "disabled";
-    }
-
-    public EventProducer getEventProducer() {
-        return eventProducer;
-    }
-
-    public void setEventProducer(EventProducer eventProducer) {
-        this.eventProducer = eventProducer;
     }
 
 }

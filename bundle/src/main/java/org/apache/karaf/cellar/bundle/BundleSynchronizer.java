@@ -41,8 +41,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
-    private EventProducer eventProducer;
-
     public void init() {
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -135,12 +133,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     @Override
     public void push(Group group) {
 
-        // check if the producer is ON
-        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR BUNDLE: cluster event producer is OFF");
-            return;
-        }
-
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR BUNDLE: pushing bundles to cluster group {}", groupName);
@@ -154,6 +146,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                 bundles = bundleContext.getBundles();
                 for (Bundle bundle : bundles) {
+                    long bundleId = bundle.getBundleId();
                     String symbolicName = bundle.getSymbolicName();
                     String version = bundle.getVersion().toString();
                     String bundleLocation = bundle.getLocation();
@@ -164,14 +157,16 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
                         BundleState bundleState = new BundleState();
+                        bundleState.setId(bundleId);
                         // get the bundle name or location.
                         String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
                         // if there is no name, then default to symbolic name.
-                        name = (name == null) ? bundle.getSymbolicName() : name;
+                        name = (name == null) ? symbolicName : name;
                         // if there is no symbolic name, resort to location.
                         name = (name == null) ? bundle.getLocation() : name;
                         bundleState.setName(name);
-                        bundleState.setName(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME));
+                        bundleState.setSymbolicName(symbolicName);
+                        bundleState.setVersion(version);
 
                         bundleState.setLocation(bundleLocation);
 
@@ -195,11 +190,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         if (existingState == null || !existingState.getLocation().equals(bundleState.getLocation()) || existingState.getStatus() != bundleState.getStatus()) {
                             // update the bundle in the cluster group
                             clusterBundles.put(id, bundleState);
-
-                            // broadcast the event
-                            ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
-                            event.setSourceGroup(group);
-                            eventProducer.produce(event);
                         }
 
                     } else
@@ -232,14 +222,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
         }
         return "disabled";
-    }
-
-    public EventProducer getEventProducer() {
-        return eventProducer;
-    }
-
-    public void setEventProducer(EventProducer eventProducer) {
-        this.eventProducer = eventProducer;
     }
 
 }

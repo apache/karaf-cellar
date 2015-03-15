@@ -38,8 +38,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationSynchronizer.class);
 
-    private EventProducer eventProducer;
-
     public ConfigurationSynchronizer() {
         // nothing to do
     }
@@ -131,12 +129,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
      */
     public void push(Group group) {
 
-        // check if the producer is ON
-        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR CONFIG: cluster event producer is OFF");
-            return;
-        }
-
         if (group != null) {
             String groupName = group.getName();
             Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
@@ -154,10 +146,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             localDictionary = filter(localDictionary);
                             // update the configurations in the cluster group
                             clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
-                            // broadcast the cluster event
-                            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
-                            event.setSourceGroup(group);
-                            eventProducer.produce(event);
                         } else
                             LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
                     }
@@ -193,14 +181,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             LOGGER.error("CELLAR CONFIG: error while retrieving the sync policy", e);
         }
         return "disabled";
-    }
-
-    public EventProducer getEventProducer() {
-        return eventProducer;
-    }
-
-    public void setEventProducer(EventProducer eventProducer) {
-        this.eventProducer = eventProducer;
     }
 
 }

@@ -28,7 +28,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 import javax.management.openmbean.*;
 import java.net.URL;
-import java.util.Map;
+import java.util.*;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 import java.util.regex.Matcher;
@@ -108,9 +108,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         if (manifest == null) {
             throw new IllegalArgumentException("Bundle location " + location + " doesn't seem correct");
         }
-        String name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+        String name = manifest.getMainAttributes().getValue("Bundle-Name");
+        String symbolicName = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
         if (name == null) {
-            name = manifest.getMainAttributes().getValue("Bundle-SymbolicName");
+            name = symbolicName;
         }
         if (name == null) {
             name = location;
@@ -125,6 +126,8 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             BundleState state = new BundleState();
             state.setName(name);
+            state.setVersion(version);
+            state.setSymbolicName(name);
             state.setLocation(location);
             state.setStatus(BundleEvent.INSTALLED);
             clusterBundles.put(name + "/" + version, state);
@@ -317,20 +320,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
-            int id = 0;
-            for (String bundle : clusterBundles.keySet()) {
-                String[] tokens = bundle.split("/");
-                String name = null;
-                String version = null;
-                if (tokens.length == 2) {
-                    name = tokens[0];
-                    version = tokens[1];
-                } else {
-                    name = bundle;
-                }
-                BundleState state = clusterBundles.get(bundle);
+            List<BundleState> bundles = new ArrayList<BundleState>(clusterBundles.values());
+            Collections.sort(bundles, new BundleStateComparator());
+
+            for (BundleState bundle : bundles) {
                 String status;
-                switch (state.getStatus()) {
+                switch (bundle.getStatus()) {
                     case BundleEvent.INSTALLED:
                         status = "Installed";
                         break;
@@ -358,9 +353,8 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 }
                 CompositeData data = new CompositeDataSupport(compositeType,
                         new String[]{"id", "name", "version", "status", "location"},
-                        new Object[]{id, name, version, status, state.getLocation()});
+                        new Object[]{bundle.getId(), bundle.getName(), bundle.getVersion(), status, bundle.getLocation()});
                 table.put(data);
-                id++;
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -383,13 +377,11 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             int id = -1;
             try {
                 id = Integer.parseInt(name);
-                int index = 0;
-                for (String clusterBundle : clusterBundles.keySet()) {
-                    if (index == id) {
-                        key = clusterBundle;
+                for (String bundle : clusterBundles.keySet()) {
+                    if (clusterBundles.get(bundle).getId() == id) {
+                        key = bundle;
                         break;
                     }
-                    index++;
                 }
             } catch (NumberFormatException nfe) {
                 // ignore
@@ -464,6 +456,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             }
         }
         return key;
+    }
+
+    class BundleStateComparator implements Comparator<BundleState> {
+        public int compare(BundleState b1, BundleState b2) {
+            return (int)(b1.getId() - b2.getId());
+        }
     }
 
 }

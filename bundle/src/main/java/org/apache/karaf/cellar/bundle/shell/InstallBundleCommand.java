@@ -98,6 +98,8 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
                     BundleState state = new BundleState();
                     state.setName(name);
+                    state.setSymbolicName(symbolicName);
+                    state.setVersion(version);
                     state.setLocation(url);
                     if (start) {
                         state.setStatus(BundleEvent.STARTED);

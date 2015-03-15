@@ -126,7 +126,6 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                         for (Resource resource : resources) {
                             ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
                             clusterBundles.add(info);
-                            // TODO fire event to the other nodes ?
                         }
                     } else {
                         LOGGER.debug("CELLAR OBR: URL {} is BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);

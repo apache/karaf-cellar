@@ -50,13 +50,11 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             int id = -1;
             try {
                 id = Integer.parseInt(name);
-                int index = 0;
                 for (String bundle : clusterBundles.keySet()) {
-                    if (index == id) {
+                    if (clusterBundles.get(bundle).getId() == id) {
                         key = bundle;
                         break;
                     }
-                    index++;
                 }
             } catch (NumberFormatException nfe) {
                 // ignore
