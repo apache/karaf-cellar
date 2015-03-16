@@ -106,10 +106,10 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
                         options.add(FeaturesService.Option.NoAutoRefreshBundles);
                     }
                     if (version != null) {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}/{}", name, version);
+                        LOGGER.debug("CELLAR FEATURES: uninstalling feature {}/{}", name, version);
                         featuresService.uninstallFeature(name, version, options);
                     } else {
-                        LOGGER.debug("CELLAR FEATURES: un-installing feature {}", name);
+                        LOGGER.debug("CELLAR FEATURES: uninstalling feature {}", name);
                         featuresService.uninstallFeature(name, options);
                     }
                 }

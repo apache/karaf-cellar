@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -79,87 +78,6 @@ public class FeaturesSupport extends CellarSupport {
             }
         }
         return false;
-    }
-
-    /**
-     * Push a {@code Feature} and its status in a cluster group.
-     *
-     * @param feature the feature to push in the cluster group.
-     * @param group the cluster group.
-     */
-    public void pushFeature(Feature feature, Group group) {
-        if (feature != null) {
-            String groupName = group.getName();
-            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-
-            if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
-                if (featuresService != null && clusterFeatures != null) {
-                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
-                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion() , state);
-                }
-            } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
-        } else LOGGER.warn("CELLAR FEATURES: feature is null");
-    }
-
-    /**
-     * Push a {@code Feature} and its status in a cluster group.
-     * This version of the method force the bundle status, without looking the features service.
-     *
-     * @param feature the feature to push in the cluster group.
-     * @param group the cluster group.
-     * @param force true to force the bundle status (ignoring the features service), false else.
-     */
-    public void pushFeature(Feature feature, Group group, Boolean force) {
-        if (feature != null) {
-            String groupName = group.getName();
-            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-
-            if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
-                if (featuresService != null && clusterFeatures != null) {
-                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), force);
-                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), state);
-                }
-            } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
-        } else LOGGER.warn("CELLAR FEATURES: feature is null");
-    }
-
-    /**
-     * Push a features {@code Repository} in a cluster group.
-     *
-     * @param repository the features repository to push in the cluster group.
-     * @param group the cluster group.
-     */
-    public void pushRepository(Repository repository, Group group) {
-        String groupName = group.getName();
-        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
-
-        boolean found = false;
-        for (String clusterRepository : clusterRepositories.keySet()) {
-            if (clusterRepository.equals(repository.getURI().toString())) {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found) {
-            clusterRepositories.put(repository.getURI().toString(), repository.getName());
-        }
-    }
-
-    /**
-     * Remove a features {@code Repository} from a cluster group.
-     *
-     * @param repository the features repository to remove from the cluster group.
-     * @param group the cluster group.
-     */
-    public void removeRepository(Repository repository, Group group) {
-        String groupName = group.getName();
-        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
-
-        if (featuresService != null && clusterRepositories != null) {
-            URI uri = repository.getURI();
-            clusterRepositories.remove(uri.toString());
-        }
     }
 
     public FeaturesService getFeaturesService() {

@@ -91,7 +91,7 @@ public class ListFeaturesCommand extends CellarCommandSupport {
 
                     String name = info.getName();
                     String version = info.getVersion();
-                    boolean isInstalled = info.isInstalled();
+                    boolean isInstalled = info.getInstalled();
 
                     String located = "";
                     boolean cluster = info.isCluster();
@@ -147,7 +147,7 @@ public class ListFeaturesCommand extends CellarCommandSupport {
             FeatureState state = clusterFeatures.get(key);
             ExtendedFeatureState extendedState = new ExtendedFeatureState();
             extendedState.setName(state.getName());
-            extendedState.setInstalled(state.isInstalled());
+            extendedState.setInstalled(state.getInstalled());
             extendedState.setVersion(state.getVersion());
             extendedState.setCluster(true);
             extendedState.setLocal(true);

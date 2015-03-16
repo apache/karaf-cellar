@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,11 +82,16 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         FeatureEvent.EventType type = event.getType();
 
                         // update the features in the cluster group
+                        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
+                        FeatureState clusterFeatureState = new FeatureState();
+                        clusterFeatureState.setName(event.getFeature().getName());
+                        clusterFeatureState.setVersion(event.getFeature().getVersion());
                         if (FeatureEvent.EventType.FeatureInstalled.equals(event.getType())) {
-                            pushFeature(event.getFeature(), group, true);
+                            clusterFeatureState.setInstalled(Boolean.TRUE);
                         } else {
-                            pushFeature(event.getFeature(), group, false);
+                            clusterFeatureState.setInstalled(Boolean.FALSE);
                         }
+                        clusterFeatures.put(event.getFeature().getName() + "/" + event.getFeature().getVersion(), clusterFeatureState);
 
                         // broadcast the event
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
@@ -128,37 +134,34 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         clusterRepositoryEvent.setSourceGroup(group);
                         RepositoryEvent.EventType type = event.getType();
 
+                        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + group.getName());
+
                         // update the features repositories in the cluster group
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                            pushRepository(event.getRepository(), group);
+                            if (!clusterRepositories.contains(event.getRepository().getURI().toString())) {
+                                clusterRepositories.add(event.getRepository().getURI().toString());
+                            }
                             // update the features in the cluster group
                             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
                                     // check the feature in the distributed map
-                                    FeatureState featureState = null;
-                                    for (String k : clusterFeatures.keySet()) {
-                                        FeatureState clusterFeature = clusterFeatures.get(k);
-                                        if (clusterFeature.getName().equals(feature.getName()) && clusterFeature.getVersion().equals(feature.getVersion())) {
-                                            featureState = clusterFeature;
-                                            break;
-                                        }
-                                    }
-                                    if (featureState == null) {
-                                        featureState = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
-                                        clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
-                                    }
+                                    FeatureState clusterFeatureState = new FeatureState();
+                                    clusterFeatureState.setName(feature.getName());
+                                    clusterFeatureState.setVersion(feature.getVersion());
+                                    clusterFeatureState.setInstalled(Boolean.FALSE);
+                                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
                                 }
                             } catch (Exception e) {
                                 LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
                             }
                         } else {
-                            removeRepository(event.getRepository(), group);
+                            // update the repositories in the cluster group
+                            clusterRepositories.remove(event.getRepository().getURI().toString());
                             // update the features in the cluster group
                             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
                             try {
                                 for (Feature feature : event.getRepository().getFeatures()) {
-                                    FeatureState info = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
                                     clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                                 }
                             } catch (Exception e) {

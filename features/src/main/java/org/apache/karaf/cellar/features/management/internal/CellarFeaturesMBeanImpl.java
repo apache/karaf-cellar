@@ -320,7 +320,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
                     CompositeData data = new CompositeDataSupport(featuresType,
                             new String[]{"name", "version", "installed", "located", "blocked"},
-                            new Object[]{feature.getName(), feature.getVersion(), feature.isInstalled(), located, blocked});
+                            new Object[]{feature.getName(), feature.getVersion(), feature.getInstalled(), located, blocked});
                     table.put(data);
                 }
             }
@@ -340,7 +340,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             FeatureState state = clusterFeatures.get(key);
             ExtendedFeatureState extendedState = new ExtendedFeatureState();
             extendedState.setName(state.getName());
-            extendedState.setInstalled(state.isInstalled());
+            extendedState.setInstalled(state.getInstalled());
             extendedState.setVersion(state.getVersion());
             extendedState.setCluster(true);
             extendedState.setLocal(true);
@@ -380,7 +380,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // get the features repositories in the cluster group
-        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
 
         List<String> result = new ArrayList<String>();
         for (String clusterRepository : clusterRepositories.keySet()) {
@@ -412,7 +412,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             // get the features repositories in the cluster group
-            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
@@ -458,7 +458,10 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 clusterRepositories.put(url, name);
 
                 for (Feature feature : repository.getFeatures()) {
-                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                    FeatureState state = new FeatureState();
+                    state.setName(feature.getName());
+                    state.setVersion(feature.getVersion());
+                    state.setInstalled(featuresService.isInstalled(feature));
                     clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), state);
                 }
 
@@ -498,7 +501,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // get the features repositories in the cluster group
-        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
         // get the features in the cluster group
         Map<FeatureState, Boolean> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
@@ -546,8 +549,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 clusterRepositories.remove(url);
 
                 for (Feature feature : repository.getFeatures()) {
-                    FeatureState state = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
-                    clusterFeatures.remove(state);
+                    clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                 }
 
                 // un-register the repository if it's not local registered

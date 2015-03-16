@@ -22,15 +22,9 @@ public class FeatureState implements Serializable {
 
     private String name;
     private String version;
-    private boolean installed;
+    private Boolean installed;
 
     public FeatureState() { }
-
-    public FeatureState(String name, String version, boolean installed) {
-        this.name = name;
-        this.version = version;
-        this.installed = installed;
-    }
 
     public String getName() {
         return name;
@@ -48,32 +42,12 @@ public class FeatureState implements Serializable {
         this.version = version;
     }
 
-    public boolean isInstalled() {
+    public boolean getInstalled() {
         return installed;
     }
 
     public void setInstalled(boolean installed) {
         this.installed = installed;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FeatureState info = (FeatureState) o;
-
-        if (name != null ? !name.equals(info.name) : info.name != null) return false;
-        if (version != null ? !version.equals(info.version) : info.version != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (version != null ? version.hashCode() : 0);
-        return result;
     }
 
 }

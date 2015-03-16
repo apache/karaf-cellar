@@ -89,6 +89,7 @@ public class InstallFeatureCommand extends CellarCommandSupport {
                     // use the version provided by the user
                     version = split[1];
                 }
+
                 FeatureState found = null;
                 String foundKey = null;
                 for (String k : clusterFeatures.keySet()) {

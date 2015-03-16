@@ -67,7 +67,7 @@ public class RepoAddCommand extends CellarCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             // get the features repositories in the cluster group
-            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
@@ -115,7 +115,10 @@ public class RepoAddCommand extends CellarCommandSupport {
 
                     // update the features in the cluster group
                     for (Feature feature : repository.getFeatures()) {
-                        FeatureState featureState = new FeatureState(feature.getName(), feature.getVersion(), featuresService.isInstalled(feature));
+                        FeatureState featureState = new FeatureState();
+                        featureState.setName(feature.getName());
+                        featureState.setVersion(feature.getVersion());
+                        featureState.setInstalled(featuresService.isInstalled(feature));
                         clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
                     }
 
