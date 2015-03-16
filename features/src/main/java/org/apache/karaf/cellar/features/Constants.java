@@ -19,7 +19,7 @@ package org.apache.karaf.cellar.features;
 public class Constants {
 
     // hazelcast distributed resources name
-    public static final String REPOSITORIES_LIST = "org.apache.karaf.cellar.repositories";
+    public static final String REPOSITORIES_MAP = "org.apache.karaf.cellar.repositories";
     public static final String FEATURES_MAP = "org.apache.karaf.cellar.features";
 
     // configuration category

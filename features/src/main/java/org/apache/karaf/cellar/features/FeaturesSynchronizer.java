@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -86,26 +85,26 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void pull(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            LOGGER.debug("CELLAR FEATURES: pulling features repositories and features from cluster group {}", groupName);
+            LOGGER.debug("CELLAR FEATURE: pulling features repositories and features from cluster group {}", groupName);
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
+                Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
                 // get the features repositories URLs from the cluster group
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
-                    for (String url : clusterRepositories) {
+                    for (String url : clusterRepositories.keySet()) {
                         try {
                             if (!isRepositoryRegisteredLocally(url)) {
-                                LOGGER.debug("CELLAR FEATURES: adding repository {}", url);
+                                LOGGER.debug("CELLAR FEATURE: adding repository {}", url);
                                 featuresService.addRepository(new URI(url));
                             }
                         } catch (MalformedURLException e) {
-                            LOGGER.error("CELLAR FEATURES: failed to add repository URL {} (malformed)", url, e);
+                            LOGGER.error("CELLAR FEATURE: failed to add repository URL {} (malformed)", url, e);
                         } catch (Exception e) {
-                            LOGGER.error("CELLAR FEATURES: failed to add repository URL {}", url, e);
+                            LOGGER.error("CELLAR FEATURE: failed to add repository URL {}", url, e);
                         }
                     }
                 }
@@ -130,13 +129,13 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             // if feature has to be installed locally
                             if (clusterInstalled && !locallyInstalled) {
                                 try {
-                                    LOGGER.debug("CELLAR FEATURES: installing feature {}/{}", state.getName(), state.getVersion());
+                                    LOGGER.debug("CELLAR FEATURE: installing feature {}/{}", state.getName(), state.getVersion());
                                     featuresService.installFeature(state.getName(), state.getVersion());
                                 } catch (Exception e) {
-                                    LOGGER.error("CELLAR FEATURES: failed to install feature {}/{} ", new Object[]{state.getName(), state.getVersion()}, e);
+                                    LOGGER.error("CELLAR FEATURE: failed to install feature {}/{} ", new Object[]{state.getName(), state.getVersion()}, e);
                                 }
                             }
-                        } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
+                        } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
                     }
                 }
             } finally {
@@ -154,13 +153,13 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     public void push(Group group) {
         if (group != null) {
             String groupName = group.getName();
-            LOGGER.debug("CELLAR FEATURES: pushing features repositories and features in cluster group {}", groupName);
+            LOGGER.debug("CELLAR FEATURE: pushing features repositories and features in cluster group {}", groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-                List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
+                Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
                 Repository[] repositoryList = new Repository[0];
@@ -170,21 +169,21 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     repositoryList = featuresService.listRepositories();
                     featuresList = featuresService.listFeatures();
                 } catch (Exception e) {
-                    LOGGER.error("CELLAR FEATURES: error listing features", e);
+                    LOGGER.error("CELLAR FEATURE: error listing features", e);
                 }
 
                 // push features repositories to the cluster group
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
                         try {
-                            if (!clusterRepositories.contains(repository.getURI().toString())) {
-                                clusterRepositories.add(repository.getURI().toString());
-                                LOGGER.debug("CELLAR FEATURES: pushing repository {} in cluster group {}", repository.getName(), groupName);
+                            if (!clusterRepositories.containsKey(repository.getURI().toString())) {
+                                clusterRepositories.put(repository.getURI().toString(), repository.getName());
+                                LOGGER.debug("CELLAR FEATURE: pushing repository {} in cluster group {}", repository.getName(), groupName);
                             } else {
-                                LOGGER.debug("CELLAR FEATURES: repository {} is already in cluster group {}", repository.getName(), groupName);
+                                LOGGER.debug("CELLAR FEATURE: repository {} is already in cluster group {}", repository.getName(), groupName);
                             }
                         } catch (Exception e) {
-                            LOGGER.warn("CELLAR FEATURES: can't add repository", e);
+                            LOGGER.warn("CELLAR FEATURE: can't add repository", e);
                         }
                     }
                 }
@@ -198,9 +197,9 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             clusterFeatureState.setVersion(feature.getVersion());
                             clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
                             clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
-                            LOGGER.debug("CELLAR FEATURES : pushing feature {}/{} to cluster group {}", feature.getName(), feature.getVersion(), groupName);
+                            LOGGER.debug("CELLAR FEATURE : pushing feature {}/{} to cluster group {}", feature.getName(), feature.getVersion(), groupName);
                         } else {
-                            LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
+                            LOGGER.debug("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
                         }
                     }
                 }

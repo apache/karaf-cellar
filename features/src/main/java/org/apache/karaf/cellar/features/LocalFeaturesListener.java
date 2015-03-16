@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,13 +57,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void featureEvent(FeatureEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURES: local listener is disabled");
+            LOGGER.debug("CELLAR FEATURE: local listener is disabled");
             return;
         }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURE: cluster event producer is OFF");
             return;
         }
 
@@ -97,7 +96,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         eventProducer.produce(featureEvent);
-                    } else LOGGER.trace("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
+                    } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
@@ -112,13 +111,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void repositoryEvent(RepositoryEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURES: local listener is disabled");
+            LOGGER.debug("CELLAR FEATURE: local listener is disabled");
             return;
         }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURE: cluster event producer is OFF");
             return;
         }
 
@@ -134,12 +133,12 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         clusterRepositoryEvent.setSourceGroup(group);
                         RepositoryEvent.EventType type = event.getType();
 
-                        List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + group.getName());
+                        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + group.getName());
 
                         // update the features repositories in the cluster group
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                            if (!clusterRepositories.contains(event.getRepository().getURI().toString())) {
-                                clusterRepositories.add(event.getRepository().getURI().toString());
+                            if (!clusterRepositories.containsKey(event.getRepository().getURI().toString())) {
+                                clusterRepositories.put(event.getRepository().getURI().toString(), event.getRepository().getName());
                             }
                             // update the features in the cluster group
                             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
@@ -153,7 +152,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                     clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURE: failed to update the cluster group", e);
                             }
                         } else {
                             // update the repositories in the cluster group
@@ -165,7 +164,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                                     clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                                 }
                             } catch (Exception e) {
-                                LOGGER.warn("CELLAR FEATURES: failed to update the cluster group", e);
+                                LOGGER.warn("CELLAR FEATURE: failed to update the cluster group", e);
                             }
                         }
                         // broadcast the cluster event

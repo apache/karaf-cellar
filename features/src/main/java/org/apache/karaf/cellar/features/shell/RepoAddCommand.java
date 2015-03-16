@@ -67,7 +67,7 @@ public class RepoAddCommand extends CellarCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
             // get the features repositories in the cluster group
-            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
+            Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 

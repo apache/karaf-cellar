@@ -54,19 +54,19 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     	
     	// check if the handler is ON
         if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES: {} switch is OFF, cluster event is not handled", SWITCH_ID);
+            LOGGER.debug("CELLAR FEATURE: {} switch is OFF, cluster event is not handled", SWITCH_ID);
             return;
         }
         
         if (groupManager == null) {
         	//in rare cases for example right after installation this happens!
-        	LOGGER.error("CELLAR FEATURES: retrieved event {} while groupManager is not available yet!", event);
+        	LOGGER.error("CELLAR FEATURE: retrieved event {} while groupManager is not available yet!", event);
         	return;
         }
 
         // check if the group is local
         if (!groupManager.isLocalGroup(event.getSourceGroup().getName())) {
-            LOGGER.debug("CELLAR FEATURES: node is not part of the event cluster group");
+            LOGGER.debug("CELLAR FEATURE: node is not part of the event cluster group");
             return;
         }
 
@@ -76,21 +76,21 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
             // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                 if (!isRepositoryRegisteredLocally(uri)) {
-                    LOGGER.debug("CELLAR FEATURES: adding repository URI {}", uri);
+                    LOGGER.debug("CELLAR FEATURE: adding repository URI {}", uri);
                     featuresService.addRepository(new URI(uri), event.getInstall());
                 } else {
-                    LOGGER.debug("CELLAR FEATURES: repository URI {} is already registered locally");
+                    LOGGER.debug("CELLAR FEATURE: repository URI {} is already registered locally");
                 }
             } else {
                 if (isRepositoryRegisteredLocally(uri)) {
-                    LOGGER.debug("CELLAR FEATURES: removing repository URI {}", uri);
+                    LOGGER.debug("CELLAR FEATURE: removing repository URI {}", uri);
                     featuresService.removeRepository(new URI(uri), event.getUninstall());
                 } else {
-                    LOGGER.debug("CELLAR FEATURES: repository URI {} is not registered locally");
+                    LOGGER.debug("CELLAR FEATURE: repository URI {} is not registered locally");
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("CELLAR FEATURES: failed to add/remove repository URL {}", uri, e);
+            LOGGER.error("CELLAR FEATURE: failed to add/remove repository URL {}", uri, e);
         }
     }
 
