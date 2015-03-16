@@ -87,7 +87,7 @@ public class RepoListCommand extends CellarCommandSupport {
         Map<String, RepositoryState> repositories = new HashMap<String, RepositoryState>();
 
         // get the cluster features repositories
-        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+        Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + groupName);
         for (String url : clusterRepositories.keySet()) {
             RepositoryState state = new RepositoryState();
             state.setCluster(true);
