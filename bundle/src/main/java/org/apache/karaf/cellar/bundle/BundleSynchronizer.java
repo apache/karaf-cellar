@@ -41,8 +41,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
-    private EventProducer eventProducer;
-
     public void init() {
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
@@ -75,7 +73,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }
@@ -135,12 +133,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     @Override
     public void push(Group group) {
 
-        // check if the producer is ON
-        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR BUNDLE: cluster event producer is OFF");
-            return;
-        }
-
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR BUNDLE: pushing bundles to cluster group {}", groupName);
@@ -195,11 +187,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 existingState.getStatus() != bundleState.getStatus()) {
                             // update the distributed map
                             clusterBundles.put(id, bundleState);
-
-                            // broadcast the event
-                            ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
-                            event.setSourceGroup(group);
-                            eventProducer.produce(event);
                         }
 
                     } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
@@ -231,14 +218,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
 
         return "disabled";
-    }
-
-    public EventProducer getEventProducer() {
-        return eventProducer;
-    }
-
-    public void setEventProducer(EventProducer eventProducer) {
-        this.eventProducer = eventProducer;
     }
 
 }

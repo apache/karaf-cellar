@@ -18,7 +18,6 @@ import org.apache.felix.bundlerepository.Resource;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
-import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR OBR: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR OBR: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }
@@ -128,7 +127,6 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                         for (Resource resource : resources) {
                             ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
                             clusterBundles.add(info);
-                            // TODO fire event to the other nodes ?
                         }
                     } else {
                         LOGGER.trace("CELLAR OBR: URL {} is marked BLOCKED OUTBOUND for cluster group {}", repository.getURI().toString(), groupName);
