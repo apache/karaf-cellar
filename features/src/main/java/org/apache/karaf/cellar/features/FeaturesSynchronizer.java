@@ -72,7 +72,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             }
         }
         if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'node' for cluster group " + group.getName());
             push(group);
         }
     }
