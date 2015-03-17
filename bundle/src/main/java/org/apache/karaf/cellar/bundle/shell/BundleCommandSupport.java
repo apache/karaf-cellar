@@ -59,31 +59,29 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         return bundles;
     }
 
-    protected void addMatchingBundles(String id, List<String> bundles, Map<String, ExtendedBundleState> clusterBundles) {
+    protected void addMatchingBundles(String nameId, List<String> bundles, Map<String, ExtendedBundleState> clusterBundles) {
 
         // id is a number
         Pattern pattern = Pattern.compile("^\\d+$");
-        Matcher matcher = pattern.matcher(id);
+        Matcher matcher = pattern.matcher(nameId);
         if (matcher.find()) {
-            int idInt = Integer.parseInt(id);
-            int index = 0;
+            int id = Integer.parseInt(nameId);
             for (String bundle : clusterBundles.keySet()) {
-                if (index == idInt) {
+                if (clusterBundles.get(bundle).getId() == id) {
                     bundles.add(bundle);
                     break;
                 }
-                index++;
             }
             return;
         }
 
         // id as a number range
         pattern = Pattern.compile("^(\\d+)-(\\d+)$");
-        matcher = pattern.matcher(id);
+        matcher = pattern.matcher(nameId);
         if (matcher.find()) {
-            int index = id.indexOf('-');
-            long startId = Long.parseLong(id.substring(0, index));
-            long endId = Long.parseLong(id.substring(index + 1));
+            int index = nameId.indexOf('-');
+            long startId = Long.parseLong(nameId.substring(0, index));
+            long endId = Long.parseLong(nameId.substring(index + 1));
             if (startId < endId) {
                 int bundleIndex = 0;
                 for (String bundle : clusterBundles.keySet()) {
@@ -96,10 +94,10 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             return;
         }
 
-        int index = id.indexOf('/');
+        int index = nameId.indexOf('/');
         if (index != -1) {
             // id is name/version
-            String[] idSplit = id.split("/");
+            String[] idSplit = nameId.split("/");
             String name = idSplit[0];
             String version = idSplit[1];
             for (String bundle : clusterBundles.keySet()) {
@@ -134,7 +132,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
 
         // id is just name
         // regex support on the name
-        Pattern namePattern = Pattern.compile(id);
+        Pattern namePattern = Pattern.compile(nameId);
         // looking for bundle using only the name
         for (String bundle : clusterBundles.keySet()) {
             BundleState state = clusterBundles.get(bundle);
@@ -168,9 +166,11 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         for (String key : clusterBundles.keySet()) {
             BundleState state = clusterBundles.get(key);
             ExtendedBundleState extendedState = new ExtendedBundleState();
+            extendedState.setId(state.getId());
             extendedState.setName(state.getName());
             extendedState.setStatus(state.getStatus());
             extendedState.setLocation(state.getLocation());
+            extendedState.setVersion(state.getVersion());
             // extendedState.setData(state.getData());
             extendedState.setCluster(true);
             extendedState.setLocal(false);
@@ -193,7 +193,9 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 name = (name == null) ? bundle.getSymbolicName() : name;
                 // if there is no symbolic name, resort to location.
                 name = (name == null) ? bundle.getLocation() : name;
+                extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
+                extendedState.setVersion(bundle.getVersion().toString());
                 extendedState.setLocation(bundle.getLocation());
                 int status = bundle.getState();
                 if (status == Bundle.ACTIVE)

@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle.shell;
 
+import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
@@ -22,10 +23,10 @@ import org.apache.karaf.shell.commands.Option;
 import org.apache.karaf.shell.table.ShellTable;
 import org.osgi.framework.BundleEvent;
 
-import java.util.Map;
+import java.util.*;
 
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
-public class ListBundleCommand extends  BundleCommandSupport {
+public class ListBundleCommand extends BundleCommandSupport {
 
     @Option(name = "-s", aliases = {}, description = "Shows the symbolic name", required = false, multiValued = false)
     boolean showSymbolicName;
@@ -60,8 +61,8 @@ public class ListBundleCommand extends  BundleCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         try {
-            Map<String, ExtendedBundleState> bundles = gatherBundles();
-            if (bundles != null && !bundles.isEmpty()) {
+            Map<String, ExtendedBundleState> allBundles = gatherBundles();
+            if (allBundles != null && !allBundles.isEmpty()) {
                 System.out.println(String.format("Bundles in cluster group " + groupName));
 
                 ShellTable table = new ShellTable();
@@ -78,21 +79,12 @@ public class ListBundleCommand extends  BundleCommandSupport {
                     table.column("Name");
                 }
 
-                int id = 0;
-                for (String bundle : bundles.keySet()) {
-                    String[] tokens = bundle.split("/");
-                    String symbolicName = null;
-                    String version = null;
-                    if (tokens.length == 2) {
-                        symbolicName = tokens[0];
-                        version = tokens[1];
-                    } else {
-                        symbolicName = bundle;
-                        version = "";
-                    }
-                    ExtendedBundleState state = bundles.get(bundle);
+                List<ExtendedBundleState> bundles = new ArrayList<ExtendedBundleState>(allBundles.values());
+                Collections.sort(bundles, new BundleStateComparator());
+
+                for (ExtendedBundleState bundle : bundles) {
                     String status;
-                    switch (state.getStatus()) {
+                    switch (bundle.getStatus()) {
                         case BundleEvent.INSTALLED:
                             status = "Installed";
                             break;
@@ -120,30 +112,27 @@ public class ListBundleCommand extends  BundleCommandSupport {
                     }
 
                     String located = "";
-                    boolean cluster = state.isCluster();
-                    boolean local = state.isLocal();
+                    boolean cluster = bundle.isCluster();
+                    boolean local = bundle.isLocal();
                     if (cluster && local)
                         located = "cluster/local";
                     if (cluster && !local) {
                         located = "cluster";
                         if (onlyLocal) {
-                            id++;
                             continue;
                         }
                     }
                     if (local && !cluster) {
                         located = "local";
                         if (onlyCluster) {
-                            id++;
                             continue;
                         }
                     }
 
                     String blocked = "";
-                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.INBOUND);
-                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.OUTBOUND);
+                    boolean inbound = support.isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND);
+                    boolean outbound = support.isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.OUTBOUND);
                     if (inbound && outbound && onlyBlocked) {
-                        id++;
                         continue;
                     }
                     if (!inbound && !outbound)
@@ -154,15 +143,14 @@ public class ListBundleCommand extends  BundleCommandSupport {
                         blocked = "out";
 
                     if (showLocation) {
-                        table.addRow().addContent(id, status, located, blocked, version, state.getLocation());
+                        table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getLocation());
                     } else {
                         if (showSymbolicName) {
-                            table.addRow().addContent(id, status, located, blocked, version, symbolicName);
+                            table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getSymbolicName());
                         } else {
-                            table.addRow().addContent(id, status, located, blocked, version, state.getName());
+                            table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getName());
                         }
                     }
-                    id++;
                 }
 
                 table.print(System.out);
@@ -174,6 +162,12 @@ public class ListBundleCommand extends  BundleCommandSupport {
         }
 
         return null;
+    }
+
+    class BundleStateComparator implements Comparator<BundleState> {
+        public int compare(BundleState b1, BundleState b2) {
+            return (int) (b1.getId() - b2.getId());
+        }
     }
 
 }

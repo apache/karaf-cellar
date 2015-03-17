@@ -106,7 +106,10 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                                 if (state == null) {
                                     state = new BundleState();
                                 }
+                                state.setId(event.getBundle().getBundleId());
                                 state.setName(name);
+                                state.setVersion(version);
+                                state.setSymbolicName(symbolicName);
                                 state.setStatus(type);
                                 state.setLocation(bundleLocation);
                                 clusterBundles.put(symbolicName + "/" + version, state);
