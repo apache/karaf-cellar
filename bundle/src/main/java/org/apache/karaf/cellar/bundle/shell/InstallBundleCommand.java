@@ -101,6 +101,7 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     state.setSymbolicName(symbolicName);
                     state.setVersion(version);
                     state.setLocation(url);
+                    state.setId(clusterBundles.size());
                     if (start) {
                         state.setStatus(BundleEvent.STARTED);
                     } else {

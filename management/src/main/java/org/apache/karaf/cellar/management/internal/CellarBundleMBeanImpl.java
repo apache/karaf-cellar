@@ -125,6 +125,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             // update the cluster group
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
             BundleState state = new BundleState();
+            state.setId(clusterBundles.size());
             state.setName(name);
             state.setVersion(version);
             state.setSymbolicName(name);
