@@ -146,6 +146,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                 bundles = bundleContext.getBundles();
                 for (Bundle bundle : bundles) {
+                    long bundleId = bundle.getBundleId();
                     String symbolicName = bundle.getSymbolicName();
                     String version = bundle.getVersion().toString();
                     String bundleLocation = bundle.getLocation();
@@ -159,10 +160,13 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         // get the bundle name or location.
                         String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
                         // if there is no name, then default to symbolic name.
-                        name = (name == null) ? bundle.getSymbolicName() : name;
+                        name = (name == null) ? symbolicName : name;
                         // if there is no symbolic name, resort to location.
                         name = (name == null) ? bundle.getLocation() : name;
+                        bundleState.setId(bundleId);
                         bundleState.setName(name);
+                        bundleState.setSymbolicName(symbolicName);
+                        bundleState.setVersion(version);
                         bundleState.setLocation(bundleLocation);
 
                         if (status == Bundle.ACTIVE)
@@ -180,14 +184,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                         bundleState.setStatus(status);
 
-                        BundleState existingState = clusterBundles.get(id);
-
-                        if (existingState == null ||
-                                !existingState.getLocation().equals(bundleState.getLocation()) ||
-                                existingState.getStatus() != bundleState.getStatus()) {
-                            // update the distributed map
-                            clusterBundles.put(id, bundleState);
-                        }
+                        clusterBundles.put(id, bundleState);
 
                     } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }

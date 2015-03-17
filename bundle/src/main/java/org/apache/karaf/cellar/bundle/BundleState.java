@@ -22,10 +22,21 @@ public class BundleState implements Serializable {
 
     private static final long serialVersionUID = 5933673686648413918L;
 
+    private long id;
     private String name;
+    private String symbolicName;
+    private String version;
     private String location;
     private int status;
     private byte[] data;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -33,6 +44,22 @@ public class BundleState implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSymbolicName() {
+        return symbolicName;
+    }
+
+    public void setSymbolicName(String symbolicName) {
+        this.symbolicName = symbolicName;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getLocation() {
