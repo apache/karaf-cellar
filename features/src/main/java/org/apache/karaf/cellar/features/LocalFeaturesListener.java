@@ -138,7 +138,11 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         // update the features repositories in the cluster group
                         if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                             if (!clusterRepositories.containsKey(event.getRepository().getURI().toString())) {
-                                clusterRepositories.put(event.getRepository().getURI().toString(), event.getRepository().getName());
+                                try {
+                                    clusterRepositories.put(event.getRepository().getURI().toString(), event.getRepository().getName());
+                                } catch (Exception e) {
+                                    // nothing to do
+                                }
                             }
                             // update the features in the cluster group
                             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + group.getName());
