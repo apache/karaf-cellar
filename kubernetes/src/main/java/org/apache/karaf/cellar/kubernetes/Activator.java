@@ -18,6 +18,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ManagedServiceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Hashtable;
 
@@ -25,7 +27,8 @@ public class Activator implements BundleActivator {
 
     private ServiceRegistration serviceRegistration;
 
-    @Override
+    private final static Logger LOGGER = LoggerFactory.getLogger(Activator.class);
+
     public void start(BundleContext bundleContext) throws Exception {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(Constants.SERVICE_PID, "org.apache.karaf.cellar.kubernetes");

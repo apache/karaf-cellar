@@ -48,7 +48,7 @@ public class KubernetesDiscoveryService implements DiscoveryService {
             String kubernetesUrl = "http://" + kubernetesHost + ":" + kubernetesPort;
             LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesUrl);
             kubernetesClient = new KubernetesClient(new KubernetesFactory(kubernetesUrl));
-            LOGGER.debug("CELLAR KUBERNETES: discovery service initalized");
+            LOGGER.debug("CELLAR KUBERNETES: discovery service initialized");
         } catch (Exception e) {
             LOGGER.error("CELLAR KUBERNETES: can't init discovery service", e);
         }

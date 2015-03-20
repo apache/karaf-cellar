@@ -38,6 +38,8 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KubernetesDiscoveryServiceFactory.class);
 
+    private static final String KUBERNETES_HOST = "host";
+    private static final String KUBERNETES_PORT = "port";
     private static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
     private static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";
 
@@ -56,9 +58,13 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
 
     @Override
     public void updated(String pid, Dictionary properties) throws ConfigurationException {
+
         ServiceRegistration newServiceRegistration = null;
         try {
             if (properties != null) {
+
+                LOGGER.info("CELLAR KUBERNETES: creating the discovery service ...");
+
                 Properties serviceProperties = new Properties();
                 for (Map.Entry entry : serviceProperties.entrySet()) {
                     Object key = entry.getKey();
@@ -68,23 +74,36 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
 
                 KubernetesDiscoveryService kubernetesDiscoveryService = new KubernetesDiscoveryService();
 
-                String kubernetesHost = getEnvOrDefault("KUBERNETES_RO_SERVICE_HOST", "localhost");
-                String kubernetesPort = getEnvOrDefault("KUBERNETES_RO_SERVICE_PORT", "8080");
+                String kubernetesHost = (String) properties.get(KUBERNETES_HOST);
+                String kubernetesPort = (String) properties.get(KUBERNETES_PORT);
+                if (kubernetesHost == null) {
+                    kubernetesHost = getEnvOrDefault("KUBERNETES_RO_SERVICE_HOST", "localhost");
+                }
+                if (kubernetesPort == null) {
+                    kubernetesPort = getEnvOrDefault("KUBERNETES_RO_SERVICE_PORT", "8080");
+                }
                 String kubernetesPodLabelKey = (String) properties.get(KUBERNETES_POD_LABEL_KEY);
+                if (kubernetesPodLabelKey == null) {
+                    kubernetesPodLabelKey = "name";
+                }
                 String kubernetesPodLabelValue = (String) properties.get(KUBERNETES_POD_LABEL_VALUE);
+                if (kubernetesPodLabelValue == null) {
+                    kubernetesPodLabelValue = "cellar";
+                }
 
                 kubernetesDiscoveryService.setKubernetesHost(kubernetesHost);
                 kubernetesDiscoveryService.setKubernetesPort(kubernetesPort);
                 kubernetesDiscoveryService.setKubernetesPodLabelKey(kubernetesPodLabelKey);
                 kubernetesDiscoveryService.setKubernetesPodLabelValue(kubernetesPodLabelValue);
+
                 kubernetesDiscoveryService.init();
 
                 newServiceRegistration = bundleContext.registerService(DiscoveryService.class.getName(), kubernetesDiscoveryService, (Dictionary) serviceProperties);
+                registrations.put(pid, newServiceRegistration);
             }
         } finally {
             ServiceRegistration oldServiceRegistration = (newServiceRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newServiceRegistration);
             if (oldServiceRegistration != null) {
-                LOGGER.debug("CELLAR KUBERNETES: unregister discovery service {}", pid);
                 oldServiceRegistration.unregister();
             }
         }
