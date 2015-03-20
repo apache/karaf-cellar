@@ -15,6 +15,28 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.5
+                    =========================
+
+  Overview
+  --------
+
+This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+It includes several big fixes, especially on the Synchronizers.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-3482] - 100% cpu usage
+    * [KARAF-3521] - Cellar Synchronizers should not uninstall local resources
+    * [KARAF-3523] - Default etc/org.apache.karaf.cellar.node.cfg contains a wrong property name
+    * [KARAF-3609] - Kubernetes/Cloud Service Discovery isn't working in Immutable applications
+    * [KARAF-3617] - Cellar config synchronizer creates the configuration but not the properties at sync time
+
+** Improvement
+    * [KARAF-3614] - Refactore features support for more reliable sync behavior
+    * [KARAF-3615] - Cluster bundles should keep the bundle ID
+
                     Apache Karaf Cellar 2.3.4
                     =========================
 
