@@ -82,7 +82,6 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
                 service.init();
 
                 newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), (Object) service, (Dictionary) serviceProperties);
-                registrations.put(pid, newRegistration);
             }
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
