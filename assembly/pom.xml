@@ -95,11 +95,6 @@
                                     <type>xml</type>
                                     <classifier>hazelcast</classifier>
                                 </artifact>
-                                <artifact>
-                                    <file>target/classes/kubernetes.cfg</file>
-                                    <type>cfg</type>
-                                    <classifier>kubernetes</classifier>
-                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>

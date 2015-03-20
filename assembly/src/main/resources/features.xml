@@ -99,9 +99,6 @@
     </feature>
 
     <feature name="cellar-kubernetes" description="Cellar kubernetes support in clusters" version="${project.version}" resolver="(obr)">
-        <configfile finalname="/etc/org.apache.karaf.cellar.kubernetes.cfg">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/kubernetes
-        </configfile>
         <feature version="${project.version}">cellar-core</feature>
         <feature>fabric8-kubernetes-api</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
