@@ -15,6 +15,30 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 3.0.2
+                    =========================
+
+  Overview
+  --------
+
+ Apache Karaf Cellar 3.0.2 is a major new release of Cellar designed to work with Karaf 3.0.x versions.
+ It includes bug fixes, especially on the Synchronizers.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-2653] - Local and Cluster Bundle Lists Don't Match After Feature Installation
+    * [KARAF-3482] - 100% cpu usage
+    * [KARAF-3521] - Cellar Synchronizers should not uninstall local resources
+    * [KARAF-3609] - Kubernetes/Cloud Service Discovery isn't working in Immutable applications
+    * [KARAF-3617] - Cellar config synchronizer creates the configuration but not the properties at sync time
+
+** Improvement
+    * [KARAF-1895] - Improve Cellar documentation
+    * [KARAF-3452] - Upgrade to maven-release-plugin 2.5.1
+    * [KARAF-3614] - Refactore features support for more reliable sync behavior
+    * [KARAF-3615] - Cluster bundles should keep the bundle ID
+
                     Apache Karaf Cellar 3.0.1
                     =========================
 
