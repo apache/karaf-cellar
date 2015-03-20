@@ -99,7 +99,6 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
                 kubernetesDiscoveryService.init();
 
                 newServiceRegistration = bundleContext.registerService(DiscoveryService.class.getName(), kubernetesDiscoveryService, (Dictionary) serviceProperties);
-                registrations.put(pid, newServiceRegistration);
             }
         } finally {
             ServiceRegistration oldServiceRegistration = (newServiceRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newServiceRegistration);
