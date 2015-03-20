@@ -82,11 +82,12 @@ public class BlobStoreDiscoveryServiceFactory implements ManagedServiceFactory {
                 service.init();
 
                 newRegistration = bundleContext.registerService(DiscoveryService.class.getName(), (Object) service, (Dictionary) serviceProperties);
+                registrations.put(pid, newRegistration);
             }
         } finally {
             ServiceRegistration oldRegistration = (newRegistration == null) ? registrations.remove(pid) : registrations.put(pid, newRegistration);
             if (oldRegistration != null) {
-                LOGGER.debug("CELLAR CLOUD: un-registering blob store discovery service {}", pid);
+                LOGGER.debug("CELLAR CLOUD: unregistering blob store discovery service {}", pid);
                 oldRegistration.unregister();
             }
         }
