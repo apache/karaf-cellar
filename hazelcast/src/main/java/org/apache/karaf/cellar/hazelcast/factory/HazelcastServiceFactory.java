@@ -28,7 +28,7 @@ public class HazelcastServiceFactory {
 
     private BundleContext bundleContext;
     private CombinedClassLoader combinedClassLoader;
-    private HazelcastConfigurationManager configurationManager = new HazelcastConfigurationManager();
+    private HazelcastConfigurationManager configurationManager;
 
     private CountDownLatch initializationLatch = new CountDownLatch(1);
     private CountDownLatch instanceLatch = new CountDownLatch(1);
@@ -91,6 +91,10 @@ public class HazelcastServiceFactory {
 
     public void setCombinedClassLoader(CombinedClassLoader combinedClassLoader) {
         this.combinedClassLoader = combinedClassLoader;
+    }
+    
+    public void setConfigurationManager(HazelcastConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
     }
 
 }
