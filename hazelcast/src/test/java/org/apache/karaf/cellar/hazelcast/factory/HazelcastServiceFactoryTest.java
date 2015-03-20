@@ -32,6 +32,7 @@ public class HazelcastServiceFactoryTest {
     	// configuration that disables multicast and enables tcp on 127.0.0.1
         System.setProperty("karaf.home", "src/test/resources");
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
+        factory.setConfigurationManager(new HazelcastConfigurationManager());
         factory.init();
         factory.getInstance();
         HazelcastInstance defaultInstance = Hazelcast.newHazelcastInstance(null);
