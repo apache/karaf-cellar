@@ -48,6 +48,7 @@
         <osgi.version>5.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j.version>1.7.7</slf4j.version>
+        <apache.commons.lang3.version>3.3.2</apache.commons.lang3.version>
     </properties>
 
     <modules>
@@ -287,6 +288,13 @@
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time.version}</version>
+            </dependency>
+
+          <!--Apache common-lang-->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache.commons.lang3.version}</version>
             </dependency>
 
             <!-- Kubernetes -->

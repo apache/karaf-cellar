@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.dosgi;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Handler for cluster remote service call event.
@@ -123,13 +125,12 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                 if (remoteMethod.getName().equals(event.getMethod()) && remoteMethod.getParameterTypes().length == eventParamTypes.length) {
                     boolean allParamsFound = true;
                     for (int i = 0; i < remoteMethod.getParameterTypes().length; i++) {
-                        allParamsFound = allParamsFound && remoteMethod.getParameterTypes()[i].isAssignableFrom(eventParamTypes[i]);
+                        allParamsFound = allParamsFound && ClassUtils.isAssignable(eventParamTypes[i], remoteMethod.getParameterTypes()[i]);
                     }
+
+                    // if already found a matching method, no need to continue looking for one
                     if (allParamsFound) {
                         result = remoteMethod;
-                    }
-                    // if already found a matching method, no need to continue looking for one
-                    if (result != null) {
                         break;
                     }
                 }
@@ -140,7 +141,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
         //if method was not found go out with a bang
         if (result == null) {
-            throw new NoSuchMethodException();
+            throw new NoSuchMethodException(String.format("No match for method [%s] %s", event.getMethod(), Arrays.toString(eventParamTypes)));
         }
 
         return result;

@@ -74,6 +74,7 @@
 
     <feature name="cellar-dosgi" description="DOSGi support" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">cellar-core</feature>
+        <bundle start-level="30" dependency="true">wrap:mvn:org.apache.commons/commons-lang3/${apache.commons.lang3.version}</bundle>
         <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.dosgi/${project.version}</bundle>
     </feature>
 
