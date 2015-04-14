@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.dosgi;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
+import org.apache.karaf.cellar.core.exception.RemoteServiceInvocationException;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -60,6 +61,17 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
         if(results != null) {
             for(Map.Entry<Node,RemoteServiceResult> entry:results.entrySet()) {
                 RemoteServiceResult result = entry.getValue();
+
+                // an exception being thrown by the remote service call must be raised locally
+                if (result != null && result.getResult() != null && result.getResult() instanceof RemoteServiceInvocationException) {
+                    RemoteServiceInvocationException ute = (RemoteServiceInvocationException) result.getResult();
+                    if (ute.getCause() != null) {
+                        throw ute.getCause();
+                    } else {
+                        throw ute;
+                    }
+                }
+
                 return result.getResult();
             }
         }
