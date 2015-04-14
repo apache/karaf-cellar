@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.core.exception.RemoteServiceInvocationException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -84,6 +85,8 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                     }
                 }
 
+                RemoteServiceResult result = new RemoteServiceResult(event.getId());
+                EventProducer producer = eventTransportFactory.getEventProducer(Constants.RESULT_PREFIX + Constants.SEPARATOR + event.getSourceNode().getId() + event.getEndpointId(), false);
                 try {
                     Method method;
                     if (classes.length > 0) {
@@ -93,18 +96,21 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                     }
 
                     Object obj = method.invoke(targetService, event.getArguments().toArray());
-                    RemoteServiceResult result = new RemoteServiceResult(event.getId());
                     result.setResult(obj);
-
-                    EventProducer producer = eventTransportFactory.getEventProducer(Constants.RESULT_PREFIX + Constants.SEPARATOR + event.getSourceNode().getId() + event.getEndpointId(), false);
                     producer.produce(result);
 
                 } catch (NoSuchMethodException e) {
                     LOGGER.error("CELLAR DOSGI: unable to find remote method for service", e);
+                    result.setResult(new RemoteServiceInvocationException(e));
+                    producer.produce(result);
                 } catch (InvocationTargetException e) {
                     LOGGER.error("CELLAR DOSGI: unable to invoke remote method for service", e);
+                    result.setResult(new RemoteServiceInvocationException(e.getCause()));
+                    producer.produce(result);
                 } catch (IllegalAccessException e) {
                     LOGGER.error("CELLAR DOSGI: unable to access remote method for service", e);
+                    result.setResult(new RemoteServiceInvocationException(e));
+                    producer.produce(result);
                 }
             }
         }
