@@ -37,15 +37,15 @@
     <properties>
         <easymock.version>3.2</easymock.version>
         <fabric8.version>2.0.20</fabric8.version>
-        <felix.bundlerepository.version>2.0.2</felix.bundlerepository.version>
-        <felix.utils.version>1.6.0</felix.utils.version>
-        <felix.webconsole.version>4.2.2</felix.webconsole.version>
+        <felix.bundlerepository.version>2.0.4</felix.bundlerepository.version>
+        <felix.utils.version>1.8.0</felix.utils.version>
+        <felix.webconsole.version>4.2.8</felix.webconsole.version>
         <hazelcast.version>3.3.4</hazelcast.version>
         <jclouds.version>1.8.1</jclouds.version>
         <joda-time.version>2.5</joda-time.version>
         <junit.version>4.11</junit.version>
-        <karaf.version>4.0.0.M1</karaf.version>
-        <osgi.version>5.0.0</osgi.version>
+        <karaf.version>4.0.0-SNAPSHOT</karaf.version>
+        <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j.version>1.7.7</slf4j.version>
     </properties>
