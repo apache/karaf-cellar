@@ -35,13 +35,13 @@
         </configfile>
         <bundle start-level="30" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
         <bundle start-level="30" dependency="true">mvn:com.eclipsesource.minimal-json/minimal-json/0.9.2</bundle>
-        <bundle start-level="32">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
+        <bundle start-level="70">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
     <feature name="cellar-hazelcast" description="Cellar implementation based on Hazelcast" version="${project.version}" resolver="(obr)">
         <feature version="${hazelcast.version}">hazelcast</feature>
         <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="33">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <bundle start-level="70">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-config" description="ConfigAdmin cluster support" version="${project.version}" resolver="(obr)">
@@ -101,7 +101,7 @@
     <feature name="cellar-kubernetes" description="Cellar kubernetes support in clusters" version="${project.version}" resolver="(obr)">
         <feature version="${project.version}">cellar-core</feature>
         <feature>fabric8-kubernetes-api</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
+        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-webconsole" description="Cellar plugin for Karaf WebConsole" version="${project.version}" resolver="(obr)">

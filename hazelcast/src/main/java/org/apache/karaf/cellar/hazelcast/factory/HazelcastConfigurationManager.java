@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 
 /**
  * Hazelcast configuration manager.
@@ -36,6 +38,7 @@ public class HazelcastConfigurationManager {
     private String xmlConfigLocation = System.getProperty("karaf.home") + "/etc/hazelcast.xml";
 
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
+    private List<DiscoveryService> discoveryServices;
 
     /**
      * Build a Hazelcast {@link com.hazelcast.config.Config}.
@@ -45,7 +48,16 @@ public class HazelcastConfigurationManager {
     public Config getHazelcastConfig() {
         System.setProperty("hazelcast.config", xmlConfigLocation);
         Config config = new XmlConfigBuilder().build();
-        if (discoveredMemberSet != null) {
+        
+        if (config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled() && discoveredMemberSet != null) {
+            if (discoveryServices != null && !discoveryServices.isEmpty()) {
+                for (DiscoveryService service : discoveryServices) {
+                    service.refresh();
+                    Set<String> discovered = service.discoverMembers();
+                    discoveredMemberSet.addAll(discovered);
+                    LOGGER.trace("HAZELCAST STARTUP DISCOVERY: service {} found members {}", service, discovered);
+                }
+            }
             TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
             tcpIpConfig.getMembers().addAll(discoveredMemberSet);
         }
@@ -70,6 +82,10 @@ public class HazelcastConfigurationManager {
             }
         }
         return updated;
+    }
+    
+    public void setDiscoveryServices(List<DiscoveryService> discoveryServices) {
+        this.discoveryServices = discoveryServices;
     }
 
 }
