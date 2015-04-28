@@ -32,10 +32,6 @@
         <configfile finalname="/etc/hazelcast.xml">
             mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
         </configfile>
-        <!--
-        <bundle start-level="30" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
-        <bundle start-level="30" dependency="true">mvn:com.eclipsesource.minimal-json/minimal-json/0.9.2</bundle>
-        -->
         <bundle start-level="70">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
