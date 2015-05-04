@@ -67,7 +67,6 @@
                             org.apache.karaf.cellar.core*;version="${project.version}",
                             org.osgi*
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

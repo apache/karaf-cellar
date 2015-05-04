@@ -26,7 +26,7 @@ public class GroupJoinCommand extends GroupSupport {
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID", required = true, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
     List<String> nodes;
 
     @Override

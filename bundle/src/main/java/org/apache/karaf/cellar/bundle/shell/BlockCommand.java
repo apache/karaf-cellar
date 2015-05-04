@@ -48,85 +48,92 @@ public class BlockCommand extends BundleCommandSupport {
 
         List<String> patterns = new ArrayList<String>();
 
-        Map<String, ExtendedBundleState> bundles = gatherBundles();
-        List<String> selectedBundles = selector(bundles);
-        for (String selectedBundle : selectedBundles) {
-            patterns.add(bundles.get(selectedBundle).getLocation());
-        }
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        if (patterns.isEmpty() && ids != null) {
-            for (String id : ids) {
-                patterns.add(id);
+        try {
+            Map<String, ExtendedBundleState> bundles = gatherBundles();
+            List<String> selectedBundles = selector(bundles);
+            for (String selectedBundle : selectedBundles) {
+                patterns.add(bundles.get(selectedBundle).getLocation());
             }
-        }
 
-        CellarSupport support = new CellarSupport();
-        support.setClusterManager(clusterManager);
-        support.setGroupManager(groupManager);
-        support.setConfigurationAdmin(configurationAdmin);
-
-        if (!in && !out) {
-            in = true;
-            out = true;
-        }
-        if (!whitelist && !blacklist) {
-            whitelist = true;
-            blacklist = true;
-        }
-
-        if (patterns.isEmpty()) {
-            // display mode
-            if (in) {
-                System.out.println("INBOUND:");
-                if (whitelist) {
-                    System.out.print("\twhitelist: ");
-                    Set<String> list = support.getListEntries(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND);
-                    System.out.println(list.toString());
-                }
-                if (blacklist) {
-                    System.out.print("\tblacklist: ");
-                    Set<String> list = support.getListEntries(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND);
-                    System.out.println(list.toString());
+            if (patterns.isEmpty() && ids != null) {
+                for (String id : ids) {
+                    patterns.add(id);
                 }
             }
-            if (out) {
-                System.out.println("OUTBOUND:");
-                if (whitelist) {
-                    System.out.print("\twhitelist: ");
-                    Set<String> list = support.getListEntries(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND);
-                    System.out.println(list.toString());
-                }
-                if (blacklist) {
-                    System.out.print("\tblacklist: ");
-                    Set<String> list = support.getListEntries(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND);
-                    System.out.println(list.toString());
-                }
+
+            CellarSupport support = new CellarSupport();
+            support.setClusterManager(clusterManager);
+            support.setGroupManager(groupManager);
+            support.setConfigurationAdmin(configurationAdmin);
+
+            if (!in && !out) {
+                in = true;
+                out = true;
             }
-        } else {
-            // edit mode
-            for (String pattern : patterns) {
-                System.out.println("Updating blocking policy for " + pattern);
+            if (!whitelist && !blacklist) {
+                whitelist = true;
+                blacklist = true;
+            }
+
+            if (patterns.isEmpty()) {
+                // display mode
                 if (in) {
+                    System.out.println("INBOUND:");
                     if (whitelist) {
-                        System.out.println("\tinbound whitelist ...");
-                        support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+                        System.out.print("\twhitelist: ");
+                        Set<String> list = support.getListEntries(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND);
+                        System.out.println(list.toString());
                     }
                     if (blacklist) {
-                        System.out.println("\tinbound blacklist ...");
-                        support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+                        System.out.print("\tblacklist: ");
+                        Set<String> list = support.getListEntries(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND);
+                        System.out.println(list.toString());
                     }
                 }
                 if (out) {
+                    System.out.println("OUTBOUND:");
                     if (whitelist) {
-                        System.out.println("\toutbound whitelist ...");
-                        support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+                        System.out.print("\twhitelist: ");
+                        Set<String> list = support.getListEntries(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND);
+                        System.out.println(list.toString());
                     }
                     if (blacklist) {
-                        System.out.println("\toutbound blacklist ...");
-                        support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+                        System.out.print("\tblacklist: ");
+                        Set<String> list = support.getListEntries(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND);
+                        System.out.println(list.toString());
+                    }
+                }
+            } else {
+                // edit mode
+                for (String pattern : patterns) {
+                    System.out.println("Updating blocking policy for " + pattern);
+                    if (in) {
+                        if (whitelist) {
+                            System.out.println("\tinbound whitelist ...");
+                            support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+                        }
+                        if (blacklist) {
+                            System.out.println("\tinbound blacklist ...");
+                            support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.INBOUND, pattern);
+                        }
+                    }
+                    if (out) {
+                        if (whitelist) {
+                            System.out.println("\toutbound whitelist ...");
+                            support.switchListEntry(Configurations.WHITELIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+                        }
+                        if (blacklist) {
+                            System.out.println("\toutbound blacklist ...");
+                            support.switchListEntry(Configurations.BLACKLIST, groupName, Constants.CATEGORY, EventType.OUTBOUND, pattern);
+                        }
                     }
                 }
             }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         return null;

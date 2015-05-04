@@ -110,7 +110,6 @@
                             org.osgi.service.blueprint,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                         <Embed-Dependency>json</Embed-Dependency>
                     </instructions>
                 </configuration>

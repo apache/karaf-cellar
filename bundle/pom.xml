@@ -83,6 +83,7 @@
                             org.apache.karaf.cellar.bundle*;version="${project.version}"
                         </Export-Package>
                         <Import-Package>
+                            javax.management*,
                             org.apache.karaf.cellar.core*;version="${project.version}",
                             org.apache.felix.service.command,
                             org.apache.felix.gogo.commands,
@@ -90,11 +91,11 @@
                             org.apache.karaf.shell.console.commands;version="[3,5)",
                             org.apache.karaf.shell.console.completer;version="[3,5)",
                             org.apache.karaf.shell.commands;version="[3,5)",
+                            org.apache.karaf.shell.table;version="[3,5)",
                             org.apache.karaf.features;version="[3,5)",
                             org.osgi*,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.bundle.management.internal
                         </Private-Package>

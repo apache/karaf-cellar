@@ -84,13 +84,14 @@
                         </Export-Package>
                         <Import-Package>
                             com.hazelcast*,
+                            javax.management*,
+                            org.apache.aries.proxy,
                             org.apache.karaf.cellar.core*;version="${project.version}",
                             org.apache.karaf.cellar.utils.ping;version="${project.version}",
                             org.apache.karaf.features;version="[3,5)",
                             org.osgi*,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.hazelcast.management.internal
                         </Private-Package>

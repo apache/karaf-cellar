@@ -79,15 +79,14 @@
                             org.apache.karaf.shell.console.commands;version="[3,5)",
                             org.apache.karaf.shell.console.completer;version="[3,5)",
                             org.apache.karaf.shell.commands;version="[3,5)",
+                            org.apache.karaf.shell.table;version="[3,5)",
                             org.apache.karaf.management;version="[3,5)",
                             javax.management*,
                             org.osgi*,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>
-                            org.apache.felix.bundlerepository,
-                            org.osgi.service.obr,
-                            *
+                            org.apache.felix.bundlerepository, org.osgi.service.obr
                         </DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.obr.management.internal

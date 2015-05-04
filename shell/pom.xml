@@ -93,9 +93,9 @@
                             org.apache.karaf.shell.console.commands;version="[3,5)",
                             org.apache.karaf.shell.console.completer;version="[3,5)",
                             org.apache.karaf.shell.commands;version="[3,5)",
+                            org.apache.karaf.shell.table;version="[3,5)",
                             org.osgi*
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                     </instructions>
                 </configuration>
             </plugin>

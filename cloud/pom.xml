@@ -103,7 +103,7 @@
                             org.osgi*,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,org.jclouds.*,*</DynamicImport-Package>
+                        <DynamicImport-Package>org.jclouds.*</DynamicImport-Package>
                         <Bundle-Activator>org.apache.karaf.cellar.cloud.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
