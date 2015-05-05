@@ -53,7 +53,7 @@ public class BundleSupport extends CellarSupport {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
-                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getHeaders().get("Bundle-Version").toString().equals(version)) {
                     bundle.uninstall();
                 }
             }
@@ -71,7 +71,7 @@ public class BundleSupport extends CellarSupport {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
-                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getHeaders().get("Bundle-Version").toString().equals(version)) {
                     bundle.start();
                 }
             }
@@ -89,7 +89,7 @@ public class BundleSupport extends CellarSupport {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
-                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getHeaders().get("Bundle-Version").toString().equals(version)) {
                     bundle.stop();
                 }
             }
@@ -107,7 +107,7 @@ public class BundleSupport extends CellarSupport {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
-                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getVersion().toString().equals(version)) {
+                if (bundle.getSymbolicName().equals(symbolicName) && bundle.getHeaders().get("Bundle-Version").toString().equals(version)) {
                     bundle.update();
                 }
             }
