@@ -148,7 +148,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 for (Bundle bundle : bundles) {
                     long bundleId = bundle.getBundleId();
                     String symbolicName = bundle.getSymbolicName();
-                    String version = bundle.getVersion().toString();
+                    String version = bundle.getHeaders().get("Bundle-Version").toString();
                     String bundleLocation = bundle.getLocation();
                     int status = bundle.getState();
                     String id = symbolicName + "/" + version;

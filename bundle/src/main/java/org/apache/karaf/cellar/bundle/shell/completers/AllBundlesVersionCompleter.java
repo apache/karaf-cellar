@@ -30,7 +30,7 @@ public class AllBundlesVersionCompleter implements Completer {
     public int complete(String buffer, int cursor, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         for (Bundle bundle : bundleContext.getBundles()) {
-            delegate.getStrings().add(bundle.getVersion().toString());
+            delegate.getStrings().add(bundle.getHeaders().get("Bundle-Version").toString());
         }
         return delegate.complete(buffer, cursor, candidates);
     }
