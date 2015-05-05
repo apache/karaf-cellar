@@ -128,16 +128,16 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             state.setId(clusterBundles.size());
             state.setName(name);
             state.setVersion(version);
-            state.setSymbolicName(name);
+            state.setSymbolicName(symbolicName);
             state.setLocation(location);
             state.setStatus(BundleEvent.INSTALLED);
-            clusterBundles.put(name + "/" + version, state);
+            clusterBundles.put(symbolicName + "/" + version, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         // broadcast the cluster event
-        ClusterBundleEvent event = new ClusterBundleEvent(name, version, location, BundleEvent.INSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.INSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
