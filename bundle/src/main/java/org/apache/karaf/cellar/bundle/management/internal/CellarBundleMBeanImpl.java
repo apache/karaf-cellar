@@ -159,10 +159,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        ClusterBundleEvent event = new ClusterBundleEvent(name, version, location, BundleEvent.INSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.INSTALLED);
         event.setSourceGroup(group);
         if (start) {
-            event = new ClusterBundleEvent(name, version, location, BundleEvent.STARTED);
+            event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.STARTED);
             event.setSourceGroup(group);
         }
         eventProducer.produce(event);
