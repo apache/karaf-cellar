@@ -588,7 +588,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // retrieve local bundles
         for (Bundle bundle : bundleContext.getBundles()) {
-            String key = bundle.getSymbolicName() + "/" + bundle.getVersion().toString();
+            String key = bundle.getSymbolicName() + "/" + bundle.getHeaders().get("Bundle-Version").toString();
             if (bundles.containsKey(key)) {
                 ExtendedBundleState extendedState = bundles.get(key);
                 extendedState.setLocal(true);
@@ -603,7 +603,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
-                extendedState.setVersion(bundle.getVersion().toString());
+                extendedState.setVersion(bundle.getHeaders().get("Bundle-Version").toString());
                 extendedState.setSymbolicName(bundle.getSymbolicName());
                 extendedState.setLocation(bundle.getLocation());
                 int status = bundle.getState();

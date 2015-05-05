@@ -195,7 +195,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
-                extendedState.setVersion(bundle.getVersion().toString());
+                extendedState.setVersion(bundle.getHeaders().get("Bundle-Version").toString());
                 extendedState.setLocation(bundle.getLocation());
                 int status = bundle.getState();
                 if (status == Bundle.ACTIVE)
