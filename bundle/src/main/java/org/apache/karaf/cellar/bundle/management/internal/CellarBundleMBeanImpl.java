@@ -368,9 +368,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     @Override
     public TabularData getBundles(String groupName) throws Exception {
         CompositeType compositeType = new CompositeType("Bundle", "Karaf Cellar bundle",
-                new String[]{"id", "name", "version", "status", "location", "located", "blocked"},
-                new String[]{"ID of the bundle", "Name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle", "Where the bundle is located (cluster or local node)", "The bundle blocked policy"},
-                new OpenType[]{SimpleType.INTEGER, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+                new String[]{"id", "name", "symbolic_name", "version", "status", "location", "located", "blocked"},
+                new String[]{"ID of the bundle", "Name of the bundle", "Symbolic name of the bundle", "Version of the bundle", "Current status of the bundle", "Location of the bundle", "Where the bundle is located (cluster or local node)", "The bundle blocked policy"},
+                new OpenType[]{SimpleType.LONG, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
         TabularType tableType = new TabularType("Bundles", "Table of all Karaf Cellar bundles", compositeType,
                 new String[]{"name", "version"});
         TabularData table = new TabularDataSupport(tableType);
@@ -443,10 +443,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                     blocked = "out";
 
                 CompositeData data = new CompositeDataSupport(compositeType,
-                        new String[]{"id", "name", "version", "status", "location", "located", "blocked"},
-                        new Object[]{bundle.getId(), bundle.getName(), bundle.getVersion(), status, bundle.getLocation(), located, blocked});
+                        new String[]{"id", "name", "symbolic_name", "version", "status", "location", "located", "blocked"},
+                        new Object[]{bundle.getId(), bundle.getName(), bundle.getSymbolicName(), bundle.getVersion(), status, bundle.getLocation(), located, blocked});
                 table.put(data);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
@@ -579,7 +581,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             extendedState.setSymbolicName(state.getSymbolicName());
             extendedState.setStatus(state.getStatus());
             extendedState.setLocation(state.getLocation());
-            extendedState.setData(state.getData());
+            // extendedState.setData(state.getData());
             extendedState.setCluster(true);
             extendedState.setLocal(false);
             bundles.put(key, extendedState);
