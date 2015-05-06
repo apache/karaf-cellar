@@ -15,6 +15,27 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 2.3.6
+                    =========================
+
+  Overview
+  --------
+
+This release of Apache Karaf Cellar is a major update on the 2.3.x series branch.
+It includes several big fixes, especially on bundle support.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-3714] - cluster:bundle-start doesn't actually start the bundle
+    * [KARAF-3715] - Cellar BundleMBean operations raise a NullPointerException
+    * [KARAF-3716] - cluster:bundle-* commands don't correctly select bundles
+    * [KARAF-3717] - Same bundle appears two times in cluster:bundle-list
+
+** Improvement
+    * [KARAF-3628] - Karaf Hazelcast instance should "merge" the members found by the discovery services
+    * [KARAF-3664] - DOSGi exception handling and propagation
+
                     Apache Karaf Cellar 2.3.5
                     =========================
 
