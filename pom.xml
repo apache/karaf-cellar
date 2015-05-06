@@ -30,7 +30,7 @@
 
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
