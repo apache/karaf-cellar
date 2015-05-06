@@ -15,6 +15,30 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 3.0.3
+                    =========================
+
+  Overview
+  --------
+
+ Apache Karaf Cellar 3.0.3 is a major new release of Cellar designed to work with Karaf 3.0.x versions.
+ It includes bug fixes, especially on DOSGi and bundle support.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-3714] - cluster:bundle-start doesn't actually start the bundle
+    * [KARAF-3715] - Cellar BundleMBean operations raise a NullPointerException
+    * [KARAF-3716] - cluster:bundle-* commands don't correctly select bundles
+    * [KARAF-3717] - Same bundle appears two times in cluster:bundle-list
+
+** Dependency upgrade
+    * [KARAF-3708] - Upgrade to Hazelcast 3.4.2
+
+** Improvement
+    * [KARAF-3628] - Karaf Hazelcast instance should "merge" the members found by the discovery services
+    * [KARAF-3664] - DOSGi exception handling and propagation
+
                     Apache Karaf Cellar 3.0.2
                     =========================
 
