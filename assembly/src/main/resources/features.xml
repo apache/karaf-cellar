@@ -18,20 +18,14 @@
     <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
 
     <feature name="cellar-core" description="Karaf clustering core" version="${project.version}" resolver="(obr)">
-        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups
-        </configfile>
-        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node
-        </configfile>
+        <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups</configfile>
+        <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node</configfile>
         <bundle start-level="30">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
         <bundle start-level="31">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
     </feature>
 
     <feature name="hazelcast" description="In memory data grid" version="${hazelcast.version}" resolver="(obr)">
-        <configfile finalname="/etc/hazelcast.xml">
-            mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast
-        </configfile>
+        <configfile finalname="/etc/hazelcast.xml">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast</configfile>
         <bundle start-level="70">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
