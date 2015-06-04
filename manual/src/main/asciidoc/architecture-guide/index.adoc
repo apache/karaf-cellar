@@ -1,0 +1,8 @@
+
+= Karaf Cellar Architecture Guide
+
+* link:/architecture-guide/overview.adoc[Overview]
+* link:/architecture-guide/supported_events.adoc[Supported Events]
+* link:/architecture-guide/hazelcast.adoc[Why Hazelcast ?]
+* link:/architecture-guide/design.adoc[Cellar Design]
+* link:/architecture-guide/broadcasting_commands.adoc[Broadcasting Commands]

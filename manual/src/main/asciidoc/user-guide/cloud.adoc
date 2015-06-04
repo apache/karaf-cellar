@@ -1,0 +1,111 @@
+
+= Discovery Services
+
+The Discovery Services allow you to use third party libraries to discover the nodes member of the Cellar cluster.
+
+== jClouds
+
+Cellar relies on http://www.hazelcast.co[Hazelcast] in order to discover cluster nodes. This can happen either by using unicast, multicast  or specifying the ip address of each node.
+See the link:hazelcast.adoc[Core Configuration]
+
+Unfortunately multicast is not allowed in most IaaS providers and the alternative of specifying all IP addresses creates maintenance difficulties, especially since in most cases the addresses are not known in advance.
+
+Cellar solves this problem using a cloud discovery service powered by jclouds (http://jclouds.apache.org).
+
+=== Cloud discovery service
+
+Most cloud providers provide cloud storage among other services. Cellar uses the cloud storage via jclouds, in order to determine the IP addresses of each node so that Hazelcast can find them.
+
+This approach is also called blackboard and refers to the process where each node registers itself in a common storage are so that other nodes know its existence.
+
+=== Installing Cellar cloud discovery service
+
+To install the cloud discovery service simply install the appropriate jclouds provider and then install cellar-cloud feature.
+Amazon S3 is being used here for this example, but the below applies to any provider supported by jclouds.
+
+----
+karaf@root()> feature:install jclouds-aws-s3
+karaf@root()> feature:install cellar-cloud
+----
+
+Once the feature is installed, you're required to create a configuration that contains credentials and the type of the cloud storage (aka blobstore).
+To do that add a configuration file under the etc folder with the name org.apache.karaf.cellar.cloud-<provider>.cfg and place the following information there:
+
+provider=aws-s3 (this varies according to the blobstore provider)
+identity=<the identity of the blobstore account>
+credential=<the credential/password of the blobstore account)
+container=<the name of the bucket>
+validity=<the amount of time an entry is considered valid, after that time the entry is removed>
+
+For instance, you can create _etc/org.apache.karaf.cellar.cloud-mycloud.cfg_ containing:
+
+----
+provider=aws-s3
+identity=username
+credential=password
+container=cellar
+validity=360000
+----
+
+NB: you can find the cloud providers supported by jclouds here http://repo1.maven.org/maven2/org/apache/jclouds/provider/.
+You have to install the corresponding jclouds feature for the provider.
+
+After creating the file the service will check for new nodes. If new nodes are found the Hazelcast instance configuration will be updated and the instance restarted.
+
+== Kubernetes & docker.io
+
+Kuberneteshttp://kubernetes.ioKubernetes is an open source orchestration system for docker.io containers.
+It handles scheduling onto nodes in a compute cluster and actively manages workloads to ensure that their state matches
+the users declared intentions.
+Using the concepts of "labels", "pods", "replicationControllers" and "services", it groups the containers which make up
+an application into logical units for easy management and discovery.
+Following the aforementioned concept will most likely change how you package and provision your Karaf based applications.
+For instance, you will eventually have to provide a Docker image with a pre-configured Karaf, KAR files in deployment
+folder, etc. so that your Kubernetes container may bootstrap everything on boot.
+
+The Cellar Kubernetes discovery service is a great complement to the Karaf docker.io feature (allowing you to easily
+create and manage docker.io images in and for Karaf).
+
+=== Kubernetes discovery service
+
+In order to determine the IP address of each node, so that Hazelcast can connect to them, the Kubernetes discovery service queries
+the Kubernetes API for containers labeled with the _pod.label.key_ and _pod.label.key_ specified in _etc/org.apache.karaf.cellar.kubernetes-name.cfg_.
+The name in _etc/org.apache.karaf.cellar.kubernetes-name.cfg_ is a name of the choice. It allows you to create multiple Kubernetes discovery services.
+Thanks to that, the Cellar nodes can be discovered on different Kubernetes.
+
+So, you *must be sure* to label your containers (pods) accordingly.
+
+After a Cellar node starts up, Kubernetes discovery service will configure Hazelcast with currently running Cellar nodes.
+Since Hazelcast follows a peer-to-peer all-shared topology, whenever nodes come up and down, the cluster will remain up-to-date.
+
+=== Installing Kubernetes discovery service
+
+To install the Kubernetes discovery service, simply install cellar-kubernetes feature.
+
+----
+karaf@root()> feature:install cellar-kubernetes
+----
+
+Once the cellar-kubernetes feature is installed, you have to create the Kubernetes provider configuration file.
+If you have multiple Kubernetes instances, you create one configuration file per instance.
+
+For instance, you can create _etc/org.apache.karaf.cellar.kubernetes-myfirstcluster.cfg_ containing:
+
+----
+host=localhost
+port=8080
+pod.label.key=name
+pod.label.value=cellar
+----
+
+and another one _etc/org.apache.karaf.cellar.kubernetes-mysecondcluster.cfg_ containing:
+
+----
+host=192.168.134.2
+port=8080
+pod.label.key=name
+pod.label.value=cellar
+----
+
+In case you change the file, the discovery service will check again for new nodes. If new nodes are found, Hazelcast configuration will be
+updated and the instance restarted.

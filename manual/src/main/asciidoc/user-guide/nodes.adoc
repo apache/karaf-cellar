@@ -1,0 +1,186 @@
+
+= Cellar nodes
+
+This chapter describes the Cellar nodes manipulation commands.
+
+== Nodes identification
+
+When you installed the Cellar feature, your Karaf instance became automatically a Cellar cluster node,
+and hence tries to discover the others Cellar nodes.
+
+You can list the known Cellar nodes using the list-nodes command:
+
+----
+karaf@root()> cluster:node-list
+  | Id             | Host Name | Port
+-------------------------------------
+x | node2:5702     | node2 | 5702
+  | node1:5701     | node1 | 5701
+----
+
+The starting 'x' indicates that it's the Karaf instance on which you are logged on (the local node).
+
+NB: if you don't see the other nodes there (whereas they should be there), it's probably due to a network issue. By default, Cellar uses multicast to discover the nodes.
+If your network or network interface don't support multicast, you have to switch to tcp-ip instead of multicast. See link:hazelcast.adoc[Core Configuration]
+
+NB: in Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a change in Hazelcast, it's no more possible to have both. Now, in Cellar 3.0.x, the default
+configuration is multicast enabled, tcp-ip disabled. See link:hazelcast.adoc[Core Configuration]
+
+== Testing nodes
+
+You can ping a node to test it:
+
+----
+karaf@root()> cluster:node-ping node1:5701
+PING node1:5701
+from 1: req=node1:5701 time=11 ms
+from 2: req=node1:5701 time=12 ms
+from 3: req=node1:5701 time=13 ms
+from 4: req=node1:5701 time=7 ms
+from 5: req=node1:5701 time=12 ms
+----
+
+== Node Components: listener, producer, handler, consume, and synchronizer
+
+A Cellar node is actually a set of components, each component is dedicated to a special purpose.
+
+The etc/org.apache.karaf.cellar.node.cfg configuration file is dedicated to the configuration of the local node.
+It's where you can control the status of the different components.
+
+=== Synchronizers and sync policy
+
+A synchronizer is invoked when you:
+* Cellar starts
+* a node joins a cluster group (see [groups] for details about cluster groups)
+* you explicitly call the cluster:sync command
+
+We have a synchronizer per resource: feature, bundle, config, obr (optional).
+
+Cellar supports three sync policies:
+* cluster (default): if the node is the first one in the cluster, it pushes its local state to the cluster, else if it's
+not the first node in the cluster, the node will update its local state with the cluster one (meaning that the cluster
+is the master).
+* node: in this case, the node is the master, it means that the cluster state will be overwritten by the node state.
+* disabled: in this case, it means that the synchronizer is not used at all, meaning the node or the cluster are not
+updated at all (at sync time).
+
+You can configure the sync policy (for each resource, and each cluster group) in the etc/org.apache.karaf.cellar.groups.cfg
+configuration file:
+
+----
+default.bundle.sync = cluster
+default.config.sync = cluster
+default.feature.sync = cluster
+default.obr.urls.sync = cluster
+----
+
+The cluster:sync command allows you to "force" the sync:
+
+----
+karaf@node1()> cluster:sync
+Synchronizing cluster group default
+        bundle: done
+        config: done
+        feature: done
+        obr.urls: No synchronizer found for obr.urls
+----
+
+It's also possible to sync only a resource using:
+* -b (--bundle) for bundle
+* -f (--feature) for feature
+* -c (--config) for configuration
+* -o (--obr) for OBR URLs
+
+or a given cluster group using the -g (--group) option.
+
+=== Producer, consumer, and handlers
+
+To notify the other nodes in the cluster, Cellar produces a cluster event.
+
+For that, the local node uses a producer to create and send the cluster event.
+You can see the current status of the local producer using the cluster:producer-status command:
+
+----
+karaf@node1()> cluster:producer-status
+  | Node             | Status
+-----------------------------
+x | 172.17.42.1:5701 | ON
+----
+
+The cluster:producer-stop and cluster:producer-start commands allow you to stop or start the local cluster event
+producer:
+
+----
+karaf@node1()> cluster:producer-stop
+  | Node             | Status
+-----------------------------
+x | 172.17.42.1:5701 | OFF
+karaf@node1()> cluster:producer-start
+  | Node             | Status
+-----------------------------
+x | 172.17.42.1:5701 | ON
+----
+
+When the producer is off, it means that the node is "isolated" from the cluster as it doesn't send "outbound" cluster events
+to the other nodes.
+
+On the other hand, a node receives the cluster events on a consumer. Like for the producer, you can see and control the
+consumer using dedicated command:
+
+----
+karaf@node1()> cluster:consumer-status
+  | Node           | Status
+---------------------------
+x | localhost:5701 | ON
+karaf@node1()> cluster:consumer-stop
+  | Node           | Status
+---------------------------
+x | localhost:5701 | OFF
+karaf@node1()> cluster:consumer-start
+  | Node           | Status
+---------------------------
+x | localhost:5701 | ON
+----
+
+When the consumer is off, it means that node is "isolated" from the cluster as it doesn't receive "inbound" cluster events
+from the other nodes.
+
+Different cluster events are involved. For instance, we have cluster event for feature, for bundle, for configuration, for OBR, etc.
+When a consumer receives a cluster event, it delegates the handling of the cluster event to a specific handler, depending of the
+type of the cluster event.
+You can see the different handlers and their status using the cluster:handler-status command:
+
+----
+karaf@node1()> cluster:handler-status
+  | Node           | Status | Event Handler
+--------------------------------------------------------------------------------------
+x | localhost:5701 | ON     | org.apache.karaf.cellar.config.ConfigurationEventHandler
+x | localhost:5701 | ON     | org.apache.karaf.cellar.bundle.BundleEventHandler
+x | localhost:5701 | ON     | org.apache.karaf.cellar.features.FeaturesEventHandler
+----
+
+You can stop or start a specific handler using the cluster:handler-stop and cluster:handler-start commands.
+
+When a handler is stopped, it means that the node will receive the cluster event, but will not update the local resources
+dealt by the handler.
+
+=== Listeners
+
+The listeners are listening for local resource change.
+
+For instance, when you install a feature (with feature:install), the feature listener traps the change and broadcast this
+change as a cluster event to other nodes.
+
+To avoid some unexpected behaviors (especially when you stop a node), most of the listeners are switch off by default.
+
+The listeners status are configured in the etc/org.apache.karaf.cellar.node.cfg configuration file.
+
+NB: enabling listeners is at your own risk. We encourage you to use cluster dedicated commands and MBeans to manipulate
+the resources on the cluster.
+
+== Clustered resources
+
+Cellar provides dedicated commands and MBeans for clustered resources.
+
+Please, go into the 
+link:groups.adoc[cluster groups]

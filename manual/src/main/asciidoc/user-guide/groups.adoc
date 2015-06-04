@@ -1,0 +1,317 @@
+
+= Cellar groups
+
+You can define groups in Cellar. A group allows you to define specific nodes and resources that are to be
+working together. This permits some nodes (those outside the group) not to need to sync'ed with changes of
+a node within a group.
+
+By default, the Cellar nodes go into the default group:
+
+----
+karaf@root()> cluster:group-list
+  | Group   | Members
+-----------------------------------------------
+x | default | node2:5702 node1:5701(x)
+----
+
+The 'x' indicates a local group. A local group is a group containing the local node (where we are connected).
+
+== New group
+
+You can create a new group using the group-create command:
+
+----
+karaf@root()> cluster:group-create test
+----
+
+For now, the test group hasn't any nodes:
+
+----
+karaf@node1()> cluster:group-list
+  | Group   | Members
+-----------------------------------------------
+x | default | node2:5702 node1:5701(x)
+  | test    |
+----
+
+== Clustered Resources and Cluster Groups
+
+=== Features
+
+Cellar can manipulate features and features repositories on cluster groups.
+
+You can use cluster:feature-* commands or the corresponding MBean for that.
+
+You can list the features repositories on a given cluster group:
+
+----
+karaf@node1()> cluster:feature-repo-list default
+Repository                  |    Located    | URL
+-------------------------------------------------------------------------------------------------------------------------
+jclouds-1.8.1               | cluster/local | mvn:org.apache.jclouds.karaf/jclouds-karaf/1.8.1/xml/features
+karaf-cellar-3.0.1-SNAPSHOT | cluster/local | mvn:org.apache.karaf.cellar/apache-karaf-cellar/3.0.1-SNAPSHOT/xml/features
+org.ops4j.pax.cdi-0.8.0     | cluster/local | mvn:org.ops4j.pax.cdi/pax-cdi-features/0.8.0/xml/features
+spring-3.0.2                | cluster/local | mvn:org.apache.karaf.features/spring/3.0.2/xml/features
+standard-3.0.2              | cluster/local | mvn:org.apache.karaf.features/standard/3.0.2/xml/features
+enterprise-3.0.2            | cluster/local | mvn:org.apache.karaf.features/enterprise/3.0.2/xml/features
+org.ops4j.pax.web-3.1.2     | cluster/local | mvn:org.ops4j.pax.web/pax-web-features/3.1.2/xml/features
+----
+
+You have the name of the repository, and the URL, like in the feature:repo-list command. However, the cluster:feature-repo-list command
+provides the location of the features repository:
+* cluster means that the repository is defined only on the cluster group
+* local means that the repository is defined only on the local node (not on the cluster)
+* cluster/local means that the repository is defined both on the local node, but also on the cluster group
+
+You can add a repository on a cluster group using the cluster:feature-repo-add command:
+
+----
+karaf@node1()> cluster:feature-repo-add default mvn:org.apache.activemq/activemq-karaf/5.10.0/xml/features
+----
+
+You can remove a repository from a cluster group using the cluster:feature-repo-remove command:
+
+----
+karaf@node1()> cluster:feature-repo-remove default mvn:org.apache.activemq/activemq-karaf/5.10.0/xml/features
+----
+
+You can list the features on a given cluster group:
+
+----
+karaf@node1()> cluster:feature-list default |more
+Name                                    | Version          | Installed | Located       | Blocked
+------------------------------------------------------------------------------------------------
+gemini-blueprint                        | 1.0.0.RELEASE    |           | cluster/local |
+package                                 | 3.0.2            | x         | cluster/local |
+jclouds-api-route53                     | 1.8.1            |           | cluster/local |
+jclouds-rackspace-clouddns-uk           | 1.8.1            |           | cluster/local |
+cellar-cloud                            | 3.0.1-SNAPSHOT   |           | local         | in/out
+webconsole                              | 3.0.2            |           | cluster/local |
+cellar-shell                            | 3.0.1-SNAPSHOT   | x         | local         | in/out
+jclouds-glesys                          | 1.8.1            |           | cluster/local |
+...
+----
+
+Like for the features repositories, you can note there the "Located" column containing where the feature is located (local
+to the node, or on the cluster group).
+You can also see the "Blocked" column indicating if the feature is blocked inbound or outbound (see the blocking policy).
+
+You can install a feature on a cluster group using the cluster:feature-install command:
+
+----
+karaf@node1()> cluster:feature-install default eventadmin
+----
+
+You can uninstall a feature from a cluster group, using the cluster:feature-uninstall command:
+
+----
+karaf@node1()> cluster:feature-uninstall default eventadmin
+----
+
+Cellar also provides a feature listener, disabled by default as you can see in etc/org.apache.karaf.cellar.node.cfg configuration
+file:
+
+----
+feature.listener = false
+----
+
+The listener listens for the following local feature changes:
+* add features repository
+* remove features repository
+* install feature
+* uninstall feature
+
+=== Bundles
+
+Cellar can manipulate bundles on cluster groups.
+
+You can use cluster:bundle-* commands or the corresponding MBean for that.
+
+You can list the bundles in a cluster group using the cluster:bundle-list command:
+
+----
+karaf@node1()> cluster:bundle-list default |more
+Bundles in cluster group default
+ID | State    | Located       | Blocked | Version         | Name
+--------------------------------------------------------------------------------------------------------------------
+ 0 | Active   | cluster/local |         | 2.2.0           | OPS4J Pax Url - aether:
+ 1 | Active   | cluster/local |         | 3.0.2           | Apache Karaf :: Deployer :: Blueprint
+ 2 | Active   | cluster/local |         | 2.2.0           | OPS4J Pax Url - wrap:
+ 3 | Active   | cluster/local |         | 1.8.0           | Apache Felix Configuration Admin Service
+ 4 | Active   | cluster/local |         | 3.0.2           | Apache Karaf :: Region :: Core
+ ...
+----
+
+Like for the features, you can see the "Located" and "Blocked" columns.
+
+You can install a bundle on a cluster group using the cluster:bundle-install command:
+
+----
+karaf@node1()> cluster:bundle-install default mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-lang/2.4_6
+----
+
+You can start a bundle in a cluster group using the cluster:bundle-start command:
+
+----
+karaf@node1()> cluster:bundle-start default commons-lang
+----
+
+You can stop a bundle in a cluster group using the cluster:bundle-stop command:
+
+----
+karaf@node1()> cluster:bundle-stop default commons-lang
+----
+
+You can uninstall a bundle from a cluster group using the cluster:bundle-uninstall command:
+
+----
+karaf@node1()> cluster:bundle-uninstall default commons-lang
+----
+
+Like for the feature, Cellar provides a bundle listener disabled by default in etc/org.apache.karaf.cellar.nodes.cfg:
+
+----
+bundle.listener = false
+----
+
+The bundle listener listens the following local bundle changes:
+* install bundle
+* start bundle
+* stop bundle
+* uninstall bundle
+
+=== Configurations
+
+Cellar can manipulate configurations on cluster groups.
+
+You can use cluster:config-* commands or the corresponding MBean for that.
+
+You can list the configurations on a cluster group using the cluster:config-list command:
+
+----
+karaf@node1()> cluster:config-list default |more
+----------------------------------------------------------------
+Pid:            org.apache.karaf.command.acl.jaas
+Located:        cluster/local
+Blocked:
+Properties:
+   update = admin
+   service.pid = org.apache.karaf.command.acl.jaas
+----------------------------------------------------------------
+...
+----
+
+You can note the "Blocked" and "Located" attributes, like for features and bundles.
+
+YOu can list properties in a config using the cluster:config-property-list command:
+
+----
+karaf@node1()> cluster:config-property-list default org.apache.karaf.jaas
+Property list for configuration PID org.apache.karaf.jaas for cluster group default
+   encryption.prefix = {CRYPT}
+   encryption.name =
+   encryption.enabled = false
+   encryption.suffix = {CRYPT}
+   encryption.encoding = hexadecimal
+   service.pid = org.apache.karaf.jaas
+   encryption.algorithm = MD5
+----
+
+You can set or append a value to a config property using the cluster:config-property-set or cluster:config-property-append command:
+
+----
+karaf@node1()> cluster:config-property-set default my.config my.property my.value
+----
+
+You can delete a property in a config using the cluster:config-property-delete command:
+
+----
+karaf@node1()> cluster:config-property-delete default my.config my.property
+----
+
+You can delete the whole config using the cluster:config-delete command:
+
+----
+karaf@node1()> cluster:config-delete default my.config
+----
+
+Like for feature and bundle, Cellar provides a config listener disabled by default in etc/org.apache.karaf.cellar.nodes.cfg:
+
+----
+config.listener = false
+----
+
+The config listener listens the following local config changes:
+* create a config
+* add/delete/change a property
+* delete a config
+
+As some properties may be local to a node, Cellar excludes some property by default.
+You can see the current excluded properties using the cluster:config-property-excluded command:
+
+----
+karaf@node1()> cluster:config-property-excluded
+service.factoryPid, felix.fileinstall.filename, felix.fileinstall.dir, felix.fileinstall.tmpdir, org.ops4j.pax.url.mvn.defaultRepositories
+----
+
+You can modify this list using the same command, or by editing the etc/org.apache.karaf.cellar.node.cfg configuration file:
+
+----
+#
+# Excluded config properties from the sync
+# Some config properties can be considered as local to a node, and should not be sync on the cluster.
+#
+config.excluded.properties = service.factoryPid, felix.fileinstall.filename, felix.fileinstall.dir, felix.fileinstall.tmpdir, org.ops4j.pax.url.mvn.defaultRepositories
+----
+
+=== OBR (optional)
+
+See the link:obr.adoc[OBR section]
+
+=== EventAdmin (optiona)
+
+See the link:event.adoc[EventAdmin section]
+
+== Blocking policy
+
+You can define a policy to filter the cluster events exchanges by the nodes (inbound or outbound).
+
+It allows you to block or allow some resources on the cluster.
+
+By adding a resource id in a blacklist, you block the resource.
+By adding a resource id in a whitelist, you allow the resource.
+
+For instance, for feature, you can use the cluster:feature-block command to display or modify the current blocking policy for features:
+
+----
+karaf@node1()> cluster:feature-block default
+INBOUND:
+        whitelist: [*]
+        blacklist: [config, cellar*, hazelcast, management]
+OUTBOUND:
+        whitelist: [*]
+        blacklist: [config, cellar*, hazelcast, management]
+----
+
+NB: * is a wildcard.
+
+You have the equivalent command for bundle and config:
+
+----
+karaf@node1()> cluster:bundle-block default
+INBOUND:
+        whitelist: [*]
+        blacklist: [*.xml]
+OUTBOUND:
+        whitelist: [*]
+        blacklist: [*.xml]
+karaf@node1()> cluster:config-block default
+INBOUND:
+        whitelist: [*]
+        blacklist: [org.apache.karaf.cellar*, org.apache.karaf.shell, org.ops4j.pax.logging, org.ops4j.pax.web, org.apache.felix.fileinstall*, org.apache.karaf.management, org.apache.aries.transaction]
+OUTBOUND:
+        whitelist: [*]
+        blacklist: [org.apache.karaf.cellar*, org.apache.karaf.shell, org.ops4j.pax.logging, org.ops4j.pax.web, org.apache.felix.fileinstall*, org.apache.karaf.management, org.apache.aries.transaction]
+----
+
+Using those commands, you can also update the blacklist and whitelist for inbound or outbound cluster events.

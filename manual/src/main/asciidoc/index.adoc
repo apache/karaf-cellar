@@ -1,0 +1,7 @@
+= Apache Karaf Cellar
+
+This project contains documentation about Apache Karaf Cellar.
+
+* link:overview.adoc[Overview]
+* link:user-guide/index.adoc[User Guide]
+* link:architecture-guide/index.adoc[Architecture Guide]
