@@ -102,11 +102,10 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
                     if (e != null) {
                         consume(e);
                     }
+                } catch (HazelcastInstanceNotActiveException hex) {
+                    LOGGER.debug("CELLAR HAZELCAST: stop consume task", hex);
+                    break;
                 } catch (Exception ex) {
-                    if (ex instanceof HazelcastInstanceNotActiveException) {
-                        LOGGER.debug("CELLAR HAZELCAST: stop consume task", ex);
-                        break;
-                    }
                     LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", ex);
                 }
             }
