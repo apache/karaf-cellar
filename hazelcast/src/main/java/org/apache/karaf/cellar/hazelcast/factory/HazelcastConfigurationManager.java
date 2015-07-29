@@ -48,6 +48,11 @@ public class HazelcastConfigurationManager {
     public Config getHazelcastConfig() {
         System.setProperty("hazelcast.config", xmlConfigLocation);
         Config config = new XmlConfigBuilder().build();
+        if (System.getProperty("hazelcast.instanceName") != null) {
+            config.setInstanceName(System.getProperty("hazelcast.instanceName"));
+        } else {
+            config.setInstanceName("cellar");
+        }
         
         if (config.getNetworkConfig().getJoin().getTcpIpConfig().isEnabled() && discoveredMemberSet != null) {
             if (discoveryServices != null && !discoveryServices.isEmpty()) {
