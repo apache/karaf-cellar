@@ -48,14 +48,14 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
     @Override
     public void bundleChanged(BundleEvent event) {
 
-        if (!isEnabled()) {
-            LOGGER.debug("CELLAR BUNDLE: local listener is disabled");
-            return;
-        }
-
         if (event.getBundle().getBundleId() == 0 && (event.getType() == BundleEvent.STOPPING || event.getType() == BundleEvent.STOPPED)) {
             LOGGER.debug("CELLAR BUNDLE: Karaf shutdown detected, removing Cellar LocalBundleListener");
             bundleContext.removeBundleListener(this);
+            return;
+        }
+
+        if (!isEnabled()) {
+            LOGGER.debug("CELLAR BUNDLE: local listener is disabled");
             return;
         }
 
