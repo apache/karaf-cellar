@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>2.3.5-SNAPSHOT</version>
+        <version>2.3.7-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -258,7 +258,7 @@
                 <version>1.0-beta-2</version>
                 <configuration>
                     <checkinComment>[scm-publish] Updating main site with Karaf Cellar manual</checkinComment>
-                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/karaf/site/production/manual/cellar/latest</pubScmUrl>
+                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/karaf/site/production/manual/cellar/latest-2</pubScmUrl>
                     <content>${project.build.directory}/sitegen</content>
                 </configuration>
             </plugin>
