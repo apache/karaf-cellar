@@ -250,7 +250,7 @@
                 <version>1.0-beta-2</version>
                 <configuration>
                     <checkinComment>[scm-publish] Updating main site with Karaf Cellar manual</checkinComment>
-                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/karaf/site/production/manual/cellar/latest</pubScmUrl>
+                    <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/karaf/site/production/manual/cellar/latest-3</pubScmUrl>
                     <content>${project.build.directory}/sitegen</content>
                 </configuration>
             </plugin>
