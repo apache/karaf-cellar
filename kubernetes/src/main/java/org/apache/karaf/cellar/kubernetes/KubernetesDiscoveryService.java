@@ -13,10 +13,11 @@
  */
 package org.apache.karaf.cellar.kubernetes;
 
-import io.fabric8.kubernetes.api.KubernetesClient;
-import io.fabric8.kubernetes.api.KubernetesFactory;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
+
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +48,8 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         try {
             String kubernetesUrl = "http://" + kubernetesHost + ":" + kubernetesPort;
             LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesUrl);
-            kubernetesClient = new KubernetesClient(new KubernetesFactory(kubernetesUrl));
+            DefaultKubernetesClient.Config config = new DefaultKubernetesClient.ConfigBuilder().masterUrl(kubernetesUrl).build();
+            kubernetesClient = new DefaultKubernetesClient(config);
             LOGGER.debug("CELLAR KUBERNETES: discovery service initialized");
         } catch (Exception e) {
             LOGGER.error("CELLAR KUBERNETES: can't init discovery service", e);
@@ -67,11 +69,11 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         LOGGER.debug("CELLAR KUBERNETES: query pods with labeled with [{}={}]", kubernetesPodLabelKey, kubernetesPodLabelValue);
         Set<String> members = new HashSet<String>();
         try {
-            PodList podList = kubernetesClient.getPods();
+            PodList podList = kubernetesClient.pods().list();
             for (Pod pod : podList.getItems()) {
-                String value = pod.getLabels().get(kubernetesPodLabelKey);
+                String value = pod.getMetadata().getLabels().get(kubernetesPodLabelKey);
                 if (value != null && !value.isEmpty()) {
-                    members.add(pod.getCurrentState().getPodIP());
+                    members.add(pod.getStatus().getPodIP());
                 }
             }
         } catch (Exception e) {

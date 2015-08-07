@@ -44,7 +44,7 @@
         <!-- Fabric8 Kubernetes API Dependencies -->
         <dependency>
             <groupId>io.fabric8</groupId>
-            <artifactId>kubernetes-api</artifactId>
+            <artifactId>kubernetes-client</artifactId>
         </dependency>
 
         <!-- OSGi -->
