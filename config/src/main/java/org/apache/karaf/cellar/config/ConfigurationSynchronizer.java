@@ -43,6 +43,8 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     }
 
     public void init() {
+        if (groupManager == null)
+            return;
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {

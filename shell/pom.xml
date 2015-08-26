@@ -96,9 +96,6 @@
                             org.slf4j;version="[1.6,2)";resolution:=optional,
                             *
                         </Import-Package>
-                        <Private-Package>
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
-                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -98,17 +98,14 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            !org.apache.karaf.cellar.core.internal.osgi,
                             org.apache.karaf.cellar.core*
                         </Export-Package>
                         <Import-Package>
                             org.slf4j;version="[1.6,2)";resolution:=optional,
-                            org.apache.karaf.shell*;resolution:=optional,
                             *
                         </Import-Package>
                         <Private-Package>
-                            org.apache.karaf.cellar.core.internal.osgi,
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                            org.apache.karaf.cellar.core.internal.osgi
                         </Private-Package>
                     </instructions>
                 </configuration>

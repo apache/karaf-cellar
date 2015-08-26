@@ -92,20 +92,15 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            !org.apache.karaf.cellar.hazelcast.internal.osgi,
-                            !org.apache.karaf.cellar.hazelcast.management.internal
                             org.apache.karaf.cellar.hazelcast*
                         </Export-Package>
                         <Import-Package>
-                            !org.apache.karaf.cellar.hazelcast*,
                             org.slf4j;version="[1.6,2)";resolution:=optional,
-                            org.apache.karaf.shell*;resolution:=optional,
                             *
                         </Import-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.hazelcast.internal.osgi,
-                            org.apache.karaf.cellar.hazelcast.management.internal,
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                            org.apache.karaf.cellar.hazelcast.management.internal
                         </Private-Package>
                     </instructions>
                 </configuration>

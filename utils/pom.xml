@@ -75,7 +75,6 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            !org.apache.karaf.cellar.utils.ping.internal,
                             org.apache.karaf.cellar.utils*
                         </Export-Package>
                         <Import-Package>
@@ -83,8 +82,7 @@
                             *
                         </Import-Package>
                         <Private-Package>
-                            org.apache.karaf.cellar.utils.ping.internal,
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                            org.apache.karaf.cellar.utils.ping.internal
                         </Private-Package>
                     </instructions>
                 </configuration>

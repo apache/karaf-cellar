@@ -42,6 +42,8 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
     public void init() {
+        if (groupManager == null)
+            return;
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
