@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.features.internal.osgi;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.features.FeaturesEventHandler;
 import org.apache.karaf.cellar.features.FeaturesSynchronizer;
@@ -30,7 +31,6 @@ import org.apache.karaf.util.tracker.annotation.RequireService;
 import org.apache.karaf.util.tracker.annotation.Services;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
