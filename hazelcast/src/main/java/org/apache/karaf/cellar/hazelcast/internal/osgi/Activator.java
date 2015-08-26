@@ -79,6 +79,7 @@ public class Activator extends BaseActivator implements ManagedService {
     private List<DiscoveryService> discoveryServices = new ArrayList<DiscoveryService>();
     private List<Synchronizer> synchronizers = new ArrayList<Synchronizer>();
     private HazelcastInstance hazelcastInstance;
+    private HazelcastGroupManager groupManager;
     private DiscoveryTask discoveryTask;
     private CellarExtender extender;
     private TopicProducer producer;
@@ -184,12 +185,13 @@ public class Activator extends BaseActivator implements ManagedService {
         eventTransportFactory.setDispatcher(dispatcher);
 
         LOGGER.debug("[CELLAR HAZELCAST] Create and register Hazelcast group manager");
-        HazelcastGroupManager groupManager = new HazelcastGroupManager();
+        groupManager = new HazelcastGroupManager();
         groupManager.setInstance(hazelcastInstance);
         groupManager.setCombinedClassLoader(combinedClassLoader);
         groupManager.setBundleContext(bundleContext);
         groupManager.setConfigurationAdmin(configurationAdmin);
         groupManager.setEventTransportFactory(eventTransportFactory);
+        groupManager.init();
         register(new Class[]{GroupManager.class, ConfigurationListener.class}, groupManager);
 
         LOGGER.debug("[CELLAR HAZELCAST] Create Cellar membership listener");
@@ -349,6 +351,10 @@ public class Activator extends BaseActivator implements ManagedService {
         if (synchronizerServiceTracker != null) {
             synchronizerServiceTracker.close();
             synchronizerServiceTracker = null;
+        }
+        if (groupManager != null) {
+            groupManager.destroy();
+            groupManager = null;
         }
         if (discoveryServiceTracker != null) {
             discoveryServiceTracker.close();
