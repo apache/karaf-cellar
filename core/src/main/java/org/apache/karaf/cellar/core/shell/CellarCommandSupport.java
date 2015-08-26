@@ -15,16 +15,22 @@ package org.apache.karaf.cellar.core.shell;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * Abstract Cellar command.
  */
-public abstract class CellarCommandSupport extends OsgiCommandSupport {
+public abstract class CellarCommandSupport implements Action {
 
+    @Reference
     protected ClusterManager clusterManager;
+
+    @Reference
     protected GroupManager groupManager;
+
+    @Reference
     protected ConfigurationAdmin configurationAdmin;
 
     public ClusterManager getClusterManager() {
@@ -50,5 +56,12 @@ public abstract class CellarCommandSupport extends OsgiCommandSupport {
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
+
+    @Override
+    public Object execute() throws Exception {
+        return doExecute();
+    }
+
+    protected abstract Object doExecute() throws Exception;
 
 }

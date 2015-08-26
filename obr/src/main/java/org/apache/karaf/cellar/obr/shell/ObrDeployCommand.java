@@ -17,16 +17,22 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
 import org.apache.karaf.cellar.obr.ClusterObrBundleEvent;
 import org.apache.karaf.cellar.obr.Constants;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "cluster", name = "obr-deploy", description = "Deploy an OBR bundle in a cluster group")
+@Service
 public class ObrDeployCommand extends ObrCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name="bundleId", description = "The bundle ID (symbolicname,version in the OBR) to deploy", required = true, multiValued = false)
@@ -38,6 +44,7 @@ public class ObrDeployCommand extends ObrCommandSupport {
     @Option(name = "-d", aliases = { "--deployOptional" }, description = "Deploy optional bundles", required = false, multiValued = false)
     boolean deployOptional = false;
 
+    @Reference
     private EventProducer eventProducer;
 
     @Override

@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
@@ -25,18 +26,23 @@ import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-repo-add", description = "Add a features repository to a cluster group")
+@Service
 public class RepoAddCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name = "urls", description = "URLs of the feature repositories separated by whitespaces", required = true, multiValued = true)
@@ -45,7 +51,10 @@ public class RepoAddCommand extends CellarCommandSupport {
     @Option(name = "-i", aliases = { "--install" }, description = "Install all features contained in the features repository", required = false, multiValued = false)
     boolean install;
 
+    @Reference
     private EventProducer eventProducer;
+
+    @Reference
     private FeaturesService featuresService;
 
     @Override

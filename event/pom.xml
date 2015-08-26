@@ -40,6 +40,15 @@
             <artifactId>org.apache.karaf.cellar.core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
@@ -56,18 +65,26 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.event*;version="${project.version}"
+                            !org.apache.karaf.cellar.event.internal.osgi,
+                            org.apache.karaf.cellar.event*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.karaf.cellar.core*;version="${project.version}",
-                            org.osgi*,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            *
                         </Import-Package>
+                        <Private-Package>
+                            org.apache.karaf.cellar.event.internal.osgi,
+                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -18,14 +18,16 @@ import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.support.table.ShellTable;
 import org.osgi.framework.BundleEvent;
 
 import java.util.*;
 
 @Command(scope = "cluster", name = "bundle-list", description = "List the bundles in a cluster group")
+@Service
 public class ListBundleCommand extends BundleCommandSupport {
 
     @Option(name = "-s", aliases = {}, description = "Shows the symbolic name", required = false, multiValued = false)

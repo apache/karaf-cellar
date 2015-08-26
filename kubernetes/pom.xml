@@ -49,6 +49,10 @@
 
         <!-- OSGi -->
         <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>provided</scope>
@@ -64,21 +68,27 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.kubernetes.*;version="${project.version}"
+                            !org.apache.karaf.cellar.kubernetes.internal.osgi,
+                            org.apache.karaf.cellar.kubernetes.*
                         </Export-Package>
                         <Import-Package>
-                            io.fabric8.kubernetes.api;version="${fabric8.version}",
-                            org.apache.karaf.cellar.core*;version="${project.version}",
-                            org.osgi*,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            *
                         </Import-Package>
                         <DynamicImport-Package>io.fabric8.*</DynamicImport-Package>
-                        <Bundle-Activator>org.apache.karaf.cellar.kubernetes.Activator</Bundle-Activator>
+                        <Private-Package>
+                            org.apache.karaf.cellar.kubernetes.internal.osgi,
+                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

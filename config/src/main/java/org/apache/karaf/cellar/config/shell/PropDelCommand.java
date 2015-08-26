@@ -13,31 +13,40 @@
  */
 package org.apache.karaf.cellar.config.shell;
 
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.config.ClusterConfigurationEvent;
+import org.apache.karaf.cellar.config.shell.completers.ClusterConfigCompleter;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.Map;
 import java.util.Properties;
 
 @Command(scope = "cluster", name = "config-property-delete", description = "Delete a property from a configuration in a cluster group")
+@Service
 public class PropDelCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name = "pid", description = "The configuration PID", required = true, multiValued = false)
+    @Completion(ClusterConfigCompleter.class)
     String pid;
 
     @Argument(index = 2, name = "key", description = "The property key to delete", required = true, multiValued = false)
     String key;
 
+    @Reference
     private EventProducer eventProducer;
 
     @Override

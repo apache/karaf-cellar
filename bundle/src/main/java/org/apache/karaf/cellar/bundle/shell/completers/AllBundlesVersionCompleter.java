@@ -13,8 +13,12 @@
  */
 package org.apache.karaf.cellar.bundle.shell.completers;
 
-import org.apache.karaf.shell.console.Completer;
-import org.apache.karaf.shell.console.completer.StringsCompleter;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -23,16 +27,18 @@ import java.util.List;
 /**
  * Completer on all bundle version..
  */
+@Service
 public class AllBundlesVersionCompleter implements Completer {
 
+    @Reference
     private BundleContext bundleContext;
 
-    public int complete(String buffer, int cursor, List<String> candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         for (Bundle bundle : bundleContext.getBundles()) {
             delegate.getStrings().add(bundle.getHeaders().get("Bundle-Version").toString());
         }
-        return delegate.complete(buffer, cursor, candidates);
+        return delegate.complete(session, commandLine, candidates);
     }
 
     public BundleContext getBundleContext() {

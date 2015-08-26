@@ -14,10 +14,12 @@
 package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 /**
  * A completer which includes all nodes.
  */
+@Service
 public class AllNodeCompleter extends NodeCompleterSupport {
 
     /**

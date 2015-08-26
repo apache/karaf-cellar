@@ -15,8 +15,11 @@ package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
-import org.apache.karaf.shell.console.Completer;
-import org.apache.karaf.shell.console.completer.StringsCompleter;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
 import java.util.List;
 
@@ -25,6 +28,7 @@ import java.util.List;
  */
 public abstract class GroupCompleterSupport implements Completer {
 
+    @Reference
     protected GroupManager groupManager;
 
     /**
@@ -36,7 +40,7 @@ public abstract class GroupCompleterSupport implements Completer {
     protected abstract boolean acceptsGroup(Group group);
 
     @Override
-    public int complete(String buffer, int cursor, List<String> candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
             for (Group group : groupManager.listAllGroups()) {
@@ -50,7 +54,7 @@ public abstract class GroupCompleterSupport implements Completer {
         } catch (Exception e) {
             // ignore
         }
-        return delegate.complete(buffer, cursor, candidates);
+        return delegate.complete(session, commandLine, candidates);
     }
 
     public GroupManager getGroupManager() {

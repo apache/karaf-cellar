@@ -14,10 +14,12 @@
 package org.apache.karaf.cellar.shell.group;
 
 import org.apache.karaf.cellar.core.Group;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "cluster", name = "group-create", description = "Create a cluster group")
+@Service
 public class GroupCreateCommand extends GroupSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)

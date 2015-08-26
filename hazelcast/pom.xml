@@ -34,17 +34,21 @@
     <name>Apache Karaf :: Cellar :: Hazelcast</name>
 
     <dependencies>
+        <!-- Core Dependencies -->
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-all</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.core</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.karaf.cellar</groupId>
             <artifactId>org.apache.karaf.cellar.utils</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -55,6 +59,10 @@
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
         </dependency>
 
         <!-- Logging Dependencies -->
@@ -75,25 +83,29 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.hazelcast*;version="${project.version}"
+                            !org.apache.karaf.cellar.hazelcast.internal.osgi,
+                            !org.apache.karaf.cellar.hazelcast.management.internal
+                            org.apache.karaf.cellar.hazelcast*
                         </Export-Package>
                         <Import-Package>
-                            com.hazelcast*,
-                            javax.management*,
-                            org.apache.aries.proxy,
-                            org.apache.karaf.cellar.core*;version="${project.version}",
-                            org.apache.karaf.cellar.utils.ping;version="${project.version}",
-                            org.apache.karaf.features;version="[3,5)",
-                            org.osgi*,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            !org.apache.karaf.cellar.hazelcast*,
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.apache.karaf.shell*;resolution:=optional,
+                            *
                         </Import-Package>
                         <Private-Package>
-                            org.apache.karaf.cellar.hazelcast.management.internal
+                            org.apache.karaf.cellar.hazelcast.internal.osgi,
+                            org.apache.karaf.cellar.hazelcast.management.internal,
+                            org.apache.karaf.util.tracker;-split-package:=merge-first
                         </Private-Package>
                     </instructions>
                 </configuration>

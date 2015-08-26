@@ -14,15 +14,20 @@
 package org.apache.karaf.cellar.shell.producer;
 
 import org.apache.karaf.cellar.core.control.SwitchStatus;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.cellar.core.shell.completer.AllNodeCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.List;
 
 @Command(scope = "cluster", name = "producer-start", description = "Start a cluster event producer")
+@Service
 public class ProducerStartCommand extends ProducerSupport {
 
     @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
+    @Completion(AllNodeCompleter.class)
     List<String> nodes;
 
     @Override

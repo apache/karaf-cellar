@@ -19,7 +19,7 @@ import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.ManageGroupCommand;
 import org.apache.karaf.cellar.core.control.ManageGroupResult;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.support.table.ShellTable;
 
 import java.util.Collection;
 import java.util.HashSet;

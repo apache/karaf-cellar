@@ -16,8 +16,12 @@ package org.apache.karaf.cellar.shell.group;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.control.ManageGroupAction;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
+import org.apache.karaf.cellar.core.shell.completer.LocalGroupsCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,12 +29,15 @@ import java.util.List;
 import java.util.Set;
 
 @Command(scope = "cluster", name = "group-pick", description = "Picks a number of nodes from one cluster group and moves them into another")
+@Service
 public class GroupPickCommand extends GroupSupport {
 
     @Argument(index = 0, name = "sourceGroupName", description = "The source cluster group name", required = true, multiValued = false)
+    @Completion(LocalGroupsCompleter.class)
     String sourceGroupName;
 
     @Argument(index = 1, name = "targetGroupName", description = "The destination cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String targetGroupName;
 
     @Argument(index = 2, name = "count", description = "The number of nodes to transfer", required = false, multiValued = false)

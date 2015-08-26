@@ -1,0 +1,117 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.karaf.cellar.dosgi.internal.osgi;
+
+import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.cellar.core.command.CommandStore;
+import org.apache.karaf.cellar.core.event.EventHandler;
+import org.apache.karaf.cellar.core.event.EventTransportFactory;
+import org.apache.karaf.cellar.dosgi.*;
+import org.apache.karaf.cellar.dosgi.management.internal.ServiceMBeanImpl;
+import org.apache.karaf.util.tracker.BaseActivator;
+import org.apache.karaf.util.tracker.annotation.ProvideService;
+import org.apache.karaf.util.tracker.annotation.RequireService;
+import org.apache.karaf.util.tracker.annotation.Services;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.framework.hooks.service.ListenerHook;
+import org.osgi.service.cm.ConfigurationAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Hashtable;
+
+@Services(
+        provides = {
+                @ProvideService(ListenerHook.class),
+                @ProvideService(EventHandler.class)
+        },
+        requires = {
+                @RequireService(ClusterManager.class),
+                @RequireService(EventTransportFactory.class),
+                @RequireService(CommandStore.class),
+                @RequireService(ConfigurationAdmin.class)
+        }
+)
+public class Activator extends BaseActivator {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(Activator.class);
+
+    private ImportServiceListener importServiceListener;
+    private ExportServiceListener exportServiceListener;
+    private ServiceRegistration mbeanRegistration;
+
+    @Override
+    public void doStart() throws Exception {
+
+        ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        EventTransportFactory eventTransportFactory = getTrackedService(EventTransportFactory.class);
+        CommandStore commandStore = getTrackedService(CommandStore.class);
+        ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+
+        LOGGER.debug("[CELLAR DOSGi] Init remote service call handler");
+        RemoteServiceCallHandler remoteServiceCallHandler = new RemoteServiceCallHandler();
+        remoteServiceCallHandler.setEventTransportFactory(eventTransportFactory);
+        remoteServiceCallHandler.setClusterManager(clusterManager);
+        remoteServiceCallHandler.setBundleContext(bundleContext);
+        remoteServiceCallHandler.setConfigurationAdmin(configurationAdmin);
+        Hashtable props = new Hashtable();
+        props.put("managed", "true");
+        register(EventHandler.class, remoteServiceCallHandler, props);
+
+        LOGGER.debug("[CELLAR DOSGi] Init remote service result handler");
+        RemoteServiceResultHandler remoteServiceResultHandler = new RemoteServiceResultHandler();
+        remoteServiceResultHandler.setCommandStore(commandStore);
+        register(EventHandler.class, remoteServiceCallHandler);
+
+        LOGGER.debug("[CELLAR DOSGi] Init import service listener");
+        importServiceListener = new ImportServiceListener();
+        importServiceListener.setClusterManager(clusterManager);
+        importServiceListener.setEventTransportFactory(eventTransportFactory);
+        importServiceListener.setCommandStore(commandStore);
+        importServiceListener.setBundleContext(bundleContext);
+        importServiceListener.init();
+        register(ListenerHook.class, importServiceListener);
+
+        LOGGER.debug("[CELLAR DOSGi] Init export service listener");
+        exportServiceListener = new ExportServiceListener();
+        exportServiceListener.setClusterManager(clusterManager);
+        exportServiceListener.setEventTransportFactory(eventTransportFactory);
+        exportServiceListener.setBundleContext(bundleContext);
+        exportServiceListener.init();
+
+        LOGGER.debug("[CELLAR DOSGi] Register MBean");
+        ServiceMBeanImpl mbean = new ServiceMBeanImpl();
+        mbean.setClusterManager(clusterManager);
+        props = new Hashtable();
+        props.put("jmx.objectname", "org.apache.karaf.cellar:type=service,name=" + System.getProperty("karaf.name"));
+        mbeanRegistration = bundleContext.registerService(getInterfaceNames(mbean), mbean, props);
+    }
+
+    @Override
+    public void doStop() {
+        if (mbeanRegistration != null) {
+            mbeanRegistration.unregister();
+            mbeanRegistration = null;
+        }
+        if (exportServiceListener != null) {
+            exportServiceListener.destroy();
+            exportServiceListener = null;
+        }
+        if (importServiceListener != null) {
+            importServiceListener.destroy();
+            importServiceListener = null;
+        }
+    }
+
+}

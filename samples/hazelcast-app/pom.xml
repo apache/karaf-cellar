@@ -59,7 +59,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.samples.hazelcast*;version="${project.version}"
+                            org.apache.karaf.cellar.samples.hazelcast*
                         </Export-Package>
                         <Import-Package>
                             com.hazelcast.core,

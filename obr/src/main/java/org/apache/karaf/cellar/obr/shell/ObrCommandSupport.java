@@ -18,12 +18,14 @@ import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 
 /**
  * Generic cluster OBR shell command support.
  */
 public abstract class ObrCommandSupport extends CellarCommandSupport {
 
+    @Reference
     protected RepositoryAdmin obrService;
 
     public RepositoryAdmin getObrService() {
@@ -53,6 +55,5 @@ public abstract class ObrCommandSupport extends CellarCommandSupport {
 
     @Override
     public abstract Object doExecute() throws Exception;
-
 
 }
