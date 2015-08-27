@@ -37,7 +37,7 @@ public class Activator extends BaseActivator {
     private final static Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
     public void doStart() throws Exception {
-        LOGGER.debug("[CELLAR CLOUD] Init discovery service factory");
+        LOGGER.debug("CELLAR CLOUD: init discovery service factory");
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(Constants.SERVICE_PID, "org.apache.karaf.cellar.cloud");
         BlobStoreDiscoveryServiceFactory blobStoreDiscoveryServiceFactory = new BlobStoreDiscoveryServiceFactory(bundleContext);

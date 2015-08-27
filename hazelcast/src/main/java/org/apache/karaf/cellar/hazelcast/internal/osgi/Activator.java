@@ -96,11 +96,11 @@ public class Activator extends BaseActivator implements ManagedService {
 
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init combined class loader");
+        LOGGER.debug("CELLAR HAZELCAST: init combined class loader");
         combinedClassLoader = new CombinedClassLoader();
         combinedClassLoader.init();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Start the discovery service tracker");
+        LOGGER.debug("CELLAR HAZELCAST: start the discovery service tracker");
         discoveryServiceTracker = new ServiceTracker<DiscoveryService, DiscoveryService>(bundleContext, DiscoveryService.class, new ServiceTrackerCustomizer<DiscoveryService, DiscoveryService>() {
             @Override
             public DiscoveryService addingService(ServiceReference<DiscoveryService> serviceReference) {
@@ -122,7 +122,7 @@ public class Activator extends BaseActivator implements ManagedService {
         });
         discoveryServiceTracker.open();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Start the synchronizer service tracker");
+        LOGGER.debug("CELLAR HAZELCAST: start the synchronizer service tracker");
         synchronizerServiceTracker = new ServiceTracker<Synchronizer, Synchronizer>(bundleContext, Synchronizer.class, new ServiceTrackerCustomizer<Synchronizer, Synchronizer>() {
             @Override
             public Synchronizer addingService(ServiceReference<Synchronizer> serviceReference) {
@@ -144,47 +144,47 @@ public class Activator extends BaseActivator implements ManagedService {
         });
         synchronizerServiceTracker.open();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init dispatcher");
+        LOGGER.debug("CELLAR HAZELCAST: init dispatcher");
         EventHandlerRegistryDispatcher dispatcher = new EventHandlerRegistryDispatcher();
         dispatcher.setHandlerRegistry(getTrackedService(EventHandlerRegistry.class));
         dispatcher.init();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create Hazelcast configuration manager");
+        LOGGER.debug("CELLAR HAZELCAST: create Hazelcast configuration manager");
         HazelcastConfigurationManager hazelcastConfigurationManager = new HazelcastConfigurationManager();
         hazelcastConfigurationManager.setDiscoveryServices(discoveryServices);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init Hazelcast service factory");
+        LOGGER.debug("CELLAR HAZELCAST: init Hazelcast service factory");
         hazelcastServiceFactory = new HazelcastServiceFactory();
         hazelcastServiceFactory.setCombinedClassLoader(combinedClassLoader);
         hazelcastServiceFactory.setConfigurationManager(hazelcastConfigurationManager);
         hazelcastServiceFactory.setBundleContext(bundleContext);
         hazelcastServiceFactory.init();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Hazelcast instance");
+        LOGGER.debug("CELLAR HAZELCAST: register Hazelcast instance");
         hazelcastInstance = hazelcastServiceFactory.getInstance();
         register(HazelcastInstance.class, hazelcastInstance);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init discovery task");
+        LOGGER.debug("CELLAR HAZELCAST: init discovery task");
         discoveryTask = new DiscoveryTask();
         discoveryTask.setDiscoveryServices(discoveryServices);
         discoveryTask.setConfigurationAdmin(configurationAdmin);
         discoveryTask.init();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Hazelcast cluster manager");
+        LOGGER.debug("CELLAR HAZELCAST: register Hazelcast cluster manager");
         HazelcastClusterManager clusterManager = new HazelcastClusterManager();
         clusterManager.setInstance(hazelcastInstance);
         clusterManager.setConfigurationAdmin(configurationAdmin);
         clusterManager.setCombinedClassLoader(combinedClassLoader);
         register(ClusterManager.class, clusterManager);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create Hazelcast event transport factory");
+        LOGGER.debug("CELLAR HAZELCAST: create Hazelcast event transport factory");
         HazelcastEventTransportFactory eventTransportFactory = new HazelcastEventTransportFactory();
         eventTransportFactory.setCombinedClassLoader(combinedClassLoader);
         eventTransportFactory.setConfigurationAdmin(configurationAdmin);
         eventTransportFactory.setInstance(hazelcastInstance);
         eventTransportFactory.setDispatcher(dispatcher);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Hazelcast group manager");
+        LOGGER.debug("CELLAR HAZELCAST: init Hazelcast group manager");
         groupManager = new HazelcastGroupManager();
         groupManager.setInstance(hazelcastInstance);
         groupManager.setCombinedClassLoader(combinedClassLoader);
@@ -194,12 +194,12 @@ public class Activator extends BaseActivator implements ManagedService {
         groupManager.init();
         register(new Class[]{GroupManager.class, ConfigurationListener.class}, groupManager);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create Cellar membership listener");
+        LOGGER.debug("CELLAR HAZELCAST: create Cellar membership listener");
         CellarMembershipListener membershipListener = new CellarMembershipListener(hazelcastInstance);
         membershipListener.setSynchronizers(synchronizers);
         membershipListener.setGroupManager(groupManager);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init Cellar extender");
+        LOGGER.debug("CELLAR HAZELCAST: init Cellar extender");
         extender = new CellarExtender();
         extender.setCombinedClassLoader(combinedClassLoader);
         extender.setBundleContext(bundleContext);
@@ -207,7 +207,7 @@ public class Activator extends BaseActivator implements ManagedService {
 
         Node node = clusterManager.getNode();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init topic consumer");
+        LOGGER.debug("CELLAR HAZELCAST: init topic consumer");
         consumer = new TopicConsumer();
         consumer.setInstance(hazelcastInstance);
         consumer.setDispatcher(dispatcher);
@@ -215,7 +215,7 @@ public class Activator extends BaseActivator implements ManagedService {
         consumer.setConfigurationAdmin(configurationAdmin);
         consumer.init();
 
-        LOGGER.debug("[CELLAR HAZELCAST] Init topic producer");
+        LOGGER.debug("CELLAR HAZELCAST: init topic producer");
         producer = new TopicProducer();
         producer.setInstance(hazelcastInstance);
         producer.setNode(node);
@@ -223,66 +223,66 @@ public class Activator extends BaseActivator implements ManagedService {
         producer.init();
         register(EventProducer.class, producer);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register basic command store");
+        LOGGER.debug("CELLAR HAZELCAST: register basic command store");
         CommandStore commandStore = new BasicCommandStore();
         register(CommandStore.class, commandStore);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register clustered execution context");
+        LOGGER.debug("CELLAR HAZELCAST: register clustered execution context");
         ClusteredExecutionContext executionContext = new ClusteredExecutionContext();
         executionContext.setProducer(producer);
         executionContext.setCommandStore(commandStore);
         register(ExecutionContext.class, executionContext);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register producer switch command handler");
+        LOGGER.debug("CELLAR HAZELCAST: register producer switch command handler");
         ProducerSwitchCommandHandler producerSwitchCommandHandler = new ProducerSwitchCommandHandler();
         producerSwitchCommandHandler.setProducer(producer);
         producerSwitchCommandHandler.setConfigurationAdmin(configurationAdmin);
         register(EventHandler.class, producerSwitchCommandHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register producer switch result handler");
+        LOGGER.debug("CELLAR HAZELCAST: register producer switch result handler");
         ProducerSwitchResultHandler producerSwitchResultHandler = new ProducerSwitchResultHandler();
         producerSwitchResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, producerSwitchResultHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register consumer switch command handler");
+        LOGGER.debug("CELLAR HAZELCAST: register consumer switch command handler");
         ConsumerSwitchCommandHandler consumerSwitchCommandHandler = new ConsumerSwitchCommandHandler();
         consumerSwitchCommandHandler.setProducer(producer);
         consumerSwitchCommandHandler.setConsumer(consumer);
         consumerSwitchCommandHandler.setConfigurationAdmin(configurationAdmin);
         register(EventHandler.class, consumerSwitchCommandHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register consumer switch result handler");
+        LOGGER.debug("CELLAR HAZELCAST; register consumer switch result handler");
         ConsumerSwitchResultHandler consumerSwitchResultHandler = new ConsumerSwitchResultHandler();
         consumerSwitchResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, consumerSwitchResultHandler);
 
         ProxyManager proxyManager = getTrackedService(ProxyManager.class);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register manage handlers command handler");
+        LOGGER.debug("CELLAR HAZELCAST: register manage handlers command handler");
         ManageHandlersCommandHandler manageHandlersCommandHandler = new ManageHandlersCommandHandler();
         manageHandlersCommandHandler.setConfigurationAdmin(configurationAdmin);
         manageHandlersCommandHandler.setProducer(producer);
         manageHandlersCommandHandler.setProxyManager(proxyManager);
         register(EventHandler.class, manageHandlersCommandHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register manage handlers result handler");
+        LOGGER.debug("CELLAR HAZELCAST: register manage handlers result handler");
         ManageHandlersResultHandler manageHandlersResultHandler = new ManageHandlersResultHandler();
         manageHandlersResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, manageHandlersResultHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register manage group command handler");
+        LOGGER.debug("CELLAR HAZELCAST: register manage group command handler");
         ManageGroupCommandHandler manageGroupCommandHandler = new ManageGroupCommandHandler();
         manageGroupCommandHandler.setProducer(producer);
         manageGroupCommandHandler.setClusterManager(clusterManager);
         manageGroupCommandHandler.setGroupManager(groupManager);
         register(EventHandler.class, manageGroupCommandHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register manage group result handler");
+        LOGGER.debug("CELLAR HAZELCAST: register manage group result handler");
         ManageGroupResultHandler manageGroupResultHandler = new ManageGroupResultHandler();
         manageGroupResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, manageGroupResultHandler);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Cellar Core MBean");
+        LOGGER.debug("CELLAR HAZELCAST: register Cellar Core MBean");
         CellarMBeanImpl cellarMBean = new CellarMBeanImpl();
         cellarMBean.setBundleContext(bundleContext);
         cellarMBean.setClusterManager(clusterManager);
@@ -292,7 +292,7 @@ public class Activator extends BaseActivator implements ManagedService {
         props.put("jmx.objectname", "org.apache.karaf.cellar:type=core,name=" + System.getProperty("karaf.name"));
         coreMBeanRegistration = bundleContext.registerService(getInterfaceNames(cellarMBean), cellarMBean, props);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Cellar Node MBean");
+        LOGGER.debug("CELLAR HAZELCAST: register Cellar Node MBean");
         CellarNodeMBeanImpl cellarNodeMBean = new CellarNodeMBeanImpl();
         cellarNodeMBean.setClusterManager(clusterManager);
         cellarNodeMBean.setExecutionContext(executionContext);
@@ -300,7 +300,7 @@ public class Activator extends BaseActivator implements ManagedService {
         props.put("jmx.objectname", "org.apache.karaf.cellar:type=node,name=" + System.getProperty("karaf.name"));
         nodeMBeanRegistration = bundleContext.registerService(getInterfaceNames(cellarNodeMBean), cellarNodeMBean, props);
 
-        LOGGER.debug("[CELLAR HAZELCAST] Create and register Cellar Group MBean");
+        LOGGER.debug("CELLAR HAZELCAST: register Cellar Group MBean");
         CellarGroupMBeanImpl cellarGroupMBean = new CellarGroupMBeanImpl();
         cellarGroupMBean.setClusterManager(clusterManager);
         cellarGroupMBean.setExecutionContext(executionContext);

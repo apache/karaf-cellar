@@ -70,7 +70,7 @@ public class Activator extends BaseActivator implements ManagedService {
 
         File storage = new File(getString("storage", System.getProperty("karaf.etc")));
 
-        LOGGER.debug("[CELLAR CONFIG] Init event handler");
+        LOGGER.debug("CELLAR CONFIG: init event handler");
         configurationEventHandler = new ConfigurationEventHandler();
         configurationEventHandler.setConfigurationAdmin(configurationAdmin);
         configurationEventHandler.setGroupManager(groupManager);
@@ -79,9 +79,9 @@ public class Activator extends BaseActivator implements ManagedService {
         configurationEventHandler.init();
         Hashtable props = new Hashtable();
         props.put("managed", "true");
-        register(EventHandler.class, configurationEventHandler);
+        register(EventHandler.class, configurationEventHandler, props);
 
-        LOGGER.debug("[CELLAR CONFIG] Init local listener");
+        LOGGER.debug("CELLAR CONFIG: init local listener");
         localConfigurationListener = new LocalConfigurationListener();
         localConfigurationListener.setClusterManager(clusterManager);
         localConfigurationListener.setGroupManager(groupManager);
@@ -90,7 +90,7 @@ public class Activator extends BaseActivator implements ManagedService {
         localConfigurationListener.init();
         register(ConfigurationListener.class, localConfigurationListener);
 
-        LOGGER.debug("[CELLAR CONFIG] Init synchronizer");
+        LOGGER.debug("CELLAR CONFIG: init synchronizer");
         configurationSynchronizer = new ConfigurationSynchronizer();
         configurationSynchronizer.setConfigurationAdmin(configurationAdmin);
         configurationSynchronizer.setGroupManager(groupManager);
@@ -101,7 +101,7 @@ public class Activator extends BaseActivator implements ManagedService {
         props.put("resource", "config");
         register(Synchronizer.class, configurationSynchronizer, props);
 
-        LOGGER.debug("[CELLAR CONFIG] Register MBean");
+        LOGGER.debug("CELLAR CONFIG: register MBean");
         CellarConfigMBeanImpl cellarConfigMBean = new CellarConfigMBeanImpl();
         cellarConfigMBean.setClusterManager(clusterManager);
         cellarConfigMBean.setGroupManager(groupManager);

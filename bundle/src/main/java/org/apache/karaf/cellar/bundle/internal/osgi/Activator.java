@@ -65,7 +65,7 @@ public class Activator extends BaseActivator {
         EventProducer eventProducer = getTrackedService(EventProducer.class);
         FeaturesService featuresService = getTrackedService(FeaturesService.class);
 
-        LOGGER.debug("[CELLAR BUNDLE] Init even handler");
+        LOGGER.debug("CELLAR BUNDLE: init even handler");
         eventHandler = new BundleEventHandler();
         eventHandler.setConfigurationAdmin(configurationAdmin);
         eventHandler.setClusterManager(clusterManager);
@@ -77,7 +77,7 @@ public class Activator extends BaseActivator {
         props.put("managed", "true");
         register(EventHandler.class, eventHandler, props);
 
-        LOGGER.debug("[CELLAR BUNDLE] Init local listener");
+        LOGGER.debug("CELLAR BUNDLE: init local listener");
         localBundleListener = new LocalBundleListener();
         localBundleListener.setClusterManager(clusterManager);
         localBundleListener.setGroupManager(groupManager);
@@ -87,7 +87,7 @@ public class Activator extends BaseActivator {
         localBundleListener.setBundleContext(bundleContext);
         localBundleListener.init();
 
-        LOGGER.debug("[CELLAR BUNDLE] Init synchronizer");
+        LOGGER.debug("CELLAR BUNDLE: init synchronizer");
         synchronizer = new BundleSynchronizer();
         synchronizer.setConfigurationAdmin(configurationAdmin);
         synchronizer.setGroupManager(groupManager);
@@ -98,7 +98,7 @@ public class Activator extends BaseActivator {
         props.put("resource", "bundle");
         register(Synchronizer.class, synchronizer, props);
 
-        LOGGER.debug("[CELLAR BUNDLE] Register MBean");
+        LOGGER.debug("CELLAR BUNDLE: register MBean");
         CellarBundleMBeanImpl mbean = new CellarBundleMBeanImpl();
         mbean.setClusterManager(clusterManager);
         mbean.setConfigurationAdmin(configurationAdmin);

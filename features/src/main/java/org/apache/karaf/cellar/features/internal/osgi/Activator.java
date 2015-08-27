@@ -69,7 +69,7 @@ public class Activator extends BaseActivator {
         EventProducer eventProducer = getTrackedService(EventProducer.class);
         FeaturesService featuresService = getTrackedService(FeaturesService.class);
 
-        LOGGER.debug("[CELLAR FEATURES] Init repository event handler");
+        LOGGER.debug("CELLAR FEATURE: init repository event handler");
         repositoryEventHandler = new RepositoryEventHandler();
         repositoryEventHandler.setConfigurationAdmin(configurationAdmin);
         repositoryEventHandler.setFeaturesService(featuresService);
@@ -80,7 +80,7 @@ public class Activator extends BaseActivator {
         props.put("managed", "true");
         register(new Class[]{ EventHandler.class }, repositoryEventHandler, props);
 
-        LOGGER.debug("[CELLAR FEATURES] Init features event handler");
+        LOGGER.debug("CELLAR FEATURE: init features event handler");
         featuresEventHandler = new FeaturesEventHandler();
         featuresEventHandler.setFeaturesService(featuresService);
         featuresEventHandler.setClusterManager(clusterManager);
@@ -89,7 +89,7 @@ public class Activator extends BaseActivator {
         featuresEventHandler.init();
         register(new Class[]{ EventHandler.class }, featuresEventHandler, props);
 
-        LOGGER.debug("[CELLAR FEATURES] Init local features listener");
+        LOGGER.debug("CELLAR FEATURE: init local features listener");
         localFeaturesListener = new LocalFeaturesListener();
         localFeaturesListener.setClusterManager(clusterManager);
         localFeaturesListener.setGroupManager(groupManager);
@@ -99,7 +99,7 @@ public class Activator extends BaseActivator {
         localFeaturesListener.init();
         register(FeaturesListener.class, localFeaturesListener);
 
-        LOGGER.debug("[CELLAR FEATURES] Init features synchronizer");
+        LOGGER.debug("CELLAR FEATURE: init features synchronizer");
         featuresSynchronizer = new FeaturesSynchronizer();
         featuresSynchronizer.setClusterManager(clusterManager);
         featuresSynchronizer.setGroupManager(groupManager);
@@ -110,7 +110,7 @@ public class Activator extends BaseActivator {
         props.put("resource", "feature");
         register(Synchronizer.class, featuresSynchronizer, props);
 
-        LOGGER.debug("[CELLAR FEATURES] Register MBean");
+        LOGGER.debug("CELLAR FEATURE: register MBean");
         CellarFeaturesMBeanImpl mbean = new CellarFeaturesMBeanImpl();
         mbean.setClusterManager(clusterManager);
         mbean.setGroupManager(groupManager);

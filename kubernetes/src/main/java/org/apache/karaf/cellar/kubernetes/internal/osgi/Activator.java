@@ -35,7 +35,7 @@ public class Activator extends BaseActivator {
 
     @Override
     public void doStart() throws Exception {
-        LOGGER.debug("[CELLAR KUBERNETES] Init discovery service factory");
+        LOGGER.debug("CELLAR KUBERNETES: init discovery service factory");
         Hashtable props = new Hashtable();
         props.put(Constants.SERVICE_PID, "org.apache.karaf.cellar.kubernetes");
         KubernetesDiscoveryServiceFactory factory = new KubernetesDiscoveryServiceFactory(bundleContext);

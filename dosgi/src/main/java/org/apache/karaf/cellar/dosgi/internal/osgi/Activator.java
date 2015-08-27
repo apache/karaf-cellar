@@ -59,7 +59,7 @@ public class Activator extends BaseActivator {
         CommandStore commandStore = getTrackedService(CommandStore.class);
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
 
-        LOGGER.debug("[CELLAR DOSGi] Init remote service call handler");
+        LOGGER.debug("CELLAR DOSGI: init remote service call handler");
         RemoteServiceCallHandler remoteServiceCallHandler = new RemoteServiceCallHandler();
         remoteServiceCallHandler.setEventTransportFactory(eventTransportFactory);
         remoteServiceCallHandler.setClusterManager(clusterManager);
@@ -69,12 +69,12 @@ public class Activator extends BaseActivator {
         props.put("managed", "true");
         register(EventHandler.class, remoteServiceCallHandler, props);
 
-        LOGGER.debug("[CELLAR DOSGi] Init remote service result handler");
+        LOGGER.debug("CELLAR DOSGI: init remote service result handler");
         RemoteServiceResultHandler remoteServiceResultHandler = new RemoteServiceResultHandler();
         remoteServiceResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, remoteServiceCallHandler);
 
-        LOGGER.debug("[CELLAR DOSGi] Init import service listener");
+        LOGGER.debug("CELLAR DOSGI: init import service listener");
         importServiceListener = new ImportServiceListener();
         importServiceListener.setClusterManager(clusterManager);
         importServiceListener.setEventTransportFactory(eventTransportFactory);
@@ -83,14 +83,14 @@ public class Activator extends BaseActivator {
         importServiceListener.init();
         register(ListenerHook.class, importServiceListener);
 
-        LOGGER.debug("[CELLAR DOSGi] Init export service listener");
+        LOGGER.debug("CELLAR DOSGI: init export service listener");
         exportServiceListener = new ExportServiceListener();
         exportServiceListener.setClusterManager(clusterManager);
         exportServiceListener.setEventTransportFactory(eventTransportFactory);
         exportServiceListener.setBundleContext(bundleContext);
         exportServiceListener.init();
 
-        LOGGER.debug("[CELLAR DOSGi] Register MBean");
+        LOGGER.debug("CELLAR DOSGI: register MBean");
         ServiceMBeanImpl mbean = new ServiceMBeanImpl();
         mbean.setClusterManager(clusterManager);
         props = new Hashtable();

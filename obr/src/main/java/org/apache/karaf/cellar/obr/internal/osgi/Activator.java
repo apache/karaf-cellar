@@ -65,7 +65,7 @@ public class Activator extends BaseActivator {
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
         EventProducer eventProducer = getTrackedService(EventProducer.class);
 
-        LOGGER.debug("[CELLAR OBR] Init URL event handler");
+        LOGGER.debug("CELLAR OBR: init URL event handler");
         urlEventHandler = new ObrUrlEventHandler();
         urlEventHandler.setClusterManager(clusterManager);
         urlEventHandler.setGroupManager(groupManager);
@@ -76,7 +76,7 @@ public class Activator extends BaseActivator {
         props.put("managed", "true");
         register(EventHandler.class, urlEventHandler, props);
 
-        LOGGER.debug("[CELLAR OBR] Init bundle event handler");
+        LOGGER.debug("CELLAR OBR: init bundle event handler");
         bundleEventHandler = new ObrBundleEventHandler();
         bundleEventHandler.setObrService(repositoryAdmin);
         bundleEventHandler.setClusterManager(clusterManager);
@@ -85,7 +85,7 @@ public class Activator extends BaseActivator {
         bundleEventHandler.init();
         register(EventHandler.class, bundleEventHandler, props);
 
-        LOGGER.debug("[CELLAR OBR] Init URL synchronizer");
+        LOGGER.debug("CELLAR OBR: init URL synchronizer");
         urlSynchronizer = new ObrUrlSynchronizer();
         urlSynchronizer.setObrService(repositoryAdmin);
         urlSynchronizer.setClusterManager(clusterManager);
@@ -96,7 +96,7 @@ public class Activator extends BaseActivator {
         props.put("resource", "obr.urls");
         register(Synchronizer.class, urlSynchronizer, props);
 
-        LOGGER.debug("[CELLAR OBR] Register MBean");
+        LOGGER.debug("CELLAR OBR: register MBean");
         CellarOBRMBeanImpl mbean = new CellarOBRMBeanImpl();
         mbean.setClusterManager(clusterManager);
         mbean.setGroupManager(groupManager);

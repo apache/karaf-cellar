@@ -38,11 +38,11 @@ public class Activator extends BaseActivator {
     @Override
     public void doStart() throws Exception {
 
-        LOGGER.debug("[CELLAR CORE] Registering event handler service registry");
+        LOGGER.debug("CELLAR CORE: register event handler service registry");
         registry = new EventHandlerServiceRegistry();
         register(EventHandlerRegistry.class, registry);
 
-        LOGGER.debug("[CELLAR CORE] Starting event handler service tracker");
+        LOGGER.debug("CELLAR CORE: starting event handler service tracker");
         eventHandlerServiceTracker = new ServiceTracker<EventHandler, EventHandler>(bundleContext, EventHandler.class, new ServiceTrackerCustomizer<EventHandler, EventHandler>() {
             @Override
             public EventHandler addingService(ServiceReference<EventHandler> serviceReference) {

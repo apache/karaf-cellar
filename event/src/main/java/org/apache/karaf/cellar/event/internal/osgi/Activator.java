@@ -59,7 +59,7 @@ public class Activator extends BaseActivator {
         EventAdmin eventAdmin = getTrackedService(EventAdmin.class);
         EventProducer eventProducer = getTrackedService(EventProducer.class);
 
-        LOGGER.debug("[CELLAR EVENTADMIN] Init event handler");
+        LOGGER.debug("CELLAR EVENT: init event handler");
         clusterEventHandler = new ClusterEventHandler();
         clusterEventHandler.setConfigurationAdmin(configurationAdmin);
         clusterEventHandler.setGroupManager(groupManager);
@@ -70,7 +70,7 @@ public class Activator extends BaseActivator {
         props.put("managed", "true");
         register(EventHandler.class, clusterEventHandler, props);
 
-        LOGGER.debug("[CELLAR EVENTADMIN] Init local event listener");
+        LOGGER.debug("CELLAR EVENT: init local event listener");
         localEventListener = new LocalEventListener();
         localEventListener.setClusterManager(clusterManager);
         localEventListener.setGroupManager(groupManager);

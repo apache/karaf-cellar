@@ -47,7 +47,7 @@ public class Activator extends BaseActivator {
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
         GroupManager groupManager = getTrackedService(GroupManager.class);
 
-        LOGGER.debug("[CELLAR WEBCONSOLE] Init plugin");
+        LOGGER.debug("CELLAR WEBCONSOLE: init plugin");
         plugin = new CellarPlugin();
         plugin.setClusterManager(clusterManager);
         plugin.setGroupManager(groupManager);
