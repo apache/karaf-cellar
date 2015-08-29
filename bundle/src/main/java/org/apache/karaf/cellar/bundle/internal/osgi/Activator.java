@@ -60,10 +60,20 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
 
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         GroupManager groupManager = getTrackedService(GroupManager.class);
+        if (groupManager == null)
+            return;
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
         EventProducer eventProducer = getTrackedService(EventProducer.class);
+        if (eventProducer == null)
+            return;
         FeaturesService featuresService = getTrackedService(FeaturesService.class);
+        if (featuresService == null)
+            return;
 
         LOGGER.debug("CELLAR BUNDLE: init even handler");
         eventHandler = new BundleEventHandler();

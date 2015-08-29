@@ -64,10 +64,20 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
 
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         GroupManager groupManager = getTrackedService(GroupManager.class);
+        if (groupManager == null)
+            return;
         EventProducer eventProducer = getTrackedService(EventProducer.class);
+        if (eventProducer == null)
+            return;
         FeaturesService featuresService = getTrackedService(FeaturesService.class);
+        if (featuresService == null)
+            return;
 
         LOGGER.debug("CELLAR FEATURE: init repository event handler");
         repositoryEventHandler = new RepositoryEventHandler();

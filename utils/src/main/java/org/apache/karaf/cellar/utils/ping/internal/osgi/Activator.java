@@ -35,9 +35,17 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
         // retrieving services
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         EventProducer eventProducer = getTrackedService(EventProducer.class);
+        if (eventProducer == null)
+            return;
         CommandStore commandStore = getTrackedService(CommandStore.class);
+        if (commandStore == null)
+            return;
 
         // registering ping event handler
         PingHandler pingHandler = new PingHandler();

@@ -60,10 +60,20 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
 
         RepositoryAdmin repositoryAdmin = getTrackedService(RepositoryAdmin.class);
+        if (repositoryAdmin == null)
+            return;
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         GroupManager groupManager = getTrackedService(GroupManager.class);
+        if (groupManager == null)
+            return;
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
         EventProducer eventProducer = getTrackedService(EventProducer.class);
+        if (eventProducer == null)
+            return;
 
         LOGGER.debug("CELLAR OBR: init URL event handler");
         urlEventHandler = new ObrUrlEventHandler();

@@ -45,7 +45,11 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
 
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         GroupManager groupManager = getTrackedService(GroupManager.class);
+        if (groupManager == null)
+            return;
 
         LOGGER.debug("CELLAR WEBCONSOLE: init plugin");
         plugin = new CellarPlugin();

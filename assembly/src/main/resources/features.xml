@@ -19,8 +19,8 @@
     <repository>mvn:io.fabric8/karaf-features/${fabric8.version}/xml/features</repository>
     
     <feature name="cellar-core" description="Karaf clustering core" version="${project.version}">
-        <feature dependency="true">aries-proxy</feature>
-        <feature dependency="true">shell</feature>
+        <feature>aries-proxy</feature>
+        <feature>shell</feature>
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups</configfile>
         <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node</configfile>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>

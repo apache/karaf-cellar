@@ -55,9 +55,17 @@ public class Activator extends BaseActivator {
     public void doStart() throws Exception {
 
         ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+        if (clusterManager == null)
+            return;
         EventTransportFactory eventTransportFactory = getTrackedService(EventTransportFactory.class);
+        if (eventTransportFactory == null)
+            return;
         CommandStore commandStore = getTrackedService(CommandStore.class);
+        if (commandStore == null)
+            return;
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
 
         LOGGER.debug("CELLAR DOSGI: init remote service call handler");
         RemoteServiceCallHandler remoteServiceCallHandler = new RemoteServiceCallHandler();

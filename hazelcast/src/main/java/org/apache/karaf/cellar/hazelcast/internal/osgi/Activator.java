@@ -24,7 +24,6 @@ import org.apache.karaf.cellar.core.command.ClusteredExecutionContext;
 import org.apache.karaf.cellar.core.command.CommandStore;
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.control.*;
-import org.apache.karaf.cellar.core.discovery.Discovery;
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.apache.karaf.cellar.core.discovery.DiscoveryTask;
 import org.apache.karaf.cellar.core.event.*;
@@ -95,6 +94,14 @@ public class Activator extends BaseActivator implements ManagedService {
     public void doStart() throws Exception {
 
         ConfigurationAdmin configurationAdmin = getTrackedService(ConfigurationAdmin.class);
+        if (configurationAdmin == null)
+            return;
+        EventHandlerRegistry eventHandlerRegistry = getTrackedService(EventHandlerRegistry.class);
+        if (eventHandlerRegistry == null)
+            return;
+        ProxyManager proxyManager = getTrackedService(ProxyManager.class);
+        if (proxyManager == null)
+            return;
 
         LOGGER.debug("CELLAR HAZELCAST: init combined class loader");
         combinedClassLoader = new CombinedClassLoader();
@@ -146,7 +153,7 @@ public class Activator extends BaseActivator implements ManagedService {
 
         LOGGER.debug("CELLAR HAZELCAST: init dispatcher");
         EventHandlerRegistryDispatcher dispatcher = new EventHandlerRegistryDispatcher();
-        dispatcher.setHandlerRegistry(getTrackedService(EventHandlerRegistry.class));
+        dispatcher.setHandlerRegistry(eventHandlerRegistry);
         dispatcher.init();
 
         LOGGER.debug("CELLAR HAZELCAST: create Hazelcast configuration manager");
@@ -255,8 +262,6 @@ public class Activator extends BaseActivator implements ManagedService {
         ConsumerSwitchResultHandler consumerSwitchResultHandler = new ConsumerSwitchResultHandler();
         consumerSwitchResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, consumerSwitchResultHandler);
-
-        ProxyManager proxyManager = getTrackedService(ProxyManager.class);
 
         LOGGER.debug("CELLAR HAZELCAST: register manage handlers command handler");
         ManageHandlersCommandHandler manageHandlersCommandHandler = new ManageHandlersCommandHandler();
