@@ -329,6 +329,14 @@ public class Activator extends BaseActivator implements ManagedService {
             coreMBeanRegistration.unregister();
             coreMBeanRegistration = null;
         }
+        if (groupManager != null) {
+            try {
+                groupManager.destroy();
+            } catch (Exception e) {
+                LOGGER.trace("Error occured destroying the group manager", e);
+            }
+            groupManager = null;
+        }
         if (hazelcastServiceFactory != null) {
             hazelcastServiceFactory.destroy();
             hazelcastServiceFactory = null;
@@ -356,10 +364,6 @@ public class Activator extends BaseActivator implements ManagedService {
         if (synchronizerServiceTracker != null) {
             synchronizerServiceTracker.close();
             synchronizerServiceTracker = null;
-        }
-        if (groupManager != null) {
-            groupManager.destroy();
-            groupManager = null;
         }
         if (discoveryServiceTracker != null) {
             discoveryServiceTracker.close();
