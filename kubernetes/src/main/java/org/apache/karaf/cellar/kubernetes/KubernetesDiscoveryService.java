@@ -13,6 +13,8 @@
  */
 package org.apache.karaf.cellar.kubernetes;
 
+import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -48,7 +50,7 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         try {
             String kubernetesUrl = "http://" + kubernetesHost + ":" + kubernetesPort;
             LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesUrl);
-            DefaultKubernetesClient.Config config = new DefaultKubernetesClient.ConfigBuilder().masterUrl(kubernetesUrl).build();
+            Config config = new ConfigBuilder().withMasterUrl(kubernetesUrl).build();
             kubernetesClient = new DefaultKubernetesClient(config);
             LOGGER.debug("CELLAR KUBERNETES: discovery service initialized");
         } catch (Exception e) {
