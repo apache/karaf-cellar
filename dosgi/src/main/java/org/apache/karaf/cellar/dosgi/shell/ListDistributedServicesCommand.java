@@ -17,13 +17,15 @@ import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.dosgi.Constants;
 import org.apache.karaf.cellar.dosgi.EndpointDescription;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.support.table.ShellTable;
 
 import java.util.Map;
 import java.util.Set;
 
 @Command(scope = "cluster", name = "service-list", description = "List the services available on the cluster")
+@Service
 public class ListDistributedServicesCommand extends CellarCommandSupport {
 
     @Override

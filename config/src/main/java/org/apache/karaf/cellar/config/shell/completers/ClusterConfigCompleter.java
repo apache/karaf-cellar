@@ -18,8 +18,12 @@ import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
-import org.apache.karaf.shell.console.Completer;
-import org.apache.karaf.shell.console.completer.StringsCompleter;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +32,17 @@ import java.util.Properties;
 /**
  * Command completer for the configuration from the cluster.
  */
+@Service
 public class ClusterConfigCompleter implements Completer {
 
+    @Reference
     protected ClusterManager clusterManager;
+
+    @Reference
     protected GroupManager groupManager;
 
     @Override
-    public int complete(String buffer, int cursor, List<String> candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
             Map<String, Group> groups = groupManager.listGroups();
@@ -54,7 +62,7 @@ public class ClusterConfigCompleter implements Completer {
         } catch (Exception e) {
             // nothing to do
         }
-        return delegate.complete(buffer, cursor, candidates);
+        return delegate.complete(session, commandLine, candidates);
     }
 
     public ClusterManager getClusterManager() {

@@ -13,78 +13,84 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+<features name="karaf-cellar-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
     <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds.version}/xml/features</repository>
     <repository>mvn:io.fabric8/karaf-features/${fabric8.version}/xml/features</repository>
     
-    <feature name="cellar-core" description="Karaf clustering core" version="${project.version}" resolver="(obr)">
+    <feature name="cellar-core" description="Karaf clustering core" version="${project.version}">
+        <feature>aries-proxy</feature>
+        <feature>shell</feature>
         <configfile finalname="/etc/org.apache.karaf.cellar.groups.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/groups</configfile>
         <configfile finalname="/etc/org.apache.karaf.cellar.node.cfg">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/cfg/node</configfile>
-        <bundle start-level="30">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
-        <bundle start-level="31">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.core/${project.version}</bundle>
     </feature>
 
-    <feature name="hazelcast" description="In memory data grid" version="${hazelcast.version}" resolver="(obr)">
+    <feature name="hazelcast" description="In memory data grid" version="${hazelcast.version}">
         <configfile finalname="/etc/hazelcast.xml">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast</configfile>
-        <bundle start-level="30" dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
-        <bundle start-level="30" dependency="true">mvn:com.eclipsesource.minimal-json/minimal-json/0.9.2</bundle>
-        <bundle start-level="70">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle>mvn:com.eclipsesource.minimal-json/minimal-json/0.9.2</bundle>
+        <bundle>mvn:com.hazelcast/hazelcast-all/${hazelcast.version}</bundle>
     </feature>
 
-    <feature name="cellar-hazelcast" description="Cellar implementation based on Hazelcast" version="${project.version}" resolver="(obr)">
+    <feature name="cellar-hazelcast" description="Cellar implementation based on Hazelcast" version="${project.version}">
         <feature version="${hazelcast.version}">hazelcast</feature>
         <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="70">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.hazelcast/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.utils/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-config" description="ConfigAdmin cluster support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
+    <feature name="cellar-config" description="ConfigAdmin cluster support" version="${project.version}">
+        <feature>config</feature>
+        <feature>cellar-hazelcast</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-features" description="Karaf features cluster support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
+    <feature name="cellar-features" description="Karaf features cluster support" version="${project.version}">
+        <feature>feature</feature>
+        <feature>cellar-hazelcast</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-bundle" description="Bundle cluster support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
+    <feature name="cellar-bundle" description="Bundle cluster support" version="${project.version}">
+        <feature>bundle</feature>
+        <feature>cellar-hazelcast</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-shell" description="Cellar shell support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
+    <feature name="cellar-shell" description="Cellar shell support" version="${project.version}">
+        <feature>shell</feature>
+        <feature>cellar-hazelcast</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar" description="Karaf clustering" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-hazelcast</feature>
-        <feature version="${project.version}">cellar-shell</feature>
-        <feature version="${project.version}">cellar-config</feature>
-        <feature version="${project.version}">cellar-bundle</feature>
-        <feature version="${project.version}">cellar-features</feature>
+    <feature name="cellar" description="Karaf clustering" version="${project.version}">
+        <feature>cellar-hazelcast</feature>
+        <feature>cellar-shell</feature>
+        <feature>cellar-config</feature>
+        <feature>cellar-bundle</feature>
+        <feature>cellar-features</feature>
     </feature>
 
-    <feature name="cellar-dosgi" description="DOSGi support" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
+    <feature name="cellar-dosgi" description="DOSGi support" version="${project.version}">
+        <feature>cellar-hazelcast</feature>
         <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.dosgi/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-obr" description="OBR cluster support" version="${project.version}" resolver="(obr)">
+    <feature name="cellar-obr" description="OBR cluster support" version="${project.version}">
         <feature>obr</feature>
-        <feature version="${project.version}">cellar-core</feature>
+        <feature>cellar-hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-eventadmin" description="OSGi events broadcasting in clusters" version="${project.version}" resolver="(obr)">
+    <feature name="cellar-eventadmin" description="OSGi events broadcasting in clusters" version="${project.version}">
         <feature>eventadmin</feature>
-        <feature version="${project.version}">cellar-core</feature>
+        <feature>cellar-hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.event/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-cloud" description="Cloud blobstore support in clusters" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
+    <feature name="cellar-cloud" description="Cloud blobstore support in clusters" version="${project.version}">
+        <feature>cellar-hazelcast</feature>
         <feature version="${jclouds.version}">jclouds</feature>
         <!-- Adding S3 as the default Blobstore -->
         <feature>jclouds-aws-s3</feature>
@@ -92,15 +98,14 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-kubernetes" description="Cellar kubernetes support in clusters" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar-core</feature>
+    <feature name="cellar-kubernetes" description="Cellar kubernetes support in clusters" version="${project.version}">
         <feature>fabric8-kubernetes-api</feature>
-        <bundle start-level="40">mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-webconsole" description="Cellar plugin for Karaf WebConsole" version="${project.version}" resolver="(obr)">
-        <feature version="${project.version}">cellar</feature>
+    <feature name="cellar-webconsole" description="Cellar plugin for Karaf WebConsole" version="${project.version}">
         <feature>webconsole</feature>
+        <feature>cellar-hazelcast</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
     </feature>
 

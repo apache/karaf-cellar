@@ -49,13 +49,16 @@
         <!-- Core dependencies -->
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
-            <artifactId>org.apache.karaf.shell.console</artifactId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
             <artifactId>org.apache.aries.proxy.api</artifactId>
             <version>1.0.1</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Logging Dependencies -->
@@ -86,19 +89,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.core*;version="${project.version}"
+                            org.apache.karaf.cellar.core*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.aries.proxy,
-                            org.apache.karaf.shell.console*;version="[3,5)",
-                            org.osgi*,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            *
                         </Import-Package>
+                        <Private-Package>
+                            org.apache.karaf.cellar.core.internal.osgi
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

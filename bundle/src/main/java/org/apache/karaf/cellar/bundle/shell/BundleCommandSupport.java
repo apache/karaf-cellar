@@ -17,8 +17,12 @@ import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.apache.karaf.shell.commands.Argument;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 
 import java.util.ArrayList;
@@ -31,10 +35,14 @@ import java.util.regex.Pattern;
 public abstract class BundleCommandSupport extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name = "ids", description = "The list of bundle (identified by IDs or name or name/version) separated by whitespaces", required = false, multiValued = true)
     List<String> ids;
+
+    @Reference
+    protected BundleContext bundleContext;
 
     protected abstract Object doExecute() throws Exception;
 

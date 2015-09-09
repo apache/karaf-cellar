@@ -14,10 +14,12 @@
 package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.Group;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 /**
  * Completer for all cluster groups.
  */
+@Service
 public class AllGroupsCompleter extends GroupCompleterSupport {
 
     /**

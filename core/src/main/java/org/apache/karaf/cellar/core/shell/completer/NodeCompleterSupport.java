@@ -15,8 +15,11 @@ package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Node;
-import org.apache.karaf.shell.console.Completer;
-import org.apache.karaf.shell.console.completer.StringsCompleter;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
 import java.util.List;
 
@@ -25,10 +28,11 @@ import java.util.List;
  */
 public abstract class NodeCompleterSupport implements Completer {
 
+    @Reference
     private ClusterManager clusterManager;
 
     @Override
-    public int complete(String buffer, int cursor, List<String> candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         StringsCompleter delegate = new StringsCompleter();
         try {
             for (Node node : clusterManager.listNodes()) {
@@ -42,7 +46,7 @@ public abstract class NodeCompleterSupport implements Completer {
         } catch (Exception e) {
             // Ignore
         }
-        return delegate.complete(buffer, cursor, candidates);
+        return delegate.complete(session, commandLine, candidates);
     }
 
     protected abstract boolean acceptsNode(Node node);

@@ -18,7 +18,7 @@ import org.apache.karaf.cellar.core.control.ProducerSwitchCommand;
 import org.apache.karaf.cellar.core.control.ProducerSwitchResult;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.shell.ClusterCommandSupport;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.support.table.ShellTable;
 
 import java.util.HashSet;
 import java.util.List;

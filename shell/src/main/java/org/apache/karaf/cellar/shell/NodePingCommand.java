@@ -14,19 +14,24 @@
 package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.shell.completer.AllNodeCompleter;
 import org.apache.karaf.cellar.utils.ping.Ping;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 @Command(scope = "cluster", name = "node-ping", description = "Ping a cluster node")
+@Service
 public class NodePingCommand extends ClusterCommandSupport {
 
     private static Long TIMEOUT = 5000L;
 
     @Argument(index = 0, name = "node", description = "The ID of the node to ping", required = true, multiValued = false)
+    @Completion(AllNodeCompleter.class)
     String nodeId;
 
     @Argument(index = 1, name = "iterations", description = "The number of iterations to perform", required = false, multiValued = false)

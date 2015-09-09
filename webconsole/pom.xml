@@ -40,6 +40,10 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <scope>provided</scope>
@@ -96,21 +100,29 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.webconsole*;version="${project.version}"
+                            !org.apache.karaf.cellar.webconsole.internal.osgi,
+                            org.apache.karaf.cellar.webconsole*
                         </Export-Package>
                         <Import-Package>
-                            org.apache.karaf.cellar.core*;version="${project.version}",
-                            org.apache.felix.webconsole;version="[3,5)",
-                            org.osgi.framework,
-                            org.osgi.service.blueprint,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            javax.servlet*;version="[3,4)",
+                            org.apache.felix.webconsole*;version="[3,5)",
+                            *
                         </Import-Package>
                         <Embed-Dependency>json</Embed-Dependency>
+                        <Private-Package>
+                            org.apache.karaf.cellar.webconsole.internal.osgi,
+                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

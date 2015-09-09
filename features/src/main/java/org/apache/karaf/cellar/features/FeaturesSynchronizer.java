@@ -39,6 +39,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
     @Override
     public void init() {
+        if (groupManager == null)
+            return;
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
@@ -197,7 +199,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             clusterFeatureState.setVersion(feature.getVersion());
                             clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
                             clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
-                            LOGGER.debug("CELLAR FEATURE : pushing feature {}/{} to cluster group {}", feature.getName(), feature.getVersion(), groupName);
+                            LOGGER.debug("CELLAR FEATURE: pushing feature {}/{} to cluster group {}", feature.getName(), feature.getVersion(), groupName);
                         } else {
                             LOGGER.debug("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
                         }

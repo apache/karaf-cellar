@@ -43,24 +43,27 @@
             <artifactId>org.apache.karaf.cellar.samples.dosgi.greeter.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.karaf.shell</groupId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.samples.dosgi.greeter.client*;version="${project.version}"
+                            org.apache.karaf.cellar.samples.dosgi.greeter.client*
                         </Export-Package>
-                        <Import-Package>
-                            org.apache.karaf.cellar.samples.dosgi.greeter.api,
-                            org.apache.karaf.shell.commands;version="[3,5)",
-                            org.apache.karaf.shell.console;version="[3,5)",
-                            org.osgi*
-                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

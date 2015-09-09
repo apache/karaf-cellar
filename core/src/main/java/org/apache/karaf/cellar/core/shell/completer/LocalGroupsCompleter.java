@@ -15,10 +15,12 @@ package org.apache.karaf.cellar.core.shell.completer;
 
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 /**
  * Local cluster groups completer.
  */
+@Service
 public class LocalGroupsCompleter extends GroupCompleterSupport {
 
     /**

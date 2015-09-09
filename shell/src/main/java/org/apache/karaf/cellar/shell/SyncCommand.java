@@ -16,9 +16,12 @@ package org.apache.karaf.cellar.shell;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -29,6 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 @Command(scope = "cluster", name = "sync", description = "Manipulate the synchronizers")
+@Service
 public class SyncCommand extends ClusterCommandSupport {
 
     @Option(name = "-g", aliases = { "--group" }, description = "The cluster group name", required = false, multiValued = false)
@@ -49,7 +53,11 @@ public class SyncCommand extends ClusterCommandSupport {
     @Argument(name = "policy", description = "The definition of the sync policy for the given cluster resource", required = false, multiValued = false)
     private String policy;
 
+    @Reference
     private ConfigurationAdmin configurationAdmin;
+
+    @Reference
+    private BundleContext bundleContext;
 
     @Override
     protected Object doExecute() throws Exception {

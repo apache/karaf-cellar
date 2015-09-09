@@ -18,9 +18,12 @@ import org.apache.karaf.cellar.config.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.service.cm.Configuration;
 
 import java.util.Enumeration;
@@ -29,9 +32,11 @@ import java.util.Map;
 import java.util.Properties;
 
 @Command(scope = "cluster", name = "config-list", description = "List the configurations in a cluster group")
+@Service
 public class ListCommand extends ConfigCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name = "pid", description = "The configuration PID to look for", required = false, multiValued = false)

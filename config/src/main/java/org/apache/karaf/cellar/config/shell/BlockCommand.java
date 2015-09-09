@@ -14,24 +14,31 @@
 package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.config.Constants;
+import org.apache.karaf.cellar.config.shell.completers.ClusterConfigCompleter;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.Set;
 
 @Command(scope = "cluster", name = "config-block", description = "Change the blocking policy for a bundle")
+@Service
 public class BlockCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Argument(index = 1, name = "pidPattern", description = "The configuration PID pattern", required = false, multiValued = false)
+    @Completion(ClusterConfigCompleter.class)
     String pid;
 
     @Option(name = "-in", description = "Update the inbound direction", required = false, multiValued = false)

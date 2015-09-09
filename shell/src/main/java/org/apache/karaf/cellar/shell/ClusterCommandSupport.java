@@ -15,12 +15,14 @@ package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
 
 /**
  * Abstract cluster shell command.
  */
 public abstract class ClusterCommandSupport extends CellarCommandSupport {
 
+    @Reference
     protected ExecutionContext executionContext;
 
     public ExecutionContext getExecutionContext() {

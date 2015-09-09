@@ -14,14 +14,15 @@
 package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.Node;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.support.table.ShellTable;
 
 import java.util.Set;
 
 @Command(scope = "cluster", name = "node-list", description = "List the nodes in the cluster")
+@Service
 public class NodesListCommand extends ClusterCommandSupport {
-
 
     @Override
     protected Object doExecute() throws Exception {

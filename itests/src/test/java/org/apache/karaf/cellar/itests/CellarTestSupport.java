@@ -22,21 +22,21 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
+import java.security.Principal;
+import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
+import javax.security.auth.Subject;
 
-import org.apache.felix.service.command.CommandProcessor;
-import org.apache.felix.service.command.CommandSession;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.api.console.SessionFactory;
 import org.ops4j.pax.exam.*;
 import org.ops4j.pax.exam.karaf.options.*;
 import org.osgi.framework.Bundle;
@@ -66,6 +66,10 @@ public class CellarTestSupport {
     @Inject
     protected BundleContext bundleContext;
 
+    @Inject
+    protected SessionFactory sessionFactory;
+
+
     /**
      * @param probe
      * @return
@@ -94,7 +98,9 @@ public class CellarTestSupport {
         String propsetCmd = membersBuilder.toString();
         String updateCmd = "config:update";
 
-        executeCommands(editCmd, propsetCmd, updateCmd);
+        executeCommand(editCmd);
+        executeCommand(propsetCmd);
+        executeCommand(updateCmd);
     }
 
     /**
@@ -192,97 +198,102 @@ public class CellarTestSupport {
         return options;
     }
 
-    /**
-     * Executes a shell command and returns output as a String.
-     * Commands have a default timeout of 10 seconds.
-     *
-     * @param command
-     * @return
-     */
-    protected String executeCommand(final String command) {
-        return executeCommand(command, COMMAND_TIMEOUT, false);
+    protected String executeCommand(final String command, Principal ... principals) {
+        return executeCommand(command, COMMAND_TIMEOUT, false, principals);
     }
 
-    /**
-     * Executes a shell command and returns output as a String.
-     * Commands have a default timeout of 10 seconds.
-     *
-     * @param command The command to execute.
-     * @param timeout The amount of time in millis to wait for the command to execute.
-     * @param silent  Specifies if the command should be displayed in the screen.
-     * @return
-     */
-    protected String executeCommand(final String command, final Long timeout, final Boolean silent) {
+
+    protected String executeCommand(final String command, final Long timeout, final Boolean silent, final Principal... principals) {
+        waitForCommandService(command);
+
         String response;
         final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        final CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
-        final CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
-        FutureTask<String> commandFuture = new FutureTask<String>(
-                new Callable<String>() {
-                    public String call() {
-                        try {
-                            if (!silent) {
-                                System.err.println(command);
-                            }
-                            commandSession.execute(command);
-                        } catch (Exception e) {
-                            e.printStackTrace(System.err);
-                        }
-                        printStream.flush();
-                        return byteArrayOutputStream.toString();
+        final SessionFactory sessionFactory = getOsgiService(SessionFactory.class);
+        final Session session = sessionFactory.create(System.in, printStream, System.err);
+
+        final Callable<String> commandCallable = new Callable<String>() {
+            @Override
+            public String call() throws Exception {
+                try {
+                    if (!silent) {
+                        System.err.println(command);
                     }
-                });
+                    session.execute(command);
+                } catch (Exception e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+                printStream.flush();
+                return byteArrayOutputStream.toString();
+            }
+        };
+
+        FutureTask<String> commandFuture;
+        if (principals.length == 0) {
+            commandFuture = new FutureTask<String>(commandCallable);
+        } else {
+            // If principals are defined, run the command callable via Subject.doAs()
+            commandFuture = new FutureTask<String>(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    Subject subject = new Subject();
+                    subject.getPrincipals().addAll(Arrays.asList(principals));
+                    return Subject.doAs(subject, new PrivilegedExceptionAction<String>() {
+                        @Override
+                        public String run() throws Exception {
+                            return commandCallable.call();
+                        }
+                    });
+                }
+            });
+        }
 
         try {
             executor.submit(commandFuture);
             response = commandFuture.get(timeout, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
+        } catch (TimeoutException e) {
             e.printStackTrace(System.err);
             response = "SHELL COMMAND TIMED OUT: ";
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause().getCause();
+            throw new RuntimeException(cause.getMessage(), cause);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
-
         return response;
     }
 
-    /**
-     * Executes multiple commands inside a Single Session.
-     * Commands have a default timeout of 10 seconds.
-     *
-     * @param commands
-     * @return
-     */
-    protected String executeCommands(final String... commands) {
-        String response;
-        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        final PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        final CommandProcessor commandProcessor = getOsgiService(CommandProcessor.class);
-        final CommandSession commandSession = commandProcessor.createSession(System.in, printStream, System.err);
-        FutureTask<String> commandFuture = new FutureTask<String>(
-                new Callable<String>() {
-                    public String call() {
-                        try {
-                            for (String command : commands) {
-                                System.err.println(command);
-                                commandSession.execute(command);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace(System.err);
-                        }
-                        return byteArrayOutputStream.toString();
-                    }
-                });
+    private void waitForCommandService(String command) {
+        // the commands are represented by services. Due to the asynchronous nature of services they may not be
+        // immediately available. This code waits the services to be available, in their secured form. It
+        // means that the code waits for the command service to appear with the roles defined.
 
+        if (command == null || command.length() == 0) {
+            return;
+        }
+
+        int spaceIdx = command.indexOf(' ');
+        if (spaceIdx > 0) {
+            command = command.substring(0, spaceIdx);
+        }
+        int colonIndx = command.indexOf(':');
+        String scope = (colonIndx > 0) ? command.substring(0, colonIndx) : "*";
+        String name  = (colonIndx > 0) ? command.substring(colonIndx + 1) : command;
         try {
-            executor.submit(commandFuture);
-            response = commandFuture.get(COMMAND_TIMEOUT, TimeUnit.MILLISECONDS);
+            long start = System.currentTimeMillis();
+            long cur   = start;
+            while (cur - start < SERVICE_TIMEOUT) {
+                if (sessionFactory.getRegistry().getCommand(scope, name) != null) {
+                    return;
+                }
+                Thread.sleep(100);
+                cur = System.currentTimeMillis();
+            }
         } catch (Exception e) {
-            e.printStackTrace(System.err);
-            response = "SHELL COMMAND TIMED OUT: ";
+            throw new RuntimeException(e);
         }
-
-        return response;
     }
+
 
     protected Bundle getInstalledBundle(String symbolicName) {
         for (Bundle b : bundleContext.getBundles()) {

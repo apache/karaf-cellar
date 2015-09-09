@@ -40,8 +40,12 @@
             <artifactId>org.apache.karaf.cellar.core</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.karaf</groupId>
+            <artifactId>org.apache.karaf.util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.karaf.shell</groupId>
-            <artifactId>org.apache.karaf.shell.table</artifactId>
+            <artifactId>org.apache.karaf.shell.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -72,27 +76,28 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-services-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.apache.karaf.cellar.dosgi*;version="${project.version}"
+                            !org.apache.karaf.cellar.dosgi.internal.osgi,
+                            org.apache.karaf.cellar.dosgi*
                         </Export-Package>
                         <Import-Package>
-                            javax.management*,
-                            org.apache.karaf.cellar.core*;version="${project.version}",
-                            org.apache.felix.service.command,
-                            org.apache.felix.gogo.commands,
-                            org.apache.karaf.shell.console;version="[3,5)",
-                            org.apache.karaf.shell.console.commands;version="[3,5)",
-                            org.apache.karaf.shell.console.completer;version="[3,5)",
-                            org.apache.karaf.shell.commands;version="[3,5)",
-                            org.apache.karaf.shell.table;version="[3,5)",
-                            org.osgi*,
-                            org.slf4j;version="[1.6,2)";resolution:=optional
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.apache.karaf.shell*;resolution:=optional,
+                            *
                         </Import-Package>
                         <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,org.apache.karaf.cellar.*</DynamicImport-Package>
+                        <Private-Package>
+                            org.apache.karaf.cellar.dosgi.internal.osgi,
+                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                        </Private-Package>
                     </instructions>
                 </configuration>
             </plugin>

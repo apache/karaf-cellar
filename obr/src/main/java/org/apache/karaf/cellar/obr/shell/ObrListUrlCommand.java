@@ -16,16 +16,21 @@ package org.apache.karaf.cellar.obr.shell;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
 import org.apache.karaf.cellar.obr.Constants;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.Set;
 
 @Command(scope = "cluster", name = "obr-list-url", description = "List the OBR URLs in a cluster group")
+@Service
 public class ObrListUrlCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Override

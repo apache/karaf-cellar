@@ -18,21 +18,27 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
 import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
-import org.apache.karaf.shell.table.ShellTable;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.support.table.ShellTable;
 
 import java.util.*;
 
 @Command(scope = "cluster", name = "feature-list", description = "List the features in a cluster group")
+@Service
 public class ListFeaturesCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
+    @Completion(AllGroupsCompleter.class)
     String groupName;
 
     @Option(name = "-i", aliases = { "--installed" }, description = "Display only installed features", required = false, multiValued = false)
@@ -53,6 +59,7 @@ public class ListFeaturesCommand extends CellarCommandSupport {
     @Option(name = "--blocked", description = "Shows only blocked features", required = false, multiValued = false)
     boolean onlyBlocked;
 
+    @Reference
     private FeaturesService featuresService;
 
     @Override
@@ -73,7 +80,7 @@ public class ListFeaturesCommand extends CellarCommandSupport {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             Map<String, ExtendedFeatureState> features = gatherFeatures();
-;
+
             if (features != null && !features.isEmpty()) {
 
                 ShellTable table = new ShellTable();

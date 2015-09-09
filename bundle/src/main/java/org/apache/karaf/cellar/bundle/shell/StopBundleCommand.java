@@ -22,14 +22,19 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.framework.BundleEvent;
 
 import java.util.List;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "bundle-stop", description = "Stop a bundle in a cluster group")
+@Service
 public class StopBundleCommand extends BundleCommandSupport {
+
+    @Reference
     private EventProducer eventProducer;
 
     @Override

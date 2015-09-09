@@ -18,12 +18,14 @@ import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.*;
 
 @Command(scope = "cluster", name = "bundle-block", description = "Change the blocking policy for a bundle")
+@Service
 public class BlockCommand extends BundleCommandSupport {
 
     @Option(name = "-in", description = "Update the inbound direction", required = false, multiValued = false)

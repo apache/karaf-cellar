@@ -15,8 +15,10 @@ package org.apache.karaf.cellar.config.shell;
 
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -24,11 +26,13 @@ import java.util.Dictionary;
 import java.util.Properties;
 
 @Command(scope = "cluster", name = "config-property-excluded", description = "Display or set the config properties excluded from the cluster sync")
+@Service
 public class PropExcludedCommand extends CellarCommandSupport {
 
     @Argument(index = 0, name = "excluded-properties", description = "A list of comma separated properties excluded from the cluster sync", required = false, multiValued = false)
     String excludedProperties;
 
+    @Reference
     private ConfigurationAdmin configurationAdmin;
 
     @Override
@@ -59,4 +63,5 @@ public class PropExcludedCommand extends CellarCommandSupport {
     public void setConfigurationAdmin(ConfigurationAdmin configurationAdmin) {
         this.configurationAdmin = configurationAdmin;
     }
+
 }
