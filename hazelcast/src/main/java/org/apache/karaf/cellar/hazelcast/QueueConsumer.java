@@ -14,9 +14,11 @@
 package org.apache.karaf.cellar.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import com.hazelcast.core.IQueue;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
+
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
@@ -87,22 +89,26 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     public void run() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader((combinedClassLoader != null)
+                    ? combinedClassLoader : getClass().getClassLoader());
             while (isConsuming) {
-                if (combinedClassLoader != null) {
-                    Thread.currentThread().setContextClassLoader(combinedClassLoader);
-                } else Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                E e = null;
                 try {
-                    e = getQueue().poll(10, TimeUnit.SECONDS);
-                } catch (InterruptedException e1) {
-                    LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
-                }
-                if (e != null) {
-                    consume(e);
+                    E e = null;
+                    try {
+                        e = getQueue().poll(10, TimeUnit.SECONDS);
+                    } catch (InterruptedException e1) {
+                        LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
+                    }
+                    if (e != null) {
+                        consume(e);
+                    }
+                } catch (HazelcastInstanceNotActiveException hex) {
+                    LOGGER.debug("CELLAR HAZELCAST: stop consume task", hex);
+                    break;
+                } catch (Exception ex) {
+                    LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", ex);
                 }
             }
-        } catch (Exception ex) {
-            LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", ex);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
