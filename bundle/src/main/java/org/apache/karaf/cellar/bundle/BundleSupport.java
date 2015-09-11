@@ -42,6 +42,26 @@ public class BundleSupport extends CellarSupport {
         getBundleContext().installBundle(location);
     }
 
+    public boolean isInstalled(String location) {
+        Bundle[] bundles = getBundleContext().getBundles();
+        for (Bundle bundle : bundles) {
+            if (bundle.getLocation().equals(location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isStarted(String location) {
+        Bundle[] bundles = getBundleContext().getBundles();
+        for (Bundle bundle : bundles) {
+            if (bundle.getLocation().equals(location) && (bundle.getState() == Bundle.ACTIVE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Locally uninstall a bundle.
      *

@@ -22,7 +22,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.support.table.ShellTable;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.*;
 
@@ -63,7 +63,7 @@ public class ListBundleCommand extends BundleCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         try {
-            Map<String, ExtendedBundleState> allBundles = gatherBundles();
+            Map<String, ExtendedBundleState> allBundles = gatherBundles(false);
             if (allBundles != null && !allBundles.isEmpty()) {
                 System.out.println(String.format("Bundles in cluster group " + groupName));
 
@@ -87,25 +87,22 @@ public class ListBundleCommand extends BundleCommandSupport {
                 for (ExtendedBundleState bundle : bundles) {
                     String status;
                     switch (bundle.getStatus()) {
-                        case BundleEvent.INSTALLED:
+                        case Bundle.INSTALLED:
                             status = "Installed";
                             break;
-                        case BundleEvent.RESOLVED:
+                        case Bundle.RESOLVED:
                             status = "Resolved";
                             break;
-                        case BundleEvent.STARTED:
+                        case Bundle.ACTIVE:
                             status = "Active";
                             break;
-                        case BundleEvent.STARTING:
+                        case Bundle.STARTING:
                             status = "Starting";
                             break;
-                        case BundleEvent.STOPPED:
-                            status = "Resolved";
-                            break;
-                        case BundleEvent.STOPPING:
+                        case Bundle.STOPPING:
                             status = "Stopping";
                             break;
-                        case BundleEvent.UNINSTALLED:
+                        case Bundle.UNINSTALLED:
                             status = "Uninstalled";
                             break;
                         default:

@@ -25,7 +25,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class StopBundleCommand extends BundleCommandSupport {
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(gatherBundles());
+            List<String> bundles = selector(gatherBundles(true));
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
@@ -78,12 +78,12 @@ public class StopBundleCommand extends BundleCommandSupport {
                 }
 
                 // update the cluster state
-                state.setStatus(BundleEvent.STOPPED);
+                state.setStatus(Bundle.RESOLVED);
                 clusterBundles.put(bundle, state);
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }

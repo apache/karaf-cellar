@@ -17,6 +17,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ITopic;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Node;
+import org.apache.karaf.cellar.core.command.Command;
 import org.apache.karaf.cellar.core.command.Result;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
@@ -57,7 +58,8 @@ public class TopicProducer<E extends Event> implements EventProducer<E> {
     @Override
     public void produce(E event) {
         if (this.getSwitch().getStatus().equals(SwitchStatus.ON) || event.getForce() || event instanceof Result) {
-            event.setSourceNode(node);
+            if (event instanceof Result || event instanceof Command)
+                event.setSourceNode(node);
             topic.publish(event);
         } else {
             if (eventSwitch.getStatus().equals(SwitchStatus.OFF)) {

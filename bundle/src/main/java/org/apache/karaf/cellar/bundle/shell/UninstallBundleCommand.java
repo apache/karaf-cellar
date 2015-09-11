@@ -25,7 +25,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class UninstallBundleCommand extends BundleCommandSupport {
         try {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
-            List<String> bundles = selector(gatherBundles());
+            List<String> bundles = selector(gatherBundles(true));
 
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
@@ -82,7 +82,7 @@ public class UninstallBundleCommand extends BundleCommandSupport {
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.UNINSTALLED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }

@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.bundle.shell;
 
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.Constants;
+import org.apache.karaf.cellar.bundle.shell.completers.AllBundlesNameCompleter;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.core.shell.completer.AllGroupsCompleter;
@@ -23,7 +24,6 @@ import org.apache.karaf.shell.api.action.Completion;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +39,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
     String groupName;
 
     @Argument(index = 1, name = "ids", description = "The list of bundle (identified by IDs or name or name/version) separated by whitespaces", required = false, multiValued = true)
+    @Completion(AllBundlesNameCompleter.class)
     List<String> ids;
 
     @Reference
@@ -166,7 +167,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         }
     }
 
-    protected Map<String, ExtendedBundleState> gatherBundles() {
+    protected Map<String, ExtendedBundleState> gatherBundles(boolean clusterOnly) {
         Map<String, ExtendedBundleState> bundles = new HashMap<String, ExtendedBundleState>();
 
         // retrieve bundles from the cluster
@@ -184,6 +185,9 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             extendedState.setLocal(false);
             bundles.put(key, extendedState);
         }
+
+        if (clusterOnly)
+            return bundles;
 
         // retrieve local bundles
         for (Bundle bundle : bundleContext.getBundles()) {
@@ -203,22 +207,9 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
-                extendedState.setVersion(bundle.getHeaders().get("Bundle-Version").toString());
+                extendedState.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
                 extendedState.setLocation(bundle.getLocation());
-                int status = bundle.getState();
-                if (status == Bundle.ACTIVE)
-                    status = BundleEvent.STARTED;
-                if (status == Bundle.INSTALLED)
-                    status = BundleEvent.INSTALLED;
-                if (status == Bundle.RESOLVED)
-                    status = BundleEvent.RESOLVED;
-                if (status == Bundle.STARTING)
-                    status = BundleEvent.STARTING;
-                if (status == Bundle.UNINSTALLED)
-                    status = BundleEvent.UNINSTALLED;
-                if (status == Bundle.STOPPING)
-                    status = BundleEvent.STARTED;
-                extendedState.setStatus(status);
+                extendedState.setStatus(bundle.getState());
                 extendedState.setCluster(false);
                 extendedState.setLocal(true);
                 bundles.put(key, extendedState);

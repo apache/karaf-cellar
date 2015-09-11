@@ -103,6 +103,7 @@ public class Activator extends BaseActivator {
         synchronizer.setGroupManager(groupManager);
         synchronizer.setClusterManager(clusterManager);
         synchronizer.setBundleContext(bundleContext);
+        synchronizer.setEventProducer(eventProducer);
         synchronizer.init();
         props = new Hashtable();
         props.put("resource", "bundle");

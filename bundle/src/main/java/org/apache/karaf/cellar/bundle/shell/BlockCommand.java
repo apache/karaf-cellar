@@ -54,7 +54,7 @@ public class BlockCommand extends BundleCommandSupport {
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
         try {
-            Map<String, ExtendedBundleState> bundles = gatherBundles();
+            Map<String, ExtendedBundleState> bundles = gatherBundles(false);
             List<String> selectedBundles = selector(bundles);
             for (String selectedBundle : selectedBundles) {
                 patterns.add(bundles.get(selectedBundle).getLocation());

@@ -55,7 +55,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
         }
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR BUNDLE: local listener is disabled");
+            LOGGER.trace("CELLAR BUNDLE: local listener is disabled");
             return;
         }
 
@@ -89,7 +89,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                     String symbolicName = event.getBundle().getSymbolicName();
                     String version = event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
                     String bundleLocation = event.getBundle().getLocation();
-                    int type = event.getType();
+                    int status = event.getBundle().getState();
 
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
@@ -99,7 +99,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                         try {
                             // update bundles in the cluster group
                             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + group.getName());
-                            if (type == BundleEvent.UNINSTALLED) {
+                            if (event.getType() == BundleEvent.UNINSTALLED) {
                                 clusterBundles.remove(symbolicName + "/" + version);
                             } else {
                                 BundleState state = clusterBundles.get(symbolicName + "/" + version);
@@ -110,7 +110,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                                 state.setName(name);
                                 state.setVersion(version);
                                 state.setSymbolicName(symbolicName);
-                                state.setStatus(type);
+                                state.setStatus(status);
                                 state.setLocation(bundleLocation);
                                 clusterBundles.put(symbolicName + "/" + version, state);
                             }
@@ -125,8 +125,9 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
             				}
                             
                             // broadcast the cluster event
-                            ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, type);
+                            ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
                             clusterBundleEvent.setSourceGroup(group);
+                            clusterBundleEvent.setSourceNode(clusterManager.getNode());
                             eventProducer.produce(clusterBundleEvent);
                         } catch (Exception e) {
                         	LOGGER.error("CELLAR BUNDLE: failed to create bundle event", e);

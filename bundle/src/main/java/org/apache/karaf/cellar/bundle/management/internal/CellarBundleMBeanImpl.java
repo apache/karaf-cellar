@@ -16,16 +16,13 @@ package org.apache.karaf.cellar.bundle.management.internal;
 import org.apache.karaf.cellar.bundle.BundleState;
 import org.apache.karaf.cellar.bundle.ClusterBundleEvent;
 import org.apache.karaf.cellar.bundle.Constants;
-import org.apache.karaf.cellar.bundle.shell.BundleCommandSupport;
 import org.apache.karaf.cellar.core.*;
-import org.apache.karaf.cellar.core.control.ManageGroupAction;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.bundle.management.CellarBundleMBean;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
@@ -149,9 +146,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             state.setId(clusterBundles.size());
             state.setLocation(location);
             if (start) {
-                state.setStatus(BundleEvent.STARTED);
+                state.setStatus(Bundle.ACTIVE);
             } else {
-                state.setStatus(BundleEvent.INSTALLED);
+                state.setStatus(Bundle.INSTALLED);
             }
             clusterBundles.put(symbolicName + "/" + version, state);
         } finally {
@@ -159,10 +156,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         }
 
         // broadcast the event
-        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.INSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, Bundle.INSTALLED);
         event.setSourceGroup(group);
         if (start) {
-            event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.STARTED);
+            event = new ClusterBundleEvent(symbolicName, version, location, Bundle.ACTIVE);
             event.setSourceGroup(group);
         }
         eventProducer.produce(event);
@@ -212,7 +209,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.UNINSTALLED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }
@@ -263,12 +260,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 }
 
                 // update the cluster state
-                state.setStatus(BundleEvent.STARTED);
+                state.setStatus(Bundle.ACTIVE);
                 clusterBundles.put(bundle, state);
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }
@@ -316,12 +313,12 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 }
 
                 // update the cluster state
-                state.setStatus(BundleEvent.STOPPED);
+                state.setStatus(Bundle.RESOLVED);
                 clusterBundles.put(bundle, state);
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }
@@ -396,25 +393,22 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             for (ExtendedBundleState bundle : bundles) {
                 String status;
                 switch (bundle.getStatus()) {
-                    case BundleEvent.INSTALLED:
+                    case Bundle.INSTALLED:
                         status = "Installed";
                         break;
-                    case BundleEvent.RESOLVED:
+                    case Bundle.RESOLVED:
                         status = "Resolved";
                         break;
-                    case BundleEvent.STARTED:
+                    case Bundle.ACTIVE:
                         status = "Active";
                         break;
-                    case BundleEvent.STARTING:
+                    case Bundle.STARTING:
                         status = "Starting";
                         break;
-                    case BundleEvent.STOPPED:
-                        status = "Resolved";
-                        break;
-                    case BundleEvent.STOPPING:
+                    case Bundle.STOPPING:
                         status = "Stopping";
                         break;
-                    case BundleEvent.UNINSTALLED:
+                    case Bundle.UNINSTALLED:
                         status = "Uninstalled";
                         break;
                     default:
@@ -604,23 +598,10 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
-                extendedState.setVersion(bundle.getHeaders().get("Bundle-Version").toString());
+                extendedState.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
                 extendedState.setSymbolicName(bundle.getSymbolicName());
                 extendedState.setLocation(bundle.getLocation());
-                int status = bundle.getState();
-                if (status == Bundle.ACTIVE)
-                    status = BundleEvent.STARTED;
-                if (status == Bundle.INSTALLED)
-                    status = BundleEvent.INSTALLED;
-                if (status == Bundle.RESOLVED)
-                    status = BundleEvent.RESOLVED;
-                if (status == Bundle.STARTING)
-                    status = BundleEvent.STARTING;
-                if (status == Bundle.UNINSTALLED)
-                    status = BundleEvent.UNINSTALLED;
-                if (status == Bundle.STOPPING)
-                    status = BundleEvent.STARTED;
-                extendedState.setStatus(status);
+                extendedState.setStatus(bundle.getState());
                 extendedState.setCluster(false);
                 extendedState.setLocal(true);
                 bundles.put(key, extendedState);
