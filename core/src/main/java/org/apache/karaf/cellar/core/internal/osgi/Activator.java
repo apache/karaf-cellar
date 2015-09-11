@@ -67,6 +67,8 @@ public class Activator extends BaseActivator {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (eventHandlerServiceTracker != null) {
             eventHandlerServiceTracker.close();
             eventHandlerServiceTracker = null;

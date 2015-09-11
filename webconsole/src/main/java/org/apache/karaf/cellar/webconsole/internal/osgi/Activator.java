@@ -65,6 +65,8 @@ public class Activator extends BaseActivator {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (plugin != null) {
             plugin.stop();
             plugin = null;

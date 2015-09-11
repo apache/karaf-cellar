@@ -60,4 +60,9 @@ public class Activator extends BaseActivator {
         register(EventHandler.class, pongHandler);
     }
 
+    @Override
+    public void doStop() {
+        super.doStop();
+    }
+
 }

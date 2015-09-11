@@ -317,6 +317,8 @@ public class Activator extends BaseActivator implements ManagedService {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (groupMBeanRegistration != null) {
             groupMBeanRegistration.unregister();
             groupMBeanRegistration = null;

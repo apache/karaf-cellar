@@ -108,6 +108,8 @@ public class Activator extends BaseActivator {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (mbeanRegistration != null) {
             mbeanRegistration.unregister();
             mbeanRegistration = null;

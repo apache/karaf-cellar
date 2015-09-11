@@ -42,4 +42,9 @@ public class Activator extends BaseActivator {
         register(ManagedServiceFactory.class, factory, props);
     }
 
+    @Override
+    public void doStop() {
+        super.doStop();
+    }
+
 }

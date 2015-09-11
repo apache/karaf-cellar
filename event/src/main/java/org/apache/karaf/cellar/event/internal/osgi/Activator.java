@@ -94,6 +94,8 @@ public class Activator extends BaseActivator {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (localEventListener != null) {
             localEventListener.destroy();
             localEventListener = null;

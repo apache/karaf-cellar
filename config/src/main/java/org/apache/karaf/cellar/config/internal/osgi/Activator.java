@@ -122,6 +122,8 @@ public class Activator extends BaseActivator implements ManagedService {
 
     @Override
     public void doStop() {
+        super.doStop();
+
         if (cellarConfigMBeanRegistration != null) {
             cellarConfigMBeanRegistration.unregister();
             cellarConfigMBeanRegistration = null;
