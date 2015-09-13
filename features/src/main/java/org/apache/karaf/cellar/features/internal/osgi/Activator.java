@@ -113,6 +113,7 @@ public class Activator extends BaseActivator {
         featuresSynchronizer = new FeaturesSynchronizer();
         featuresSynchronizer.setClusterManager(clusterManager);
         featuresSynchronizer.setGroupManager(groupManager);
+        featuresSynchronizer.setEventProducer(eventProducer);
         featuresSynchronizer.setConfigurationAdmin(configurationAdmin);
         featuresSynchronizer.setFeaturesService(featuresService);
         featuresSynchronizer.init();

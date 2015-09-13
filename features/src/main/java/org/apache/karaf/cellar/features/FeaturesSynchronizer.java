@@ -16,9 +16,13 @@ package org.apache.karaf.cellar.features;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
+import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
+import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.Repository;
+import org.apache.karaf.features.RepositoryEvent;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +40,12 @@ import java.util.Set;
 public class FeaturesSynchronizer extends FeaturesSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(FeaturesSynchronizer.class);
+
+    private EventProducer eventProducer;
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
 
     @Override
     public void init() {
@@ -62,19 +72,32 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
     @Override
     public void sync(Group group) {
         String policy = getSyncPolicy(group);
-        if (policy != null && policy.equalsIgnoreCase("cluster")) {
-            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'cluster' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
-                LOGGER.debug("CELLAR FEATURE: node is the first and only member of the group, pushing state");
-                push(group);
-            } else {
-                LOGGER.debug("CELLAR FEATURE: pulling state");
-                pull(group);
-            }
+        if (policy == null) {
+            LOGGER.warn("CELLAR FEATURE: sync policy is not defined for cluster group {}", group.getName());
         }
-        if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR FEATURE: sync policy is set as 'node' for cluster group " + group.getName());
+        if (policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy set as 'cluster' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push after)");
             push(group);
+        } else if (policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy set as 'node' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push first)");
+            push(group);
+            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull after)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("clusterOnly")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy set as 'clusterOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull only)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("nodeOnly")) {
+            LOGGER.debug("CELLAR FEATURE: sync policy set as 'nodeOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push only)");
+            push(group);
+        } else {
+            LOGGER.debug("CELLAR FEATURE: sync policy set as 'disabled' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR FEATURE: no sync");
         }
     }
 
@@ -102,7 +125,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             if (!isRepositoryRegisteredLocally(url)) {
                                 LOGGER.debug("CELLAR FEATURE: adding repository {}", url);
                                 featuresService.addRepository(new URI(url));
-                            }
+                            } // TODO uninstall local features repositories not on the cluster ?
                         } catch (MalformedURLException e) {
                             LOGGER.error("CELLAR FEATURE: failed to add repository URL {} (malformed)", url, e);
                         } catch (Exception e) {
@@ -136,7 +159,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 } catch (Exception e) {
                                     LOGGER.error("CELLAR FEATURE: failed to install feature {}/{} ", new Object[]{state.getName(), state.getVersion()}, e);
                                 }
-                            }
+                            } // TODO uninstall local features not on the cluster ?
                         } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
                     }
                 }
@@ -153,6 +176,12 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
      */
     @Override
     public void push(Group group) {
+
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR FEATURE: cluster event producer is OFF");
+            return;
+        }
+
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR FEATURE: pushing features repositories and features in cluster group {}", groupName);
@@ -179,8 +208,14 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                     for (Repository repository : repositoryList) {
                         try {
                             if (!clusterRepositories.containsKey(repository.getURI().toString())) {
-                                clusterRepositories.put(repository.getURI().toString(), repository.getName());
                                 LOGGER.debug("CELLAR FEATURE: pushing repository {} in cluster group {}", repository.getName(), groupName);
+                                // updating cluster state
+                                clusterRepositories.put(repository.getURI().toString(), repository.getName());
+                                // sending cluster event
+                                ClusterRepositoryEvent event = new ClusterRepositoryEvent(repository.getURI().toString(), RepositoryEvent.EventType.RepositoryAdded);
+                                event.setSourceGroup(group);
+                                event.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(event);
                             } else {
                                 LOGGER.debug("CELLAR FEATURE: repository {} is already in cluster group {}", repository.getName(), groupName);
                             }
@@ -194,12 +229,47 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (featuresList != null && featuresList.length > 0) {
                     for (Feature feature : featuresList) {
                         if (isAllowed(group, Constants.CATEGORY, feature.getName(), EventType.OUTBOUND)) {
-                            FeatureState clusterFeatureState = new FeatureState();
-                            clusterFeatureState.setName(feature.getName());
-                            clusterFeatureState.setVersion(feature.getVersion());
-                            clusterFeatureState.setInstalled(featuresService.isInstalled(feature));
-                            clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), clusterFeatureState);
-                            LOGGER.debug("CELLAR FEATURE: pushing feature {}/{} to cluster group {}", feature.getName(), feature.getVersion(), groupName);
+                            boolean installed = featuresService.isInstalled(feature);
+                            String key = feature.getName() + "/" + feature.getVersion();
+                            FeatureState clusterFeature = clusterFeatures.get(key);
+                            if (clusterFeature == null) {
+                                LOGGER.debug("CELLAR FEATURE: adding feature {} to cluster group {}", key, groupName);
+                                // updating cluster state
+                                clusterFeature = new FeatureState();
+                                clusterFeature.setName(feature.getName());
+                                clusterFeature.setVersion(feature.getVersion());
+                                clusterFeature.setInstalled(installed);
+                                clusterFeatures.put(key, clusterFeature);
+                                // sending cluster event
+                                ClusterFeaturesEvent event;
+                                if (installed) {
+                                    event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureInstalled);
+                                } else {
+                                    event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureUninstalled);
+                                }
+                                event.setSourceGroup(group);
+                                event.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(event);
+
+                            } else {
+                                if (clusterFeature.getInstalled() != installed) {
+                                    // updating cluster state
+                                    clusterFeature.setInstalled(installed);
+                                    clusterFeatures.put(key, clusterFeature);
+                                    // sending cluster event
+                                    ClusterFeaturesEvent event;
+                                    if (installed) {
+                                        event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureInstalled);
+                                    } else {
+                                        event = new ClusterFeaturesEvent(feature.getName(), feature.getVersion(), FeatureEvent.EventType.FeatureUninstalled);
+                                    }
+                                    event.setSourceGroup(group);
+                                    event.setSourceNode(clusterManager.getNode());
+                                    eventProducer.produce(event);
+                                } else {
+                                    LOGGER.debug("CELLAR FEATURE: feature {} already sync on the cluster group {}", key, groupName);
+                                }
+                            }
                         } else {
                             LOGGER.debug("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", feature.getName(), groupName);
                         }
