@@ -100,6 +100,7 @@ public class Activator extends BaseActivator {
         urlSynchronizer.setObrService(repositoryAdmin);
         urlSynchronizer.setClusterManager(clusterManager);
         urlSynchronizer.setGroupManager(groupManager);
+        urlSynchronizer.setEventProducer(eventProducer);
         urlSynchronizer.setConfigurationAdmin(configurationAdmin);
         urlSynchronizer.init();
         props = new Hashtable();

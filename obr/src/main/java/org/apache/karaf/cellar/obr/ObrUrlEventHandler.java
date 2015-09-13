@@ -70,6 +70,12 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
             return;
         }
 
+        // check if it's not a "local" event
+        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR BUNDLE: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         String url = event.getUrl();
         try {
             if (isAllowed(event.getSourceGroup(), Constants.URLS_CONFIG_CATEGORY, url, EventType.INBOUND) || event.getForce()) {
