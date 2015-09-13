@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.bundle;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.Bundle;
@@ -69,16 +70,16 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     public void sync(Group group) {
         String policy = getSyncPolicy(group);
         if (policy == null) {
-            LOGGER.warn("CELLAR BUNDLE: sync policy is not defined for cluster group " + group.getName());
+            LOGGER.warn("CELLAR BUNDLE: sync policy is not defined for cluster group {}", group.getName());
         }
         if (policy.equalsIgnoreCase("cluster")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
             pull(group);
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'node' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'node' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push first)");
             push(group);
             LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull after)");
@@ -127,18 +128,18 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 try {
                                     if (state.getStatus() == Bundle.INSTALLED) {
                                         if (!isInstalled(state.getLocation())) {
-                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {}", state.getLocation());
+                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
                                             installBundleFromLocation(state.getLocation());
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already installed on node", state.getLocation());
                                         }
                                     } else if (state.getStatus() == Bundle.ACTIVE) {
                                         if (!isInstalled(state.getLocation())) {
-                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {}", state.getLocation());
+                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
                                             installBundleFromLocation(state.getLocation());
                                         }
                                         if (!isStarted(state.getLocation())) {
-                                            LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{}", symbolicName, version);
+                                            LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{} on node", symbolicName, version);
                                             startBundle(symbolicName, version);
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
@@ -164,6 +165,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
      */
     @Override
     public void push(Group group) {
+
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
+            return;
+        }
 
         if (group != null) {
             String groupName = group.getName();

@@ -103,6 +103,7 @@ public class Activator extends BaseActivator implements ManagedService {
         configurationSynchronizer.setConfigurationAdmin(configurationAdmin);
         configurationSynchronizer.setGroupManager(groupManager);
         configurationSynchronizer.setClusterManager(clusterManager);
+        configurationSynchronizer.setEventProducer(eventProducer);
         configurationSynchronizer.setStorage(storage);
         configurationSynchronizer.init();
         props = new Hashtable();

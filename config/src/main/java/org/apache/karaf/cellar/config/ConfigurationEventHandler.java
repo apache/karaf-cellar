@@ -62,6 +62,12 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             return;
         }
 
+        // check if it's not a "local" event
+        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR CONFIG: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         Group group = event.getSourceGroup();
         String groupName = group.getName();
 
