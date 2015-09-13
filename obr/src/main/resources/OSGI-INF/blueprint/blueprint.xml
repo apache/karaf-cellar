@@ -35,6 +35,7 @@
         <property name="clusterManager" ref="clusterManager"/>
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
+        <property name="eventProducer" ref="eventProducer"/>
     </bean>
     <service ref="obrUrlSynchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">
         <service-properties>

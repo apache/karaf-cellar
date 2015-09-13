@@ -131,6 +131,12 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
             return;
         }
 
+        // check if it's not a "local" event
+        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR BUNDLE: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         String bundleId = event.getBundleId();
         boolean deployOptional = event.getDeployOptional();
         boolean start = event.getStart();
