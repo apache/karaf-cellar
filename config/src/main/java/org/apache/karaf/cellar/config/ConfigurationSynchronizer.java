@@ -38,8 +38,10 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ConfigurationSynchronizer.class);
 
-    public ConfigurationSynchronizer() {
-        // nothing to do
+    private EventProducer eventProducer;
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
     }
 
     public void init() {
@@ -63,19 +65,32 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
     @Override
     public void sync(Group group) {
         String policy = getSyncPolicy(group);
-        if (policy != null && policy.equalsIgnoreCase("cluster")) {
-            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'cluster' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
-                LOGGER.debug("CELLAR CONFIG: node is the first and only member of the group, pushing state");
-                push(group);
-            } else {
-                LOGGER.debug("CELLAR CONFIG: pulling state");
-                pull(group);
-            }
+        if (policy == null) {
+            LOGGER.warn("CELLAR CONFIG: sync policy is not defined for cluster group {}", group.getName());
         }
-        if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR CONFIG: sync policy is set as 'node' for cluster group " + group.getName());
+        if (policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy set as 'cluster' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push after)");
             push(group);
+        } else if (policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy set as 'node' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push first)");
+            push(group);
+            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull after)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("clusterOnly")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy set as 'clusterOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull only)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("nodeOnly")) {
+            LOGGER.debug("CELLAR CONFIG: sync policy set as 'nodeOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push only)");
+            push(group);
+        } else {
+            LOGGER.debug("CELLAR CONFIG: sync policy set as 'disabled' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR CONFIG: no sync");
         }
     }
 
@@ -107,6 +122,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
                             localDictionary = filter(localDictionary);
                             if (!equals(clusterDictionary, localDictionary)) {
+                                LOGGER.debug("CELLAR CONFIG: updating configration {} on node", pid);
                                 localConfiguration.update((Dictionary) clusterDictionary);
                                 persistConfiguration(configurationAdmin, pid, clusterDictionary);
                             }
@@ -128,6 +144,11 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
      */
     public void push(Group group) {
 
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR CONFIG: cluster event producer is OFF");
+            return;
+        }
+
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR CONFIG: pushing configurations to cluster group {}", groupName);
@@ -145,8 +166,28 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
                             Dictionary localDictionary = localConfiguration.getProperties();
                             localDictionary = filter(localDictionary);
-                            // update the configurations in the cluster group
-                            clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                            if (!clusterConfigurations.containsKey(pid)) {
+                                LOGGER.debug("CELLAR CONFIG: creating configuration pid {} on the cluster", pid);
+                                // update cluster configurations
+                                clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                // send cluster event
+                                ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
+                                event.setSourceGroup(group);
+                                event.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(event);
+                            } else {
+                                Dictionary clusterDictionary = clusterConfigurations.get(pid);
+                                if (!equals(clusterDictionary, localDictionary)) {
+                                    LOGGER.debug("CELLAR CONFIG: updating configuration pid {} on the cluster", pid);
+                                    // update cluster configurations
+                                    clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                    // send cluster event
+                                    ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
+                                    event.setSourceGroup(group);
+                                    event.setSourceNode(clusterManager.getNode());
+                                    eventProducer.produce(event);
+                                }
+                            }
                         } else
                             LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
                     }

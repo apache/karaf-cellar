@@ -68,7 +68,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
         try {
             // check if it's not a "local" event
             if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
-                LOGGER.debug("CELLAR BUNDLE: cluster event is local (coming from local synchronizer or listener)");
+                LOGGER.trace("CELLAR BUNDLE: cluster event is local (coming from local synchronizer or listener)");
                 return;
             }
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getLocation(), EventType.INBOUND)) {

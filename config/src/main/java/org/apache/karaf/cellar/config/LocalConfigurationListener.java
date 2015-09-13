@@ -45,7 +45,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
     public void configurationEvent(ConfigurationEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR CONFIG: local listener is disabled");
+            LOGGER.trace("CELLAR CONFIG: local listener is disabled");
             return;
         }
 
@@ -72,7 +72,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             if (clusterConfigurations.containsKey(pid)) {
                                 // update the configurations in the cluster group
                                 clusterConfigurations.remove(pid);
-                                // broadcast the cluster event
+                                // send the cluster event
                                 ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
                                 clusterConfigurationEvent.setType(event.getType());
                                 clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
@@ -91,7 +91,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                             if (!equals(localDictionary, distributedDictionary)) {
                                 // update the configurations in the cluster group
                                 clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
-                                // broadcast the cluster event
+                                // send the cluster event
                                 ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
                                 clusterConfigurationEvent.setSourceGroup(group);
                                 clusterConfigurationEvent.setSourceNode(clusterManager.getNode());
