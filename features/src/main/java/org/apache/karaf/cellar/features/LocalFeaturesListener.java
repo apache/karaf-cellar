@@ -57,7 +57,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void featureEvent(FeatureEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURE: local listener is disabled");
+            LOGGER.trace("CELLAR FEATURE: local listener is disabled");
             return;
         }
 
@@ -95,6 +95,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         // broadcast the event
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
+                        featureEvent.setSourceNode(clusterManager.getNode());
                         eventProducer.produce(featureEvent);
                     } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
@@ -111,7 +112,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void repositoryEvent(RepositoryEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURE: local listener is disabled");
+            LOGGER.trace("CELLAR FEATURE: local listener is disabled");
             return;
         }
 
@@ -131,6 +132,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     for (Group group : groups) {
                         ClusterRepositoryEvent clusterRepositoryEvent = new ClusterRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
                         clusterRepositoryEvent.setSourceGroup(group);
+                        clusterRepositoryEvent.setSourceNode(clusterManager.getNode());
                         RepositoryEvent.EventType type = event.getType();
 
                         Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + group.getName());
