@@ -55,6 +55,12 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             return;
         }
 
+        // check if it's not a "local" event
+        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR CONFIG: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         Group group = event.getSourceGroup();
         String groupName = group.getName();
 
@@ -90,7 +96,8 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
             } catch (Exception ex) {
                 LOGGER.error("CELLAR CONFIG: failed to update local configuration", ex);
             }
-        } else LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
+        } else
+            LOGGER.debug("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
     }
 
     public void init() {

@@ -23,7 +23,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.Map;
 
@@ -67,7 +67,7 @@ public class StopBundleCommand extends BundleCommandSupport {
                 System.err.println("Bundle " + key + " not found in cluster group " + groupName);
                 return null;
             }
-            state.setStatus(BundleEvent.STOPPED);
+            state.setStatus(Bundle.RESOLVED);
             location = state.getLocation();
 
             // check if the bundle is allowed
@@ -87,7 +87,7 @@ public class StopBundleCommand extends BundleCommandSupport {
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 

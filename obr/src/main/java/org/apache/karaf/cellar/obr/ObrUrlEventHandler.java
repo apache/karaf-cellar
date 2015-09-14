@@ -64,6 +64,12 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
             return;
         }
 
+        // check if it's not a "local" event
+        if (clusterObrUrlEvent.getSourceNode() != null && clusterObrUrlEvent.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR OBR: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         String url = clusterObrUrlEvent.getUrl();
         String groupName = clusterObrUrlEvent.getSourceGroup().getName();
         try {
@@ -80,7 +86,8 @@ public class ObrUrlEventHandler extends ObrSupport implements EventHandler<Clust
                         LOGGER.warn("CELLAR OBR: the repository URL hasn't been removed from the OBR service");
                     }
                 }
-            } else LOGGER.debug("CELLAR OBR: repository URL {} is marked BLOCKED INBOUND for cluster group {}", url, groupName);
+            } else
+                LOGGER.debug("CELLAR OBR: repository URL {} is marked BLOCKED INBOUND for cluster group {}", url, groupName);
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to register URL {}", url, e);
         }

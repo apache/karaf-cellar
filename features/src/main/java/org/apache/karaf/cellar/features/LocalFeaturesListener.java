@@ -58,13 +58,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void featureEvent(FeatureEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURES_MAP: local listener is disabled");
+            LOGGER.trace("CELLAR FEATURES: local listener is disabled");
             return;
         }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES_MAP: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
             return;
         }
 
@@ -96,9 +96,10 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         // broadcast the cluster event
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
+                        featureEvent.setSourceNode(clusterManager.getNode());
                         eventProducer.produce(featureEvent);
                     } else
-                        LOGGER.debug("CELLAR FEATURES_MAP: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
+                        LOGGER.debug("CELLAR FEATURES: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
             }
         }
@@ -113,13 +114,13 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     public void repositoryEvent(RepositoryEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR FEATURES_MAP: local listener is disabled");
+            LOGGER.trace("CELLAR FEATURES: local listener is disabled");
             return;
         }
 
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
-            LOGGER.debug("CELLAR FEATURES_MAP: cluster event producer is OFF");
+            LOGGER.debug("CELLAR FEATURES: cluster event producer is OFF");
             return;
         }
 
@@ -133,6 +134,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                     for (Group group : groups) {
                         ClusterRepositoryEvent repositoryEvent = new ClusterRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
                         repositoryEvent.setSourceGroup(group);
+                        repositoryEvent.setSourceNode(clusterManager.getNode());
                         RepositoryEvent.EventType type = event.getType();
 
                         List<String> clusterRepositories = clusterManager.getList(Constants.REPOSITORIES_LIST + Configurations.SEPARATOR + group.getName());

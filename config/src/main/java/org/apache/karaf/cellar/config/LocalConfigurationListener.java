@@ -48,7 +48,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
     public void configurationEvent(ConfigurationEvent event) {
 
         if (!isEnabled()) {
-            LOGGER.debug("CELLAR CONFIG: local listener is disabled");
+            LOGGER.trace("CELLAR CONFIG: local listener is disabled");
             return;
         }
 

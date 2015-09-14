@@ -21,7 +21,7 @@ import org.apache.karaf.cellar.bundle.Constants;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.*;
 
@@ -64,25 +64,22 @@ public class ListBundleCommand extends CellarCommandSupport {
 
                     String status;
                     switch (bundle.getStatus()) {
-                        case BundleEvent.INSTALLED:
+                        case Bundle.INSTALLED:
                             status = "Installed";
                             break;
-                        case BundleEvent.RESOLVED:
+                        case Bundle.RESOLVED:
                             status = "Resolved";
                             break;
-                        case BundleEvent.STARTED:
+                        case Bundle.ACTIVE:
                             status = "Active";
                             break;
-                        case BundleEvent.STARTING:
+                        case Bundle.STARTING:
                             status = "Starting";
                             break;
-                        case BundleEvent.STOPPED:
-                            status = "Resolved";
-                            break;
-                        case BundleEvent.STOPPING:
+                        case Bundle.STOPPING:
                             status = "Stopping";
                             break;
-                        case BundleEvent.UNINSTALLED:
+                        case Bundle.UNINSTALLED:
                             status = "Uninstalled";
                             break;
                         default:

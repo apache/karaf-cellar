@@ -32,6 +32,7 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="clusterManager" ref="clusterManager"/>
         <property name="bundleContext" ref="blueprintBundleContext"/>
+        <property name="eventProducer" ref="eventProducer"/>
         <property name="featuresService" ref="featuresService"/>
     </bean>
     <service ref="synchronizer" interface="org.apache.karaf.cellar.core.Synchronizer">

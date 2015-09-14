@@ -23,7 +23,7 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.util.Map;
 
@@ -79,7 +79,7 @@ public class StartBundleCommand extends BundleCommandSupport {
                 return null;
             }
 
-            state.setStatus(BundleEvent.STARTED);
+            state.setStatus(Bundle.ACTIVE);
             clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -87,7 +87,7 @@ public class StartBundleCommand extends BundleCommandSupport {
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
         event.setSourceGroup(group);
         eventProducer.produce(event);
 

@@ -21,7 +21,6 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleReference;
 import org.osgi.service.cm.Configuration;
@@ -34,14 +33,22 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * BundleSynchronizer is used when Cellar starts or when a node joins a cluster group.
- * The purpose is synchronize bundles local state with the states in cluster groups.
+ * The BundleSynchronizer is called when Cellar starts or a node joins a cluster group.
+ * The purpose is to synchronize bundles local state with the states in the cluster groups.
  */
 public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(BundleSynchronizer.class);
 
+    private EventProducer eventProducer;
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
+
     public void init() {
+        if (groupManager == null)
+            return;
         Set<Group> groups = groupManager.listLocalGroups();
         if (groups != null && !groups.isEmpty()) {
             for (Group group : groups) {
@@ -62,19 +69,32 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     @Override
     public void sync(Group group) {
         String policy = getSyncPolicy(group);
-        if (policy != null && policy.equalsIgnoreCase("cluster")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'cluster' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
-                LOGGER.debug("CELLAR BUNDLE: node is the first and only member of the group, pushing state");
-                push(group);
-            } else {
-                LOGGER.debug("CELLAR BUNDLE: pulling state");
-                pull(group);
-            }
+        if (policy == null) {
+            LOGGER.warn("CELLAR BUNDLE: sync policy is not defined for cluster group {}", group.getName());
         }
-        if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR BUNDLE: sync policy is set as 'node' for cluster group " + group.getName());
+        if (policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push after)");
             push(group);
+        } else if (policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'node' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push first)");
+            push(group);
+            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull after)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("clusterOnly")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'clusterOnly' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull only)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("nodeOnly")) {
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'nodeOnly' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push only)");
+            push(group);
+        } else {
+            LOGGER.debug("CELLAR BUNDLE: sync policy set as 'disabled' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR BUNDLE: no sync");
         }
     }
 
@@ -91,6 +111,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
@@ -105,17 +126,30 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             String bundleLocation = state.getLocation();
                             if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
                                 try {
-                                    if (state.getStatus() == BundleEvent.INSTALLED) {
-                                        installBundleFromLocation(state.getLocation());
-                                    } else if (state.getStatus() == BundleEvent.STARTED) {
-                                        installBundleFromLocation(state.getLocation());
-                                        startBundle(symbolicName, version);
+                                    if (state.getStatus() == Bundle.INSTALLED) {
+                                        if (!isInstalled(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
+                                            installBundleFromLocation(state.getLocation());
+                                        } else {
+                                            LOGGER.debug("CELLAR BUNDLE: bundle located {} already installed on node", state.getLocation());
+                                        }
+                                    } else if (state.getStatus() == Bundle.ACTIVE) {
+                                        if (!isInstalled(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
+                                            installBundleFromLocation(state.getLocation());
+                                        }
+                                        if (!isStarted(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{} on node", symbolicName, version);
+                                            startBundle(symbolicName, version);
+                                        } else {
+                                            LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
+                                        }
                                     }
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
                                 }
                             } else
-                                LOGGER.debug("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
+                                LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
                         }
                     }
                 }
@@ -133,6 +167,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     @Override
     public void push(Group group) {
 
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            LOGGER.warn("CELLAR BUNDLE: cluster event producer is OFF");
+            return;
+        }
+
         if (group != null) {
             String groupName = group.getName();
             LOGGER.debug("CELLAR BUNDLE: pushing bundles to cluster group {}", groupName);
@@ -148,52 +187,52 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 for (Bundle bundle : bundles) {
                     long bundleId = bundle.getBundleId();
                     String symbolicName = bundle.getSymbolicName();
-                    String version = bundle.getHeaders().get("Bundle-Version").toString();
+                    String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
                     String bundleLocation = bundle.getLocation();
                     int status = bundle.getState();
                     String id = symbolicName + "/" + version;
 
-                    // check if the bundle is allowed outbound
+                    // check if the pid is marked as local.
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
-
-                        BundleState bundleState = new BundleState();
-                        bundleState.setId(bundleId);
-                        // get the bundle name or location.
-                        String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
-                        // if there is no name, then default to symbolic name.
-                        name = (name == null) ? symbolicName : name;
-                        // if there is no symbolic name, resort to location.
-                        name = (name == null) ? bundle.getLocation() : name;
-                        bundleState.setName(name);
-                        bundleState.setSymbolicName(symbolicName);
-                        bundleState.setVersion(version);
-
-                        bundleState.setLocation(bundleLocation);
-
-                        if (status == Bundle.ACTIVE)
-                            status = BundleEvent.STARTED;
-                        if (status == Bundle.INSTALLED)
-                            status = BundleEvent.INSTALLED;
-                        if (status == Bundle.RESOLVED)
-                            status = BundleEvent.RESOLVED;
-                        if (status == Bundle.STARTING)
-                            status = BundleEvent.STARTING;
-                        if (status == Bundle.UNINSTALLED)
-                            status = BundleEvent.UNINSTALLED;
-                        if (status == Bundle.STOPPING)
-                            status = BundleEvent.STARTED;
-
-                        bundleState.setStatus(status);
-
-                        BundleState existingState = clusterBundles.get(id);
-
-                        if (existingState == null || !existingState.getLocation().equals(bundleState.getLocation()) || existingState.getStatus() != bundleState.getStatus()) {
-                            // update the bundle in the cluster group
+                        if (!clusterBundles.containsKey(id)) {
+                            LOGGER.debug("CELLAR BUNDLE: deploying bundle {} on the cluster", id);
+                            BundleState bundleState = new BundleState();
+                            // get the bundle name or location.
+                            String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
+                            // if there is no name, then default to symbolic name.
+                            name = (name == null) ? symbolicName : name;
+                            // if there is no symbolic name, resort to location.
+                            name = (name == null) ? bundle.getLocation() : name;
+                            bundleState.setId(bundleId);
+                            bundleState.setName(name);
+                            bundleState.setSymbolicName(symbolicName);
+                            bundleState.setVersion(version);
+                            bundleState.setLocation(bundleLocation);
+                            bundleState.setStatus(status);
+                            // update cluster state
                             clusterBundles.put(id, bundleState);
+                            // send cluster event
+                            ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
+                            clusterEvent.setSourceGroup(group);
+                            clusterEvent.setSourceNode(clusterManager.getNode());
+                            eventProducer.produce(clusterEvent);
+                        } else {
+                            BundleState bundleState = clusterBundles.get(id);
+                            if (bundleState.getStatus() != status) {
+                                LOGGER.debug("CELLAR BUNDLE: updating bundle {} on the cluster", id);
+                                // update cluster state
+                                bundleState.setStatus(status);
+                                clusterBundles.put(id, bundleState);
+                                // send cluster event
+                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
+                                clusterEvent.setSourceGroup(group);
+                                clusterEvent.setSourceNode(clusterManager.getNode());
+                                eventProducer.produce(clusterEvent);
+                            }
                         }
 
                     } else
-                        LOGGER.debug("CELLAR BUNDLE: bundle {} is marked as BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
+                        LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -210,7 +249,6 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
     @Override
     public String getSyncPolicy(Group group) {
         String groupName = group.getName();
-
         try {
             Configuration configuration = configurationAdmin.getConfiguration(Configurations.GROUP, null);
             Dictionary<String, Object> properties = configuration.getProperties();
@@ -221,6 +259,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         } catch (IOException e) {
             LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
         }
+
         return "disabled";
     }
 

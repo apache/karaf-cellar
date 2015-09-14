@@ -26,7 +26,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 
 import java.net.URL;
 import java.util.List;
@@ -103,9 +103,9 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     state.setLocation(url);
                     state.setId(clusterBundles.size());
                     if (start) {
-                        state.setStatus(BundleEvent.STARTED);
+                        state.setStatus(Bundle.ACTIVE);
                     } else {
-                        state.setStatus(BundleEvent.INSTALLED);
+                        state.setStatus(Bundle.INSTALLED);
                     }
                     clusterBundles.put(symbolicName + "/" + version, state);
                 } finally {
@@ -113,7 +113,10 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 }
 
                 // broadcast the cluster event
-                ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, url, BundleEvent.INSTALLED);
+                ClusterBundleEvent event;
+                if (start)
+                    event = new ClusterBundleEvent(symbolicName, version, url, Bundle.ACTIVE);
+                else event = new ClusterBundleEvent(symbolicName, version, url, Bundle.INSTALLED);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {

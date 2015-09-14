@@ -26,7 +26,7 @@
 
     <feature name="hazelcast" description="In memory data grid" version="${hazelcast.version}" resolver="(obr)">
         <configfile finalname="/etc/hazelcast.xml">mvn:org.apache.karaf.cellar/apache-karaf-cellar/${project.version}/xml/hazelcast</configfile>
-        <bundle start-level="70">mvn:com.hazelcast/hazelcast-all/${hazelcast.version}</bundle>
+        <bundle start-level="70">mvn:com.hazelcast/hazelcast/${hazelcast.version}</bundle>
     </feature>
 
     <feature name="cellar-hazelcast" description="Cellar implementation based on Hazelcast" version="${project.version}" resolver="(obr)">

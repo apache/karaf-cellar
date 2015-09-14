@@ -18,6 +18,7 @@ import org.apache.felix.bundlerepository.Resource;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.Synchronizer;
+import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
@@ -33,6 +34,12 @@ import java.util.Set;
 public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(ObrUrlSynchronizer.class);
+
+    private EventProducer eventProducer;
+
+    public void setEventProducer(EventProducer eventProducer) {
+        this.eventProducer = eventProducer;
+    }
 
     @Override
     public void init() {
@@ -57,19 +64,32 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
     @Override
     public void sync(Group group) {
         String policy = getSyncPolicy(group);
-        if (policy != null && policy.equalsIgnoreCase("cluster")) {
-            LOGGER.debug("CELLAR OBR: sync policy is set as 'cluster' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() == 1 && clusterManager.listNodesByGroup(group).contains(clusterManager.getNode())) {
-                LOGGER.debug("CELLAR OBR: node is the first and only member of the group, pushing state");
-                push(group);
-            } else {
-                LOGGER.debug("CELLAR OBR: pulling state");
-                pull(group);
-            }
+        if (policy == null) {
+            LOGGER.warn("CELLAR OBR: sync policy is not defined for cluster group {}", group.getName());
         }
-        if (policy != null && policy.equalsIgnoreCase("node")) {
-            LOGGER.debug("CELLAR OBR: sync policy is set as 'cluster' for cluster group " + group.getName());
+        if (policy.equalsIgnoreCase("cluster")) {
+            LOGGER.debug("CELLAR OBR: sync policy set as 'cluster' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR OBR: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR OBR: updating cluster from the local node (push after)");
             push(group);
+        } else if (policy.equalsIgnoreCase("node")) {
+            LOGGER.debug("CELLAR OBR: sync policy set as 'node' for cluster group {}", group.getName());
+            LOGGER.debug("CELLAR OBR: updating cluster from the local node (push first)");
+            push(group);
+            LOGGER.debug("CELLAR OBR: updating node from the cluster (pull after)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("clusterOnly")) {
+            LOGGER.debug("CELLAR OBR: sync policy set as 'clusterOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR OBR: updating node from the cluster (pull only)");
+            pull(group);
+        } else if (policy.equalsIgnoreCase("nodeOnly")) {
+            LOGGER.debug("CELLAR OBR: sync policy set as 'nodeOnly' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR OBR: updating cluster from the local node (push only)");
+            push(group);
+        } else {
+            LOGGER.debug("CELLAR OBR: sync policy set as 'disabled' for cluster group " + group.getName());
+            LOGGER.debug("CELLAR OBR: no sync");
         }
     }
 
@@ -119,11 +139,19 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                 Repository[] repositories = obrService.listRepositories();
                 for (Repository repository : repositories) {
                     if (isAllowed(group, Constants.URLS_CONFIG_CATEGORY, repository.getURI().toString(), EventType.OUTBOUND)) {
+                        LOGGER.debug("CELLAR OBR: adding repository {} to the cluster", repository.getURI().toString());
+                        // update cluster state
                         clusterUrls.add(repository.getURI().toString());
+                        // send cluster event
+                        ClusterObrUrlEvent urlEvent = new ClusterObrUrlEvent(repository.getURI().toString(), Constants.URL_ADD_EVENT_TYPE);
+                        urlEvent.setSourceGroup(group);
+                        urlEvent.setSourceNode(clusterManager.getNode());
+                        eventProducer.produce(urlEvent);
                         // update the OBR bundles in the cluster group
                         Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);
                         Resource[] resources = repository.getResources();
                         for (Resource resource : resources) {
+                            LOGGER.debug("CELLAR OBR: adding bundle {} to the cluster", resource.getPresentationName());
                             ObrBundleInfo info = new ObrBundleInfo(resource.getPresentationName(), resource.getSymbolicName(), resource.getVersion().toString());
                             clusterBundles.add(info);
                         }

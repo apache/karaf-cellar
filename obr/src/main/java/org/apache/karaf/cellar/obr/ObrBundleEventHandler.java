@@ -56,9 +56,9 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
         String[] target;
         int idx = bundle.indexOf(VERSION_DELIM);
         if (idx > 0) {
-            target = new String[]{ bundle.substring(0, idx), bundle.substring(idx + 1) };
+            target = new String[]{bundle.substring(0, idx), bundle.substring(idx + 1)};
         } else {
-            target = new String[]{ bundle, null };
+            target = new String[]{bundle, null};
         }
         return target;
     }
@@ -124,6 +124,12 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
             return;
         }
 
+        // check if it's not a "local" event
+        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR OBR: cluster event is local (coming from local synchronizer or listener)");
+            return;
+        }
+
         String bundleId = event.getBundleId();
         try {
             if (isAllowed(event.getSourceGroup(), Constants.BUNDLES_CONFIG_CATEGORY, bundleId, EventType.INBOUND)) {
@@ -152,7 +158,8 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
                         }
                     } else LOGGER.warn("CELLAR OBR: could not resolve targets");
                 }
-            } else LOGGER.debug("CELLAR OBR: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
+            } else
+                LOGGER.debug("CELLAR OBR: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleId, event.getSourceGroup().getName());
         } catch (Exception e) {
             LOGGER.error("CELLAR OBR: failed to handle bundle event {}", bundleId, e);
         }

@@ -21,7 +21,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.cellar.management.CellarBundleMBean;
-import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Bundle;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
@@ -130,14 +130,14 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             state.setVersion(version);
             state.setSymbolicName(symbolicName);
             state.setLocation(location);
-            state.setStatus(BundleEvent.INSTALLED);
+            state.setStatus(Bundle.INSTALLED);
             clusterBundles.put(symbolicName + "/" + version, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
 
         // broadcast the cluster event
-        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, BundleEvent.INSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, Bundle.INSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -192,7 +192,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.UNINSTALLED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.UNINSTALLED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -239,7 +239,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
             }
 
-            state.setStatus(BundleEvent.STARTED);
+            state.setStatus(Bundle.ACTIVE);
             clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -247,7 +247,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STARTED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -294,7 +294,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 throw new IllegalArgumentException("Bundle location " + location + " is blocked outbound for cluster group " + groupName);
             }
 
-            state.setStatus(BundleEvent.STOPPED);
+            state.setStatus(Bundle.RESOLVED);
             clusterBundles.put(key, state);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -302,7 +302,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // broadcast the cluster event
         String[] split = key.split("/");
-        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleEvent.STOPPED);
+        ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
@@ -327,25 +327,22 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             for (BundleState bundle : bundles) {
                 String status;
                 switch (bundle.getStatus()) {
-                    case BundleEvent.INSTALLED:
+                    case Bundle.INSTALLED:
                         status = "Installed";
                         break;
-                    case BundleEvent.RESOLVED:
+                    case Bundle.RESOLVED:
                         status = "Resolved";
                         break;
-                    case BundleEvent.STARTED:
+                    case Bundle.ACTIVE:
                         status = "Active";
                         break;
-                    case BundleEvent.STARTING:
+                    case Bundle.STARTING:
                         status = "Starting";
                         break;
-                    case BundleEvent.STOPPED:
-                        status = "Resolved";
-                        break;
-                    case BundleEvent.STOPPING:
+                    case Bundle.STOPPING:
                         status = "Stopping";
                         break;
-                    case BundleEvent.UNINSTALLED:
+                    case Bundle.UNINSTALLED:
                         status = "Uninstalled";
                         break;
                     default:
