@@ -45,10 +45,13 @@ public class RepoAddCommand extends CellarCommandSupport {
     @Completion(AllGroupsCompleter.class)
     String groupName;
 
-    @Argument(index = 1, name = "urls", description = "URLs of the feature repositories separated by whitespaces", required = true, multiValued = true)
-    List<String> urls;
+    @Argument(index = 1, name = "name/url", description = "Shortcut name of the features repository or the full URL", required = true, multiValued = false)
+    String nameOrUrl;
 
-    @Option(name = "-i", aliases = { "--install" }, description = "Install all features contained in the features repository", required = false, multiValued = false)
+    @Argument(index = 2, name = "version", description = "The version of the features repository if using features repository name as first argument. It should be empty if using the URL.", required = false, multiValued = false)
+    String version;
+
+    @Option(name = "-i", aliases = {"--install"}, description = "Install all features contained in the features repository", required = false, multiValued = false)
     boolean install;
 
     @Reference
@@ -80,69 +83,71 @@ public class RepoAddCommand extends CellarCommandSupport {
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-            for (String url : urls) {
-                // check if the URL is already registered
-                String name = null;
-                for (String repository : clusterRepositories.keySet()) {
-                    if (repository.equals(url)) {
-                        name = clusterRepositories.get(url);
+            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
+            if (uri == null) {
+                uri = new URI(nameOrUrl);
+            }
+            // check if the URL is already registered
+            String name = null;
+            for (String repository : clusterRepositories.keySet()) {
+                if (repository.equals(uri)) {
+                    name = clusterRepositories.get(uri);
+                    break;
+                }
+            }
+            if (name == null) {
+                // update the repository temporary locally
+                Repository repository = null;
+                boolean localRegistered = false;
+                // local lookup
+                for (Repository registeredRepository : featuresService.listRepositories()) {
+                    if (registeredRepository.getURI().equals(uri)) {
+                        repository = registeredRepository;
                         break;
                     }
                 }
-                if (name == null) {
-                    // update the repository temporary locally
-                    Repository repository  = null;
-                    boolean localRegistered = false;
-                    // local lookup
+                if (repository == null) {
+                    // registered locally
+                    try {
+                        featuresService.addRepository(uri);
+                    } catch (Exception e) {
+                        System.err.println("Repository URL " + uri + " is not valid: " + e.getMessage());
+                        return null;
+                    }
+                    // get the repository
                     for (Repository registeredRepository : featuresService.listRepositories()) {
-                        if (registeredRepository.getURI().equals(new URI(url))) {
+                        if (registeredRepository.getURI().equals(uri)) {
                             repository = registeredRepository;
                             break;
                         }
                     }
-                    if (repository == null) {
-                        // registered locally
-                        try {
-                            featuresService.addRepository(new URI(url));
-                        } catch (Exception e) {
-                            System.err.println("Repository URL " + url + " is not valid: " + e.getMessage());
-                            continue;
-                        }
-                        // get the repository
-                        for (Repository registeredRepository : featuresService.listRepositories()) {
-                            if (registeredRepository.getURI().equals(new URI(url))) {
-                                repository = registeredRepository;
-                                break;
-                            }
-                        }
-                    } else {
-                        localRegistered = true;
-                    }
-
-                    // update the features repositories in the cluster group
-                    clusterRepositories.put(url, repository.getName());
-
-                    // update the features in the cluster group
-                    for (Feature feature : repository.getFeatures()) {
-                        FeatureState featureState = new FeatureState();
-                        featureState.setName(feature.getName());
-                        featureState.setVersion(feature.getVersion());
-                        featureState.setInstalled(featuresService.isInstalled(feature));
-                        clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
-                    }
-
-                    // un-register the repository if it's not local registered
-                    if (!localRegistered)
-                        featuresService.removeRepository(new URI(url));
-
-                    // broadcast the cluster event
-                    ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
-                    event.setInstall(install);
-                    event.setSourceGroup(group);
-                    eventProducer.produce(event);
                 } else {
-                    System.err.println("Features repository URL " + url + " already registered");
+                    localRegistered = true;
                 }
+
+                // update the features repositories in the cluster group
+                clusterRepositories.put(uri.toString(), repository.getName());
+
+                // update the features in the cluster group
+                for (Feature feature : repository.getFeatures()) {
+                    FeatureState featureState = new FeatureState();
+                    featureState.setName(feature.getName());
+                    featureState.setVersion(feature.getVersion());
+                    featureState.setInstalled(featuresService.isInstalled(feature));
+                    clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
+                }
+
+                // un-register the repository if it's not local registered
+                if (!localRegistered)
+                    featuresService.removeRepository(uri);
+
+                // broadcast the cluster event
+                ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
+                event.setInstall(install);
+                event.setSourceGroup(group);
+                eventProducer.produce(event);
+            } else {
+                System.err.println("Features repository URL " + uri + " already registered");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);

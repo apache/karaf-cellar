@@ -25,39 +25,50 @@ public interface CellarFeaturesMBean {
      * Add a features repository in a cluster group.
      *
      * @param group the cluster group name.
-     * @param url the features repository URL.
+     * @param nameOrUrl the features repository name or URL.
      * @throws Exception in case of add failure.
      */
-    void addRepository(String group, String url) throws Exception;
+    void addRepository(String group, String nameOrUrl) throws Exception;
 
     /**
      * Add a features repository in a cluster group.
      *
      * @param group the cluster group name.
-     * @param url the features repository URL.
+     * @param nameOrUrl the features repository name or URL.
+     * @param version the features repository version (when name is provided).
+     * @throws Exception in case of add failure.
+     */
+    void addRepository(String group, String nameOrUrl, String version) throws Exception;
+
+    /**
+     * Add a features repository in a cluster group.
+     *
+     * @param group the cluster group name.
+     * @param nameOrUrl the features repository URL.
+     * @param version the features repository version (when name is provided).
      * @param install true to install all features contained in the repository, false else.
      * @throws Exception in case of add failure.
      */
-    void addRepository(String group, String url, boolean install) throws Exception;
+    void addRepository(String group, String nameOrUrl, String version, boolean install) throws Exception;
 
     /**
      * Remove a features repository from a cluster group.
      *
      * @param group the cluster group name.
-     * @param url the features repository URL.
+     * @param repository the features repository name or URL.
      * @throws Exception in case of remove failure.
      */
-    void removeRepository(String group, String url) throws Exception;
+    void removeRepository(String group, String repository) throws Exception;
 
     /**
      * Remove a features repository from a cluster group, eventually uninstalling all features described in the repository.
      *
      * @param group the cluster group name.
-     * @param url the features repository URL.
+     * @param repository the features repository name or URL.
      * @param uninstall true to uninstall all features described in the repository URL.
      * @throws Exception
      */
-    void removeRepository(String group, String url, boolean uninstall) throws Exception;
+    void removeRepository(String group, String repository, boolean uninstall) throws Exception;
 
     /**
      * Install a feature in a cluster group.
