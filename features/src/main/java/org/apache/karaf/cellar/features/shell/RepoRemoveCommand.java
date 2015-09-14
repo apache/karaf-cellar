@@ -30,8 +30,11 @@ import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Command(scope = "cluster", name = "feature-repo-remove", description = "Remove features repository URLs from a cluster group")
 public class RepoRemoveCommand extends CellarCommandSupport {
@@ -39,10 +42,10 @@ public class RepoRemoveCommand extends CellarCommandSupport {
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     String groupName;
 
-    @Argument(index = 1, name = "urls", description = "The features repository URLs separated by whitespaces", required = true, multiValued = true)
-    List<String> urls;
+    @Argument(index = 1, name = "repository", description = "Name or url of the repository to remove", required = true, multiValued = false)
+    String repository;
 
-    @Option(name = "-u", aliases = { "--uninstall-all" }, description = "Uninstall all features contained in the features repositories", required = false, multiValued = false)
+    @Option(name = "-u", aliases = {"--uninstall-all"}, description = "Uninstall all features contained in the features repositories", required = false, multiValued = false)
     boolean uninstall;
 
     private EventProducer eventProducer;
@@ -71,6 +74,32 @@ public class RepoRemoveCommand extends CellarCommandSupport {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+            List<String> urls = new ArrayList<String>();
+            Pattern pattern = Pattern.compile(repository);
+            for (String repositoryUrl : clusterRepositories.keySet()) {
+                String repositoryName = clusterRepositories.get(repositoryUrl);
+                if (repositoryName != null && !repositoryName.isEmpty()) {
+                    // repository has name, try regex on the name
+                    Matcher nameMatcher = pattern.matcher(repositoryName);
+                    if (nameMatcher.matches()) {
+                        urls.add(repositoryUrl);
+                    } else {
+                        // the name regex doesn't match, fallback to repository URI regex
+                        Matcher uriMatcher = pattern.matcher(repositoryUrl);
+                        if (uriMatcher.matches()) {
+                            urls.add(repositoryUrl);
+                        }
+                    }
+                } else {
+                    // the repository name is not defined, use repository URI regex
+                    Matcher uriMatcher = pattern.matcher(repositoryUrl);
+                    if (uriMatcher.matches()) {
+                        urls.add(repositoryUrl);
+                    }
+                }
+            }
+
             for (String url : urls) {
                 // looking for the URL in the list
                 boolean found = false;

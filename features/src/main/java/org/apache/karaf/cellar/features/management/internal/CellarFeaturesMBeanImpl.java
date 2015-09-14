@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.features.management.internal;
 
 // import org.apache.karaf.cellar.bundle.BundleState;
+
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
@@ -35,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of the Cellar Features MBean.
@@ -128,7 +131,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             // check if the feature exist
             FeatureState feature = null;
             String key = null;
-            for (String k: clusterFeatures.keySet()) {
+            for (String k : clusterFeatures.keySet()) {
                 FeatureState state = clusterFeatures.get(k);
                 key = k;
                 if (version == null) {
@@ -391,12 +394,17 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void addRepository(String groupName, String url) throws Exception {
-        this.addRepository(groupName, url, false);
+    public void addRepository(String groupName, String nameOrUrl) throws Exception {
+        this.addRepository(groupName, nameOrUrl, null, false);
     }
 
     @Override
-    public void addRepository(String groupName, String url, boolean install) throws Exception {
+    public void addRepository(String groupName, String nameOrUrl, String version) throws Exception {
+        this.addRepository(groupName, nameOrUrl, version, false);
+    }
+
+    @Override
+    public void addRepository(String groupName, String nameOrUrl, String version, boolean install) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -416,10 +424,15 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
+            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
+            if (uri == null) {
+                uri = new URI(nameOrUrl);
+            }
+
             // check if the URL is already registered
             String name = null;
             for (String repository : clusterRepositories.keySet()) {
-                if (repository.equals(url)) {
+                if (repository.equals(uri)) {
                     name = clusterRepositories.get(repository);
                     break;
                 }
@@ -430,7 +443,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 boolean localRegistered = false;
                 // local lookup
                 for (Repository registeredRepository : featuresService.listRepositories()) {
-                    if (registeredRepository.getURI().equals(new URI(url))) {
+                    if (registeredRepository.getURI().equals(uri)) {
                         repository = registeredRepository;
                         break;
                     }
@@ -438,13 +451,13 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 if (repository == null) {
                     // registered locally
                     try {
-                        featuresService.addRepository(new URI(url));
+                        featuresService.addRepository(uri);
                     } catch (Exception e) {
-                        throw new IllegalArgumentException("Features repository URL " + url + " is not valid: " + e.getMessage());
+                        throw new IllegalArgumentException("Features repository URL " + uri + " is not valid: " + e.getMessage());
                     }
                     // get the repository
                     for (Repository registeredRepository : featuresService.listRepositories()) {
-                        if (registeredRepository.getURI().equals(new URI(url))) {
+                        if (registeredRepository.getURI().equals(uri)) {
                             repository = registeredRepository;
                             break;
                         }
@@ -455,7 +468,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 }
 
                 // update the cluster group
-                clusterRepositories.put(url, name);
+                clusterRepositories.put(uri.toString(), name);
 
                 for (Feature feature : repository.getFeatures()) {
                     FeatureState state = new FeatureState();
@@ -467,15 +480,15 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
                 // un-register the repository if it's not local registered
                 if (!localRegistered)
-                    featuresService.removeRepository(new URI(url));
+                    featuresService.removeRepository(uri);
 
                 // broadcast the cluster event
-                ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryAdded);
+                ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
                 event.setInstall(install);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             } else {
-                throw new IllegalArgumentException("Features repository URL " + url + " already registered");
+                throw new IllegalArgumentException("Features repository URL " + uri + " already registered");
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -483,12 +496,12 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void removeRepository(String groupName, String url) throws Exception {
-        this.removeRepository(groupName, url, false);
+    public void removeRepository(String groupName, String repository) throws Exception {
+        this.removeRepository(groupName, repository, false);
     }
 
     @Override
-    public void removeRepository(String groupName, String url, boolean uninstall) throws Exception {
+    public void removeRepository(String groupName, String repo, boolean uninstall) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -508,61 +521,87 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            // looking for the URL in the list
-            String name = null;
-            for (String clusterRepository : clusterRepositories.keySet()) {
-                if (clusterRepository.equals(url)) {
-                    name = clusterRepositories.get(clusterRepository);
-                    break;
+
+            List<String> urls = new ArrayList<String>();
+            Pattern pattern = Pattern.compile(repo);
+            for (String repositoryUrl : clusterRepositories.keySet()) {
+                String repositoryName = clusterRepositories.get(repositoryUrl);
+                if (repositoryName != null && !repositoryName.isEmpty()) {
+                    // repository has name, try regex on the name
+                    Matcher nameMatcher = pattern.matcher(repositoryName);
+                    if (nameMatcher.matches()) {
+                        urls.add(repositoryUrl);
+                    } else {
+                        // the name regex doesn't match, fallback to repository URI regex
+                        Matcher uriMatcher = pattern.matcher(repositoryUrl);
+                        if (uriMatcher.matches()) {
+                            urls.add(repositoryUrl);
+                        }
+                    }
+                } else {
+                    // the repository name is not defined, use repository URI regex
+                    Matcher uriMatcher = pattern.matcher(repositoryUrl);
+                    if (uriMatcher.matches()) {
+                        urls.add(repositoryUrl);
+                    }
                 }
             }
-            if (name == null) {
-                // update the repository temporary locally
-                Repository repository = null;
-                boolean localRegistered = false;
-                // local lookup
-                for (Repository registeredRepository : featuresService.listRepositories()) {
-                    if (registeredRepository.getURI().equals(new URI(url))) {
-                        repository = registeredRepository;
+
+            for (String url : urls) {
+                // looking for the URL in the list
+                String name = null;
+                for (String clusterRepository : clusterRepositories.keySet()) {
+                    if (clusterRepository.equals(url)) {
+                        name = clusterRepositories.get(clusterRepository);
                         break;
                     }
                 }
-                if (repository == null) {
-                    // registered locally
-                    try {
-                        featuresService.addRepository(new URI(url));
-                    } catch (Exception e) {
-                        throw new IllegalArgumentException("Features repository URL " + url + " is not valid: " + e.getMessage());
-                    }
-                    // get the repository
+                if (name == null) {
+                    // update the repository temporary locally
+                    Repository repository = null;
+                    boolean localRegistered = false;
+                    // local lookup
                     for (Repository registeredRepository : featuresService.listRepositories()) {
                         if (registeredRepository.getURI().equals(new URI(url))) {
                             repository = registeredRepository;
                             break;
                         }
                     }
-                } else {
-                    localRegistered = true;
+                    if (repository == null) {
+                        // registered locally
+                        try {
+                            featuresService.addRepository(new URI(url));
+                        } catch (Exception e) {
+                            throw new IllegalArgumentException("Features repository URL " + url + " is not valid: " + e.getMessage());
+                        }
+                        // get the repository
+                        for (Repository registeredRepository : featuresService.listRepositories()) {
+                            if (registeredRepository.getURI().equals(new URI(url))) {
+                                repository = registeredRepository;
+                                break;
+                            }
+                        }
+                    } else {
+                        localRegistered = true;
+                    }
+
+                    // update the cluster group
+                    clusterRepositories.remove(url);
+
+                    for (Feature feature : repository.getFeatures()) {
+                        clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
+                    }
+
+                    // un-register the repository if it's not local registered
+                    if (!localRegistered)
+                        featuresService.removeRepository(new URI(url));
+
+                    // broadcast a cluster event
+                    ClusterRepositoryEvent event = new ClusterRepositoryEvent(repo, RepositoryEvent.EventType.RepositoryRemoved);
+                    event.setUninstall(uninstall);
+                    event.setSourceGroup(group);
+                    eventProducer.produce(event);
                 }
-
-                // update the cluster group
-                clusterRepositories.remove(url);
-
-                for (Feature feature : repository.getFeatures()) {
-                    clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
-                }
-
-                // un-register the repository if it's not local registered
-                if (!localRegistered)
-                    featuresService.removeRepository(new URI(url));
-
-                // broadcast a cluster event
-                ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
-                event.setUninstall(uninstall);
-                event.setSourceGroup(group);
-                eventProducer.produce(event);
-            } else {
-                throw new IllegalArgumentException("Features repository URL " + url + " not found in cluster group " + groupName);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
