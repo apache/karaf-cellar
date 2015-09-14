@@ -31,7 +31,7 @@ public class HazelcastServiceFactoryTest {
         // Joining a cluster may not work with the default configuration on
         // networks where multicast is disabled. Use a custom hazelcast.xml
         // configuration that disables multicast and enables tcp on 127.0.0.1
-        System.setProperty("karaf.home", "src/test/resources");
+        System.setProperty("karaf.etc", "src/test/resources/etc");
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.setConfigurationManager(new HazelcastConfigurationManager());
         factory.init();

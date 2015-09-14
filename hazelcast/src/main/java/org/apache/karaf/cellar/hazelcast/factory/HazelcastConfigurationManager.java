@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class HazelcastConfigurationManager {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(HazelcastServiceFactory.class);
 
-    private String xmlConfigLocation = System.getProperty("karaf.home") + "/etc/hazelcast.xml";
+    private String xmlConfigLocation = System.getProperty("karaf.etc") + File.separator + "hazelcast.xml";
 
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
     private List<DiscoveryService> discoveryServices;
