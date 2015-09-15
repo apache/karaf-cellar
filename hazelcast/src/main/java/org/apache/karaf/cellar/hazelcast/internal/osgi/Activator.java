@@ -190,6 +190,7 @@ public class Activator extends BaseActivator implements ManagedService {
         eventTransportFactory.setConfigurationAdmin(configurationAdmin);
         eventTransportFactory.setInstance(hazelcastInstance);
         eventTransportFactory.setDispatcher(dispatcher);
+        register(EventTransportFactory.class, eventTransportFactory);
 
         LOGGER.debug("CELLAR HAZELCAST: init Hazelcast group manager");
         groupManager = new HazelcastGroupManager();
