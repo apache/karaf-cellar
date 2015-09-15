@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
 import org.apache.karaf.cellar.features.Constants;
+import org.apache.karaf.cellar.features.FeatureFinder;
 import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
 import org.apache.karaf.features.Feature;
@@ -30,7 +31,6 @@ import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
 
 @Command(scope = "cluster", name = "feature-repo-add", description = "Add a features repository to a cluster group")
@@ -50,6 +50,7 @@ public class RepoAddCommand extends CellarCommandSupport {
 
     private EventProducer eventProducer;
     private FeaturesService featuresService;
+    private FeatureFinder featureFinder;
 
     @Override
     protected Object doExecute() throws Exception {
@@ -74,15 +75,15 @@ public class RepoAddCommand extends CellarCommandSupport {
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
+            URI uri = featureFinder.getUriFor(nameOrUrl, version);
             if (uri == null) {
                 uri = new URI(nameOrUrl);
             }
             // check if the URL is already registered
             String name = null;
-            for (String repository : clusterRepositories.keySet()) {
-                if (repository.equals(uri)) {
-                    name = clusterRepositories.get(uri);
+            for (String repositoryUri : clusterRepositories.keySet()) {
+                if (repositoryUri.equals(uri)) {
+                    name = clusterRepositories.get(repositoryUri);
                     break;
                 }
             }
@@ -162,4 +163,13 @@ public class RepoAddCommand extends CellarCommandSupport {
     public void setFeaturesService(FeaturesService featuresService) {
         this.featuresService = featuresService;
     }
+
+    public FeatureFinder getFeatureFinder() {
+        return featureFinder;
+    }
+
+    public void setFeatureFinder(FeatureFinder featureFinder) {
+        this.featureFinder = featureFinder;
+    }
+
 }

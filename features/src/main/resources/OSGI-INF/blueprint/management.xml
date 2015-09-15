@@ -26,6 +26,7 @@
         <property name="groupManager" ref="groupManager"/>
         <property name="configurationAdmin" ref="configurationAdmin"/>
         <property name="featuresService" ref="featuresService"/>
+        <property name="featureFinder" ref="featureFinder"/>
     </bean>
     <service ref="cellarFeaturesMBean" auto-export="interfaces">
         <service-properties>

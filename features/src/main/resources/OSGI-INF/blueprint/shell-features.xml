@@ -68,6 +68,7 @@
                 <property name="groupManager" ref="groupManager"/>
                 <property name="eventProducer" ref="eventProducer"/>
                 <property name="featuresService" ref="featuresService"/>
+                <property name="featureFinder" ref="featureFinder"/>
             </action>
             <completers>
                 <ref component-id="allGroupsCompleter"/>

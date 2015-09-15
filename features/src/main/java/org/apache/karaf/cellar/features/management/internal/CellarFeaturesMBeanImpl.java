@@ -13,19 +13,13 @@
  */
 package org.apache.karaf.cellar.features.management.internal;
 
-// import org.apache.karaf.cellar.bundle.BundleState;
-
 import org.apache.karaf.cellar.core.*;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
-import org.apache.karaf.cellar.features.ClusterFeaturesEvent;
-import org.apache.karaf.cellar.features.Constants;
-import org.apache.karaf.cellar.features.FeatureState;
-import org.apache.karaf.cellar.features.ClusterRepositoryEvent;
+import org.apache.karaf.cellar.features.*;
 import org.apache.karaf.cellar.features.management.CellarFeaturesMBean;
 import org.apache.karaf.features.*;
-// import org.osgi.framework.BundleEvent;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import javax.management.NotCompliantMBeanException;
@@ -48,6 +42,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     private GroupManager groupManager;
     private EventProducer eventProducer;
     private FeaturesService featuresService;
+    private FeatureFinder featureFinder;
     private ConfigurationAdmin configurationAdmin;
 
     public CellarFeaturesMBeanImpl() throws NotCompliantMBeanException {
@@ -84,6 +79,14 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
 
     public void setFeaturesService(FeaturesService featuresService) {
         this.featuresService = featuresService;
+    }
+
+    public FeatureFinder getFeatureFinder() {
+        return featureFinder;
+    }
+
+    public void setFeatureFinder(FeatureFinder featureFinder) {
+        this.featureFinder = featureFinder;
     }
 
     public ConfigurationAdmin getConfigurationAdmin() {
@@ -424,7 +427,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             // get the features in the cluster group
             Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
+            URI uri = featureFinder.getUriFor(nameOrUrl, version);
             if (uri == null) {
                 uri = new URI(nameOrUrl);
             }

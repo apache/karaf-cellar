@@ -67,6 +67,11 @@
     </bean>
     <service ref="repositoryEventHandler" interface="org.apache.karaf.cellar.core.event.EventHandler"/>
 
+    <!-- Feature Finder -->
+    <bean id="featureFinder" class="org.apache.karaf.cellar.features.FeatureFinder">
+        <property name="configurationAdmin" ref="configurationAdmin"/>
+    </bean>
+
     <reference id="clusterManager" interface="org.apache.karaf.cellar.core.ClusterManager"/>
     <reference id="groupManager" interface="org.apache.karaf.cellar.core.GroupManager"/>
     <reference id="eventProducer" interface="org.apache.karaf.cellar.core.event.EventProducer"/>
