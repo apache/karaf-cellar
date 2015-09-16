@@ -36,6 +36,8 @@ public class Activator extends BaseActivator {
         public void doStart() throws Exception {
 
                 ClusterManager clusterManager = getTrackedService(ClusterManager.class);
+                if (clusterManager == null)
+                        return;
 
                 String nodeId = clusterManager.getNode().getId();
                 GreeterImpl greeter = new GreeterImpl(nodeId);
