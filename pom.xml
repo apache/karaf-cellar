@@ -64,6 +64,7 @@
         <module>shell</module>
         <module>hazelcast</module>
         <module>utils</module>
+        <module>http</module>
         <module>cloud</module>
         <module>kubernetes</module>
         <module>webconsole</module>

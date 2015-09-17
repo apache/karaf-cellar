@@ -109,5 +109,12 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
     </feature>
 
+    <feature name="cellar-http-balancer" description="Cellar HTTP request balancer" version="${project.version}">
+        <feature>cellar-hazelcast</feature>
+        <feature>http</feature>
+        <feature>http-whiteboard</feature>
+        <bundle>mvn:org.apache.karaf.cellar.http/org.apache.karaf.cellar.http.balancer/${project.version}</bundle>
+    </feature>
+
 </features>
 
