@@ -87,7 +87,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
             Set<Member> members = cluster.getMembers();
             if (members != null && !members.isEmpty()) {
                 for (Member member : members) {
-                    HazelcastNode node = new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
+                    HazelcastNode node = new HazelcastNode(member);
                     nodes.add(node);
                 }
             }
@@ -110,7 +110,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
                 Set<Member> members = cluster.getMembers();
                 if (members != null && !members.isEmpty()) {
                     for (Member member : members) {
-                        HazelcastNode node = new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
+                        HazelcastNode node = new HazelcastNode(member);
                         if (ids.contains(node.getId())) {
                             nodes.add(node);
                         }
@@ -135,7 +135,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
                 Set<Member> members = cluster.getMembers();
                 if (members != null && !members.isEmpty()) {
                     for (Member member : members) {
-                        HazelcastNode node = new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
+                        HazelcastNode node = new HazelcastNode(member);
                         if (id.equals(node.getId())) {
                             return node;
                         }

@@ -13,7 +13,12 @@
  */
 package org.apache.karaf.cellar.hazelcast;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
 import org.apache.karaf.cellar.core.Node;
+
+import com.hazelcast.core.Member;
 
 /**
  * Cluster node powered by Hazelcast.
@@ -25,11 +30,17 @@ public class HazelcastNode implements Node {
     private String host;
     private int port;
 
-    public HazelcastNode(String host, int port) {
+    public HazelcastNode(Member member) {
+        InetSocketAddress addr = member.getSocketAddress();
+        this.host = getHostString(addr);
+        this.port = addr.getPort();
         StringBuilder builder = new StringBuilder();
-        this.host = host;
-        this.port = port;
         this.id = builder.append(host).append(":").append(port).toString();
+    }
+
+    static String getHostString(InetSocketAddress socketAddr) {
+      InetAddress addr = socketAddr.getAddress();
+      return (addr != null && addr.toString().startsWith("/")) ? addr.getHostAddress() : socketAddr.getHostName();
     }
 
     @Override
@@ -83,5 +94,5 @@ public class HazelcastNode implements Node {
 		return "HazelcastNode [id=" + id + ", host=" + host + ", port=" + port
 				+ "]";
 	}
-    
+
 }
