@@ -26,6 +26,7 @@ import org.apache.karaf.cellar.features.Constants;
 import org.apache.karaf.cellar.features.FeatureState;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.FeaturesService;
+import org.apache.karaf.features.command.completers.AllFeatureCompleter;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
@@ -54,6 +55,7 @@ public class InstallFeatureCommand extends CellarCommandSupport {
     String groupName;
 
     @Argument(index = 1, name = "features", description = "The name and version of the features to install. A feature id looks like name/version. The version is optional.", required = true, multiValued = true)
+    @Completion(AllFeatureCompleter.class)
     List<String> features;
 
     @Reference

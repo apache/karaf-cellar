@@ -26,6 +26,7 @@ import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
+import org.apache.karaf.features.command.completers.InstalledRepoNameCompleter;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
@@ -49,6 +50,7 @@ public class RepoRemoveCommand extends CellarCommandSupport {
     String groupName;
 
     @Argument(index = 1, name = "repository", description = "Name or url of the repository to remove", required = true, multiValued = false)
+    @Completion(InstalledRepoNameCompleter.class)
     String repository;
 
     @Option(name = "-u", aliases = {"--uninstall-all"}, description = "Uninstall all features contained in the features repositories", required = false, multiValued = false)

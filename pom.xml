@@ -221,6 +221,11 @@
                 <version>${karaf.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.karaf.features</groupId>
+                <artifactId>org.apache.karaf.features.command</artifactId>
+                <version>${karaf.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.karaf</groupId>
                 <artifactId>org.apache.karaf.util</artifactId>
                 <version>${karaf.version}</version>

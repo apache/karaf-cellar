@@ -26,6 +26,7 @@ import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
+import org.apache.karaf.features.command.completers.AvailableRepoNameCompleter;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
@@ -46,6 +47,7 @@ public class RepoAddCommand extends CellarCommandSupport {
     String groupName;
 
     @Argument(index = 1, name = "name/url", description = "Shortcut name of the features repository or the full URL", required = true, multiValued = false)
+    @Completion(AvailableRepoNameCompleter.class)
     String nameOrUrl;
 
     @Argument(index = 2, name = "version", description = "The version of the features repository if using features repository name as first argument. It should be empty if using the URL.", required = false, multiValued = false)
