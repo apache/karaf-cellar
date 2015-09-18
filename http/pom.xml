@@ -35,7 +35,6 @@
 
     <modules>
         <module>balancer</module>
-        <!-- <module>session-replicator</module> -->
     </modules>
 
 </project>
