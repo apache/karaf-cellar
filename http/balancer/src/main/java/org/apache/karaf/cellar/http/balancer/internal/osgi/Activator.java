@@ -95,7 +95,9 @@ public class Activator extends BaseActivator {
         synchronizer.setGroupManager(groupManager);
         synchronizer.setBundleContext(bundleContext);
         synchronizer.init();
-        register(Synchronizer.class, synchronizer);
+        props = new Hashtable();
+        props.put("resource", "balanced.servlet");
+        register(Synchronizer.class, synchronizer, props);
 
         LOGGER.debug("CELLAR HTTP BALANCER: starting local servlet listener");
         LocalServletListener servletListener = new LocalServletListener();
@@ -103,9 +105,7 @@ public class Activator extends BaseActivator {
         servletListener.setGroupManager(groupManager);
         servletListener.setConfigurationAdmin(configurationAdmin);
         servletListener.setEventProducer(eventProducer);
-        props = new Hashtable();
-        props.put("resource", "balanced.servlet");
-        register(ServletListener.class, servletListener, props);
+        register(ServletListener.class, servletListener);
     }
 
     @Override
