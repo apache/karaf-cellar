@@ -55,4 +55,8 @@
     <reference id="commandStore" interface="org.apache.karaf.cellar.core.command.CommandStore"/>
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
+
+    <bean id="serviceTracker" class="org.apache.karaf.cellar.dosgi.ServiceTracker" init-method="init" destroy-method="destroy">
+        <property name="clusterManager" ref="clusterManager"/>
+    </bean>
 </blueprint>

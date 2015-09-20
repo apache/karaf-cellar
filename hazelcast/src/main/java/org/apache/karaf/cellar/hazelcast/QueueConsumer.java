@@ -86,26 +86,32 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
     @Override
     public void run() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            while (isConsuming) {
-                if (combinedClassLoader != null) {
-                    Thread.currentThread().setContextClassLoader(combinedClassLoader);
-                } else Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                E e = null;
-                try {
-                    e = getQueue().poll(10, TimeUnit.SECONDS);
-                } catch (InterruptedException e1) {
-                    LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
-                }
+        E e;
+        while (isConsuming) {
+            if (combinedClassLoader != null) {
+                Thread.currentThread().setContextClassLoader(combinedClassLoader);
+            } else Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            e = null;
+            try {
+                e = getQueue().poll(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e1) {
+                LOGGER.warn("CELLAR HAZELCAST: consume task interrupted");
+            } catch (Exception e2) {
+                // catch everything from Hazelcast to prevent the death of Queue Consumer task
+                LOGGER.warn("CELLAR HAZELCAST: consumer task failed to poll the queue", e2);
+            }
+            
+            try {
                 if (e != null) {
                     consume(e);
                 }
+            } catch (Exception e1) {
+                LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", e1);
             }
-        } catch (Exception ex) {
-            LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", ex);
-        } finally {
-            Thread.currentThread().setContextClassLoader(originalClassLoader);
+
         }
+        
+        Thread.currentThread().setContextClassLoader(originalClassLoader);
     }
 
     /**
