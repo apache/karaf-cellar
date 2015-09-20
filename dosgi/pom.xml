@@ -53,6 +53,11 @@
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
 
         <!-- Logging Dependencies -->
         <dependency>
@@ -90,6 +95,9 @@
                             org.osgi*,
                             org.slf4j;version="[1.6,2)";resolution:=optional
                         </Import-Package>
+                        <Private-Package>
+                            org.apache.commons.lang3*;-split-package:=merge-first
+                        </Private-Package>
                         <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,*</DynamicImport-Package>
                     </instructions>
                 </configuration>
