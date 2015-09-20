@@ -87,6 +87,10 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     uninstallBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == Bundle.ACTIVE) {
+                    if (!isInstalled(event.getLocation())) {
+                        LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
+                        installBundleFromLocation(event.getLocation());
+                    }
                     startBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == Bundle.RESOLVED) {
