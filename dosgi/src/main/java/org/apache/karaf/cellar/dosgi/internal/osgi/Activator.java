@@ -80,7 +80,7 @@ public class Activator extends BaseActivator {
         LOGGER.debug("CELLAR DOSGI: init remote service result handler");
         RemoteServiceResultHandler remoteServiceResultHandler = new RemoteServiceResultHandler();
         remoteServiceResultHandler.setCommandStore(commandStore);
-        register(EventHandler.class, remoteServiceCallHandler);
+        register(EventHandler.class, remoteServiceResultHandler);
 
         LOGGER.debug("CELLAR DOSGI: init import service listener");
         importServiceListener = new ImportServiceListener();

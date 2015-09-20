@@ -14,6 +14,7 @@
 package org.apache.karaf.cellar.samples.dosgi.greeter.client;
 
 import org.apache.karaf.cellar.samples.dosgi.greeter.api.Greeter;
+import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
@@ -21,7 +22,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "dosgi-greeter", name = "greet", description = "Starts the greet client")
 @Service
-public class GreetCommand {
+public class GreetCommand implements Action {
 
     @Argument(index = 0, name = "greetMessage", description = "The message that will be sent as the greeting.", required = true, multiValued = false)
     String greetMessage;
@@ -32,7 +33,7 @@ public class GreetCommand {
     @Reference
     private Greeter greeter;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         GreeterClient greeterClient = new GreeterClient(greeter, greetMessage,iterations);
         greeterClient.start();
         return null;

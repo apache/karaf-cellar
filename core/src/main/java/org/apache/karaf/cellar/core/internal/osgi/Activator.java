@@ -32,14 +32,13 @@ public class Activator extends BaseActivator {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
-    private EventHandlerServiceRegistry registry;
     private ServiceTracker<EventHandler, EventHandler> eventHandlerServiceTracker;
 
     @Override
     public void doStart() throws Exception {
 
         LOGGER.debug("CELLAR CORE: register event handler service registry");
-        registry = new EventHandlerServiceRegistry();
+        final EventHandlerServiceRegistry registry = new EventHandlerServiceRegistry();
         register(EventHandlerRegistry.class, registry);
 
         LOGGER.debug("CELLAR CORE: starting event handler service tracker");
