@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.dosgi;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.control.BasicSwitch;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * Handler for cluster remote service call event.
@@ -84,13 +86,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                 RemoteServiceResult result = new RemoteServiceResult(event.getId());
                 EventProducer producer = eventTransportFactory.getEventProducer(Constants.RESULT_PREFIX + Constants.SEPARATOR + event.getSourceNode().getId() + event.getEndpointId(), false);
                 try {
-                    Method method;
-                    if (classes.length > 0) {
-                        method = targetService.getClass().getMethod(event.getMethod(), classes);
-                    } else {
-                        method = targetService.getClass().getMethod(event.getMethod());
-                    }
-
+                    Method method = getMethod(classes, targetService, event);
                     Object obj = method.invoke(targetService, event.getArguments().toArray());
                     result.setResult(obj);
                     producer.produce(result);
@@ -112,6 +108,52 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
         }
     }
 
+    /**
+     * <p>Gets a matching method in the <code>Object targetService<code/>.<br/>
+     * Inheritance is supported.</p>
+     *
+     * @param eventParamTypes
+     * @param targetService
+     * @param event
+     * @return a method instance from the <code>Object targetService<code/>
+     * @throws NoSuchMethodException
+     */
+    private Method getMethod(Class[] eventParamTypes, Object targetService, RemoteServiceCall event) throws NoSuchMethodException {
+
+        Method result = null;
+        if (eventParamTypes.length > 0) {
+            for (Method remoteMethod : targetService.getClass().getMethods()) {
+                //need to find a method with a matching name and with the same number of parameters
+                if (remoteMethod.getName().equals(event.getMethod()) && remoteMethod.getParameterTypes().length == eventParamTypes.length) {
+                    boolean allParamsFound = true;
+                    for (int i = 0; i < remoteMethod.getParameterTypes().length; i++) {
+                        allParamsFound = allParamsFound && ClassUtils.isAssignable(eventParamTypes[i], remoteMethod.getParameterTypes()[i]);
+                    }
+
+                    // if already found a matching method, no need to continue looking for one
+                    if (allParamsFound) {
+                        result = remoteMethod;
+                        break;
+                    }
+                }
+            }
+        } else {
+            result = targetService.getClass().getMethod(event.getMethod());
+        }
+
+        //if method was not found go out with a bang
+        if (result == null) {
+            throw new NoSuchMethodException(String.format("No match for method [%s] %s", event.getMethod(), Arrays.toString(eventParamTypes)));
+        }
+
+        return result;
+    }
+
+    /**
+     * Get the event type that this handler can handle.
+     *
+     * @return the remote service call event type.
+     */
     @Override
     public Class<RemoteServiceCall> getType() {
         return RemoteServiceCall.class;
