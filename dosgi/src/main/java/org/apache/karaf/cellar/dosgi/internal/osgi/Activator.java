@@ -49,6 +49,7 @@ public class Activator extends BaseActivator {
 
     private ImportServiceListener importServiceListener;
     private ExportServiceListener exportServiceListener;
+    private RemovedNodeServiceTracker removedNodeServiceTracker;
     private ServiceRegistration mbeanRegistration;
 
     @Override
@@ -98,6 +99,11 @@ public class Activator extends BaseActivator {
         exportServiceListener.setBundleContext(bundleContext);
         exportServiceListener.init();
 
+        LOGGER.debug("CELLAR DOSGI: start removed nodes service tracker");
+        removedNodeServiceTracker = new RemovedNodeServiceTracker();
+        removedNodeServiceTracker.setClusterManager(clusterManager);
+        removedNodeServiceTracker.init();
+
         LOGGER.debug("CELLAR DOSGI: register MBean");
         ServiceMBeanImpl mbean = new ServiceMBeanImpl();
         mbean.setClusterManager(clusterManager);
@@ -114,6 +120,12 @@ public class Activator extends BaseActivator {
             mbeanRegistration.unregister();
             mbeanRegistration = null;
         }
+
+        if (removedNodeServiceTracker != null) {
+            removedNodeServiceTracker.destroy();
+            removedNodeServiceTracker = null;
+        }
+
         if (exportServiceListener != null) {
             exportServiceListener.destroy();
             exportServiceListener = null;
