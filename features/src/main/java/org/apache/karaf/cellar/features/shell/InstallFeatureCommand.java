@@ -63,46 +63,54 @@ public class InstallFeatureCommand extends FeatureCommandSupport {
             return null;
         }
 
-        Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-        // try to resolve the feature version if not provided
-        if (version == null) {
-            for (FeatureState state : clusterFeatures.values()) {
-                if (state.getName().equals(feature)) {
-                    version = state.getVersion();
+        try {
+
+            Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+
+            // try to resolve the feature version if not provided
+            if (version == null) {
+                for (FeatureState state : clusterFeatures.values()) {
+                    if (state.getName().equals(feature)) {
+                        version = state.getVersion();
+                    }
                 }
             }
-        }
 
-        // check if the feature exists in the map
-        if (!clusterFeatures.containsKey(feature + "/" + version)) {
-            if (version != null)
-                System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
-            else System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
-            return null;
-        }
+            // check if the feature exists in the map
+            if (!clusterFeatures.containsKey(feature + "/" + version)) {
+                if (version != null)
+                    System.err.println("Feature " + feature + "/" + version + " doesn't exist in the cluster group " + groupName);
+                else System.err.println("Feature " + feature + " doesn't exist in the cluster group " + groupName);
+                return null;
+            }
 
-        // check if the outbound event is allowed
-        if (!isAllowed(group, Constants.CATEGORY, feature, EventType.OUTBOUND)) {
-            System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
-            return null;
-        }
+            // check if the outbound event is allowed
+            if (!isAllowed(group, Constants.CATEGORY, feature, EventType.OUTBOUND)) {
+                System.err.println("Feature " + feature + " is blocked outbound for cluster group " + groupName);
+                return null;
+            }
 
-        // update the features in the cluster group
-        FeatureState clusterFeatureState = clusterFeatures.get(feature + "/" + version);
-        if (clusterFeatureState == null) {
-            clusterFeatureState = new FeatureState();
-            clusterFeatureState.setName(feature);
-            clusterFeatureState.setVersion(version);
-        }
-        clusterFeatureState.setInstalled(Boolean.TRUE);
-        clusterFeatures.put(feature + "/" + version, clusterFeatureState);
-        // TODO does it make sense to also update the cluster bundles, I don't think so ...
+            // update the features in the cluster group
+            FeatureState clusterFeatureState = clusterFeatures.get(feature + "/" + version);
+            if (clusterFeatureState == null) {
+                clusterFeatureState = new FeatureState();
+                clusterFeatureState.setName(feature);
+                clusterFeatureState.setVersion(version);
+            }
+            clusterFeatureState.setInstalled(Boolean.TRUE);
+            clusterFeatures.put(feature + "/" + version, clusterFeatureState);
+            // TODO does it make sense to also update the cluster bundles, I don't think so ...
 
-        // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(feature, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
-        event.setSourceGroup(group);
-        eventProducer.produce(event);
+            // broadcast the cluster event
+            ClusterFeaturesEvent event = new ClusterFeaturesEvent(feature, version, noClean, noRefresh, FeatureEvent.EventType.FeatureInstalled);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
 
         return null;
     }
