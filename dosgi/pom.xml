@@ -57,6 +57,11 @@
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.2</version>
+        </dependency>
 
         <!-- Logging Dependencies -->
         <dependency>
@@ -96,7 +101,8 @@
                         <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,org.apache.karaf.cellar.*</DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.dosgi.internal.osgi,
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                            org.apache.karaf.util.tracker;-split-package:=merge-first,
+                            org.apache.commons.lang3*;-split-package:=merge-first
                         </Private-Package>
                     </instructions>
                 </configuration>
