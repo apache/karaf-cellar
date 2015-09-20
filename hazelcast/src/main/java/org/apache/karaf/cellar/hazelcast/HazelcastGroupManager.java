@@ -146,7 +146,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
             Cluster cluster = instance.getCluster();
             if (cluster != null) {
                 Member member = cluster.getLocalMember();
-                node = new HazelcastNode(member.getInetSocketAddress().getHostName(), member.getInetSocketAddress().getPort());
+                node = new HazelcastNode(member.getInetSocketAddress().getHostString(), member.getInetSocketAddress().getPort());
             }
             return node;
         } finally {
