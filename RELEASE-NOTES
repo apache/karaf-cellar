@@ -25,6 +25,45 @@
 
   Changelog
   ---------
+** Bug
+    * [KARAF-1842] - cellar will show a distributed service as available, after the Node exposing it has shutdown unexpectedly 
+    * [KARAF-3521] - Cellar Synchronizers should not uninstall local resources
+    * [KARAF-3609] - Kubernetes/Cloud Service Discovery isn't working in Immutable applications
+    * [KARAF-3617] - Cellar config synchronizer creates the configuration but not the properties at sync time
+    * [KARAF-3646] - Service method and inheritance
+    * [KARAF-3677] - Cellar commands is waiting for the shell 1.1.0 namespace
+    * [KARAF-3714] - cluster:bundle-start doesn't actually start the bundle
+    * [KARAF-3715] - Cellar BundleMBean operations raise a NullPointerException
+    * [KARAF-3716] - cluster:bundle-* commands don't correctly select bundles
+    * [KARAF-3717] - Same bundle appears two times in cluster:bundle-list
+    * [KARAF-3719] - Cannot create a custom distribution including cellar using karaf-maven-plugin 
+    * [KARAF-3734] - Sync is not called when a node join a cluster group
+    * [KARAF-3864] - Warning when shutting down system with karaf-cellar installed
+    * [KARAF-3873] - TimeoutTask doesn't correctly remove pending commands
+    * [KARAF-3970] - Restarting cellar-hazelcast causes HazelcastInstanceNotActiveException
+    * [KARAF-3991] - Cellar should use karaf.etc property instead of karaf.home to load hazelcast.xml
+
+** Dependency upgrade
+    * [KARAF-3708] - Upgrade to Hazelcast 3.4.2
+    * [KARAF-3907] - Upgrade to Kubernetes v1 API
+    * [KARAF-3958] - Upgrade to Hazelcast 3.5.1
+    * [KARAF-4004] - Upgrade to Hazelcast 3.5.2
+
+** Improvement
+    * [KARAF-3502] - Refactor commands to be aligned with "new" Karaf 4 API
+    * [KARAF-3503] - Remove blueprint dependency and full Karaf 4 based
+    * [KARAF-3614] - Refactore features support for more reliable sync behavior
+    * [KARAF-3615] - Cluster bundles should keep the bundle ID
+    * [KARAF-3628] - Karaf Hazelcast instance should "merge" the members found by the discovery services
+    * [KARAF-3664] - DOSGi exception handling and propagation
+    * [KARAF-3795] - hazelcast instanceName
+    * [KARAF-3869] - Use hazelcast-all artifact instead of hazelcast
+    * [KARAF-3981] - Improve and extend synchronizers
+    * [KARAF-3988] - cluster:feature-repo-add should support repository aliases
+
+** New Feature
+    * [KARAF-2488] - Provide Cellar HTTP LoadBalancer service
+    * [KARAF-2489] - Provide Cellar HTTP Session Replication service
 
                     Apache Karaf Cellar 3.0.1
                     =========================
