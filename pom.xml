@@ -42,7 +42,7 @@
         <felix.utils.version>1.8.0</felix.utils.version>
         <felix.webconsole.version>4.2.8</felix.webconsole.version>
         <hazelcast.version>3.5.3</hazelcast.version>
-        <jclouds.version>1.8.1</jclouds.version>
+        <jclouds.version>1.9.1</jclouds.version>
         <joda-time.version>2.5</joda-time.version>
         <junit.version>4.11</junit.version>
         <karaf.version>4.0.0</karaf.version>
