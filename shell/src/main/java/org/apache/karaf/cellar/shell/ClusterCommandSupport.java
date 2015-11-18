@@ -15,12 +15,16 @@ package org.apache.karaf.cellar.shell;
 
 import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.shell.CellarCommandSupport;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 
 /**
  * Abstract cluster shell command.
  */
 public abstract class ClusterCommandSupport extends CellarCommandSupport {
+
+    @Option(name = "-t", aliases = { "--timeout" }, description = "Consumer command timeout (in seconds)", required = false, multiValued = false)
+    protected long timeout = 30;
 
     @Reference
     protected ExecutionContext executionContext;

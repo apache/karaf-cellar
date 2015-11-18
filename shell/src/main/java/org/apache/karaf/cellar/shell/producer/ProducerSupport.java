@@ -33,6 +33,7 @@ public abstract class ProducerSupport extends ClusterCommandSupport {
     protected Object doExecute(List<String> nodeIds, SwitchStatus status) throws Exception {
 
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
+        command.setTimeout(timeout * 1000);
 
         // looking for nodes and check if exist
         Set<Node> recipientList = new HashSet<Node>();

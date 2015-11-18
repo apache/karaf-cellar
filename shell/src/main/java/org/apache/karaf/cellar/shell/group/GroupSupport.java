@@ -48,6 +48,7 @@ public abstract class GroupSupport extends ClusterCommandSupport {
     protected Object doExecute(ManageGroupAction action, String group, Group source, Collection<String> nodeIds, Boolean suppressOutput) throws Exception {
 
         ManageGroupCommand command = new ManageGroupCommand(clusterManager.generateId());
+        command.setTimeout(timeout * 1000);
 
         // looking for nodes and check if exist
         Set<Node> recipientList = new HashSet<Node>();

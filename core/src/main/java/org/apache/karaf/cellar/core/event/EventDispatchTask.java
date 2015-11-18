@@ -22,15 +22,25 @@ import org.slf4j.LoggerFactory;
 public class EventDispatchTask<E extends Event> implements Runnable {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(EventDispatchTask.class);
+    private static final long DEFAULT_TIMEOUT = 30000;
 
     private E event;
     private EventHandlerRegistry handlerRegistry;
-    private long timeout = 10000;
+    private long timeout;
     private long interval = 1000;
 
     public EventDispatchTask(E event, EventHandlerRegistry handlerRegistry) {
         this.event = event;
         this.handlerRegistry = handlerRegistry;
+        if (System.getProperty("cellar.timeout") != null) {
+            try {
+                this.timeout = Long.parseLong(System.getProperty("cellar.timeout"));
+            } catch (Exception e) {
+                this.timeout = DEFAULT_TIMEOUT;
+            }
+        } else {
+            this.timeout = DEFAULT_TIMEOUT;
+        }
     }
 
     public EventDispatchTask(E event, EventHandlerRegistry handlerRegistry, long timeout) {

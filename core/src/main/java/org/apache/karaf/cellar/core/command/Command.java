@@ -30,14 +30,24 @@ import java.util.concurrent.TimeUnit;
 public class Command<R extends Result> extends Event {
 
     protected static final transient Logger LOGGER = LoggerFactory.getLogger(Command.class);
+    protected static final long DEFAULT_TIMEOUT = 30000;
 
-    protected long timeout = 10000;
+    protected long timeout;
     protected final BlockingQueue<Map<Node, R>> resultQueue = new LinkedBlockingQueue<Map<Node, R>>();
     protected final Map<Node, R> nodeResults = new HashMap<Node, R>();
 
     public Command(String id) {
         super(id);
         this.force = true;
+        if (System.getProperty("cellar.timeout") != null) {
+            try {
+                this.timeout = Long.parseLong(System.getProperty("cellar.timeout"));
+            } catch (Exception e) {
+                this.timeout = DEFAULT_TIMEOUT;
+            }
+        } else {
+            this.timeout = DEFAULT_TIMEOUT;
+        }
     }
 
     @Override
