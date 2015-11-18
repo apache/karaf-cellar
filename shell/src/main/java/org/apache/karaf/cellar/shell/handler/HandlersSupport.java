@@ -32,6 +32,7 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
     protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
 
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
+        command.setTimeout(timeout * 1000);
 
         // looking for nodes and check if exist
         Set<Node> recipientList = new HashSet<Node>();
