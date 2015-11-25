@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.2.xsd"
-           xmlns="http://www.hazelcast.com/schema/config"
+<hz:hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.5.xsd"
+           xmlns:hz="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <network>
-        <port auto-increment="true" port-count="100">5701</port>
-        <join>
-            <multicast enabled="false"/>
-            <tcp-ip enabled="true">
-                <interface>127.0.0.1</interface>
-            </tcp-ip>
-        </join>
-    </network>
+    <hz:network>
+        <hz:port auto-increment="true" port-count="100">5701</hz:port>
+        <hz:join>
+            <hz:multicast enabled="false"/>
+            <hz:tcp-ip enabled="true">
+                <hz:interface>127.0.0.1</hz:interface>
+            </hz:tcp-ip>
+        </hz:join>
+    </hz:network>
 
-</hazelcast>
+</hz:hazelcast>
