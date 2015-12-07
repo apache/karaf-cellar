@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,9 +67,10 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
                 LOGGER.info("CELLAR KUBERNETES: creating the discovery service ...");
 
                 Properties serviceProperties = new Properties();
-                for (Map.Entry entry : serviceProperties.entrySet()) {
-                    Object key = entry.getKey();
-                    Object value = entry.getValue();
+                Enumeration propKeys = properties.keys();
+                while (propKeys.hasMoreElements()) {
+                    Object key = propKeys.nextElement();
+                    Object value = properties.get(key);
                     serviceProperties.put(key, value);
                 }
 
