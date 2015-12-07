@@ -42,7 +42,7 @@ public class HazelcastInstanceAware {
         Cluster cluster = instance.getCluster();
         if (cluster != null) {
             Member member = cluster.getLocalMember();
-            return new HazelcastNode(member.getSocketAddress().getHostString(), member.getSocketAddress().getPort());
+            return new HazelcastNode(member);
         } else {
             return null;
         }
