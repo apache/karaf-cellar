@@ -13,10 +13,7 @@
  */
 package org.apache.karaf.cellar.hazelcast;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IQueue;
-import com.hazelcast.core.ItemEvent;
-import com.hazelcast.core.ItemListener;
+import com.hazelcast.core.*;
 import org.apache.karaf.cellar.core.Configurations;
 import org.apache.karaf.cellar.core.Dispatcher;
 import org.apache.karaf.cellar.core.Node;
@@ -105,10 +102,12 @@ public class QueueConsumer<E extends Event> implements EventConsumer<E>, ItemLis
                 if (e != null) {
                     consume(e);
                 }
+            } catch (HazelcastInstanceNotActiveException hex) {
+                LOGGER.debug("CELLAR HAZELCAST: instance not active, stop consuming", hex);
+                break;
             } catch (Exception e1) {
                 LOGGER.error("CELLAR HAZELCAST: failed to consume from queue", e1);
             }
-
         }
         
         Thread.currentThread().setContextClassLoader(originalClassLoader);
