@@ -1,0 +1,60 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== Introduction
+
+=== Use Cases
+
+The first goal of Karaf Cellar is to synchronize the status of several Karaf instances (named nodes).
+
+Cellar provides dedicated shell commands and JMX MBeans to manage the cluster, and manipulate the resources on the cluster.
+
+It's also possible to enable local resources listeners: these listeners broadcast local resource changes as cluster events.
+Please note that this behavior is disabled by default as it can have side effects (especially when a node is stopped).
+Enabling listeners is at your own risk.
+
+The nodes list could be discovered (using unicast or multicast), or "static" defined (using a couple hostname or IP
+and port list).
+
+Cellar is able to synchronize:
+* bundles (remote or local)
+* config
+* features
+
+Optionally, Cellar also support synchronization of OSGi EventAdmin, OBR (URLs and bundles).
+
+The second goal is to provide a Distributed OSGi runtime. It means that using Cellar, you are able to call an OSGi
+service located on a remote instance. See the link:transport[transport and DOSGi section] of the user guide.
+
+Finally, Cellar also provides "runtime clustering" by providing dedicated feature like:
+* HTTP load balancing
+* HTTP sessions replication
+* log centralization
+Please, see the sections dedicated to those features.
+
+=== Cross topology
+
+This is the default Cellar topology. Cellar is installed on all nodes, each node has the same function.
+
+It means that you can perform actions on any node, it will be broadcasted to all others nodes.
+
+=== Star topology
+
+In this topology, if Cellar is installed on all nodes, you perform actions only on one specific node (the "manager").
+
+To do that, the "manager" is a standard Cellar node, and the event producing is disable on all others nodes
+(`cluster:producer-stop` on all "managed" nodes).
+
+Like this, only the "manager" will send event to the nodes (which are able to consumer and handle), but no event can
+be produced on the nodes.

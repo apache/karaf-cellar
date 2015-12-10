@@ -1,33 +1,47 @@
-h1. HTTP Session Replication
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== HTTP Session Replication
 
 Apache Karaf Cellar supports replication of the HTTP sessions on the cluster.
 
 It means that the same web application deployed on multiple nodes in the cluster will share the same HTTP sessions
 pool, allowing clients to transparently connect to any node, without loosing any session state.
 
-h2. Enable Cluster HTTP Session Replication
+=== Enable Cluster HTTP Session Replication
 
 In order to be able to be stored on the cluster, all HTTP Sessions used in your web application have to implement
 Serializable interface. Any non-serializable attribute has to be flagged as transient.
 
 You have to enable a specific filter in your application to enable the replication. See next chapter for details.
 
-At runtime level, you just have to install http, http-whiteboard, and cellar features:
+At runtime level, you just have to install `http`, `http-whiteboard`, and `cellar` features:
 
-{code}
+----
 karaf@root()> feature:install http
 karaf@root()> feature:install http-whiteboard
-karaf@root()> feature:repo-add cellar 4.0.0
+karaf@root()> feature:repo-add cellar
 karaf@root()> feature:install cellar
-{code}
+----
 
-h2. Web Application Session Replication
+=== Web Application Session Replication
 
 In order to use HTTP session replication on the cluster, you just have to add a filter in your web application.
 
-Basically, the WEB-INF/web.xml file of your web application should look like this:
+Basically, the `WEB-INF/web.xml` file of your web application should look like this:
 
-{code}
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
@@ -74,4 +88,4 @@ Basically, the WEB-INF/web.xml file of your web application should look like thi
 	</listener>
 
 </web-app>
-{code}
+----

@@ -1,56 +1,70 @@
-h1. HTTP Balancer
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== HTTP Balancer
 
 Apache Karaf Cellar is able to expose servlets local to a node on the cluster.
 It means that a client (browser) can use any node in the cluster, proxying the requests to the node actually
 hosting the servlets.
 
-h2. Enable HTTP Balancer
+=== Enable HTTP Balancer
 
-To enable Cellar HTTP Balancer, you have to first install the http and http-whiteboard features:
+To enable Cellar HTTP Balancer, you have to first install the `http` and `http-whiteboard` features:
 
-{code}
+----
 karaf@root()> feature:install http
 karaf@root()> feature:install http-whiteboard
-{code}
+----
 
-Now, we install the cellar-http-balancer feature, actually providing the balancer:
+Now, we install the `cellar-http-balancer` feature, actually providing the balancer:
 
-{code}
+----
 karaf@root()> feature:install cellar-http-balancer
-{code}
+----
 
-Of course, you can use Cellar to spread the installation of the cellar-http-balancer feature on all nodes in the
+Of course, you can use Cellar to spread the installation of the `cellar-http-balancer` feature on all nodes in the
 cluster group:
 
-{code}
+----
 karaf@root()> cluster:feature-install default cellar-http-balancer
-{code}
+----
 
 It's done: the Cellar HTTP Balancer is now enabled. It will expose proxy servlets on nodes.
 
-h2. Balancer in action
+=== Balancer in action
 
 To illustrate Cellar HTTP Balancer in action, you need at least a cluster with two nodes.
 
 On node1, we enable the Cellar HTTP Balancer:
 
-{code}
+----
 karaf@node1()> feature:install http
 karaf@node1()> feature:install http-whiteboard
 karaf@node1()> feature:repo-add cellar 4.0.0
 karaf@node1()> feature:install cellar
 karaf@node1()> cluster:feature-install default cellar-http-balancer
-{code}
+----
 
 Now, we install the webconsole on node1:
 
-{code}
+----
 karaf@node1()> feature:install webconsole
-{code}
+----
 
-We can see the "local" servlets provided by the webconsole feature using the http:list command:
+We can see the "local" servlets provided by the webconsole feature using the `http:list` command:
 
-{code}
+----
 karaf@node1()> http:list
 ID  | Servlet          | Servlet-Name    | State       | Alias               | Url
 ------------------------------------------------------------------------------------------------------
@@ -60,13 +74,13 @@ ID  | Servlet          | Servlet-Name    | State       | Alias               | U
 101 | ResourceServlet  | /res            | Deployed    | /system/console/res | [/system/console/res/*]
 101 | KarafOsgiManager | ServletModel-11 | Deployed    | /system/console     | [/system/console/*]
 105 | InstancePlugin   | ServletModel-9  | Deployed    | /instance           | [/instance/*]
-{code}
+----
 
 You can access to the webconsole using a browser on http://localhost:8181/system/console.
 
-We can see that Cellar HTTP Balancer exposed the servlets to the cluster, using the cluster:http-list command:
+We can see that Cellar HTTP Balancer exposed the servlets to the cluster, using the `cluster:http-list` command:
 
-{code}
+----
 karaf@node1()> cluster:http-list default
 Alias               | Locations
 -----------------------------------------------------------------
@@ -75,32 +89,31 @@ Alias               | Locations
 /instance           | http://172.17.42.1:8181/instance
 /system/console     | http://172.17.42.1:8181/system/console
 /features           | http://172.17.42.1:8181/features
-{code}
+----
 
+On another node (node2), we install `http`, `http-whiteboard` and `cellar` features:
 
-On another node (node2), we install http, http-whiteboard and cellar features:
-
-{code}
+----
 karaf@node1()> feature:install http
 karaf@node1()> feature:install http-whiteboard
 karaf@node1()> feature:repo-add cellar 4.0.0
 karaf@node1()> feature:install cellar
-{code}
+----
 
-WARNING: if you run the nodes on a single machine, you have to provision etc/org.ops4j.pax.web.cfg configuration file
-containing the org.osgi.service.http.port property with a port number different to 8181.
-For this example, I use the following etc/org.ops4j.pax.web.cfg file:
+WARNING: if you run the nodes on a single machine, you have to provision `etc/org.ops4j.pax.web.cfg` configuration file
+containing the `org.osgi.service.http.port property` with a port number different to 8181.
+For this example, we use the following `etc/org.ops4j.pax.web.cfg` file:
 
-{code}
+----
 org.osgi.service.http.port=8041
-{code}
+----
 
-On node1, as we installed the cellar-http-balancer using cluster:feature-install command, it's automatically installed
+On node1, as we installed the `cellar-http-balancer` using `cluster:feature-install` command, it's automatically installed
 when node2 joins the default cluster group.
 
-We can see the HTTP endpoints available on the cluster using the cluster:http-list command:
+We can see the HTTP endpoints available on the cluster using the `cluster:http-list` command:
 
-{code}
+----
 karaf@node2()> cluster:http-list default
 Alias               | Locations
 -----------------------------------------------------------------
@@ -109,12 +122,12 @@ Alias               | Locations
 /instance           | http://172.17.42.1:8181/instance
 /system/console     | http://172.17.42.1:8181/system/console
 /features           | http://172.17.42.1:8181/features
-{code}
+----
 
-If we take a look on the HTTP endpoints locally available on node2 (using http:list command), we can see the proxies
+If we take a look on the HTTP endpoints locally available on node2 (using `http:list` command), we can see the proxies
 created by Cellar HTTP Balancer:
 
-{code}
+----
 karaf@node2()> http:list
 ID  | Servlet                    | Servlet-Name   | State       | Alias               | Url
 ---------------------------------------------------------------------------------------------------------------
@@ -123,7 +136,7 @@ ID  | Servlet                    | Servlet-Name   | State       | Alias         
 100 | CellarBalancerProxyServlet | ServletModel-6 | Deployed    | /features           | [/features/*]
 100 | CellarBalancerProxyServlet | ServletModel-5 | Deployed    | /system/console     | [/system/console/*]
 100 | CellarBalancerProxyServlet | ServletModel-4 | Deployed    | /instance           | [/instance/*]
-{code}
+----
 
 You can use a browser on http://localhost:8041/system/console: you will actually use the webconsole from node1, as
 Cellar HTTP Balancer proxies from node2 to node1.

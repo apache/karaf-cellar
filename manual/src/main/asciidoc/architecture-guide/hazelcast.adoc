@@ -1,10 +1,24 @@
-h1. The role of Hazelcast
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== The role of Hazelcast
 
 The idea behind the clustering engine is that for each unit that we want to replicate, we create an event,
 broadcast the event to the cluster and hold the unit state to a shared resource, so that the rest of the
 nodes can look up and retrieve the changes.
 
-!/images/shared_architecture.jpg!
+image::images/shared_architecture.jpg[]
 
 For instance, we want all nodes in our cluster to share configuration for PIDs a.b.c and x.y.z. On node
 "Karaf A" a change occurs on a.b.c. "Karaf A" updated the shared repository data for a.b.c and then notifies

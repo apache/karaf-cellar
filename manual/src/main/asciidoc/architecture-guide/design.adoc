@@ -1,0 +1,40 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== Design
+
+The design works with the following entities:
+
+* *OSGi Listener* is an interface which implements a listener for specific OSGi events (e.g. `ConfigurationListener`).
+
+* *Event* is the object that contains all the required information required to describe the event (e.g. PID changed).
+* *Event Topic* is the distributed topic used to broadcast events. It is common for all event types.
+* *Shared Map* is the distributed collection that serves as shared resource. We use one per event type.
+* *Event Handler* is the processor which processes remote events received through the topic.
+* *Event Dispatcher* is the unit which decides which event should be processed by which event handlers.
+* *Command* is a special type of event that is linked to a list of events that represent the outcome of the command.
+* *Result* is a special type of event that represents the outcome of a command. Commands and results are correlated.
+
+image::images/event_flow.jpg[]
+
+The OSGi specification uses the `Events` and `Listener` paradigms in many situations (e.g. `ConfigurationChangeEvent`
+and `ConfigurationListener`). By implementing such a Listener and exposing it as an OSGi service to the Service
+Registry, we can be sure that we are "listening" for the events that we are interested in.
+
+When the listener is notified of an event, it forwards the `Event` object to a Hazelcazst distributed topic. To
+keep things as simple as possible, we keep a single topic for all event types. Each node has a listener
+registered on that topic and gets/sends all events to the event dispatcher.
+
+When the Event Dispatcher receives an event, it looks up an internal registry (in our case the OSGi Service Registry)
+to find an Event Handler that can handle the received Event. The handler found receives the event and processes it.
