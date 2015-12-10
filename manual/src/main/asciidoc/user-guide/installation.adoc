@@ -1,0 +1,74 @@
+
+= Installation
+
+This chapter describes how to install Apache Karaf Cellar into your existing Karaf based installation.
+
+== Pre-Installation Requirements
+
+Cellar is installed on running Karaf instances.
+
+Cellar is provided as a Karaf features descriptor. The easiest way to install is just to
+have an internet connection from the Karaf running instance.
+
+See link::deploy.adoc[Deploy Cellar] to how to install and start Cellar.
+
+== Building from Sources
+
+If you intend to build Karaf Cellar from the sources, the requirements are:
+
+*Hardware:*
+* 100MB of free disk space for the Apache Karaf Cellar x.y source distributions or SVN checkout, the Maven build and the dependencies that Maven downloads.
+
+*Environment:*
+* Java SE Development Kit 1.7.x or greater (http://www.oracle.com/technetwork/java/javase/).
+* Apache Maven 3.0.3 (http://maven.apache.org/download.html).
+
+*Note:* Karaf Cellar requires Java 7 to compile, build and run.
+
+=== Building on Windows
+
+This procedure explains how to download and install the source distribution on a Windows system.
+
+[start=1]
+. From a browser, navigate to http://karaf.apache.org/sub-projects/cellar/download.html.
+. Select the desired distribution.
+For a source distribution, the filename will be similar to: _apache-karaf-cellar-x.y-src.zip_.
+. Extract Karaf Cellar from the ZIP file into a directory of your choice. Please remember the restrictions concerning illegal characters in Java paths, e.g. \!, % etc.
+. {anchor:Windows Source Installation} Build Karaf Cellar using Maven 3.0.3 or greater and Java 6.
+The recommended method of building Karaf Cellar is the following:
+----
+cd [cellar_install_dir]\src
+----
+where _\[cellar_install_dir\]_ is the directory in which Karaf Cellar was uncompressed.
+----
+mvn
+----
+[start=5]
+. Proceed to the link:deploy.adoc[Deploy Cellar]
+
+=== Building on Unix
+
+This procedure explains how to download and install the source distribution on an Unix system.
+
+[start=1]
+. From a browser, navigate to http://karaf.apache.org/sub-projects/cellar/download.html.
+. Select the desired distribution.
+For a source distribution, the filename will be similar to: _apache-karaf-cellar-x.y-src.tar.gz_.
+. Extract the files from the tarball file into a directory of your choice. For example:
+----
+gunzip apache-karaf-cellar-x.y-src.tar.gz
+tar xvf apache-karaf-cellar-x.y-src.tar
+----
+Please remember the restrictions concerning illegal characters in Java paths, e.g. \!, % etc.
+[start=4]
+. Build Karaf using Maven:
+The preferred method of building Karaf is the following:
+----
+cd [karaf_install_dir]/src
+----
+where \[karaf_install_dir\] is the directory in which Karaf Cellar was uncompressed.
+----
+mvn
+----
+[start=5]
+. Proceed to the link:deploy#Deploy Cellar.adoc[Deploy Cellar]

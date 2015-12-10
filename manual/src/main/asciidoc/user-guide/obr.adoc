@@ -1,0 +1,87 @@
+
+= OBR Support
+
+Apache Karaf Cellar is able to "broadcast" OBR actions between cluster nodes of the same group.
+
+== Enable OBR support
+
+To enable Cellar OBR support, the cellar-obr feature must first be installed:
+
+----
+karaf@root()> feature:install cellar-obr
+----
+
+
+The Cellar OBR feature will install the Karaf OBR feature which provides the OBR service (RepositoryAdmin).
+
+== Register repository URL in a cluster
+
+The cluster:obr-add-url command registers an OBR repository URL (repository.xml) in a cluster group:
+
+----
+karaf@root()> cluster:obr-add-url group file:///path/to/repository.xml
+karaf@root()> cluster:obr-add-url group http://karaf.cave.host:9090/cave/repo-repository.xml
+----
+
+The OBR repository URLs are stored in a cluster distributed set. It allows new nodes to register the distributed URLs:
+
+----
+karaf@root()> cluster:obr-list-url group
+file://path/to/repository.xml
+http://karaf.cave.host:9090/cave/repo-repository.xml
+----
+
+When a repository is registered in the distributed OBR, Cave maintains a distributed set of bundles available on the
+OBR of a cluster group:
+
+----
+karaf@root()> cluster:obr-list group
+Name                                                                         | Symbolic Name                                                             | Version
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Apache Aries JMX Blueprint Core                                              | org.apache.aries.jmx.blueprint.core                                       | 1.1.1.SNAPSHOT
+Apache Karaf :: JAAS :: Command                                              | org.apache.karaf.jaas.command                                             | 2.3.6.SNAPSHOT
+Apache Aries Proxy Service                                                   | org.apache.aries.proxy.impl                                               | 1.0.3.SNAPSHOT
+Apache Karaf :: System :: Shell Commands                                     | org.apache.karaf.system.command                                           | 3.0.2.SNAPSHOT
+Apache Karaf :: JDBC :: Core                                                 | org.apache.karaf.jdbc.core                                                | 3.0.2.SNAPSHOT
+Apache Aries Example SPI Provider Bundle 1                                   | org.apache.aries.spifly.examples.provider1.bundle                         | 1.0.1.SNAPSHOT
+Apache Aries Transaction Manager                                             | org.apache.aries.transaction.manager                                      | 1.1.1.SNAPSHOT
+Apache Karaf :: Features :: Management                                       | org.apache.karaf.features.management                                      | 2.3.6.SNAPSHOT
+Apache Aries Blueprint Sample Fragment for Testing Annotation                | org.apache.aries.blueprint.sample-fragment                                | 1.0.1.SNAPSHOT
+Apache Karaf :: Management :: MBeans :: OBR                                  | org.apache.karaf.management.mbeans.obr                                    | 2.3.6.SNAPSHOT
+Apache Karaf :: JNDI :: Core                                                 | org.apache.karaf.jndi.core                                                | 2.3.6.SNAPSHOT
+Apache Karaf :: Shell :: SSH                                                 | org.apache.karaf.shell.ssh                                                | 3.0.2.SNAPSHOT
+Apache Aries Blueprint Web OSGI                                              | org.apache.aries.blueprint.webosgi                                        | 1.0.2.SNAPSHOT
+Apache Aries Blueprint JEXL evaluator                                        | org.apache.aries.blueprint.jexl.evaluator                                 | 1.0.1.SNAPSHOT
+Apache Karaf :: JDBC :: Command                                              | org.apache.karaf.jdbc.command                                             | 3.0.2.SNAPSHOT
+...
+----
+
+When you remove a repository URL from the distributed OBR, the bundles' distributed set is updated:
+
+----
+karaf@root()> cluster:obr-remove-url group http://karaf.cave.host:9090/cave/repo-repository.xml
+----
+
+== Deploying bundles using the cluster OBR
+
+You can deploy a bundle (and that bundle's dependent bundles) using the OBR on a given cluster group:
+
+----
+karaf@root()> cluster:obr-deploy group bundleId
+----
+
+The bundle ID is the symbolic name, viewable using the cluster:obr-list command. If you don't provide the version, the OBR deploys the latest version
+available. To provide the version, use a comma after the symbolic name:
+
+----
+karaf@root()> cluster:obr-deploy group org.apache.servicemix.specs.java-persistence-api-1.1.1
+karaf@root()> cluster:obr-deploy group org.apache.camel.camel-jms,2.9.0.SNAPSHOT
+----
+
+The OBR will automatically install the bundles required to satisfy the bundle dependencies.
+
+The deploy command doesn't start bundles by default. To start the bundles just after deployment, you can use the -s option:
+
+----
+karaf@root()> cluster:obr-deploy -s group org.ops4j.pax.web.pax-web-runtime
+----

@@ -1,0 +1,16 @@
+
+= Architecture Overview
+
+The core concept behind Karaf Cellar is that each node can be a part of one or more groups that
+provide the node distributed memory for keeping data (e.g. configuration, features information, other)
+and a topic which is used to exchange events with the rest of the group nodes.
+
+image::architecture.jpg[]
+
+Each group comes with a configuration, which defines which events are to be broadcasted and which are
+not. Whenever a local change occurs to a node, the node will read the setup information of all the
+groups that it belongs to and broadcasts the event to the groups that are whitelisted to the specific event.
+
+The broadcast operation happens via a distributed topic provided by the group. For the groups
+that the broadcast reaches, the distributed configuration data will be updated so that nodes
+that join in the future can pickup the change.

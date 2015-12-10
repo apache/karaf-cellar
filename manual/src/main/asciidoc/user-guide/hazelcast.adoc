@@ -1,0 +1,136 @@
+
+= Core runtime and Hazelcast
+
+Cellar uses Hazelcast as cluster engine.
+
+When you install the cellar feature, a hazelcast feature is automatically installed, providing the etc/hazelcast.xml
+configuration file.
+
+The etc/hazelcast.xml configuration file contains all the core configuration, especially:
+* the Hazelcast cluster identifiers (group name and password)
+* network discovery and security configuration
+
+== Hazelcast cluster identification
+
+The <group/> element in the etc/hazelcast.xml defines the identification of the Hazelcast cluster:
+
+----
+    <group>
+        <name>cellar</name>
+        <password>pass</password>
+    </group>
+----
+
+All Cellar nodes have to use the same name and password (to be part of the same Hazelcast cluster).
+
+== Network
+
+The <network/> element in the etc/hazelcast.xml contains all the network configuration.
+
+First, it defines the port numbers used by Hazelcast:
+
+----
+        <port auto-increment="true" port-count="100">5701</port>
+        <outbound-ports>
+            <!--
+                Allowed port range when connecting to other nodes.
+                0 or * means use system provided port.
+            -->
+            <ports>0</ports>
+        </outbound-ports>
+----
+
+Second, it defines the mechanism used to discover the Cellar nodes: it's the <join/> element.
+
+By default, Hazelcast uses unicast.
+
+You can also use multicast (enabled by default in Cellar):
+
+----
+            <multicast enabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="false"/>
+            <aws enabled="false"/>
+----
+
+Instead of using multicast, you can also explicitly define the host names (or IP addresses) of the different
+Cellar nodes:
+
+----
+            <multicast enabled="false"/>
+            <tcp-ip enabled="true"/>
+            <aws enabled="false"/>
+----
+
+By default, it will bind to all interfaces on the node machine. It's possible to specify a interface:
+
+----
+            <multicast enabled="false"/>
+            <tcp-ip enabled="true">
+                <interface>127.0.0.1</interface>
+            </tcp-ip>
+            <aws enabled="false"/>
+----
+
+NB: in previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled in the same time.
+In Hazelcast 3.3.x (the version currently used by Cellar 3.0.x), only one discover mechanism can be enabled at a time. Cellar uses multicast by default (tcp-ip is disabled).
+If your network or network interface don't support multicast, you have to enable tcp-ip and disable multicast.
+
+You can also discover nodes located on a Amazon instance:
+
+----
+            <multicast enabled="false"/>
+            <tcp-ip enabled="false"/>
+            <aws enabled="true">
+                <access-key>my-access-key</access-key>
+                <secret-key>my-secret-key</secret-key>
+                <!--optional, default is us-east-1 -->
+                <region>us-west-1</region>
+                <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
+                <host-header>ec2.amazonaws.com</host-header>
+                <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
+                <security-group-name>hazelcast-sg</security-group-name>
+                <tag-key>type</tag-key>
+                <tag-value>hz-nodes</tag-value>
+            </aws>
+----
+
+Third, you can specific on which network interface the cluster is running (whatever the discovery mechanism used). By default, Hazelcast listens on all interfaces (0.0.0.0).
+But you can specify an interface:
+
+----
+        <interfaces enabled="true">
+            <interface>10.10.1.*</interface>
+        </interfaces>
+----
+
+Finally, you can also enable security transport on the cluster.
+Two modes are supported:
+* SSL:
+----
+        <ssl enabled="true"/>
+----
+* Symmetric Encryption:
+----
+        <symmetric-encryption enabled="true">
+            <!--
+               encryption algorithm such as
+               DES/ECB/PKCS5Padding,
+               PBEWithMD5AndDES,
+               AES/CBC/PKCS5Padding,
+               Blowfish,
+               DESede
+            -->
+            <algorithm>PBEWithMD5AndDES</algorithm>
+            <!-- salt value to use when generating the secret key -->
+            <salt>thesalt</salt>
+            <!-- pass phrase to use when generating the secret key -->
+            <password>thepass</password>
+            <!-- iteration count to use when generating the secret key -->
+            <iteration-count>19</iteration-count>
+        </symmetric-encryption>
+----
+
+Cellar provides additional discovery mechanisms, See link:cloud.adoc[Discovery Service (jclouds and kubernetes)]
