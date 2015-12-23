@@ -66,6 +66,7 @@
         <module>http</module>
         <module>cloud</module>
         <module>kubernetes</module>
+        <module>dns</module>
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
