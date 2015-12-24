@@ -1,0 +1,45 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== Broadcasting commands
+
+Commands are a special kind of event. They imply that when they are handled, a Result event will be fired
+containing the outcome of the command. For each command, we have one result per recipient. Each command
+contains an unique id (unique for all cluster nodes, created from Hazelcast). This id is used to correlate
+the request with the result. For each result successfully correlated the result is added to list of results
+on the command object. If the list gets full of if 10 seconds from the command execution have elapsed, the list
+is moved to a blocking queue from which the result can be retrieved.
+
+The following code snippet shows what happens when a command is sent for execution:
+
+----
+public Map<node,result> execute(Command command) throws Exception {
+   if (command == null) {
+      throw new Exception("Command store not found");
+   } else {
+      //store the command to correlate it with the result.
+      commandStore.getPending().put(command.getId(), command);
+      //I create a timeout task and schedule it
+      TimeoutTask timeoutTask = new TimeoutTask(command, commandStore);
+      ScheduledFuture timeoutFuture = timeoutScheduler.schedule(timeoutTask, command.getTimeout(), TimeUnit.MILLISECONDS);
+   }
+   if (producer != null) {
+      //send the command to the topic
+      producer.produce(command);
+      //retrieve the result list from the blocking queue.
+      return command.getResult();
+   }
+   throw new Exception("Command producer not found");
+}
+----

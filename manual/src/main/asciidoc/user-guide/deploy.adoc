@@ -1,0 +1,105 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== Deploy Cellar
+
+This chapter describes how to deploy and start Cellar into a running Apache Karaf instance. This chapter
+assumes that you already know Apache Karaf basics, especially the notion of features and shell usage.
+
+=== Registering Cellar features
+
+Karaf Cellar is provided as a Karaf features XML descriptor.
+
+Simply register the Cellar feature URL in your Karaf instance:
+
+----
+karaf@root()> feature:repo-add mvn:org.apache.karaf.cellar/apache-karaf-cellar/3.0.3/xml/features
+Adding feature url mvn:org.apache.karaf.cellar/apache-karaf-cellar/3.0.3/xml/features
+----
+
+Now you have Cellar features available in your Karaf instance:
+
+----
+karaf@root()> feature:list |grep -i cellar
+cellar-core                   | 3.0.3   |           | karaf-cellar-3.0.3 | Karaf clustering core
+hazelcast                     | 3.4.2   |           | karaf-cellar-3.0.3 | In memory data grid
+cellar-hazelcast              | 3.0.3   |           | karaf-cellar-3.0.3 | Cellar implementation based on Hazelcast
+cellar-config                 | 3.0.3   |           | karaf-cellar-3.0.3 | ConfigAdmin cluster support
+cellar-features               | 3.0.3   |           | karaf-cellar-3.0.3 | Karaf features cluster support
+cellar-bundle                 | 3.0.3   |           | karaf-cellar-3.0.3 | Bundle cluster support
+cellar-shell                  | 3.0.3   |           | karaf-cellar-3.0.3 | Cellar shell support
+cellar                        | 3.0.3   |           | karaf-cellar-3.0.3 | Karaf clustering
+cellar-dosgi                  | 3.0.3   |           | karaf-cellar-3.0.3 | DOSGi support
+cellar-obr                    | 3.0.3   |           | karaf-cellar-3.0.3 | OBR cluster support
+cellar-eventadmin             | 3.0.3   |           | karaf-cellar-3.0.3 | OSGi events broadcasting in clusters
+cellar-cloud                  | 3.0.3   |           | karaf-cellar-3.0.3 | Cloud blobstore support in clusters
+cellar-webconsole             | 3.0.3   |           | karaf-cellar-3.0.3 | Cellar plugin for Karaf WebConsole
+----
+
+=== Starting Cellar
+
+To start Cellar in your Karaf instance, you only need to install the Cellar feature:
+
+----
+karaf@root()> feature:install cellar
+----
+
+You can now see the Cellar components (bundles) installed:
+
+----
+karaf@root()> la|grep -i cellar
+80 | Active   |  30 | 3.0.3        | Apache Karaf :: Cellar :: Core
+81 | Active   |  31 | 3.0.3        | Apache Karaf :: Cellar :: Utils
+82 | Active   |  33 | 3.0.3        | Apache Karaf :: Cellar :: Hazelcast
+83 | Active   |  40 | 3.0.3        | Apache Karaf :: Cellar :: Shell
+84 | Active   |  40 | 3.0.3        | Apache Karaf :: Cellar :: Config
+85 | Active   |  40 | 3.0.3        | Apache Karaf :: Cellar :: Bundle
+86 | Active   |  40 | 3.0.3        | Apache Karaf :: Cellar :: Features
+----
+
+And Cellar cluster commands are now available:
+
+----
+karaf@root()> cluster:<TAB>
+----
+
+=== Optional features
+
+Optionally, you can install additional features.
+
+The cellar-event feature adds support of OSGi EventAdmin on the cluster:
+
+----
+karaf@root()> feature:install cellar-event
+----
+
+The cellar-obr feature adds support of OBR sync on the cluster:
+
+----
+karaf@root()> feature:install cellar-obr
+----
+
+The cellar-dosgi feature adds support of DOSGi (Distributed OSGi):
+
+----
+karaf@root()> feature:install cellar-dosgi
+----
+
+The cellar-cloud feature adds support of cloud blobstore, allowing to use instances located on a cloud provider:
+
+----
+karaf@root()> feature:install cellar-cloud
+----
+
+Please, see the sections dedicated to these features for details.

@@ -1,34 +1,48 @@
-h1. Core runtime and Hazelcast
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== Core runtime and Hazelcast
 
 Cellar uses Hazelcast as cluster engine.
 
-When you install the cellar feature, a hazelcast feature is automatically installed, providing the etc/hazelcast.xml
+When you install the cellar feature, a hazelcast feature is automatically installed, providing the `etc/hazelcast.xml`
 configuration file.
 
-The etc/hazelcast.xml configuration file contains all the core configuration, especially:
+The `etc/hazelcast.xml` configuration file contains all the core configuration, especially:
 * the Hazelcast cluster identifiers (group name and password)
 * network discovery and security configuration
 
-h2. Hazelcast cluster identification
+=== Hazelcast cluster identification
 
-The <group/> element in the etc/hazelcast.xml defines the identification of the Hazelcast cluster:
+The `<group/>` element in the `etc/hazelcast.xml` defines the identification of the Hazelcast cluster:
 
-{code}
+----
     <group>
         <name>cellar</name>
         <password>pass</password>
     </group>
-{code}
+----
 
 All Cellar nodes have to use the same name and password (to be part of the same Hazelcast cluster).
 
-h2. Network
+=== Network
 
-The <network/> element in the etc/hazelcast.xml contains all the network configuration.
+The `<network/>` element in the `etc/hazelcast.xml` contains all the network configuration.
 
 First, it defines the port numbers used by Hazelcast:
 
-{code}
+----
         <port auto-increment="true" port-count="100">5701</port>
         <outbound-ports>
             <!--
@@ -37,41 +51,41 @@ First, it defines the port numbers used by Hazelcast:
             -->
             <ports>0</ports>
         </outbound-ports>
-{code}
+----
 
-Second, it defines the mechanism used to discover the Cellar nodes: it's the <join/> element.
+Second, it defines the mechanism used to discover the Cellar nodes: it's the `<join/>` element.
 
 By default, Hazelcast uses unicast.
 
 You can also use multicast (enabled by default in Cellar):
 
-{code}
+----
             <multicast enabled="true">
                 <multicast-group>224.2.2.3</multicast-group>
                 <multicast-port>54327</multicast-port>
             </multicast>
             <tcp-ip enabled="false"/>
             <aws enabled="false"/>
-{code}
+----
 
 Instead of using multicast, you can also explicitly define the host names (or IP addresses) of the different
 Cellar nodes:
 
-{code}
+----
             <multicast enabled="false"/>
             <tcp-ip enabled="true"/>
             <aws enabled="false"/>
-{code}
+----
 
 By default, it will bind to all interfaces on the node machine. It's possible to specify a interface:
 
-{code}
+----
             <multicast enabled="false"/>
             <tcp-ip enabled="true">
                 <interface>127.0.0.1</interface>
             </tcp-ip>
             <aws enabled="false"/>
-{code}
+----
 
 NB: in previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled in the same time.
 In Hazelcast 3.3.x (the version currently used by Cellar 3.0.x), only one discover mechanism can be enabled at a time. Cellar uses multicast by default (tcp-ip is disabled).
@@ -79,7 +93,7 @@ If your network or network interface don't support multicast, you have to enable
 
 You can also discover nodes located on a Amazon instance:
 
-{code}
+----
             <multicast enabled="false"/>
             <tcp-ip enabled="false"/>
             <aws enabled="true">
@@ -94,25 +108,25 @@ You can also discover nodes located on a Amazon instance:
                 <tag-key>type</tag-key>
                 <tag-value>hz-nodes</tag-value>
             </aws>
-{code}
+----
 
 Third, you can specific on which network interface the cluster is running (whatever the discovery mechanism used). By default, Hazelcast listens on all interfaces (0.0.0.0).
 But you can specify an interface:
 
-{code}
+----
         <interfaces enabled="true">
             <interface>10.10.1.*</interface>
         </interfaces>
-{code}
+----
 
 Finally, you can also enable security transport on the cluster.
 Two modes are supported:
 * SSL:
-{code}
+----
         <ssl enabled="true"/>
-{code}
+----
 * Symmetric Encryption:
-{code}
+----
         <symmetric-encryption enabled="true">
             <!--
                encryption algorithm such as
@@ -130,6 +144,6 @@ Two modes are supported:
             <!-- iteration count to use when generating the secret key -->
             <iteration-count>19</iteration-count>
         </symmetric-encryption>
-{code}
+----
 
-Cellar provides additional discovery mechanisms, See [Discovery Service (jclouds and kubernetes)|cloud] section for details.
+Cellar provides additional discovery mechanisms, See link:cloud[Discovery Service (jclouds and kubernetes)] section for details.

@@ -1,39 +1,52 @@
-h1. OBR Support
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+== OBR Support
 
 Apache Karaf Cellar is able to "broadcast" OBR actions between cluster nodes of the same group.
 
-h2. Enable OBR support
+=== Enable OBR support
 
 To enable Cellar OBR support, the cellar-obr feature must first be installed:
 
-{code}
+----
 karaf@root()> feature:install cellar-obr
-{code}
-
+----
 
 The Cellar OBR feature will install the Karaf OBR feature which provides the OBR service (RepositoryAdmin).
 
-h2. Register repository URL in a cluster
+=== Register repository URL in a cluster
 
-The cluster:obr-add-url command registers an OBR repository URL (repository.xml) in a cluster group:
+The `cluster:obr-add-url` command registers an OBR repository URL (repository.xml) in a cluster group:
 
-{code}
+----
 karaf@root()> cluster:obr-add-url group file:///path/to/repository.xml
 karaf@root()> cluster:obr-add-url group http://karaf.cave.host:9090/cave/repo-repository.xml
-{code}
+----
 
 The OBR repository URLs are stored in a cluster distributed set. It allows new nodes to register the distributed URLs:
 
-{code}
+----
 karaf@root()> cluster:obr-list-url group
 file://path/to/repository.xml
 http://karaf.cave.host:9090/cave/repo-repository.xml
-{code}
+----
 
 When a repository is registered in the distributed OBR, Cave maintains a distributed set of bundles available on the
 OBR of a cluster group:
 
-{code}
+----
 karaf@root()> cluster:obr-list group
 Name                                                                         | Symbolic Name                                                             | Version
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -53,34 +66,34 @@ Apache Aries Blueprint Web OSGI                                              | o
 Apache Aries Blueprint JEXL evaluator                                        | org.apache.aries.blueprint.jexl.evaluator                                 | 1.0.1.SNAPSHOT
 Apache Karaf :: JDBC :: Command                                              | org.apache.karaf.jdbc.command                                             | 3.0.2.SNAPSHOT
 ...
-{code}
+----
 
 When you remove a repository URL from the distributed OBR, the bundles' distributed set is updated:
 
-{code}
+----
 karaf@root()> cluster:obr-remove-url group http://karaf.cave.host:9090/cave/repo-repository.xml
-{code}
+----
 
-h2. Deploying bundles using the cluster OBR
+=== Deploying bundles using the cluster OBR
 
 You can deploy a bundle (and that bundle's dependent bundles) using the OBR on a given cluster group:
 
-{code}
+----
 karaf@root()> cluster:obr-deploy group bundleId
-{code}
+----
 
-The bundle ID is the symbolic name, viewable using the cluster:obr-list command. If you don't provide the version, the OBR deploys the latest version
+The bundle ID is the symbolic name, viewable using the `cluster:obr-list` command. If you don't provide the version, the OBR deploys the latest version
 available. To provide the version, use a comma after the symbolic name:
 
-{code}
+----
 karaf@root()> cluster:obr-deploy group org.apache.servicemix.specs.java-persistence-api-1.1.1
 karaf@root()> cluster:obr-deploy group org.apache.camel.camel-jms,2.9.0.SNAPSHOT
-{code}
+----
 
 The OBR will automatically install the bundles required to satisfy the bundle dependencies.
 
 The deploy command doesn't start bundles by default. To start the bundles just after deployment, you can use the -s option:
 
-{code}
+----
 karaf@root()> cluster:obr-deploy -s group org.ops4j.pax.web.pax-web-runtime
-{code}
+----

@@ -31,145 +31,38 @@
     <groupId>org.apache.karaf.cellar</groupId>
     <artifactId>manual</artifactId>
     <name>Apache Karaf :: Cellar :: Manual</name>
-    <packaging>war</packaging>
-
-    <properties>
-        <manual.dir>${project.build.directory}/manual</manual.dir>
-        <manual>${manual.dir}/cellar-manual-${project.version}</manual>
-        <scala.version>2.8.1</scala.version>
-        <scalate.version>1.4.0</scalate.version>
-        <cellar.version>${project.version}</cellar.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.fusesource.scalate</groupId>
-            <artifactId>scalate-wikitext</artifactId>
-            <version>${scalate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-            <version>${scala.version}</version>
-        </dependency>
-    </dependencies>
+    <packaging>pom</packaging>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <useDefaultDelimiters>false</useDefaultDelimiters>
-                    <delimiters>
-                        <delimiter>${*}</delimiter>
-                    </delimiters>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>filter</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/webapp</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/webapp</directory>
-                                    <filtering>true</filtering>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- TODO: add generate-command-help goal of karaf-maven-plugin as soon as it supports scalate-wiki output format -->
-            <plugin>
-                <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin</artifactId>
-                <version>${scalate.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-htmls</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>sitegen-no-fork</goal>
-                        </goals>
-                        <configuration>
-                            <warSourceDirectory>${project.build.directory}/webapp</warSourceDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <remoteServerId>people.apache.org</remoteServerId>
-                    <remoteServerUrl>scp://people.apache.org/www/karaf.apache.org/manual/cellar/${cellar.version}
-                    </remoteServerUrl>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.wagon</groupId>
-                        <artifactId>wagon-ssh</artifactId>
-                        <version>1.0-beta-6</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.fusesource.wikitext</groupId>
-                        <artifactId>confluence-core</artifactId>
-                        <version>1.3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.6</version>
                 <executions>
                     <execution>
-                        <id>create-manual</id>
+                        <id>create-documentation</id>
                         <phase>package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <tasks>
-                                <mkdir dir="${manual.dir}"/>
-                                <move file="${project.build.directory}/sitegen/manual.html" tofile="${manual}.html"/>
+                                <mkdir dir="target"/>
+                                <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html"/>
                                 <echo message="Generating PDF using Prince XML (http://www.princexml.com/)"/>
                                 <exec executable="prince">
-                                    <arg value="${manual}.html"/>
-                                    <arg value="${manual}.pdf"/>
+                                    <arg value="target/documentation.html"/>
+                                    <arg value="target/documentation.pdf"/>
                                     <arg value="--log"/>
                                     <arg value="${project.build.directory}/prince.log"/>
                                 </exec>
-                                <attachartifact file="${manual}.html" type="html"/>
-                                <attachartifact file="${manual}.pdf" type="pdf"/>
+                                <attachartifact file="target/documentation.html" type="html"/>
+                                <attachartifact file="target/documentation.pdf" type="pdf"/>
                             </tasks>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.1</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>${project.build.directory}/webapp/</directory>
-                        </resource>
-                    </webResources>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -180,68 +73,35 @@
                         mvn jetty:run
                        to have a live web site
                     -->
-                    <webAppSourceDirectory>${project.build.directory}/webapp/</webAppSourceDirectory>
-
-                    <systemProperties>
-                        <systemProperty>
-                            <name>scalate.editor</name>
-                            <value>${env.SCALATE_EDITOR}</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>scalate.workdir</name>
-                            <value>${project.build.directory}/scalateWorkDir</value>
-                        </systemProperty>
-                        <systemProperty>
-                            <name>scalate.mode</name>
-                            <value>development</value>
-                        </systemProperty>
-                    </systemProperties>
+                    <webAppSourceDirectory>${project.build.directory}/generated-docs/</webAppSourceDirectory>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.2</version>
                 <executions>
                     <execution>
-                        <id>bundle-manifest</id>
-                        <phase>process-classes</phase>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>manifest</goal>
+                            <goal>process-asciidoc</goal>
                         </goals>
+                        <configuration>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <backend>html5</backend>
+                            <attributes>
+                                <toc/>
+                                <linkcss>false</linkcss>
+                                <doctype>book</doctype>
+                            </attributes>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <supportedProjectTypes>
-                        <supportedProjectType>jar</supportedProjectType>
-                        <supportedProjectType>bundle</supportedProjectType>
-                        <supportedProjectType>war</supportedProjectType>
-                    </supportedProjectTypes>
-                    <instructions>
-                        <Import-Package>
-                            javax.servlet,
-                            javax.servlet.http,
-                            org.osgi.framework,
-                            org.osgi.service.packageadmin,
-                            javax.swing*,
-                            javax.xml*,
-                            javax.ws.rs*,
-                            org.w3c.dom,
-                            org.xml.sax*,
-                            sun.misc;resolution:=optional,
-                            jline;resolution:=optional,
-                            org.apache.tools.ant*;resolution:=optional,
-                            org.fusesource.scalamd;resolution:=optional,
-                            com.sun.jersey*;resolution:=optional,
-                            org.apache.commons.logging;provider=paxlogging;resolution:=optional,
-                            org.apache.log4j;provider=paxlogging;resolution:=optional,
-                            org.slf4j*;provider=paxlogging;resolution:=optional;version="[1.5,2)",
-                        </Import-Package>
-                        <Bundle-ClassPath>.,WEB-INF/classes</Bundle-ClassPath>
-                        <Embed-Directory>WEB-INF/lib</Embed-Directory>
-                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <Webapp-Context>/karaf-doc</Webapp-Context>
-                    </instructions>
+                    <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                    <headerFooter>true</headerFooter>
+                    <imagesDir>../resources/images</imagesDir>
                 </configuration>
             </plugin>
             <plugin>
@@ -251,20 +111,10 @@
                 <configuration>
                     <checkinComment>[scm-publish] Updating main site with Karaf Cellar manual</checkinComment>
                     <pubScmUrl>scm:svn:https://svn.apache.org/repos/asf/karaf/site/production/manual/cellar/latest-3</pubScmUrl>
-                    <content>${project.build.directory}/sitegen</content>
+                    <content>${project.build.directory}/generated-docs</content>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin</artifactId>
-                <version>${scalate.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
 
 </project>
