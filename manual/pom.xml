@@ -36,47 +36,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.6</version>
-                <executions>
-                    <execution>
-                        <id>create-documentation</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <mkdir dir="target"/>
-                                <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html"/>
-                                <echo message="Generating PDF using Prince XML (http://www.princexml.com/)"/>
-                                <exec executable="prince">
-                                    <arg value="target/documentation.html"/>
-                                    <arg value="target/documentation.pdf"/>
-                                    <arg value="--log"/>
-                                    <arg value="${project.build.directory}/prince.log"/>
-                                </exec>
-                                <attachartifact file="target/documentation.html" type="html"/>
-                                <attachartifact file="target/documentation.pdf" type="pdf"/>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.1.5.v20100705</version>
-                <configuration>
-                    <!-- When editing the conf files, you can comment this line to run
-                        mvn jetty:run
-                       to have a live web site
-                    -->
-                    <webAppSourceDirectory>${project.build.directory}/generated-docs/</webAppSourceDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
                 <version>1.5.2</version>
@@ -116,5 +75,44 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>pdf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>create-documentation</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <mkdir dir="target"/>
+                                        <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html"/>
+                                        <echo message="Generating PDF using Prince XML (http://www.princexml.com/)"/>
+                                        <exec executable="prince">
+                                            <arg value="target/documentation.html"/>
+                                            <arg value="target/documentation.pdf"/>
+                                            <arg value="--log"/>
+                                            <arg value="${project.build.directory}/prince.log"/>
+                                        </exec>
+                                        <attachartifact file="target/documentation.html" type="html"/>
+                                        <attachartifact file="target/documentation.pdf" type="pdf"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
