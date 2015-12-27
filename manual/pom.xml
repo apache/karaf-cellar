@@ -113,14 +113,4 @@
         </plugins>
     </build>
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin</artifactId>
-                <version>${scalate.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
-
 </project>
