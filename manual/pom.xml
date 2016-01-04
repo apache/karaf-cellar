@@ -49,10 +49,10 @@
                         <configuration>
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <backend>html5</backend>
+                            <doctype>book</doctype>
                             <attributes>
                                 <toc/>
                                 <linkcss>false</linkcss>
-                                <doctype>book</doctype>
                             </attributes>
                         </configuration>
                     </execution>
