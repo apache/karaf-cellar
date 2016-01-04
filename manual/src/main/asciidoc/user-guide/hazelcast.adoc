@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Core runtime and Hazelcast
+=== Core runtime and Hazelcast
 
 Cellar uses Hazelcast as cluster engine.
 
@@ -20,10 +20,11 @@ When you install the cellar feature, a hazelcast feature is automatically instal
 configuration file.
 
 The `etc/hazelcast.xml` configuration file contains all the core configuration, especially:
+
 * the Hazelcast cluster identifiers (group name and password)
 * network discovery and security configuration
 
-=== Hazelcast cluster identification
+==== Hazelcast cluster identification
 
 The `<group/>` element in the `etc/hazelcast.xml` defines the identification of the Hazelcast cluster:
 
@@ -36,7 +37,7 @@ The `<group/>` element in the `etc/hazelcast.xml` defines the identification of 
 
 All Cellar nodes have to use the same name and password (to be part of the same Hazelcast cluster).
 
-=== Network
+==== Network
 
 The `<network/>` element in the etc/hazelcast.xml contains all the network configuration.
 
@@ -87,9 +88,12 @@ By default, it will bind to all interfaces on the node machine. It's possible to
             <aws enabled="false"/>
 ----
 
-NB: in previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled in the same time.
+[NOTE]
+====
+In previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled in the same time.
 In Hazelcast 3.3.x (the version currently used by Cellar 3.0.x), only one discover mechanism can be enabled at a time. Cellar uses multicast by default (tcp-ip is disabled).
 If your network or network interface don't support multicast, you have to enable tcp-ip and disable multicast.
+====
 
 You can also discover nodes located on a Amazon instance:
 
@@ -123,10 +127,13 @@ Finally, you can also enable security transport on the cluster.
 Two modes are supported:
 
 * SSL:
+
 ----
         <ssl enabled="true"/>
 ----
+
 * Symmetric Encryption:
+
 ----
         <symmetric-encryption enabled="true">
             <!--

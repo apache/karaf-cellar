@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Supported Events
+=== Supported Events
 
 There are 3 types of events:
 

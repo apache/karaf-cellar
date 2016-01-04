@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Broadcasting commands
+=== Broadcasting commands
 
 Commands are a special kind of event. They imply that when they are handled, a `Result` event will be fired
 containing the outcome of the command. For each command, we have one result per recipient.

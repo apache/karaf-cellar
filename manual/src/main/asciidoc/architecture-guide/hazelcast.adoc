@@ -12,13 +12,13 @@
 // limitations under the License.
 //
 
-== The role of Hazelcast
+=== The role of Hazelcast
 
 The idea behind the clustering engine is that for each unit that we want to replicate, we create an event,
 broadcast the event to the cluster and hold the unit state to a shared resource, so that the rest of the
 nodes can look up and retrieve the changes.
 
-image::images/shared_architecture.jpg[]
+image::shared_architecture.jpg[]
 
 For instance, we want all nodes in our cluster to share configuration for PIDs a.b.c and x.y.z. On node
 "Karaf A" a change occurs on a.b.c. "Karaf A" updated the shared repository data for a.b.c and then notifies

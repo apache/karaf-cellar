@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Design
+=== Design
 
 The design works with the following entities:
 
@@ -26,7 +26,7 @@ The design works with the following entities:
 * *Command* is a special type of event that is linked to a list of events that represent the outcome of the command.
 * *Result* is a special type of event that represents the outcome of a command. Commands and results are correlated.
 
-image::images/event_flow.jpg[]
+image::event_flow.jpg[]
 
 The OSGi specification uses the `Events` and `Listener` paradigms in many situations (e.g. `ConfigurationChangeEvent`
 and `ConfigurationListener`). By implementing such a Listener and exposing it as an OSGi service to the Service

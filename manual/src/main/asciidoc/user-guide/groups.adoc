@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Cellar groups
+=== Cellar groups
 
 You can define groups in Cellar. A group allows you to define specific nodes and resources that are to be
 working together. This permits some nodes (those outside the group) not to need to sync'ed with changes of
@@ -29,7 +29,7 @@ x | default | node2:5702 node1:5701(x)
 
 The 'x' indicates a local group. A local group is a group containing the local node (where we are connected).
 
-=== New group
+==== New group
 
 You can create a new group using the group-create command:
 
@@ -47,9 +47,9 @@ x | default | node2:5702 node1:5701(x)
   | test    |
 ----
 
-=== Clustered Resources and Cluster Groups
+==== Clustered Resources and Cluster Groups
 
-==== Features
+===== Features
 
 Cellar can manipulate features and features repositories on cluster groups.
 
@@ -72,6 +72,7 @@ org.ops4j.pax.web-3.1.2     | cluster/local | mvn:org.ops4j.pax.web/pax-web-feat
 
 You have the name of the repository, and the URL, like in the feature:repo-list command. However, the cluster:feature-repo-list command
 provides the location of the features repository:
+
 * cluster means that the repository is defined only on the cluster group
 * local means that the repository is defined only on the local node (not on the cluster)
 * cluster/local means that the repository is defined both on the local node, but also on the cluster group
@@ -129,12 +130,13 @@ feature.listener = false
 ----
 
 The listener listens for the following local feature changes:
+
 * add features repository
 * remove features repository
 * install feature
 * uninstall feature
 
-==== Bundles
+===== Bundles
 
 Cellar can manipulate bundles on cluster groups.
 
@@ -188,12 +190,13 @@ bundle.listener = false
 ----
 
 The bundle listener listens the following local bundle changes:
+
 * install bundle
 * start bundle
 * stop bundle
 * uninstall bundle
 
-==== Configurations
+===== Configurations
 
 Cellar can manipulate configurations on cluster groups.
 
@@ -277,15 +280,15 @@ You can modify this list using the same command, or by editing the `etc/org.apac
 config.excluded.properties = service.factoryPid, felix.fileinstall.filename, felix.fileinstall.dir, felix.fileinstall.tmpdir, org.ops4j.pax.url.mvn.defaultRepositories
 ----
 
-==== OBR (optional)
+===== OBR (optional)
 
 See the link:obr[OBR section] for details.
 
-==== EventAdmin (optional)
+===== EventAdmin (optional)
 
 See the link:event[EventAdmin section] for details.
 
-=== Blocking policy
+==== Blocking policy
 
 You can define a policy to filter the cluster events exchanges by the nodes (inbound or outbound).
 
@@ -306,7 +309,10 @@ OUTBOUND:
         blacklist: [config, cellar*, hazelcast, management]
 ----
 
-NB: * is a wildcard.
+[NOTE]
+====
+* is a wildcard.
+====
 
 You have the equivalent command for bundle and config:
 

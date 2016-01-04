@@ -12,14 +12,14 @@
 // limitations under the License.
 //
 
-== HTTP Session Replication
+=== HTTP Session Replication
 
 Apache Karaf Cellar supports replication of the HTTP sessions on the cluster.
 
 It means that the same web application deployed on multiple nodes in the cluster will share the same HTTP sessions
 pool, allowing clients to transparently connect to any node, without loosing any session state.
 
-=== Enable Cluster HTTP Session Replication
+==== Enable Cluster HTTP Session Replication
 
 In order to be able to be stored on the cluster, all HTTP Sessions used in your web application have to implement
 Serializable interface. Any non-serializable attribute has to be flagged as transient.
@@ -35,7 +35,7 @@ karaf@root()> feature:repo-add cellar
 karaf@root()> feature:install cellar
 ----
 
-=== Web Application Session Replication
+==== Web Application Session Replication
 
 In order to use HTTP session replication on the cluster, you just have to add a filter in your web application.
 

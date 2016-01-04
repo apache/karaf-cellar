@@ -12,11 +12,11 @@
 // limitations under the License.
 //
 
-== OSGi Event Broadcasting support (eventadmin)
+=== OSGi Event Broadcasting support (eventadmin)
 
 Apache Karaf Cellar is able to listen all OSGi events on the cluster nodes, and broadcast each events to other nodes.
 
-=== Enable OSGi Event Broadcasting support
+==== Enable OSGi Event Broadcasting support
 
 OSGi Event Broadcasting is an optional feature. To enable it, you have to install the cellar-eventadmin feature:
 
@@ -24,7 +24,7 @@ OSGi Event Broadcasting is an optional feature. To enable it, you have to instal
 karaf@root()> feature:install cellar-eventadmin
 ----
 
-=== OSGi Event Broadcast in action
+==== OSGi Event Broadcast in action
 
 As soon as the cellar-eventadmin feature is installed (on all nodes that should use the clustered eventadmin),
 Cellar listens all OSGi events, and broadcast these events to all nodes of the same cluster group.

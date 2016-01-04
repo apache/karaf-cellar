@@ -12,11 +12,11 @@
 // limitations under the License.
 //
 
-== OBR Support
+=== OBR Support
 
 Apache Karaf Cellar is able to "broadcast" OBR actions between cluster nodes of the same group.
 
-=== Enable OBR support
+==== Enable OBR support
 
 To enable Cellar OBR support, the `cellar-obr` feature must first be installed:
 
@@ -26,7 +26,7 @@ karaf@root()> feature:install cellar-obr
 
 The Cellar OBR feature will install the Karaf OBR feature which provides the OBR service (RepositoryAdmin).
 
-=== Register repository URL in a cluster
+==== Register repository URL in a cluster
 
 The `cluster:obr-add-url` command registers an OBR repository URL (repository.xml) in a cluster group:
 
@@ -74,7 +74,7 @@ When you remove a repository URL from the distributed OBR, the bundles' distribu
 karaf@root()> cluster:obr-remove-url group http://karaf.cave.host:9090/cave/repo-repository.xml
 ----
 
-=== Deploying bundles using the cluster OBR
+==== Deploying bundles using the cluster OBR
 
 You can deploy a bundle (and that bundle's dependent bundles) using the OBR on a given cluster group:
 

@@ -12,9 +12,9 @@
 // limitations under the License.
 //
 
-== Introduction
+=== Introduction
 
-=== Use Cases
+==== Use Cases
 
 The first goal of Karaf Cellar is to synchronize the status of several Karaf instances (named nodes).
 
@@ -28,6 +28,7 @@ The nodes list could be discovered (using unicast or multicast), or "static" def
 and port list).
 
 Cellar is able to synchronize:
+
 * bundles (remote or local)
 * config
 * features
@@ -38,18 +39,19 @@ The second goal is to provide a Distributed OSGi runtime. It means that using Ce
 service located on a remote instance. See the link:transport[transport and DOSGi section] of the user guide.
 
 Finally, Cellar also provides "runtime clustering" by providing dedicated feature like:
+
 * HTTP load balancing
 * HTTP sessions replication
 * log centralization
 Please, see the sections dedicated to those features.
 
-=== Cross topology
+==== Cross topology
 
 This is the default Cellar topology. Cellar is installed on all nodes, each node has the same function.
 
 It means that you can perform actions on any node, it will be broadcasted to all others nodes.
 
-=== Star topology
+==== Star topology
 
 In this topology, if Cellar is installed on all nodes, you perform actions only on one specific node (the "manager").
 

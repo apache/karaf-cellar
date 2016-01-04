@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== Architecture Overview
+=== Architecture Overview
 
 The core concept behind Karaf Cellar is that each node can be a part of one or more groups that
 provide the node distributed memory for keeping data (e.g. configuration, features information, other)

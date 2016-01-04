@@ -12,13 +12,13 @@
 // limitations under the License.
 //
 
-== HTTP Balancer
+=== HTTP Balancer
 
 Apache Karaf Cellar is able to expose servlets local to a node on the cluster.
 It means that a client (browser) can use any node in the cluster, proxying the requests to the node actually
 hosting the servlets.
 
-=== Enable HTTP Balancer
+==== Enable HTTP Balancer
 
 To enable Cellar HTTP Balancer, you have to first install the `http` and `http-whiteboard` features:
 
@@ -42,7 +42,7 @@ karaf@root()> cluster:feature-install default cellar-http-balancer
 
 It's done: the Cellar HTTP Balancer is now enabled. It will expose proxy servlets on nodes.
 
-=== Balancer in action
+==== Balancer in action
 
 To illustrate Cellar HTTP Balancer in action, you need at least a cluster with two nodes.
 
@@ -100,13 +100,16 @@ karaf@node1()> feature:repo-add cellar 4.0.0
 karaf@node1()> feature:install cellar
 ----
 
-WARNING: if you run the nodes on a single machine, you have to provision `etc/org.ops4j.pax.web.cfg` configuration file
+[NOTE]
+====
+If you run the nodes on a single machine, you have to provision `etc/org.ops4j.pax.web.cfg` configuration file
 containing the `org.osgi.service.http.port property` with a port number different to 8181.
 For this example, we use the following `etc/org.ops4j.pax.web.cfg` file:
 
 ----
 org.osgi.service.http.port=8041
 ----
+====
 
 On node1, as we installed the `cellar-http-balancer` using `cluster:feature-install` command, it's automatically installed
 when node2 joins the default cluster group.

@@ -15,14 +15,14 @@
 Apache Karaf Cellar 4.x - Documentation
 ========================================
 Apache Software Foundation
-:doctype: book
+:doctype: article
 :toc: left
 :toclevels: 3
 :toc-position: left
 :toc-title: Apache Karaf Cellar 4.x - Documentation
 :numbered:
 
-= User Guide
+== User Guide
 
 include::user-guide/introduction.adoc[]
 
@@ -48,7 +48,7 @@ include::user-guide/transport.adoc[]
 
 include::user-guide/cloud.adoc[]
 
-= Architecture Guide
+== Architecture Guide
 
 include::architecture-guide/overview.adoc[]
 
