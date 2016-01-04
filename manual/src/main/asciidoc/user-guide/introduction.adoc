@@ -12,9 +12,9 @@
 // limitations under the License.
 //
 
-== Introduction
+=== Introduction
 
-=== Karaf Cellar use cases
+==== Karaf Cellar use cases
 
 The first purpose of Cellar is to synchronize the state of several Karaf instances (named nodes).
 
@@ -47,17 +47,17 @@ Finally, Cellar also provides "runtime clustering" by providing dedicated featur
 
 Please, see the sections dedicated to those features.
 
-=== Cross topology
+==== Cross topology
 
-image::images/cross_topology.jpg[]
+image::cross_topology.jpg[]
 
 This is the default Cellar topology. Cellar is installed on every nodes, each node has the same function.
 
 It means that you can perform actions on any node, it will be broadcasted to all others nodes.
 
-=== Star topology
+==== Star topology
 
-image::images/star_topology.jpg[]
+image::star_topology.jpg[]
 
 In this topology, if Cellar is installed on all nodes, you perform actions only on one specific node (the "manager").
 

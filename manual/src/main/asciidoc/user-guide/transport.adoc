@@ -12,7 +12,7 @@
 // limitations under the License.
 //
 
-== DOSGi and Transport
+=== DOSGi and Transport
 
 DOSGi (Distributed OSGi) enables the distribution of OSGi services across the Cellar nodes.
 

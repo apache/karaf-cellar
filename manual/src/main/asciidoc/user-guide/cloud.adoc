@@ -12,26 +12,26 @@
 // limitations under the License.
 //
 
-== Discovery Services
+=== Discovery Services
 
 The Discovery Services allow you to use third party libraries to discover the nodes member of the Cellar cluster.
 
-=== jClouds
+==== jClouds
 
-Cellar relies on Hazelcast (http://www.hazelcast.com) in order to discover cluster nodes. This can happen either by using unicast, multicast  or specifying the ip address of each node.
+Cellar relies on http://www.hazelcast.com[Hazelcast] in order to discover cluster nodes. This can happen either by using unicast, multicast  or specifying the ip address of each node.
 See the link::hazelcast[Core Configuration] section for details.
 
 Unfortunately multicast is not allowed in most IaaS providers and the alternative of specifying all IP addresses creates maintenance difficulties, especially since in most cases the addresses are not known in advance.
 
-Cellar solves this problem using a cloud discovery service powered by jclouds (http://jclouds.apache.org).
+Cellar solves this problem using a cloud discovery service powered by http://jclouds.apache.org[jClouds].
 
-==== Cloud discovery service
+===== Cloud discovery service
 
 Most cloud providers provide cloud storage among other services. Cellar uses the cloud storage via jclouds, in order to determine the IP addresses of each node so that Hazelcast can find them.
 
 This approach is also called blackboard and refers to the process where each node registers itself in a common storage are so that other nodes know its existence.
 
-==== Installing Cellar cloud discovery service
+===== Installing Cellar cloud discovery service
 
 To install the cloud discovery service simply install the appropriate jclouds provider and then install cellar-cloud feature.
 Amazon S3 is being used here for this example, but the below applies to any provider supported by jclouds.
@@ -62,12 +62,15 @@ container=cellar
 validity=360000
 ----
 
-NB: you can find the cloud providers supported by jclouds here http://repo1.maven.org/maven2/org/apache/jclouds/provider/.
+[NOTE]
+====
+You can find the cloud providers supported by jclouds here http://repo1.maven.org/maven2/org/apache/jclouds/provider/.
 You have to install the corresponding jclouds feature for the provider.
+====
 
 After creating the file the service will check for new nodes. If new nodes are found the Hazelcast instance configuration will be updated and the instance restarted.
 
-==== Kubernetes & docker.io
+===== Kubernetes & docker.io
 
 link::http://kubernetes.io[Kubernetes] is an open source orchestration system for docker.io containers.
 It handles scheduling onto nodes in a compute cluster and actively manages workloads to ensure that their state matches
@@ -81,7 +84,7 @@ folder, etc. so that your Kubernetes container may bootstrap everything on boot.
 The Cellar Kubernetes discovery service is a great complement to the Karaf docker.io feature (allowing you to easily
 create and manage docker.io images in and for Karaf).
 
-==== Kubernetes discovery service
+===== Kubernetes discovery service
 
 In order to determine the IP address of each node, so that Hazelcast can connect to them, the Kubernetes discovery service queries
 the Kubernetes API for containers labeled with the `pod.label.key` and `pod.label.key` specified in `etc/org.apache.karaf.cellar.kubernetes-name.cfg`.
@@ -93,7 +96,7 @@ So, you *must be sure* to label your containers (pods) accordingly.
 After a Cellar node starts up, Kubernetes discovery service will configure Hazelcast with currently running Cellar nodes.
 Since Hazelcast follows a peer-to-peer all-shared topology, whenever nodes come up and down, the cluster will remain up-to-date.
 
-==== Installing Kubernetes discovery service
+===== Installing Kubernetes discovery service
 
 To install the Kubernetes discovery service, simply install cellar-kubernetes feature.
 

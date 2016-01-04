@@ -12,12 +12,12 @@
 // limitations under the License.
 //
 
-== Deploy Cellar
+=== Deploy Cellar
 
 This chapter describes how to deploy and start Cellar into a running Apache Karaf instance. This chapter
 assumes that you already know Apache Karaf basics, especially the notion of features and shell usage.
 
-=== Registering Cellar features
+==== Registering Cellar features
 
 Karaf Cellar is provided as a Karaf features XML descriptor.
 
@@ -47,7 +47,7 @@ cellar-cloud                  | 3.0.3   |           | karaf-cellar-3.0.3 | Cloud
 cellar-webconsole             | 3.0.3   |           | karaf-cellar-3.0.3 | Cellar plugin for Karaf WebConsole
 ----
 
-=== Starting Cellar
+==== Starting Cellar
 
 To start Cellar in your Karaf instance, you only need to install the Cellar feature:
 
@@ -74,7 +74,7 @@ And Cellar cluster commands are now available:
 karaf@root()> cluster:<TAB>
 ----
 
-=== Optional features
+==== Optional features
 
 Optionally, you can install additional features.
 

@@ -12,11 +12,11 @@
 // limitations under the License.
 //
 
-== Cellar nodes
+=== Cellar nodes
 
 This chapter describes the Cellar nodes manipulation commands.
 
-=== Nodes identification
+==== Nodes identification
 
 When you installed the Cellar feature, your Karaf instance became automatically a Cellar cluster node,
 and hence tries to discover the others Cellar nodes.
@@ -33,13 +33,19 @@ x | node2:5702     | node2 | 5702
 
 The starting 'x' indicates that it's the Karaf instance on which you are logged on (the local node).
 
-NB: if you don't see the other nodes there (whereas they should be there), it's probably due to a network issue. By default, Cellar uses multicast to discover the nodes.
+[NOTE]
+====
+If you don't see the other nodes there (whereas they should be there), it's probably due to a network issue. By default, Cellar uses multicast to discover the nodes.
 If your network or network interface don't support multicast, you have to switch to tcp-ip instead of multicast. See [Core Configuration|hazelcast] for details.
+====
 
-NB: in Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a change in Hazelcast, it's no more possible to have both. Now, in Cellar 3.0.x, the default
+[NOTE]
+====
+In Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a change in Hazelcast, it's no more possible to have both. Now, in Cellar 3.0.x, the default
 configuration is multicast enabled, tcp-ip disabled. See [Core Configuration|hazelcast] for details.
+====
 
-=== Testing nodes
+==== Testing nodes
 
 You can ping a node to test it:
 
@@ -53,14 +59,14 @@ from 4: req=node1:5701 time=7 ms
 from 5: req=node1:5701 time=12 ms
 ----
 
-=== Node Components: listener, producer, handler, consume, and synchronizer
+==== Node Components: listener, producer, handler, consume, and synchronizer
 
 A Cellar node is actually a set of components, each component is dedicated to a special purpose.
 
 The `etc/org.apache.karaf.cellar.node.cfg` configuration file is dedicated to the configuration of the local node.
 It's where you can control the status of the different components.
 
-=== Synchronizers and sync policy
+==== Synchronizers and sync policy
 
 A synchronizer is invoked when you:
 
@@ -109,7 +115,7 @@ It's also possible to sync only a resource using:
 
 or a given cluster group using the -g (--group) option.
 
-=== Producer, consumer, and handlers
+==== Producer, consumer, and handlers
 
 To notify the other nodes in the cluster, Cellar produces a cluster event.
 
@@ -180,7 +186,7 @@ You can stop or start a specific handler using the `cluster:handler-stop` and `c
 When a handler is stopped, it means that the node will receive the cluster event, but will not update the local resources
 dealt by the handler.
 
-=== Listeners
+==== Listeners
 
 The listeners are listening for local resource change.
 
@@ -191,10 +197,13 @@ To avoid some unexpected behaviors (especially when you stop a node), most of th
 
 The listeners status are configured in the `etc/org.apache.karaf.cellar.node.cfg` configuration file.
 
-NB: enabling listeners is at your own risk. We encourage you to use cluster dedicated commands and MBeans to manipulate
+[NOTE]
+====
+Enabling listeners is at your own risk. We encourage you to use cluster dedicated commands and MBeans to manipulate
 the resources on the cluster.
+====
 
-== Clustered resources
+=== Clustered resources
 
 Cellar provides dedicated commands and MBeans for clustered resources.
 

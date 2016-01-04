@@ -12,13 +12,13 @@
 // limitations under the License.
 //
 
-== Architecture Overview
+=== Architecture Overview
 
 The core concept behind Karaf Cellar is that each node can be a part of one or more groups that
 provide the node distributed memory for keeping data (e.g. configuration, features information, other)
 and a topic which is used to exchange events with the rest of the group nodes.
 
-image::images/architecture.png[]
+image::architecture.png[]
 
 Each group comes with a configuration, which defines which events are to be broadcasted and which are
 not. Whenever a local change occurs to a node, the node will read the setup information of all the
