@@ -70,7 +70,7 @@ public class DiscoveryTask implements Runnable {
                     	properties = new Hashtable();
                     }
                     String newMemberText = CellarUtils.createStringFromSet(members, true);
-                    String memberText = (String) properties.get(Discovery.MEMBERS_PROPERTY_NAME);
+                    String memberText = (String) properties.get(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME);
                     if (newMemberText != null && newMemberText.length() > 0 && !newMemberText.equals(memberText)) {
                         properties.put(Discovery.DISCOVERED_MEMBERS_PROPERTY_NAME, newMemberText);
                         LOGGER.trace("CELLAR DISCOVERY: adding a new member {} to configuration and updating it", newMemberText);
