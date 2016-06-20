@@ -27,6 +27,8 @@ import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.apache.karaf.features.command.completers.AvailableRepoNameCompleter;
+import org.apache.karaf.features.internal.model.Features;
+import org.apache.karaf.features.internal.model.JaxbUtil;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
@@ -97,51 +99,22 @@ public class RepoAddCommand extends CellarCommandSupport {
                     break;
                 }
             }
+
             if (name == null) {
-                // update the repository temporary locally
-                Repository repository = null;
-                boolean localRegistered = false;
-                // local lookup
-                for (Repository registeredRepository : featuresService.listRepositories()) {
-                    if (registeredRepository.getURI().equals(uri)) {
-                        repository = registeredRepository;
-                        break;
-                    }
-                }
-                if (repository == null) {
-                    // registered locally
-                    try {
-                        featuresService.addRepository(uri);
-                    } catch (Exception e) {
-                        System.err.println("Repository URL " + uri + " is not valid: " + e.getMessage());
-                        return null;
-                    }
-                    // get the repository
-                    for (Repository registeredRepository : featuresService.listRepositories()) {
-                        if (registeredRepository.getURI().equals(uri)) {
-                            repository = registeredRepository;
-                            break;
-                        }
-                    }
-                } else {
-                    localRegistered = true;
-                }
+                // parsing the features repository to get content
+                Features repository = JaxbUtil.unmarshal(uri.toASCIIString(), true);
 
                 // update the features repositories in the cluster group
                 clusterRepositories.put(uri.toString(), repository.getName());
 
                 // update the features in the cluster group
-                for (Feature feature : repository.getFeatures()) {
+                for (Feature feature : repository.getFeature()) {
                     FeatureState featureState = new FeatureState();
                     featureState.setName(feature.getName());
                     featureState.setVersion(feature.getVersion());
                     featureState.setInstalled(featuresService.isInstalled(feature));
                     clusterFeatures.put(feature.getName() + "/" + feature.getVersion(), featureState);
                 }
-
-                // un-register the repository if it's not local registered
-                if (!localRegistered)
-                    featuresService.removeRepository(uri);
 
                 // broadcast the cluster event
                 ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);

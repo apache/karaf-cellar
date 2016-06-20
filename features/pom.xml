@@ -115,8 +115,11 @@
                             *
                         </Import-Package>
                         <Private-Package>
+                            org.apache.karaf.features.internal.model,
                             org.apache.karaf.cellar.features.management.internal,
                             org.apache.karaf.cellar.features.internal.osgi,
+                            org.apache.felix.utils.version,
+                            org.apache.karaf.util,
                             org.apache.karaf.util.tracker;-split-package:=merge-first
                         </Private-Package>
                     </instructions>

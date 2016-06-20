@@ -27,6 +27,8 @@ import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.apache.karaf.features.command.completers.InstalledRepoNameCompleter;
+import org.apache.karaf.features.internal.model.Features;
+import org.apache.karaf.features.internal.model.JaxbUtil;
 import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.Completion;
@@ -121,46 +123,15 @@ public class RepoRemoveCommand extends CellarCommandSupport {
                     }
                 }
                 if (found) {
-                    // update the repository temporary locally
-                    Repository repository = null;
-                    boolean localRegistered = false;
-                    // local lookup
-                    for (Repository registeredRepository : featuresService.listRepositories()) {
-                        if (registeredRepository.getURI().equals(new URI(url))) {
-                            repository = registeredRepository;
-                            break;
-                        }
-                    }
-                    if (repository == null) {
-                        // registered locally
-                        try {
-                            featuresService.addRepository(new URI(url));
-                        } catch (Exception e) {
-                            System.err.println("Repository URL " + url + " is not valid: " + e.getMessage());
-                            continue;
-                        }
-                        // get the repository
-                        for (Repository registeredRepository : featuresService.listRepositories()) {
-                            if (registeredRepository.getURI().equals(new URI(url))) {
-                                repository = registeredRepository;
-                                break;
-                            }
-                        }
-                    } else {
-                        localRegistered = true;
-                    }
+                    Features repositoryModel = JaxbUtil.unmarshal(url, true);
 
                     // update the features repositories in the cluster group
                     clusterRepositories.remove(url);
 
                     // update the features in the cluster group
-                    for (Feature feature : repository.getFeatures()) {
+                    for (Feature feature : repositoryModel.getFeature()) {
                         clusterFeatures.remove(feature.getName() + "/" + feature.getVersion());
                     }
-
-                    // un-register the repository if it's not local registered
-                    if (!localRegistered)
-                        featuresService.removeRepository(new URI(url));
 
                     // broadcast a cluster event
                     ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
