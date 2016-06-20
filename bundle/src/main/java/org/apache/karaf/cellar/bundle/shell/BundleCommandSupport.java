@@ -122,14 +122,14 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                             bundles.add(bundle);
                         } else {
                             // no match on bundle name, fall back to symbolic name and check if it matches the regex
-                            matcher = namePattern.matcher(name);
+                            matcher = namePattern.matcher(bundleSplit[0]);
                             if (matcher.find()) {
                                 bundles.add(bundle);
                             }
                         }
                     } else {
                         // no bundle name, fall back to symbolic name and check if it matches the regex
-                        matcher = namePattern.matcher(name);
+                        matcher = namePattern.matcher(bundleSplit[0]);
                         if (matcher.find()) {
                             bundles.add(bundle);
                         }
