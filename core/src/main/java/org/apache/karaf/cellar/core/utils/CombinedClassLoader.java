@@ -29,12 +29,16 @@ public class CombinedClassLoader extends ClassLoader {
 
     private final ConcurrentMap<Long, Bundle> bundles = new ConcurrentHashMap<Long, Bundle>();
 
+    private final ConcurrentMap<String, Bundle> classBundleCache = new ConcurrentHashMap<String, Bundle>();
+
     public void init() {
         bundles.clear();
+        classBundleCache.clear();
     }
 
     public void destroy() {
         bundles.clear();
+        classBundleCache.clear();
     }
 
     public void addBundle(Bundle bundle) {
@@ -43,21 +47,46 @@ public class CombinedClassLoader extends ClassLoader {
 
     public void removeBundle(Bundle bundle) {
         bundles.remove(bundle.getBundleId());
+        // Remove all bundle classes from class name to bundle cache
+        for (Map.Entry<String, Bundle> entry : classBundleCache.entrySet()) {
+            if (entry.getValue().getBundleId() == bundle.getBundleId()) {
+                classBundleCache.remove(entry.getKey());
+            }
+        }
     }
 
     @Override
-    public Class findClass(String name) throws ClassNotFoundException {
+    public Class<?> findClass(String name) throws ClassNotFoundException {
+        // Trying to find class using class name to bundle cache first
+        Bundle bundle = classBundleCache.get(name);
+        if (bundle != null) {
+            Class<?> clazz = loadClassFromBundle(name, bundle);
+            if (clazz != null) {
+                return clazz;
+            }
+            // Remove stale cache entry
+            classBundleCache.remove(name);
+        }
+        // Class not found using class name to bundle cache, check all registered bundles
         for (Map.Entry<Long, Bundle> entry : bundles.entrySet()) {
-            try {
-                Bundle bundle = entry.getValue();
-                if (bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STARTING) {
-                    return bundle.loadClass(name);
-                }
-            } catch (ClassNotFoundException cnfe) {
-                // Try next
+            bundle = entry.getValue();
+            Class<?> clazz = loadClassFromBundle(name, bundle);
+            if (clazz != null) {
+                classBundleCache.put(name, bundle);
+                return clazz;
             }
         }
         throw new ClassNotFoundException(name);
+    }
+
+    private Class<?> loadClassFromBundle(String name, Bundle bundle) {
+        try {
+            if (bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STARTING) {
+                return bundle.loadClass(name);
+            }
+        } catch (ClassNotFoundException cnfe) {
+        }
+        return null;
     }
 
     @Override
