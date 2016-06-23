@@ -49,6 +49,8 @@
         <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j.version>1.7.7</slf4j.version>
+        <netflix.feign.version>8.13.1</netflix.feign.version>
+        <gson.version>2.3</gson.version>
         <bnd.version.policy>[$(version;==;$(@)),$(version;+;$(@)))</bnd.version.policy>
     </properties>
 
@@ -67,6 +69,7 @@
         <module>cloud</module>
         <module>kubernetes</module>
         <module>dns</module>
+        <module>etcd</module>
         <module>webconsole</module>
         <module>assembly</module>
         <module>samples</module>
@@ -294,7 +297,7 @@
                 <version>${joda-time.version}</version>
             </dependency>
 
-          <!--Apache common-lang-->
+            <!--Apache common-lang-->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
@@ -306,6 +309,28 @@
                 <groupId>io.fabric8</groupId>
                 <artifactId>kubernetes-client</artifactId>
                 <version>${fabric8.kubernetes-client.version}</version>
+            </dependency>
+
+            <!-- Netflix Feign -->
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.netflix.feign</groupId>
+                <artifactId>feign-core</artifactId>
+                <version>${netflix.feign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.netflix.feign</groupId>
+                <artifactId>feign-slf4j</artifactId>
+                <version>${netflix.feign.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.netflix.feign</groupId>
+                <artifactId>feign-gson</artifactId>
+                <version>${netflix.feign.version}</version>
             </dependency>
 
             <!-- Testing -->

@@ -98,9 +98,20 @@
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.cloud/${project.version}</bundle>
     </feature>
 
-    <feature name="cellar-kubernetes" description="Cellar kubernetes support in clusters" version="${project.version}">
+    <feature name="cellar-kubernetes" description="Cellar Kubernetes support" version="${project.version}">
+        <feature>cellar-core</feature>
         <feature>fabric8-kubernetes-api</feature>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kubernetes/${project.version}</bundle>
+    </feature>
+
+    <feature name="cellar-dns" description="Cellar DNS support" version="${project.version}">
+        <feature>cellar-core</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.dns/${project.version}</bundle>
+    </feature>
+
+    <feature name="cellar-etcd" description="Cellar Etcd discovery support" version="${project.version}">
+        <feature>cellar-core</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.etcd/${project.version}</bundle>
     </feature>
 
     <feature name="cellar-webconsole" description="Cellar plugin for Karaf WebConsole" version="${project.version}">
@@ -114,10 +125,6 @@
         <feature>http</feature>
         <feature>http-whiteboard</feature>
         <bundle>mvn:org.apache.karaf.cellar.http/org.apache.karaf.cellar.http.balancer/${project.version}</bundle>
-    </feature>
-
-    <feature name="cellar-dns" description="Cellar DNS support in clusters" version="${project.version}">
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.dns/${project.version}</bundle>
     </feature>
 
 </features>
