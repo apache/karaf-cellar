@@ -37,7 +37,7 @@ public class ResultHandler<R extends Result> implements EventHandler<R> {
     public void handle(R result) {
         if (commandStore != null && commandStore.getPending() != null) {
             String id = result.getId();
-            Command command = commandStore.getPending().get(id);
+            Command command = commandStore.getPending().remove(id);
 
             if (command != null && handlerSwitch.getStatus().equals(SwitchStatus.ON)) {
                 command.addResults(result);
