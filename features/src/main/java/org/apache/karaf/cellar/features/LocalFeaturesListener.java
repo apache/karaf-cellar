@@ -133,6 +133,8 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterRepositoryEvent clusterRepositoryEvent = new ClusterRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
                         clusterRepositoryEvent.setSourceGroup(group);
                         clusterRepositoryEvent.setSourceNode(clusterManager.getNode());
+                        clusterRepositoryEvent.setInstall(false);
+                        clusterRepositoryEvent.setUninstall(false);
                         RepositoryEvent.EventType type = event.getType();
 
                         Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + group.getName());
