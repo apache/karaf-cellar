@@ -444,7 +444,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 Features repository = JaxbUtil.unmarshal(uri.toASCIIString(), true);
 
                 // update the cluster group
-                clusterRepositories.put(uri.toString(), name);
+                clusterRepositories.put(uri.toString(), repository.getName());
 
                 // update the features in the cluster group
                 for (Feature feature : repository.getFeature()) {
