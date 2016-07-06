@@ -40,6 +40,8 @@ include::user-guide/obr.adoc[]
 
 include::user-guide/event.adoc[]
 
+include::user-guide/log.adoc[]
+
 include::user-guide/http-balancer.adoc[]
 
 include::user-guide/http-session.adoc[]

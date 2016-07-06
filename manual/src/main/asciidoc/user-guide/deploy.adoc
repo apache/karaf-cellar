@@ -81,4 +81,16 @@ The cellar-cloud feature adds support of cloud blobstore, allowing to use instan
 karaf@root()> feature:install cellar-cloud
 ----
 
+The cellar-http feature adds HTTP support:
+
+----
+karaf@root()> feature:install cellar-http
+----
+
+The cellar-log feature adds centralized log support:
+
+----
+karaf@root()> feature:install cellar-log
+----
+
 Please, see the sections dedicated to these features for details.

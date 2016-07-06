@@ -1,0 +1,122 @@
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+=== Centralized Log
+
+Apache Karaf Cellar is able to centralize and manage log service on each node.
+
+==== Enable Cellar log
+
+Centralized log support is an optionnal feature that you can install using:
+
+----
+karaf@root()> feature:install cellar-log
+----
+
+==== Display log messages and exceptions
+
+The `cluster:log-display` command allows you to display all log messages on the cluster or on a specific node in the
+cluster.
+
+Without argument, `cluster:log-display` command will display log messages from all nodes in the cluster:
+
+----
+karaf@node1()> cluster:log-display
+172.17.42.1:5701 | 2016-07-09T22:21:34+0200 | INFO | pool-52-thread-1 | org.apache.karaf.shell.impl.action.osgi.CommandExtension | Registering commands for bundle org.apache.karaf.cellar.log/4.0.1.SNAPSHOT
+172.17.42.1:5701 | 2016-07-09T22:21:34+0200 | INFO | pool-52-thread-1 | org.apache.karaf.features.internal.service.FeaturesServiceImpl | Done.
+----
+
+You can also specify a node (ID or alias) to display only log messages for this specific node:
+
+----
+karaf@node1()> cluster:log-display ALL 172.17.42.1:5701
+172.17.42.1:5701 | 2016-07-09T22:21:34+0200 | INFO | pool-52-thread-1 | org.apache.karaf.shell.impl.action.osgi.CommandExtension | Registering commands for bundle org.apache.karaf.cellar.log/4.0.1.SNAPSHOT
+172.17.42.1:5701 | 2016-07-09T22:21:34+0200 | INFO | pool-52-thread-1 | org.apache.karaf.features.internal.service.FeaturesServiceImpl | Done.
+----
+
+`ALL` keyword means log messages for any logger.
+
+It's also possible to display the log message only for a specific logger:
+
+----
+karaf@node1()> cluster:log-display org.apache.karaf.features
+172.17.42.1:5701 | 2016-07-09T22:21:34+0200 | INFO | pool-52-thread-1 | org.apache.karaf.features.internal.service.FeaturesServiceImpl | Done.
+----
+
+The `cluster:log-exception-display` displays the last occurred exception.
+
+Like the `cluster:log-display` command, you can also filter by logger and node.
+
+==== Log a message
+
+At any time, you can log a message of your choice using `cluster:log-log` command, from the local node and any node
+in the cluster:
+
+----
+karaf@root()> cluster:log-log "My own message"
+karaf@root()> cluster:log-log "My own message" 172.17.42.1:5701
+----
+
+==== Clear log messages
+
+The `cluster:log-clear` command cleans the log messages.
+
+Without argument, the command cleans all log messages on the cluster:
+
+----
+karaf@root()> cluster:log-clear
+----
+
+You can specify the node (ID or alias) for which we remove only the log message:
+
+----
+karaf@root()> cluster:log-clear
+----
+
+===== Get and set log levels
+
+You can change the log level for any logger on all nodes in the cluster or on a specific node using the
+`cluster:log-set` command.
+
+----
+karaf@root()> cluster:log-set DEBUG
+----
+
+You can specify the logger to change:
+
+----
+karaf@root()> cluster:log-set DEBUG org.apache.karaf.cellar
+----
+
+And you can also change on a specific node in the cluster instead of all nodes:
+
+----
+karaf@root()> cluster:log-set DEBUG ROOT 172.17.42.1:5701
+----
+
+On the other hand, you can display the current log level on all nodes, for each logger using the `cluster:log-set`
+command:
+
+----
+karaf@node1()> cluster:log-get
+Node 172.17.42.1:5701 (x)
+Logger | Level
+--------------
+ROOT   | INFO
+...
+----
+
+==== JMX MBeans
+
+All actions you can do using the shell commands can be done with the `CellarLogMBean`.

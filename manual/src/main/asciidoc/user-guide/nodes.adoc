@@ -25,10 +25,10 @@ You can list the known Cellar nodes using the list-nodes command:
 
 ----
 karaf@root()> cluster:node-list
-  | Id             | Host Name | Port
--------------------------------------
-x | node2:5702     | node2 | 5702
-  | node1:5701     | node1 | 5701
+  | Id             | Alias | Host Name | Port
+----------------------------------------------
+x | node2:5702     |       | node2 | 5702
+  | node1:5701     |       | node1 | 5701
 ----
 
 The starting 'x' indicates that it's the Karaf instance on which you are logged on (the local node).
@@ -47,6 +47,9 @@ In Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a chan
 Now, in Cellar 3.0.x, the default configuration is multicast enabled, tcp-ip disabled.
 See link:hazelcast[Core Configuration section] for details.
 ====
+
+The `cluster:node-alias` command allows you to define an alias to a node. Any Cellar command using a node as argument
+or option can use either node ID or node alias.
 
 ==== Testing nodes
 

@@ -127,5 +127,11 @@
         <bundle>mvn:org.apache.karaf.cellar.http/org.apache.karaf.cellar.http.balancer/${project.version}</bundle>
     </feature>
 
+    <feature name="cellar-log" description="Cellar central log support" version="${project.version}">
+        <feature>log</feature>
+        <feature>cellar-hazelcast</feature>
+        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.log/${project.version}</bundle>
+    </feature>
+
 </features>
 

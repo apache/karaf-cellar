@@ -160,6 +160,14 @@
         -->
         <hz:merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</hz:merge-policy>
     </hz:map>
+    <hz:map name="org.apache.karaf.cellar.log">
+        <hz:time-to-live-seconds>0</hz:time-to-live-seconds>
+        <hz:max-idle-seconds>0</hz:max-idle-seconds>
+        <hz:eviction-policy>LRU</hz:eviction-policy>
+        <hz:max-size policy="PER_PARTITION">5000</hz:max-size>
+        <hz:eviction-percentage>25</hz:eviction-percentage>
+        <hz:backup-count>0</hz:backup-count>
+    </hz:map>
 
     <hz:multimap name="default">
         <hz:backup-count>1</hz:backup-count>
