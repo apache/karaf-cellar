@@ -104,15 +104,15 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
     }
 
     @Override
-    public void join(String groupName, String nodeId) throws Exception {
+    public void join(String groupName, String nodeIdOrAlias) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
         }
 
-        Node node = clusterManager.findNodeById(nodeId);
+        Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
         if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
         }
 
         Set<Node> nodes = new HashSet<Node>();
@@ -127,15 +127,15 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
     }
 
     @Override
-    public void quit(String groupName, String nodeId) throws Exception {
+    public void quit(String groupName, String nodeIdOrAlias) throws Exception {
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
             throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
         }
 
-        Node node = clusterManager.findNodeById(nodeId);
+        Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
         if (node == null) {
-            throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+            throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
         }
 
         Set<Node> nodes = new HashSet<Node>();

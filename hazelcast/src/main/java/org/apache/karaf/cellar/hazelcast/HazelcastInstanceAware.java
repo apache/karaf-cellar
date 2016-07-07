@@ -48,6 +48,14 @@ public class HazelcastInstanceAware {
         }
     }
 
+    public void setNodeAlias(String alias) {
+        Cluster cluster = instance.getCluster();
+        if (cluster != null) {
+            Member member = cluster.getLocalMember();
+            member.setStringAttribute("alias", alias);
+        }
+    }
+
     public HazelcastInstance getInstance() {
         return instance;
     }

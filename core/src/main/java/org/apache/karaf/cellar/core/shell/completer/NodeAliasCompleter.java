@@ -16,25 +16,16 @@ package org.apache.karaf.cellar.core.shell.completer;
 import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
-/**
- * A completer which includes all nodes.
- */
 @Service
-public class AllNodeCompleter extends NodeCompleterSupport {
+public class NodeAliasCompleter extends NodeCompleterSupport {
 
-    /**
-     * Always returns true.
-     *
-     * @param node the node.
-     * @return return true.
-     */
     @Override
     protected boolean acceptsNode(Node node) {
         return true;
     }
 
     @Override
-    protected boolean addId() { return true; }
+    protected boolean addId() { return false; }
 
     @Override
     protected boolean addAlias() { return true; }

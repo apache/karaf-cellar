@@ -40,19 +40,19 @@ public interface CellarGroupMBean {
      * Join a node in a cluster group.
      *
      * @param name the cluster group name.
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of join failure.
      */
-    void join(String name, String nodeId) throws Exception;
+    void join(String name, String nodeIdOrAlias) throws Exception;
 
     /**
      * Quit a node from a cluster group.
      *
      * @param name the cluster group name.
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of quit failure.
      */
-    void quit(String name, String nodeId) throws Exception;
+    void quit(String name, String nodeIdOrAlias) throws Exception;
 
     /**
      * Get the list of cluster groups.

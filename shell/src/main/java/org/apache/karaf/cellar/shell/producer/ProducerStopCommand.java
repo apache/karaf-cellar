@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class ProducerStopCommand extends ProducerSupport {
 
-    @Argument(index = 0, name = "node", description = "The node(s) ID", required = false, multiValued = true)
+    @Argument(index = 0, name = "node", description = "The node(s) ID or alias", required = false, multiValued = true)
     @Completion(AllNodeCompleter.class)
     List<String> nodes;
 

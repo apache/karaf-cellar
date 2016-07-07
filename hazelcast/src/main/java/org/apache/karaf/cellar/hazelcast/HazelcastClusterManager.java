@@ -146,6 +146,47 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
         return null;
     }
 
+    @Override
+    public Node findNodeByAlias(String alias) {
+        if (alias != null) {
+            Cluster cluster = instance.getCluster();
+            if (cluster != null) {
+                Set<Member> members = cluster.getMembers();
+                if (members != null && !members.isEmpty()) {
+                    for (Member member : members) {
+                        HazelcastNode node = new HazelcastNode(member);
+                        if (alias.equals(node.getAlias())) {
+                            return node;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Node findNodeByIdOrAlias(String idOrAlias) {
+        if (idOrAlias != null) {
+            Cluster cluster = instance.getCluster();
+            if (cluster != null) {
+                Set<Member> members = cluster.getMembers();
+                if (members != null && !members.isEmpty()) {
+                    for (Member member : members) {
+                        HazelcastNode node = new HazelcastNode(member);
+                        if (idOrAlias.equals(node.getId())) {
+                            return node;
+                        }
+                        if (idOrAlias.equals(node.getAlias())) {
+                            return node;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * List the nodes in a given cluster group.
      *

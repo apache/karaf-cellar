@@ -79,11 +79,34 @@ public interface ClusterManager {
     public Node findNodeById(String id);
 
     /**
+     * Get a node identified by a given alias.
+     *
+     * @param alias the alias of the node to look for.
+     * @return the node.
+     */
+    public Node findNodeByAlias(String alias);
+
+    /**
+     * Get a node identified by a given ID or alias.
+     *
+     * @param idOrAlias the ID or alias of the node to look for.
+     * @return the node.
+     */
+    public Node findNodeByIdOrAlias(String idOrAlias);
+
+    /**
      * Get the local node.
      *
      * @return the local node.
      */
     public Node getNode();
+
+    /**
+     * Set an alias for the local node.
+     *
+     * @param alias The node alias.
+     */
+    public void setNodeAlias(String alias);
 
     /**
      * Generate an unique ID across the cluster.

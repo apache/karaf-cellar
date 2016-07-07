@@ -31,13 +31,14 @@ public class NodesListCommand extends ClusterCommandSupport {
             ShellTable table = new ShellTable();
             table.column(" ");
             table.column("Id");
+            table.column("Alias");
             table.column("Host Name");
             table.column("Port");
             for (Node node : nodes) {
                 String local = "";
                 if (node.equals(clusterManager.getNode()))
                     local = "x";
-                table.addRow().addContent(local, node.getId(), node.getHost(), node.getPort());
+                table.addRow().addContent(local, node.getId(), node.getAlias(), node.getHost(), node.getPort());
             }
             table.print(System.out);
         } else {

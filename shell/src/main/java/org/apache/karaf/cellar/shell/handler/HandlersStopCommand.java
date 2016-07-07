@@ -28,7 +28,7 @@ public class HandlersStopCommand extends HandlersSupport {
     @Argument(index = 0, name = "handler", description = "The event handler", required = true, multiValued = false)
     String handler;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID or alias", required = false, multiValued = true)
     @Completion(AllNodeCompleter.class)
     List<String> nodes;
 

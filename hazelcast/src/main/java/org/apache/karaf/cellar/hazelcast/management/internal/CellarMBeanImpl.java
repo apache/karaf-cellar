@@ -143,17 +143,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void handlerStart(String handlerId, String nodeId) throws Exception {
+    public void handlerStart(String handlerId, String nodeIdOrAlias) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
 
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
             }
             nodes.add(node);
         }
@@ -164,16 +164,16 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void handlerStop(String handlerId, String nodeId) throws Exception {
+    public void handlerStop(String handlerId, String nodeIdOrAlias) throws Exception {
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
             }
             nodes.add(node);
         }
@@ -211,17 +211,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void consumerStart(String nodeId) throws Exception {
+    public void consumerStart(String nodeIdOrAlias) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
 
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
             }
             nodes.add(node);
         }
@@ -232,17 +232,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void consumerStop(String nodeId) throws Exception {
+    public void consumerStop(String nodeIdOrAlias) throws Exception {
         ConsumerSwitchCommand command = new ConsumerSwitchCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
 
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
             }
             nodes.add(node);
         }
@@ -280,17 +280,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void producerStop(String nodeId) throws Exception {
+    public void producerStop(String nodeIdOrAlias) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
 
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist");
             }
             nodes.add(node);
         }
@@ -301,17 +301,17 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
     }
 
     @Override
-    public void producerStart(String nodeId) throws Exception {
+    public void producerStart(String nodeIdOrAlias) throws Exception {
         ProducerSwitchCommand command = new ProducerSwitchCommand(clusterManager.generateId());
 
         Set<Node> nodes = new HashSet<Node>();
 
-        if (nodeId == null || nodeId.isEmpty()) {
+        if (nodeIdOrAlias == null || nodeIdOrAlias.isEmpty()) {
             nodes.add(clusterManager.getNode());
         } else {
-            Node node = clusterManager.findNodeById(nodeId);
+            Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
             if (node == null) {
-                throw new IllegalArgumentException("Cluster node " + nodeId + " doesn't exist)");
+                throw new IllegalArgumentException("Cluster node " + nodeIdOrAlias + " doesn't exist)");
             }
             nodes.add(node);
         }

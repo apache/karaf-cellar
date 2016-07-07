@@ -41,4 +41,11 @@ public interface Node extends Serializable {
      */
     public int getPort();
 
+    /**
+     * Get the alias of the node.
+     *
+     * @return the node alias.
+     */
+    public String getAlias();
+
 }

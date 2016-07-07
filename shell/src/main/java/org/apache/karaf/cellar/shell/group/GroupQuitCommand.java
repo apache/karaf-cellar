@@ -32,7 +32,7 @@ public class GroupQuitCommand extends GroupSupport {
     @Completion(AllGroupsCompleter.class)
     String groupName;
 
-    @Argument(index = 1, name = "node", description = "The node(s) ID", required = false, multiValued = true)
+    @Argument(index = 1, name = "node", description = "The node(s) ID or alias", required = false, multiValued = true)
     @Completion(AllNodeCompleter.class)
     List<String> nodes;
 

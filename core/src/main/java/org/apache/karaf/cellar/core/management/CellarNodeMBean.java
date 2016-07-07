@@ -23,11 +23,36 @@ public interface CellarNodeMBean {
     /**
      * Ping a node.
      *
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @return the time (in milliseconds) to reach the node.
      * @throws Exception in case of ping failure.
      */
-    long pingNode(String nodeId) throws Exception;
+    long pingNode(String nodeIdOrAlias) throws Exception;
+
+    /**
+     * Set the alias of the local node.
+     *
+     * @param alias The node alias.
+     * @throws Exception in case of failure.
+     */
+    void setAlias(String alias) throws Exception;
+
+    /**
+     * Get the alias for a given node ID.
+     *
+     * @param id the node ID or null for the local node.
+     * @return the corresponding alias (or null).
+     * @throws Exception in case of failure.
+     */
+    String getAlias(String id) throws Exception;
+
+    /**
+     * Get the node ID for a given alias.
+     * @param alias The node alias.
+     * @return The node ID.
+     * @throws Exception in case of failure.
+     */
+    String getId(String alias) throws Exception;
 
     /**
      * Get the list of nodes.

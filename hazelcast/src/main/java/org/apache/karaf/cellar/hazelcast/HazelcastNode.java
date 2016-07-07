@@ -25,9 +25,9 @@ import java.net.InetSocketAddress;
 public class HazelcastNode implements Node {
 
     private String id;
-
     private String host;
     private int port;
+    private String alias;
 
     public HazelcastNode(Member member) {
         InetSocketAddress address = member.getSocketAddress();
@@ -35,6 +35,7 @@ public class HazelcastNode implements Node {
         this.port = address.getPort();
         StringBuilder builder = new StringBuilder();
         this.id = builder.append(host).append(":").append(port).toString();
+        this.alias = member.getStringAttribute("alias");
     }
 
     static String getHostString(InetSocketAddress socketAddress) {
@@ -63,6 +64,15 @@ public class HazelcastNode implements Node {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    @Override
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     @Override

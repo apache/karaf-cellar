@@ -37,9 +37,17 @@ public abstract class NodeCompleterSupport implements Completer {
         try {
             for (Node node : clusterManager.listNodes()) {
                 if (acceptsNode(node)) {
-                    String id = node.getId();
-                    if (delegate.getStrings() != null && !delegate.getStrings().contains(id)) {
-                        delegate.getStrings().add(id);
+                    if (addId()) {
+                        String id = node.getId();
+                        if (delegate.getStrings() != null && !delegate.getStrings().contains(id)) {
+                            delegate.getStrings().add(id);
+                        }
+                    }
+                    if (addAlias()) {
+                        String alias = node.getAlias();
+                        if (delegate.getStrings() != null && !delegate.getStrings().contains(alias)) {
+                            delegate.getStrings().add(alias);
+                        }
                     }
                 }
             }
@@ -50,6 +58,10 @@ public abstract class NodeCompleterSupport implements Completer {
     }
 
     protected abstract boolean acceptsNode(Node node);
+
+    protected abstract boolean addId();
+
+    protected abstract boolean addAlias();
 
     public ClusterManager getClusterManager() {
         return clusterManager;

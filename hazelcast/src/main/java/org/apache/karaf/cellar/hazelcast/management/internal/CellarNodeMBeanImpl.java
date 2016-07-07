@@ -53,10 +53,10 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
     }
 
     @Override
-    public long pingNode(String nodeId) throws Exception {
-        Node node = clusterManager.findNodeById(nodeId);
+    public long pingNode(String nodeIdOrAlias) throws Exception {
+        Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
         if (node == null) {
-            throw new IllegalArgumentException("Cluster group " + nodeId + " doesn't exist");
+            throw new IllegalArgumentException("Cluster group " + nodeIdOrAlias + " doesn't exist");
         }
         Long start = System.currentTimeMillis();
         Ping ping = new Ping(clusterManager.generateId());
@@ -67,12 +67,41 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
     }
 
     @Override
+    public void setAlias(String alias) throws Exception {
+        if (alias == null) {
+            throw new IllegalArgumentException("Alias is null");
+        }
+        if (clusterManager.findNodeByAlias(alias) != null) {
+            throw new IllegalArgumentException("Alias " + alias + " already exists");
+        }
+        clusterManager.setNodeAlias(alias);
+    }
+
+    @Override
+    public String getAlias(String id) throws Exception {
+        Node node = clusterManager.findNodeById(id);
+        if (node != null) {
+            return node.getAlias();
+        }
+        return null;
+    }
+
+    @Override
+    public String getId(String alias) throws Exception {
+        Node node = clusterManager.findNodeByAlias(alias);
+        if (node != null) {
+            return node.getId();
+        }
+        return null;
+    }
+
+    @Override
     public TabularData getNodes() throws Exception {
 
         CompositeType nodeType = new CompositeType("Node", "Karaf Cellar cluster node",
-                new String[]{ "id", "hostname", "port", "local" },
-                new String[]{ "ID of the node", "Hostname of the node", "Port number of the node", "Flag defining if the node is local" },
-                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER, SimpleType.BOOLEAN });
+                new String[]{ "id", "alias", "hostname", "port", "local" },
+                new String[]{ "ID of the node", "Alias of the node", "Hostname of the node", "Port number of the node", "Flag defining if the node is local" },
+                new OpenType[]{ SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.INTEGER, SimpleType.BOOLEAN });
 
         TabularType tableType = new TabularType("Nodes", "Table of all Karaf Cellar nodes", nodeType, new String[]{ "id" });
 
@@ -83,8 +112,8 @@ public class CellarNodeMBeanImpl extends StandardMBean implements CellarNodeMBea
         for (Node node : nodes) {
             boolean local = (node.equals(clusterManager.getNode()));
             CompositeData data = new CompositeDataSupport(nodeType,
-                    new String[]{ "id", "hostname", "port", "local" },
-                    new Object[]{ node.getId(), node.getHost(), node.getPort(), local });
+                    new String[]{ "id", "alias", "hostname", "port", "local" },
+                    new Object[]{ node.getId(), node.getAlias(), node.getHost(), node.getPort(), local });
             table.put(data);
         }
 

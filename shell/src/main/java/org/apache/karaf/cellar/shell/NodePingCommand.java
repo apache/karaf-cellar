@@ -30,9 +30,9 @@ public class NodePingCommand extends ClusterCommandSupport {
 
     private static Long TIMEOUT = 10000L;
 
-    @Argument(index = 0, name = "node", description = "The ID of the node to ping", required = true, multiValued = false)
+    @Argument(index = 0, name = "node", description = "The ID or alias of the node to ping", required = true, multiValued = false)
     @Completion(AllNodeCompleter.class)
-    String nodeId;
+    String nodeIdOrAlias;
 
     @Argument(index = 1, name = "iterations", description = "The number of iterations to perform", required = false, multiValued = false)
     Integer iterations = 10;
@@ -42,9 +42,9 @@ public class NodePingCommand extends ClusterCommandSupport {
 
     @Override
     protected Object doExecute() throws Exception {
-        Node node = clusterManager.findNodeById(nodeId);
+        Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
         if (node == null) {
-            System.out.println("Cluster node " + nodeId + " doesn't exist");
+            System.out.println("Cluster node " + nodeIdOrAlias + " doesn't exist");
             return null;
         }
 

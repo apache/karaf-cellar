@@ -29,18 +29,18 @@ import java.util.Set;
  */
 public abstract class HandlersSupport extends ClusterCommandSupport {
 
-    protected Object doExecute(String handlerName, List<String> nodeIds, Boolean status) throws Exception {
+    protected Object doExecute(String handlerName, List<String> nodeIdsOrAliases, Boolean status) throws Exception {
 
         ManageHandlersCommand command = new ManageHandlersCommand(clusterManager.generateId());
         command.setTimeout(timeout * 1000);
 
         // looking for nodes and check if exist
         Set<Node> recipientList = new HashSet<Node>();
-        if (nodeIds != null && !nodeIds.isEmpty()) {
-            for (String nodeId : nodeIds) {
-                Node node = clusterManager.findNodeById(nodeId);
+        if (nodeIdsOrAliases != null && !nodeIdsOrAliases.isEmpty()) {
+            for (String nodeIdOrAlias : nodeIdsOrAliases) {
+                Node node = clusterManager.findNodeByIdOrAlias(nodeIdOrAlias);
                 if (node == null) {
-                    System.err.println("Cluster node " + nodeId + " doesn't exist");
+                    System.err.println("Cluster node " + nodeIdOrAlias + " doesn't exist");
                 } else {
                     recipientList.add(node);
                 }

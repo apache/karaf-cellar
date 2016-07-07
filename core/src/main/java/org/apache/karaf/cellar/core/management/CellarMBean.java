@@ -38,18 +38,18 @@ public interface CellarMBean {
     /**
      * Start a cluster event consumer on a node.
      *
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of start failure.
      */
-    void consumerStart(String nodeId) throws Exception;
+    void consumerStart(String nodeIdOrAlias) throws Exception;
 
     /**
      * Stop a cluster event consumer on a node.
      *
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of stop failure.
      */
-    void consumerStop(String nodeId) throws Exception;
+    void consumerStop(String nodeIdOrAlias) throws Exception;
 
     /**
      * Get the status of the cluster event handlers.
@@ -63,19 +63,19 @@ public interface CellarMBean {
      * Start a cluster event handler on a node.
      *
      * @param handlerId the cluster event handler ID.
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of start failure.
      */
-    void handlerStart(String handlerId, String nodeId) throws Exception;
+    void handlerStart(String handlerId, String nodeIdOrAlias) throws Exception;
 
     /**
      * Stop a cluster event handler on a node.
      *
      * @param handlerId the cluster event handler ID.
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of stop failure.
      */
-    void handlerStop(String handlerId, String nodeId) throws Exception;
+    void handlerStop(String handlerId, String nodeIdOrAlias) throws Exception;
 
     /**
      * Get the status of the cluster event producers.
@@ -88,17 +88,17 @@ public interface CellarMBean {
     /**
      * Start a cluster event producer on a node.
      *
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of start failure.
      */
-    void producerStart(String nodeId) throws Exception;
+    void producerStart(String nodeIdOrAlias) throws Exception;
 
     /**
      * Stop a cluster event producer on a node.
      *
-     * @param nodeId the node ID.
+     * @param nodeIdOrAlias the node ID or alias.
      * @throws Exception in case of stop failure.
      */
-    void producerStop(String nodeId) throws Exception;
+    void producerStop(String nodeIdOrAlias) throws Exception;
 
 }
