@@ -518,10 +518,10 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                     configAdminProperties = new Properties();
                 }
                 // get configuration from Hazelcast
-                Map<String, String> sourceGropConfig = instance.getMap(GROUPS_CONFIG);
+                Map<String, String> sourceGroupConfig = instance.getMap(GROUPS_CONFIG);
 
                 // update local configuration from cluster
-                for (Map.Entry<String, String> parentEntry : sourceGropConfig.entrySet()) {
+                for (Map.Entry<String, String> parentEntry : sourceGroupConfig.entrySet()) {
                     configAdminProperties.put(parentEntry.getKey(), parentEntry.getValue());
                 }
 
@@ -529,12 +529,12 @@ public class HazelcastGroupManager implements GroupManager, EntryListener, Confi
                 Enumeration keyEnumeration = configAdminProperties.keys();
                 while (keyEnumeration.hasMoreElements()) {
                     String key = (String) keyEnumeration.nextElement();
-                    String value = (String) configAdminProperties.get(key);
+                    String value = configAdminProperties.get(key).toString();
 
                     if (key.startsWith(sourceGroupName)) {
                         String newKey = key.replace(sourceGroupName, targetGroupName);
                         updatedProperties.put(newKey, value);
-                        sourceGropConfig.put(key, value);
+                        sourceGroupConfig.put(key, value);
                     }
                     updatedProperties.put(key, value);
                 }
