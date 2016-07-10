@@ -22,11 +22,13 @@ import org.apache.karaf.cellar.http.balancer.BalancerEventHandler;
 import org.apache.karaf.cellar.http.balancer.LocalServletListener;
 import org.apache.karaf.cellar.http.balancer.ProxyServletRegistry;
 import org.apache.karaf.cellar.http.balancer.ServletSynchronizer;
+import org.apache.karaf.cellar.http.balancer.management.internal.CellarHttpMBeanImpl;
 import org.apache.karaf.util.tracker.BaseActivator;
 import org.apache.karaf.util.tracker.annotation.ProvideService;
 import org.apache.karaf.util.tracker.annotation.RequireService;
 import org.apache.karaf.util.tracker.annotation.Services;
 import org.ops4j.pax.web.service.spi.ServletListener;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,8 @@ public class Activator extends BaseActivator {
     private final static Logger LOGGER = LoggerFactory.getLogger(Activator.class);
 
     private ProxyServletRegistry proxyRegistry;
+
+    private ServiceRegistration mbeanRegistration;
 
     @Override
     public void doStart() throws Exception {
@@ -106,6 +110,14 @@ public class Activator extends BaseActivator {
         servletListener.setConfigurationAdmin(configurationAdmin);
         servletListener.setEventProducer(eventProducer);
         register(ServletListener.class, servletListener);
+
+        LOGGER.debug("CELLAR HTTP BALANCER: register MBean");
+        CellarHttpMBeanImpl mbean = new CellarHttpMBeanImpl();
+        mbean.setClusterManager(clusterManager);
+        mbean.setGroupManager(groupManager);
+        props = new Hashtable();
+        props.put("jmx.objectname", "org.apache.karaf.cellar:type=http,name=" + System.getProperty("karaf.name"));
+        mbeanRegistration = bundleContext.registerService(getInterfaceNames(mbean), mbean, props);
     }
 
     @Override
@@ -115,6 +127,11 @@ public class Activator extends BaseActivator {
         if (proxyRegistry != null) {
             proxyRegistry.destroy();
             proxyRegistry = null;
+        }
+
+        if (mbeanRegistration != null) {
+            mbeanRegistration.unregister();
+            mbeanRegistration = null;
         }
     }
 

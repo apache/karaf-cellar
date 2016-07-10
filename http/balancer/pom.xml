@@ -99,6 +99,7 @@
                     <instructions>
                         <Export-Package>
                             !org.apache.karaf.cellar.http.balancer.internal.osgi,
+                            !org.apache.karaf.cellar.http.balancer.management.internal,
                             org.apache.karaf.cellar.http.balancer*
                         </Export-Package>
                         <Import-Package>
@@ -110,6 +111,7 @@
                         </Import-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.http.balancer.internal.osgi,
+                            org.apache.karaf.cellar.http.balancer.management.internal,
                             org.apache.http*,
                             org.apache.commons.codec*
                         </Private-Package>
