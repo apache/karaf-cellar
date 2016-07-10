@@ -75,7 +75,7 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         try {
             // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                if (event.getRefresh()) {
+                if (event.getRefresh() != null && event.getRefresh()) {
                     LOGGER.debug("CELLAR FEATURE: refresh repository {}", uri);
                     featuresService.refreshRepository(new URI(uri));
                 } else {
