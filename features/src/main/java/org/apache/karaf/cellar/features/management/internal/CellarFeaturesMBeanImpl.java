@@ -469,6 +469,44 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
+    public void refreshRepository(String groupName, String nameOrUrl, String version) throws Exception {
+        // check if the group exists
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the event producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF");
+        }
+
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            // get the cluster features repositories
+            Map<String, String> clusterFeaturesRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+
+            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
+            if (uri == null) {
+                uri = new URI(nameOrUrl);
+            }
+
+            if (clusterFeaturesRepositories.get(uri) == null) {
+                throw new IllegalArgumentException("Features repository " + nameOrUrl + " doesn't exist in cluster group " + groupName);
+            }
+
+            // broadcast the cluster event
+            ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
+            event.setRefresh(true);
+            event.setSourceGroup(group);
+            eventProducer.produce(event);
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    @Override
     public void removeRepository(String groupName, String repository) throws Exception {
         this.removeRepository(groupName, repository, false);
     }

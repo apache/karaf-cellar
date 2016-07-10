@@ -83,6 +83,12 @@ You can add a repository on a cluster group using the `cluster:feature-repo-add`
 karaf@node1()> cluster:feature-repo-add default mvn:org.apache.activemq/activemq-karaf/5.10.0/xml/features
 ----
 
+You can refresh a features repository in a cluster group using the `cluster:feature-repo-refresh` command:
+
+----
+karaf@node1()> cluster:feature-repo-refresh default foo
+----
+
 You can remove a repository from a cluster group using the `cluster:feature-repo-remove` command:
 
 ----

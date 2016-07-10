@@ -24,6 +24,7 @@ public class ClusterRepositoryEvent extends Event {
 	private EventType type;
     private Boolean install;
     private Boolean uninstall;
+    private Boolean refresh;
 
     public ClusterRepositoryEvent(String id, EventType type) {
         super(id);
@@ -48,6 +49,14 @@ public class ClusterRepositoryEvent extends Event {
 
     public void setUninstall(Boolean uninstall) {
         this.uninstall = uninstall;
+    }
+
+    public Boolean getRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(Boolean refresh) {
+        this.refresh = refresh;
     }
 
     @Override

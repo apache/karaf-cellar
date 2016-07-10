@@ -75,11 +75,16 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         try {
             // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
-                if (!isRepositoryRegisteredLocally(uri)) {
-                    LOGGER.debug("CELLAR FEATURE: adding repository URI {}", uri);
-                    featuresService.addRepository(new URI(uri), event.getInstall());
+                if (event.getRefresh()) {
+                    LOGGER.debug("CELLAR FEATURE: refresh repository {}", uri);
+                    featuresService.refreshRepository(new URI(uri));
                 } else {
-                    LOGGER.debug("CELLAR FEATURE: repository URI {} is already registered locally");
+                    if (!isRepositoryRegisteredLocally(uri)) {
+                        LOGGER.debug("CELLAR FEATURE: adding repository URI {}", uri);
+                        featuresService.addRepository(new URI(uri), event.getInstall());
+                    } else {
+                        LOGGER.debug("CELLAR FEATURE: repository URI {} is already registered locally", uri);
+                    }
                 }
             } else {
                 if (isRepositoryRegisteredLocally(uri)) {

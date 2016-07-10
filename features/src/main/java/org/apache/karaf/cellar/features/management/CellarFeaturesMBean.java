@@ -71,6 +71,16 @@ public interface CellarFeaturesMBean {
     void removeRepository(String group, String repository, boolean uninstall) throws Exception;
 
     /**
+     * Refresh a features repository in a cluster group.
+     *
+     * @param group the cluster group name.
+     * @param repository the features repository name or URL.
+     * @param version the features repository version.
+     * @throws Exception
+     */
+    void refreshRepository(String group, String repository, String version) throws Exception;
+
+    /**
      * Install a feature in a cluster group.
      *
      * @param group the cluster group name.
