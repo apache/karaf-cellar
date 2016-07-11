@@ -15,6 +15,53 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.0.1
+                    =========================
+
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.0.1 is a maintenance release on the Cellar 4.x serie including bug fixes and couple of new features.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-4115] - Hard coded timeout values for Cellar shell commands
+    * [KARAF-4144] - Hazelcast instance doesn't start with saxon transformer impl
+    * [KARAF-4177] - Kubernetes managed service doesn't update the correct properties set
+    * [KARAF-4259] - Cellar should deal with configuration type
+    * [KARAF-4317] - NullPointerException when adding a feature repository to a cluster
+    * [KARAF-4322] - feature:repo-remove / cluster:feature-repo-remove -u flag has no effect
+    * [KARAF-4538] - Cellar bundle regex is way too "global" in command and MBean
+    * [KARAF-4579] - Extend HTTP package import in Cellar HTTP to work with Karaf 4.1.x
+    * [KARAF-4585] - CellarNodeMBean doesn't correctly identify the local node
+    * [KARAF-4586] - Cellar discovery doesn't use the right property name
+    * [KARAF-4601] - addRepository() in cellar feature mbean always throws null pointer exception
+    * [KARAF-4602] - All Cellar modules should define the source group and node in the cluster event
+
+** Dependency upgrade
+    * [KARAF-4111] - Upgrade to Hazelcast 3.5.3
+    * [KARAF-4112] - Upgrade to Jclouds 1.9.1
+    * [KARAF-4143] - Upgrade to Easymock 3.4
+    * [KARAF-4148] - Upgrade to Hazelcast 3.5.4
+    * [KARAF-4163] - Upgrade Joda-time to version 2.9.1
+    * [KARAF-4164] - Upgrade Felix Bundle Repository to version 2.0.6
+    * [KARAF-4165] - Upgrade Felix Webconsole to version 4.2.14
+    * [KARAF-4550] - Upgrade to Hazelcast 3.6.3
+    * [KARAF-4618] - Upgrade to Hazelcast 3.6.4
+
+** Improvement
+    * [KARAF-1286] - Allow users to set node name
+    * [KARAF-4179] - Avoid reverse DNS lookup when using literal IP address
+    * [KARAF-4316] - Provide cluster:feature-repo-refresh command
+    * [KARAF-4587] - Limit the classloader overhead in the CombinedClassLoader
+
+** New Feature
+    * [KARAF-2487] - Provide Cellar centralized log service
+    * [KARAF-4236] - Cellar DNS nodes discovery
+    * [KARAF-4244] - Cellar Etcd nodes discovery
+    * [KARAF-4619] - Add CellarHttpMBean
+
                     Apache Karaf Cellar 4.0.0
                     =========================
 
