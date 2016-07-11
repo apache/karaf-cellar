@@ -215,6 +215,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 ClusterRepositoryEvent event = new ClusterRepositoryEvent(repository.getURI().toString(), RepositoryEvent.EventType.RepositoryAdded);
                                 event.setSourceGroup(group);
                                 event.setSourceNode(clusterManager.getNode());
+                                event.setLocal(clusterManager.getNode());
                                 eventProducer.produce(event);
                             } else {
                                 LOGGER.debug("CELLAR FEATURE: repository {} is already in cluster group {}", repository.getName(), groupName);
@@ -249,6 +250,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 }
                                 event.setSourceGroup(group);
                                 event.setSourceNode(clusterManager.getNode());
+                                event.setLocal(clusterManager.getNode());
                                 eventProducer.produce(event);
 
                             } else {

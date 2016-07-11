@@ -81,6 +81,7 @@ public class LocalServletListener implements ServletListener {
                     ClusterBalancerEvent event = new ClusterBalancerEvent(alias, ClusterBalancerEvent.ADDING, locations);
                     event.setSourceGroup(group);
                     event.setSourceNode(clusterManager.getNode());
+                    event.setLocal(clusterManager.getNode());
                     eventProducer.produce(event);
                 } else {
                     LOGGER.debug("CELLAR HTTP BALANCER: location {} already defined for servlet {} on cluster", location, alias);
@@ -98,6 +99,7 @@ public class LocalServletListener implements ServletListener {
                     ClusterBalancerEvent event = new ClusterBalancerEvent(alias, ClusterBalancerEvent.REMOVING, locations);
                     event.setSourceGroup(group);
                     event.setSourceNode(clusterManager.getNode());
+                    event.setLocal(clusterManager.getNode());
                     eventProducer.produce(event);
                 }
                 if (locations.isEmpty()) {

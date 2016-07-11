@@ -76,6 +76,7 @@ public class DeleteCommand extends ConfigCommandSupport {
             // broadcast a cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             event.setType(ConfigurationEvent.CM_DELETED);
             eventProducer.produce(event);
 

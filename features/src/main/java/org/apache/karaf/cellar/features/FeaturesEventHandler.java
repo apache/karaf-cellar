@@ -73,7 +73,7 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
         }
 
         // check if it's not a "local" event
-        if (event.getSourceNode() != null && event.getSourceNode().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
+        if (event.getLocal() != null && event.getLocal().getId().equalsIgnoreCase(clusterManager.getNode().getId())) {
             LOGGER.trace("CELLAR FEATURE: cluster event is local (coming from local synchronizer or listener)");
             return;
         }

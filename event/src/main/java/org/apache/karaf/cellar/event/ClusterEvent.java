@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.event;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ public class ClusterEvent extends Event {
 
     private String topicName;
     private Map<String, Serializable> properties;
+    private Node local;
 
     public ClusterEvent(String topicName, Map<String, Serializable> properties) {
         super(topicName);
@@ -46,6 +48,14 @@ public class ClusterEvent extends Event {
 
     public void setProperties(Map<String, Serializable> properties) {
         this.properties = properties;
+    }
+
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
     }
 
 }

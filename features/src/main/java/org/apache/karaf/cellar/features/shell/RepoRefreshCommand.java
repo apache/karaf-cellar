@@ -89,6 +89,7 @@ public class RepoRefreshCommand extends CellarCommandSupport {
             ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
             event.setRefresh(true);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             eventProducer.produce(event);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);

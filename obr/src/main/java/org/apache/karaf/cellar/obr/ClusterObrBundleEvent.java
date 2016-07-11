@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.obr;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
@@ -23,6 +24,7 @@ public class ClusterObrBundleEvent extends Event {
     private String bundleId;
     private Boolean start;
     private Boolean deployOptional;
+    private Node local;
 
     public ClusterObrBundleEvent(String bundleId, boolean start, boolean deployOptional) {
         super(bundleId);
@@ -41,6 +43,14 @@ public class ClusterObrBundleEvent extends Event {
 
     public boolean getDeployOptional() {
         return this.deployOptional;
+    }
+
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
     }
 
 }

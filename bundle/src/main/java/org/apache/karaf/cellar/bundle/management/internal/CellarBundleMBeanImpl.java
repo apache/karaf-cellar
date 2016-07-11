@@ -158,9 +158,11 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
         // broadcast the event
         ClusterBundleEvent event = new ClusterBundleEvent(symbolicName, version, location, Bundle.INSTALLED);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         if (start) {
             event = new ClusterBundleEvent(symbolicName, version, location, Bundle.ACTIVE);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
         }
         eventProducer.produce(event);
     }
@@ -211,6 +213,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String[] split = bundle.split("/");
                 ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.UNINSTALLED);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } finally {
@@ -267,6 +270,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String[] split = bundle.split("/");
                 ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } finally {
@@ -320,6 +324,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 String[] split = bundle.split("/");
                 ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } finally {

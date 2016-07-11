@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.obr;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
@@ -22,6 +23,7 @@ public class ClusterObrUrlEvent extends Event {
 
     private String url;
     private int type;
+    private Node local;
 
     public ClusterObrUrlEvent(String url, int type) {
         super(url);
@@ -35,6 +37,14 @@ public class ClusterObrUrlEvent extends Event {
 
     public int getType() {
         return this.type;
+    }
+
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
     }
 
 }

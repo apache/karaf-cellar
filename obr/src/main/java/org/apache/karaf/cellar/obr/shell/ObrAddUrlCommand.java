@@ -85,6 +85,7 @@ public class ObrAddUrlCommand extends ObrCommandSupport {
         // broadcast a cluster event
         ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
 
         return null;

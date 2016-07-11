@@ -85,6 +85,7 @@ public class StartBundleCommand extends BundleCommandSupport {
                 String[] split = bundle.split("/");
                 ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } finally {

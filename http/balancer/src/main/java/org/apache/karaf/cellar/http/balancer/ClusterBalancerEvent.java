@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.http.balancer;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class ClusterBalancerEvent extends Event {
     private String alias;
     private int type;
     private List<String> locations;
+    private Node local;
 
     public static int ADDING = 0;
     public static int REMOVING = 1;
@@ -57,4 +59,11 @@ public class ClusterBalancerEvent extends Event {
         this.locations = locations;
     }
 
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
+    }
 }

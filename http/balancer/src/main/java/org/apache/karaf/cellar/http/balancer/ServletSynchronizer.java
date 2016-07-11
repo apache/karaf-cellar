@@ -141,6 +141,7 @@ public class ServletSynchronizer implements Synchronizer {
                                 ClusterBalancerEvent event = new ClusterBalancerEvent(alias, ClusterBalancerEvent.ADDING, locations);
                                 event.setSourceGroup(group);
                                 event.setSourceNode(clusterManager.getNode());
+                                event.setLocal(clusterManager.getNode());
                                 eventProducer.produce(event);
                             } else {
                                 LOGGER.debug("CELLAR HTTP BALANCER: location {} already defined for servlet {} on cluster", location, alias);

@@ -137,6 +137,7 @@ public class RepoRemoveCommand extends CellarCommandSupport {
                     ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
                     event.setUninstall(uninstall);
                     event.setSourceGroup(group);
+                    event.setSourceNode(clusterManager.getNode());
                     eventProducer.produce(event);
                 } else {
                     System.err.println("Features repository URL " + url + " not found in cluster group " + groupName);

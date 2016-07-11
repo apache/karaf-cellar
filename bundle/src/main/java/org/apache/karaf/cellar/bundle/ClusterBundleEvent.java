@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.bundle;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
@@ -24,6 +25,7 @@ public class ClusterBundleEvent extends Event {
     private String version;
     private String location;
     private int type;
+    private Node local;
 
     public ClusterBundleEvent(String symbolicName, String version, String location, int type) {
         super(symbolicName + "/" + version);
@@ -65,4 +67,11 @@ public class ClusterBundleEvent extends Event {
         this.type = type;
     }
 
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
+    }
 }

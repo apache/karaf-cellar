@@ -91,6 +91,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             event.setType(ConfigurationEvent.CM_DELETED);
             eventProducer.produce(event);
         } else {
@@ -150,6 +151,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             eventProducer.produce(event);
         } else {
             throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
@@ -198,6 +200,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
             // broadcast the cluster event
             ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             eventProducer.produce(event);
         } else {
             throw new IllegalArgumentException("No configuration found in cluster group " + groupName);
@@ -236,6 +239,7 @@ public class CellarConfigMBeanImpl extends StandardMBean implements CellarConfig
                 // broadcast the cluster event
                 ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } else {

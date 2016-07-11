@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.features;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 import org.apache.karaf.features.FeatureEvent.EventType;
 
@@ -28,6 +29,7 @@ public class ClusterFeaturesEvent extends Event {
     private Boolean noRefresh;
     private Boolean noStart;
     private EventType type;
+    private Node local;
 
     public ClusterFeaturesEvent(String name, String version, EventType type) {
         super(name + separator + version);
@@ -67,4 +69,11 @@ public class ClusterFeaturesEvent extends Event {
         return type;
     }
 
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
+    }
 }

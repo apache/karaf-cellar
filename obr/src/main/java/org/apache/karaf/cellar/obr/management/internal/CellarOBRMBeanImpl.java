@@ -139,6 +139,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
         ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_ADD_EVENT_TYPE);
         event.setForce(true);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
     }
 
@@ -182,6 +183,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
         // broadcast a cluster event
         ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
     }
 
@@ -210,6 +212,7 @@ public class CellarOBRMBeanImpl extends StandardMBean implements CellarOBRMBean 
         // broadcast a cluster event
         ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, start, deployOptional);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
     }
 

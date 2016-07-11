@@ -128,6 +128,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                             ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
                             clusterBundleEvent.setSourceGroup(group);
                             clusterBundleEvent.setSourceNode(clusterManager.getNode());
+                            clusterBundleEvent.setLocal(clusterManager.getNode());
                             eventProducer.produce(clusterBundleEvent);
                         } catch (Exception e) {
                         	LOGGER.error("CELLAR BUNDLE: failed to create bundle event", e);

@@ -81,6 +81,7 @@ public class PropDelCommand extends ConfigCommandSupport {
                 // broadcast the cluster event
                 ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             }
         } else {

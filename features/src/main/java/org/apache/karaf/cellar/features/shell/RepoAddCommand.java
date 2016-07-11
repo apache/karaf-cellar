@@ -120,6 +120,7 @@ public class RepoAddCommand extends CellarCommandSupport {
                 ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
                 event.setInstall(install);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             } else {
                 System.err.println("Features repository URL " + uri + " already registered");

@@ -124,9 +124,11 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 if (start) {
                     event = new ClusterBundleEvent(symbolicName, version, url, Bundle.ACTIVE);
                     event.setSourceGroup(group);
+                    event.setSourceNode(clusterManager.getNode());
                 } else {
                     event = new ClusterBundleEvent(symbolicName, version, url, Bundle.INSTALLED);
                     event.setSourceGroup(group);
+                    event.setSourceNode(clusterManager.getNode());
                 }
                 eventProducer.produce(event);
             } else {

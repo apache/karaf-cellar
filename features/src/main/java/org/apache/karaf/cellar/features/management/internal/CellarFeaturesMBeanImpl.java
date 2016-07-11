@@ -459,6 +459,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
                 event.setInstall(install);
                 event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
             } else {
                 throw new IllegalArgumentException("Features repository URL " + uri + " already registered");
@@ -500,6 +501,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
             ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
             event.setRefresh(true);
             event.setSourceGroup(group);
+            event.setSourceNode(clusterManager.getNode());
             eventProducer.produce(event);
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -582,6 +584,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                     ClusterRepositoryEvent event = new ClusterRepositoryEvent(url, RepositoryEvent.EventType.RepositoryRemoved);
                     event.setUninstall(uninstall);
                     event.setSourceGroup(group);
+                    event.setSourceNode(clusterManager.getNode());
                     eventProducer.produce(event);
                 } else {
                     throw new IllegalArgumentException("Features repository URL " + url + " not found in cluster group " + groupName);

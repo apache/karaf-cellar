@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.config;
 
+import org.apache.karaf.cellar.core.Node;
 import org.apache.karaf.cellar.core.event.Event;
 
 /**
@@ -21,6 +22,7 @@ import org.apache.karaf.cellar.core.event.Event;
 public class ClusterConfigurationEvent extends Event {
 
 	private Integer type;
+    private Node local;
 
     public ClusterConfigurationEvent(String id) {
         super(id);
@@ -34,7 +36,15 @@ public class ClusterConfigurationEvent extends Event {
         this.type = type;
     }
 
-	@Override
+    public Node getLocal() {
+        return local;
+    }
+
+    public void setLocal(Node local) {
+        this.local = local;
+    }
+
+    @Override
 	public String toString() {
 		return "ClusterConfigurationEvent [type=" + type + ", id=" + id
 				+ ", sourceNode=" + sourceNode + ", sourceGroup=" + sourceGroup

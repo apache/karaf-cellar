@@ -214,6 +214,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
                             clusterEvent.setSourceGroup(group);
                             clusterEvent.setSourceNode(clusterManager.getNode());
+                            clusterEvent.setLocal(clusterManager.getNode());
                             eventProducer.produce(clusterEvent);
                         } else {
                             BundleState bundleState = clusterBundles.get(id);
@@ -226,6 +227,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
                                 clusterEvent.setSourceGroup(group);
                                 clusterEvent.setSourceNode(clusterManager.getNode());
+                                clusterEvent.setLocal(clusterManager.getNode());
                                 eventProducer.produce(clusterEvent);
                             }
                         }

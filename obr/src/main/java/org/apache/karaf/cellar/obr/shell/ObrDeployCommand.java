@@ -71,6 +71,7 @@ public class ObrDeployCommand extends ObrCommandSupport {
         // broadcast a cluster event
         ClusterObrBundleEvent event = new ClusterObrBundleEvent(bundleId, start, deployOptional);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
 
         return null;

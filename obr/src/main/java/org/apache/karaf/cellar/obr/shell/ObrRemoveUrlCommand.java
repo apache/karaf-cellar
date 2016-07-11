@@ -84,6 +84,7 @@ public class ObrRemoveUrlCommand extends ObrCommandSupport {
         // create an event and produce it
         ClusterObrUrlEvent event = new ClusterObrUrlEvent(url, Constants.URL_REMOVE_EVENT_TYPE);
         event.setSourceGroup(group);
+        event.setSourceNode(clusterManager.getNode());
         eventProducer.produce(event);
 
         return null;

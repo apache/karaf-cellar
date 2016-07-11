@@ -70,6 +70,12 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
             return;
         }
 
+        // check if the event is not "local"
+        if (event.getLocal() != null && event.getLocal().getId().equals(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR FEATURE: event is local (coming from synchronizer or listener)");
+            return;
+        }
+
         String uri = event.getId();
         RepositoryEvent.EventType type = event.getType();
         try {

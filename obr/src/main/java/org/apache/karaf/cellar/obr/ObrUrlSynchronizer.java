@@ -149,6 +149,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
                         ClusterObrUrlEvent urlEvent = new ClusterObrUrlEvent(repository.getURI().toString(), Constants.URL_ADD_EVENT_TYPE);
                         urlEvent.setSourceGroup(group);
                         urlEvent.setSourceNode(clusterManager.getNode());
+                        urlEvent.setLocal(clusterManager.getNode());
                         eventProducer.produce(urlEvent);
                         // update OBR bundles in the cluster group
                         Set<ObrBundleInfo> clusterBundles = clusterManager.getSet(Constants.BUNDLES_DISTRIBUTED_SET_NAME + Configurations.SEPARATOR + groupName);

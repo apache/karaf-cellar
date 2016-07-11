@@ -176,6 +176,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                                 event.setSourceGroup(group);
                                 event.setSourceNode(clusterManager.getNode());
+                                event.setLocal(clusterManager.getNode());
                                 eventProducer.produce(event);
                             } else {
                                 Dictionary clusterDictionary = clusterConfigurations.get(pid);
@@ -186,6 +187,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                     // send cluster event
                                     ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                                     event.setSourceGroup(group);
+                                    event.setLocal(clusterManager.getNode());
                                     event.setSourceNode(clusterManager.getNode());
                                     eventProducer.produce(event);
                                 }

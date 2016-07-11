@@ -96,6 +96,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterFeaturesEvent featureEvent = new ClusterFeaturesEvent(name, version, type);
                         featureEvent.setSourceGroup(group);
                         featureEvent.setSourceNode(clusterManager.getNode());
+                        featureEvent.setLocal(clusterManager.getNode());
                         eventProducer.produce(featureEvent);
                     } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED OUTBOUND for cluster group {}", name, group.getName());
                 }
@@ -133,6 +134,7 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
                         ClusterRepositoryEvent clusterRepositoryEvent = new ClusterRepositoryEvent(event.getRepository().getURI().toString(), event.getType());
                         clusterRepositoryEvent.setSourceGroup(group);
                         clusterRepositoryEvent.setSourceNode(clusterManager.getNode());
+                        clusterRepositoryEvent.setLocal(clusterManager.getNode());
                         clusterRepositoryEvent.setInstall(false);
                         clusterRepositoryEvent.setUninstall(false);
                         clusterRepositoryEvent.setRefresh(false);

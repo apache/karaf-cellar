@@ -57,6 +57,12 @@ public class ClusterEventHandler extends EventSupport implements EventHandler<Cl
             return;
         }
 
+        // check if the event is not local
+        if (event.getLocal() != null && event.getLocal().getId().equals(clusterManager.getNode().getId())) {
+            LOGGER.trace("CELLAR EVENT: cluster event is local (coming from local listener)");
+            return;
+        }
+
         try {
             if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, event.getTopicName(), EventType.INBOUND)) {
                 Map<String, Serializable> properties = event.getProperties();
