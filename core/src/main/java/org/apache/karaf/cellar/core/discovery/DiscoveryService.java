@@ -18,17 +18,17 @@ import java.util.Set;
 public interface DiscoveryService {
 
     /**
-     * Sign In to the {@link BlackboardDiscoveryService}.
+     * Sign In to the {@link DiscoveryService}.
      */
     void signIn();
 
     /**
-     * Refresh to the {@link BlackboardDiscoveryService}.
+     * Refresh to the {@link DiscoveryService}.
      */
     void refresh();
 
     /**
-     * Sign Out of the {@link BlackboardDiscoveryService}.
+     * Sign Out of the {@link DiscoveryService}.
      */
     void signOut();
 

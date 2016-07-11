@@ -142,7 +142,6 @@ public class ConfigurationSupport extends CellarSupport {
      * @param admin the configuration admin service.
      * @param pid the configuration PID to store.
      * @param props the properties to store, linked to the configuration PID.
-     * @throws Exception in case of store failure.
      */
     protected void persistConfiguration(ConfigurationAdmin admin, String pid, Dictionary props) {
         try {

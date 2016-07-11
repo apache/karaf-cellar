@@ -92,7 +92,7 @@ public class Command<R extends Result> extends Event {
      * If no result is found, it returns an empty map.
      *
      * @return a map of results.
-     * @throws Exception in case of interruption.
+     * @throws InterruptedException in case of interruption.
      */
     public Map<Node, R> getResult() throws InterruptedException {
         Map<Node, R> nodeResults = null;
