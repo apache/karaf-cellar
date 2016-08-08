@@ -94,10 +94,10 @@ Alias               | Locations
 On another node (node2), we install `http`, `http-whiteboard` and `cellar` features:
 
 ----
-karaf@node1()> feature:install http
-karaf@node1()> feature:install http-whiteboard
-karaf@node1()> feature:repo-add cellar 4.0.0
-karaf@node1()> feature:install cellar
+karaf@node2()> feature:install http
+karaf@node2()> feature:install http-whiteboard
+karaf@node2()> feature:repo-add cellar 4.0.0
+karaf@node2()> feature:install cellar
 ----
 
 [NOTE]
