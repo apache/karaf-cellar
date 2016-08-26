@@ -177,6 +177,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             ExtendedBundleState extendedState = new ExtendedBundleState();
             extendedState.setId(state.getId());
             extendedState.setName(state.getName());
+            extendedState.setSymbolicName(state.getSymbolicName());
             extendedState.setStatus(state.getStatus());
             extendedState.setLocation(state.getLocation());
             extendedState.setVersion(state.getVersion());
@@ -192,7 +193,8 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         // retrieve local bundles
         for (Bundle bundle : bundleContext.getBundles()) {
             String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
-            String key = bundle.getSymbolicName() + "/" + version;
+            String symbolicName = bundle.getSymbolicName();
+            String key = symbolicName + "/" + version;
             if (bundles.containsKey(key)) {
                 ExtendedBundleState extendedState = bundles.get(key);
                 extendedState.setLocal(true);
@@ -202,11 +204,12 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 // get the bundle name or location.
                 String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
                 // if there is no name, then default to symbolic name.
-                name = (name == null) ? bundle.getSymbolicName() : name;
+                name = (name == null) ? symbolicName : name;
                 // if there is no symbolic name, resort to location.
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
+                extendedState.setSymbolicName(symbolicName);
                 extendedState.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
                 extendedState.setLocation(bundle.getLocation());
                 extendedState.setStatus(bundle.getState());
