@@ -105,7 +105,7 @@ And you can also change on a specific node in the cluster instead of all nodes:
 karaf@root()> cluster:log-set DEBUG ROOT 172.17.42.1:5701
 ----
 
-On the other hand, you can display the current log level on all nodes, for each logger using the `cluster:log-set`
+On the other hand, you can display the current log level on all nodes, for each logger using the `cluster:log-get`
 command:
 
 ----
