@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.config.internal.osgi;
 import org.apache.karaf.cellar.config.ConfigurationEventHandler;
 import org.apache.karaf.cellar.config.ConfigurationSynchronizer;
 import org.apache.karaf.cellar.config.LocalConfigurationListener;
+import org.apache.karaf.cellar.config.management.CellarConfigMBean;
 import org.apache.karaf.cellar.config.management.internal.CellarConfigMBeanImpl;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
@@ -47,7 +48,8 @@ import java.util.Hashtable;
         provides = {
                 @ProvideService(ConfigurationListener.class),
                 @ProvideService(Synchronizer.class),
-                @ProvideService(EventHandler.class)
+                @ProvideService(EventHandler.class),
+                @ProvideService(CellarConfigMBean.class)
         }
 )
 @Managed("org.apache.karaf.shell.config")

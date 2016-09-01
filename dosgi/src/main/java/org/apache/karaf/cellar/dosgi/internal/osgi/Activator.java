@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.command.CommandStore;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventTransportFactory;
 import org.apache.karaf.cellar.dosgi.*;
+import org.apache.karaf.cellar.dosgi.management.ServiceMBean;
 import org.apache.karaf.cellar.dosgi.management.internal.ServiceMBeanImpl;
 import org.apache.karaf.util.tracker.BaseActivator;
 import org.apache.karaf.util.tracker.annotation.ProvideService;
@@ -34,7 +35,8 @@ import java.util.Hashtable;
 @Services(
         provides = {
                 @ProvideService(ListenerHook.class),
-                @ProvideService(EventHandler.class)
+                @ProvideService(EventHandler.class),
+                @ProvideService(ServiceMBean.class)
         },
         requires = {
                 @RequireService(ClusterManager.class),

@@ -22,6 +22,7 @@ import org.apache.karaf.cellar.http.balancer.BalancerEventHandler;
 import org.apache.karaf.cellar.http.balancer.LocalServletListener;
 import org.apache.karaf.cellar.http.balancer.ProxyServletRegistry;
 import org.apache.karaf.cellar.http.balancer.ServletSynchronizer;
+import org.apache.karaf.cellar.http.balancer.management.CellarHttpMBean;
 import org.apache.karaf.cellar.http.balancer.management.internal.CellarHttpMBeanImpl;
 import org.apache.karaf.util.tracker.BaseActivator;
 import org.apache.karaf.util.tracker.annotation.ProvideService;
@@ -39,7 +40,8 @@ import java.util.Hashtable;
         provides = {
                 @ProvideService(ServletListener.class),
                 @ProvideService(EventHandler.class),
-                @ProvideService(Synchronizer.class)
+                @ProvideService(Synchronizer.class),
+                @ProvideService(CellarHttpMBean.class)
         },
         requires = {
                 @RequireService(ClusterManager.class),

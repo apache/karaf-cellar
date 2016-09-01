@@ -16,6 +16,7 @@ package org.apache.karaf.cellar.bundle.internal.osgi;
 import org.apache.karaf.cellar.bundle.BundleEventHandler;
 import org.apache.karaf.cellar.bundle.BundleSynchronizer;
 import org.apache.karaf.cellar.bundle.LocalBundleListener;
+import org.apache.karaf.cellar.bundle.management.CellarBundleMBean;
 import org.apache.karaf.cellar.bundle.management.internal.CellarBundleMBeanImpl;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.GroupManager;
@@ -37,7 +38,8 @@ import java.util.Hashtable;
 @Services(
         provides = {
                 @ProvideService(EventHandler.class),
-                @ProvideService(Synchronizer.class)
+                @ProvideService(Synchronizer.class),
+                @ProvideService(CellarBundleMBean.class)
         },
         requires = {
                 @RequireService(ClusterManager.class),

@@ -27,6 +27,9 @@ import org.apache.karaf.cellar.core.control.*;
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.apache.karaf.cellar.core.discovery.DiscoveryTask;
 import org.apache.karaf.cellar.core.event.*;
+import org.apache.karaf.cellar.core.management.CellarGroupMBean;
+import org.apache.karaf.cellar.core.management.CellarMBean;
+import org.apache.karaf.cellar.core.management.CellarNodeMBean;
 import org.apache.karaf.cellar.core.utils.CombinedClassLoader;
 import org.apache.karaf.cellar.hazelcast.*;
 import org.apache.karaf.cellar.hazelcast.factory.HazelcastConfigurationManager;
@@ -60,7 +63,10 @@ import java.util.*;
                 @ProvideService(EventProducer.class),
                 @ProvideService(ExecutionContext.class),
                 @ProvideService(EventHandler.class),
-                @ProvideService(CommandStore.class)
+                @ProvideService(CommandStore.class),
+                @ProvideService(CellarMBean.class),
+                @ProvideService(CellarNodeMBean.class),
+                @ProvideService(CellarGroupMBean.class)
         },
         requires = {
                 @RequireService(ConfigurationAdmin.class),

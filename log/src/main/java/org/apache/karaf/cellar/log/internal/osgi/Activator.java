@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.log.*;
+import org.apache.karaf.cellar.log.management.CellarLogMBean;
 import org.apache.karaf.cellar.log.management.internal.CellarLogMBeanImpl;
 import org.apache.karaf.log.core.LogService;
 import org.apache.karaf.util.tracker.BaseActivator;
@@ -37,7 +38,8 @@ import java.util.Hashtable;
 @Services(
         provides = {
                 @ProvideService(PaxAppender.class),
-                @ProvideService(EventHandler.class)
+                @ProvideService(EventHandler.class),
+                @ProvideService(CellarLogMBean.class)
         },
         requires = {
                 @RequireService(ClusterManager.class),
@@ -123,7 +125,7 @@ public class Activator extends BaseActivator {
         setLogResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, setLogResultHandler);
 
-        LOGGER.debug("CELLAR LOG: registre MBean");
+        LOGGER.debug("CELLAR LOG: register MBean");
         CellarLogMBeanImpl mbean = new CellarLogMBeanImpl();
         mbean.setClusterManager(clusterManager);
         mbean.setExecutionContext(executionContext);

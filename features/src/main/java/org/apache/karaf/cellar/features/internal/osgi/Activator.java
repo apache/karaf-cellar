@@ -22,6 +22,7 @@ import org.apache.karaf.cellar.features.FeaturesEventHandler;
 import org.apache.karaf.cellar.features.FeaturesSynchronizer;
 import org.apache.karaf.cellar.features.LocalFeaturesListener;
 import org.apache.karaf.cellar.features.RepositoryEventHandler;
+import org.apache.karaf.cellar.features.management.CellarFeaturesMBean;
 import org.apache.karaf.cellar.features.management.internal.CellarFeaturesMBeanImpl;
 import org.apache.karaf.features.FeaturesListener;
 import org.apache.karaf.features.FeaturesService;
@@ -40,7 +41,8 @@ import java.util.Hashtable;
         provides = {
                 @ProvideService(FeaturesListener.class),
                 @ProvideService(Synchronizer.class),
-                @ProvideService(EventHandler.class)
+                @ProvideService(EventHandler.class),
+                @ProvideService(CellarFeaturesMBean.class)
         },
         requires = {
                 @RequireService(ClusterManager.class),

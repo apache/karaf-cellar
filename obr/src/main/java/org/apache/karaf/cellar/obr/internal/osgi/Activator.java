@@ -22,6 +22,7 @@ import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.obr.ObrBundleEventHandler;
 import org.apache.karaf.cellar.obr.ObrUrlEventHandler;
 import org.apache.karaf.cellar.obr.ObrUrlSynchronizer;
+import org.apache.karaf.cellar.obr.management.CellarOBRMBean;
 import org.apache.karaf.cellar.obr.management.internal.CellarOBRMBeanImpl;
 import org.apache.karaf.util.tracker.BaseActivator;
 import org.apache.karaf.util.tracker.annotation.ProvideService;
@@ -37,7 +38,8 @@ import java.util.Hashtable;
 @Services(
         provides = {
                 @ProvideService(EventHandler.class),
-                @ProvideService(Synchronizer.class)
+                @ProvideService(Synchronizer.class),
+                @ProvideService(CellarOBRMBean.class)
         },
         requires = {
                 @RequireService(RepositoryAdmin.class),
