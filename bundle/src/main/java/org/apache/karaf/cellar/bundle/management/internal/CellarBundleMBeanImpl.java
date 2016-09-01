@@ -588,7 +588,9 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
         // retrieve local bundles
         for (Bundle bundle : bundleContext.getBundles()) {
-            String key = bundle.getSymbolicName() + "/" + bundle.getHeaders().get("Bundle-Version").toString();
+            String version = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+            String symbolicName = bundle.getSymbolicName();
+            String key = symbolicName + "/" + version;
             if (bundles.containsKey(key)) {
                 ExtendedBundleState extendedState = bundles.get(key);
                 extendedState.setLocal(true);
@@ -598,13 +600,13 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 // get the bundle name or location.
                 String name = (String) bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_NAME);
                 // if there is no name, then default to symbolic name.
-                name = (name == null) ? bundle.getSymbolicName() : name;
+                name = (name == null) ? symbolicName : name;
                 // if there is no symbolic name, resort to location.
                 name = (name == null) ? bundle.getLocation() : name;
                 extendedState.setId(bundle.getBundleId());
                 extendedState.setName(name);
                 extendedState.setVersion(bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION));
-                extendedState.setSymbolicName(bundle.getSymbolicName());
+                extendedState.setSymbolicName(symbolicName);
                 extendedState.setLocation(bundle.getLocation());
                 extendedState.setStatus(bundle.getState());
                 extendedState.setCluster(false);
