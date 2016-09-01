@@ -90,6 +90,8 @@ public class Activator extends BaseActivator implements ManagedService {
     private volatile ServiceRegistration nodeMBeanRegistration;
     private volatile ServiceRegistration groupMBeanRegistration;
 
+    private HashMap updatedConfig;
+
     @Override
     public void doStart() throws Exception {
 
@@ -166,6 +168,11 @@ public class Activator extends BaseActivator implements ManagedService {
         hazelcastServiceFactory.setConfigurationManager(hazelcastConfigurationManager);
         hazelcastServiceFactory.setBundleContext(bundleContext);
         hazelcastServiceFactory.init();
+        if (updatedConfig != null) {
+            // we have outstanding configuration update: do it now
+            updated(updatedConfig);
+            updatedConfig = null;
+        }
 
         LOGGER.debug("CELLAR HAZELCAST: register Hazelcast instance");
         hazelcastInstance = hazelcastServiceFactory.getInstance();
@@ -388,11 +395,19 @@ public class Activator extends BaseActivator implements ManagedService {
             Object key = keys.nextElement();
             map.put(key, config.get(key));
         }
+        if (hazelcastServiceFactory != null) {
+            updated(map);
+        } else {
+            // postpone configuration update
+            updatedConfig = map;
+        }
+    }
+
+    private void updated(HashMap config) {
         try {
-            hazelcastServiceFactory.update(map);
+            hazelcastServiceFactory.update(config);
         } catch (Exception e) {
             LOGGER.error("Can't update Hazelcast service factory", e);
         }
     }
-
 }
