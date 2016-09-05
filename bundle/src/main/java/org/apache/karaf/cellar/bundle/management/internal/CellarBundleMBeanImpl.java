@@ -207,7 +207,8 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
                 }
 
                 // update the cluster state
-                clusterBundles.remove(bundle);
+                state.setStatus(Bundle.UNINSTALLED);
+                clusterBundles.put(bundle, state);
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");

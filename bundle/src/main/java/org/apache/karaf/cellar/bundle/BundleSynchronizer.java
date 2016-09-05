@@ -144,6 +144,13 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
                                         }
+                                    } else if (state.getStatus() == Bundle.UNINSTALLED) {
+                                        if (isInstalled(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: uninstalling bundle {}/{} on node", symbolicName, version);
+                                            uninstallBundle(symbolicName, version);
+                                        } else {
+                                            LOGGER.debug("CELLAR BUNDLE: bundle {}/{} already uninstalled on node", symbolicName, version);
+                                        }
                                     }
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
