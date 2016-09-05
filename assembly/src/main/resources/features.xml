@@ -41,27 +41,35 @@
     </feature>
 
     <feature name="cellar-config" description="ConfigAdmin cluster support" version="${project.version}">
-        <feature>config</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
+        <conditional>
+            <condition>config</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.config/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-features" description="Karaf features cluster support" version="${project.version}">
-        <feature>feature</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
+        <conditional>
+            <condition>feature</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.features/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-bundle" description="Bundle cluster support" version="${project.version}">
-        <feature>bundle</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
+        <conditional>
+            <condition>bundle</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.bundle/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-shell" description="Cellar shell support" version="${project.version}">
-        <feature>shell</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
+        <conditional>
+            <condition>shell</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.shell/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar" description="Karaf clustering" version="${project.version}">
@@ -78,15 +86,19 @@
     </feature>
 
     <feature name="cellar-obr" description="OBR cluster support" version="${project.version}">
-        <feature>obr</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
+        <conditional>
+            <condition>obr</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.obr/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-eventadmin" description="OSGi events broadcasting in clusters" version="${project.version}">
-        <feature>eventadmin</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.event/${project.version}</bundle>
+        <conditional>
+            <condition>eventadmin</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.event/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-cloud" description="Cloud blobstore support in clusters" version="${project.version}">
@@ -115,9 +127,11 @@
     </feature>
 
     <feature name="cellar-webconsole" description="Cellar plugin for Karaf WebConsole" version="${project.version}">
-        <feature>webconsole</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
+        <conditional>
+            <condition>webconsole</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
+        </conditional>
     </feature>
 
     <feature name="cellar-http-balancer" description="Cellar HTTP request balancer" version="${project.version}">
@@ -128,9 +142,11 @@
     </feature>
 
     <feature name="cellar-log" description="Cellar central log support" version="${project.version}">
-        <feature>log</feature>
-        <feature>cellar-hazelcast</feature>
-        <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.log/${project.version}</bundle>
+        <conditional>
+            <condition>log</condition>
+            <feature>cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.log/${project.version}</bundle>
+        </conditional>
     </feature>
 
 </features>
