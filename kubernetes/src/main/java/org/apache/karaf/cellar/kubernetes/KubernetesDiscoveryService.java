@@ -74,7 +74,7 @@ public class KubernetesDiscoveryService implements DiscoveryService {
             PodList podList = kubernetesClient.pods().list();
             for (Pod pod : podList.getItems()) {
                 String value = pod.getMetadata().getLabels().get(kubernetesPodLabelKey);
-                if (value != null && !value.isEmpty()) {
+                if (value != null && !value.isEmpty() && value.equals(kubernetesPodLabelValue)) {
                     members.add(pod.getStatus().getPodIP());
                 }
             }
