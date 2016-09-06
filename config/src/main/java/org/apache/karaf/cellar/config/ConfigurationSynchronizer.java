@@ -72,8 +72,12 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'cluster' for cluster group {}", group.getName());
-            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
+            }
             LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -84,8 +88,12 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull only)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull only)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
+            }
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push only)");
@@ -112,6 +120,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
+                // get configurations on the cluster to update local configurations
                 for (String pid : clusterConfigurations.keySet()) {
                     if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
                         Dictionary clusterDictionary = clusterConfigurations.get(pid);
@@ -132,6 +141,17 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             LOGGER.error("CELLAR CONFIG: failed to read local configuration", ex);
                         }
                     } else  LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
+                }
+                // cleanup the local configurations not present on the cluster
+                try {
+                    for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
+                        String pid = configuration.getPid();
+                        if (!clusterConfigurations.containsKey(pid)) {
+                            configuration.delete();
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Can't get local configurations", e);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -162,6 +182,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 Configuration[] localConfigurations;
                 try {
                     localConfigurations = configurationAdmin.listConfigurations(null);
+                    // push local configurations to the cluster
                     for (Configuration localConfiguration : localConfigurations) {
                         String pid = localConfiguration.getPid();
                         // check if the pid is marked as local.
@@ -194,6 +215,19 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             }
                         } else
                             LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
+                    }
+                    // clean configurations on the cluster not present locally
+                    for (String pid : clusterConfigurations.keySet()) {
+                        boolean found = false;
+                        for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
+                            if (configuration.getPid().equals(pid)) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            clusterConfigurations.remove(pid);
+                        }
                     }
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read configuration (IO error)", ex);

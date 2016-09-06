@@ -74,8 +74,12 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group {}", group.getName());
-            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
+            }
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -86,8 +90,12 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull only)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull only)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
+            }
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push only)");
@@ -113,6 +121,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 
             try {
+                // get the bundles on the cluster to update local bundles
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
                     String id = entry.getKey();
@@ -152,6 +161,18 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         }
                     }
                 }
+                // cleanup the local bundles not present on the cluster
+                for (Bundle bundle : bundleContext.getBundles()) {
+                    String id = getId(bundle);
+                    if (!clusterBundles.containsKey(id)) {
+                        // the bundle is not present on the cluster, so it has to be uninstalled locally
+                        try {
+                            bundle.uninstall();
+                        } catch (Exception e) {
+                            LOGGER.warn("Can't uninstall {}", id, e);
+                        }
+                    }
+                }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
@@ -183,13 +204,15 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 BundleContext bundleContext = ((BundleReference) getClass().getClassLoader()).getBundle().getBundleContext();
 
                 bundles = bundleContext.getBundles();
+                // push local bundles to the cluster
                 for (Bundle bundle : bundles) {
                     long bundleId = bundle.getBundleId();
                     String symbolicName = bundle.getSymbolicName();
                     String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
                     String bundleLocation = bundle.getLocation();
                     int status = bundle.getState();
-                    String id = symbolicName + "/" + version;
+
+                    String id = getId(bundle);
 
                     // check if the pid is marked as local.
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
@@ -234,10 +257,36 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
                     } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
+                // clean bundles on the cluster not present locally
+                for (String id : clusterBundles.keySet()) {
+                    boolean found = false;
+                    for (Bundle bundle : bundleContext.getBundles()) {
+                        String localBundleId = getId(bundle);
+                        if (id.equals(localBundleId)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        clusterBundles.remove(id);
+                    }
+                }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
         }
+    }
+
+    /**
+     * Return the Cellar bundle ID for a given bundle.
+     *
+     * @param bundle The bundle.
+     * @return The Cellar bundle ID.
+     */
+    private String getId(Bundle bundle) {
+        String symbolicName = bundle.getSymbolicName();
+        String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
+        return symbolicName + "/" + version;
     }
 
     /**

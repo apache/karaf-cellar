@@ -77,8 +77,12 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'cluster' for cluster group {}", group.getName());
-            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR FEATURE: node is the first one in the cluster group, no pull");
+            }
             LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -89,8 +93,12 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull only)");
-            pull(group);
+            if (clusterManager.listNodesByGroup(group).size() > 1) {
+                LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull only)");
+                pull(group);
+            } else {
+                LOGGER.debug("CELLAR FEATURE: node is the first one in the cluster group, no pull");
+            }
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push only)");
@@ -118,8 +126,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
 
-                // get the features repositories URLs from the cluster group
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
+                    // get the features repositories from the cluster to update locally
                     for (String url : clusterRepositories.keySet()) {
                         try {
                             if (!isRepositoryRegisteredLocally(url)) {
@@ -132,10 +140,21 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             LOGGER.error("CELLAR FEATURE: failed to add repository URL {}", url, e);
                         }
                     }
+                    // cleanup the local features repositories not present on the cluster
+                    try {
+                        for (Repository repository : featuresService.listRepositories()) {
+                            URI uri = repository.getURI();
+                            if (!clusterRepositories.containsKey(uri.toString())) {
+                                featuresService.removeRepository(uri);
+                            }
+                        }
+                    } catch (Exception e) {
+                        LOGGER.warn("Can't get local features repositories", e);
+                    }
                 }
 
-                // get the features from the cluster group
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
+                    // get the features from the cluster group and update locally
                     for (FeatureState state : clusterFeatures.values()) {
                         String name = state.getName();
                         // check if feature is blocked
