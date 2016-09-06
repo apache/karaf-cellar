@@ -73,7 +73,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         // id is a number
         Pattern pattern = Pattern.compile("^\\d+$");
         Matcher matcher = pattern.matcher(nameId);
-        if (matcher.find()) {
+        if (matcher.matches()) {
             int id = Integer.parseInt(nameId);
             for (String bundle : clusterBundles.keySet()) {
                 if (clusterBundles.get(bundle).getId() == id) {
@@ -87,7 +87,7 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
         // id as a number range
         pattern = Pattern.compile("^(\\d+)-(\\d+)$");
         matcher = pattern.matcher(nameId);
-        if (matcher.find()) {
+        if (matcher.matches()) {
             int index = nameId.indexOf('-');
             long startId = Long.parseLong(nameId.substring(0, index));
             long endId = Long.parseLong(nameId.substring(index + 1));
@@ -118,19 +118,19 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                     if (state.getName() != null) {
                         // bundle name is populated, check if it matches the regex
                         matcher = namePattern.matcher(state.getName());
-                        if (matcher.find()) {
+                        if (matcher.matches()) {
                             bundles.add(bundle);
                         } else {
                             // no match on bundle name, fall back to symbolic name and check if it matches the regex
                             matcher = namePattern.matcher(bundleSplit[0]);
-                            if (matcher.find()) {
+                            if (matcher.matches()) {
                                 bundles.add(bundle);
                             }
                         }
                     } else {
                         // no bundle name, fall back to symbolic name and check if it matches the regex
                         matcher = namePattern.matcher(bundleSplit[0]);
-                        if (matcher.find()) {
+                        if (matcher.matches()) {
                             bundles.add(bundle);
                         }
                     }
@@ -148,19 +148,19 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
             if (state.getName() != null) {
                 // bundle name is populated, check if it matches the regex
                 matcher = namePattern.matcher(state.getName());
-                if (matcher.find()) {
+                if (matcher.matches()) {
                     bundles.add(bundle);
                 } else {
                     // no match on bundle name, fall back to symbolic name and check if it matches the regex
                     matcher = namePattern.matcher(bundle);
-                    if (matcher.find()) {
+                    if (matcher.matches()) {
                         bundles.add(bundle);
                     }
                 }
             } else {
                 // no bundle name, fall back to symbolic name and check if it matches the regex
                 matcher = namePattern.matcher(bundle);
-                if (matcher.find()) {
+                if (matcher.matches()) {
                     bundles.add(bundle);
                 }
             }
