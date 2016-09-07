@@ -25,7 +25,7 @@ public class ObrSupport extends CellarSupport {
     protected BundleContext bundleContext;
     protected RepositoryAdmin obrService;
 
-    public void init() {
+    public void init(BundleContext bundleContext) {
         // nothing to do
     }
 

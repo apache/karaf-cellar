@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.FeaturesService;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,8 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
     @Override
-    public void init() {
-        super.init();
+    public void init(BundleContext bundleContext) {
+        super.init(bundleContext);
     }
 
     @Override

@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeatureEvent;
 import org.apache.karaf.features.RepositoryEvent;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,8 @@ public class LocalFeaturesListener extends FeaturesSupport implements org.apache
     private EventProducer eventProducer;
 
     @Override
-    public void init() {
-        super.init();
+    public void init(BundleContext bundleContext) {
+        super.init(bundleContext);
     }
 
     @Override

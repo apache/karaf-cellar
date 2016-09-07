@@ -87,7 +87,7 @@ public class Activator extends BaseActivator {
         repositoryEventHandler.setFeaturesService(featuresService);
         repositoryEventHandler.setClusterManager(clusterManager);
         repositoryEventHandler.setGroupManager(groupManager);
-        repositoryEventHandler.init();
+        repositoryEventHandler.init(bundleContext);
         Hashtable props = new Hashtable();
         props.put("managed", "true");
         register(new Class[]{ EventHandler.class }, repositoryEventHandler, props);
@@ -98,7 +98,7 @@ public class Activator extends BaseActivator {
         featuresEventHandler.setClusterManager(clusterManager);
         featuresEventHandler.setGroupManager(groupManager);
         featuresEventHandler.setConfigurationAdmin(configurationAdmin);
-        featuresEventHandler.init();
+        featuresEventHandler.init(bundleContext);
         register(new Class[]{ EventHandler.class }, featuresEventHandler, props);
 
         LOGGER.debug("CELLAR FEATURE: init local features listener");
@@ -108,7 +108,7 @@ public class Activator extends BaseActivator {
         localFeaturesListener.setEventProducer(eventProducer);
         localFeaturesListener.setConfigurationAdmin(configurationAdmin);
         localFeaturesListener.setFeaturesService(featuresService);
-        localFeaturesListener.init();
+        localFeaturesListener.init(bundleContext);
         register(FeaturesListener.class, localFeaturesListener);
 
         LOGGER.debug("CELLAR FEATURE: init features synchronizer");
@@ -118,7 +118,7 @@ public class Activator extends BaseActivator {
         featuresSynchronizer.setEventProducer(eventProducer);
         featuresSynchronizer.setConfigurationAdmin(configurationAdmin);
         featuresSynchronizer.setFeaturesService(featuresService);
-        featuresSynchronizer.init();
+        featuresSynchronizer.init(bundleContext);
         props = new Hashtable();
         props.put("resource", "feature");
         register(Synchronizer.class, featuresSynchronizer, props);

@@ -20,6 +20,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.features.Repository;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class FeaturesSupport extends CellarSupport {
 
     protected FeaturesService featuresService;
 
-    public void init() {
+    public void init(BundleContext bundleContext) {
         // nothing to do
     }
 

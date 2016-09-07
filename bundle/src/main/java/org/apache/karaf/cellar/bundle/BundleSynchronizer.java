@@ -19,11 +19,13 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.features.BootFinished;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleReference;
 import org.osgi.service.cm.Configuration;
+import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,14 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         this.eventProducer = eventProducer;
     }
 
-    public void init() {
+    public void init(BundleContext bundleContext) {
+        // wait the end of Karaf boot process
+        ServiceTracker tracker = new ServiceTracker(bundleContext, BootFinished.class, null);
+        try {
+            tracker.waitForService(120000);
+        } catch (Exception e) {
+            LOGGER.warn("Can't start BootFinished service tracker", e);
+        }
         if (groupManager == null)
             return;
         Set<Group> groups = groupManager.listLocalGroups();

@@ -83,7 +83,7 @@ public class Activator extends BaseActivator {
         urlEventHandler.setGroupManager(groupManager);
         urlEventHandler.setConfigurationAdmin(configurationAdmin);
         urlEventHandler.setObrService(repositoryAdmin);
-        urlEventHandler.init();
+        urlEventHandler.init(bundleContext);
         Hashtable props = new Hashtable();
         props.put("managed", "true");
         register(EventHandler.class, urlEventHandler, props);
@@ -94,7 +94,7 @@ public class Activator extends BaseActivator {
         bundleEventHandler.setClusterManager(clusterManager);
         bundleEventHandler.setGroupManager(groupManager);
         bundleEventHandler.setConfigurationAdmin(configurationAdmin);
-        bundleEventHandler.init();
+        bundleEventHandler.init(bundleContext);
         register(EventHandler.class, bundleEventHandler, props);
 
         LOGGER.debug("CELLAR OBR: init URL synchronizer");
@@ -104,7 +104,7 @@ public class Activator extends BaseActivator {
         urlSynchronizer.setGroupManager(groupManager);
         urlSynchronizer.setEventProducer(eventProducer);
         urlSynchronizer.setConfigurationAdmin(configurationAdmin);
-        urlSynchronizer.init();
+        urlSynchronizer.init(bundleContext);
         props = new Hashtable();
         props.put("resource", "obr.urls");
         register(Synchronizer.class, urlSynchronizer, props);

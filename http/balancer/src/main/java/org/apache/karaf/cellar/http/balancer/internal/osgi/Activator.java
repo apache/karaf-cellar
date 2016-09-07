@@ -100,7 +100,7 @@ public class Activator extends BaseActivator {
         synchronizer.setProxyRegistry(proxyRegistry);
         synchronizer.setGroupManager(groupManager);
         synchronizer.setBundleContext(bundleContext);
-        synchronizer.init();
+        synchronizer.init(bundleContext);
         props = new Hashtable();
         props.put("resource", "balanced.servlet");
         register(Synchronizer.class, synchronizer, props);

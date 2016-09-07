@@ -23,6 +23,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.Version;
 import org.osgi.service.cm.Configuration;
@@ -43,8 +44,8 @@ public class ObrBundleEventHandler extends ObrSupport implements EventHandler<Cl
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
     @Override
-    public void init() {
-        super.init();
+    public void init(BundleContext bundleContext) {
+        super.init(bundleContext);
     }
 
     @Override

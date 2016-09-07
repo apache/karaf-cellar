@@ -18,6 +18,7 @@ import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
 import org.apache.karaf.features.RepositoryEvent;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +36,8 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
     private final Switch eventSwitch = new BasicSwitch(SWITCH_ID);
 
     @Override
-    public void init() {
-        super.init();
+    public void init(BundleContext bundleContext) {
+        super.init(bundleContext);
     }
 
     @Override
