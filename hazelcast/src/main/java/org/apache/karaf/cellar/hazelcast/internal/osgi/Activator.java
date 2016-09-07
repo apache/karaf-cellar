@@ -137,27 +137,11 @@ public class Activator extends BaseActivator implements ManagedService {
         });
         discoveryServiceTracker.open();
 
-        LOGGER.debug("CELLAR HAZELCAST: start the synchronizer service tracker");
-        synchronizerServiceTracker = new ServiceTracker<Synchronizer, Synchronizer>(bundleContext, Synchronizer.class, new ServiceTrackerCustomizer<Synchronizer, Synchronizer>() {
-            @Override
-            public Synchronizer addingService(ServiceReference<Synchronizer> serviceReference) {
-                Synchronizer service = bundleContext.getService(serviceReference);
-                synchronizers.add(service);
-                return service;
-            }
-
-            @Override
-            public void modifiedService(ServiceReference<Synchronizer> serviceReference, Synchronizer synchronizer) {
-                // nothing to do
-            }
-
-            @Override
-            public void removedService(ServiceReference<Synchronizer> serviceReference, Synchronizer synchronizer) {
-                synchronizers.remove(synchronizer);
-                bundleContext.ungetService(serviceReference);
-            }
-        });
-        synchronizerServiceTracker.open();
+        LOGGER.debug("CELLAR HAZELCAST: init Cellar extender");
+        extender = new CellarExtender();
+        extender.setCombinedClassLoader(combinedClassLoader);
+        extender.setBundleContext(bundleContext);
+        extender.init();
 
         LOGGER.debug("CELLAR HAZELCAST: init dispatcher");
         EventHandlerRegistryDispatcher dispatcher = new EventHandlerRegistryDispatcher();
@@ -219,12 +203,6 @@ public class Activator extends BaseActivator implements ManagedService {
         CellarMembershipListener membershipListener = new CellarMembershipListener(hazelcastInstance);
         membershipListener.setSynchronizers(synchronizers);
         membershipListener.setGroupManager(groupManager);
-
-        LOGGER.debug("CELLAR HAZELCAST: init Cellar extender");
-        extender = new CellarExtender();
-        extender.setCombinedClassLoader(combinedClassLoader);
-        extender.setBundleContext(bundleContext);
-        extender.init();
 
         Node node = clusterManager.getNode();
 
@@ -301,6 +279,28 @@ public class Activator extends BaseActivator implements ManagedService {
         manageGroupResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, manageGroupResultHandler);
 
+        LOGGER.debug("CELLAR HAZELCAST: start the synchronizer service tracker");
+        synchronizerServiceTracker = new ServiceTracker<Synchronizer, Synchronizer>(bundleContext, Synchronizer.class, new ServiceTrackerCustomizer<Synchronizer, Synchronizer>() {
+            @Override
+            public Synchronizer addingService(ServiceReference<Synchronizer> serviceReference) {
+                Synchronizer service = bundleContext.getService(serviceReference);
+                synchronizers.add(service);
+                return service;
+            }
+
+            @Override
+            public void modifiedService(ServiceReference<Synchronizer> serviceReference, Synchronizer synchronizer) {
+                // nothing to do
+            }
+
+            @Override
+            public void removedService(ServiceReference<Synchronizer> serviceReference, Synchronizer synchronizer) {
+                synchronizers.remove(synchronizer);
+                bundleContext.ungetService(serviceReference);
+            }
+        });
+        synchronizerServiceTracker.open();
+
         LOGGER.debug("CELLAR HAZELCAST: register Cellar Core MBean");
         CellarMBeanImpl cellarMBean = new CellarMBeanImpl();
         cellarMBean.setBundleContext(bundleContext);
@@ -345,6 +345,10 @@ public class Activator extends BaseActivator implements ManagedService {
             coreMBeanRegistration.unregister();
             coreMBeanRegistration = null;
         }
+        if (synchronizerServiceTracker != null) {
+            synchronizerServiceTracker.close();
+            synchronizerServiceTracker = null;
+        }
         if (groupManager != null) {
             try {
                 groupManager.destroy();
@@ -365,10 +369,6 @@ public class Activator extends BaseActivator implements ManagedService {
             discoveryTask.destroy();
             discoveryTask = null;
         }
-        if (extender != null) {
-            extender.destroy();
-            extender = null;
-        }
         if (producer != null) {
             producer.destroy();
             producer = null;
@@ -377,9 +377,9 @@ public class Activator extends BaseActivator implements ManagedService {
             consumer.destroy();
             consumer = null;
         }
-        if (synchronizerServiceTracker != null) {
-            synchronizerServiceTracker.close();
-            synchronizerServiceTracker = null;
+        if (extender != null) {
+            extender.destroy();
+            extender = null;
         }
         if (discoveryServiceTracker != null) {
             discoveryServiceTracker.close();
