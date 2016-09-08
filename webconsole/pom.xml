@@ -24,7 +24,7 @@
     <parent>
         <artifactId>cellar</artifactId>
         <groupId>org.apache.karaf</groupId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.2</version>
     </parent>
 
     <groupId>org.apache.karaf.cellar</groupId>
