@@ -173,7 +173,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 // cleanup the local bundles not present on the cluster
                 for (Bundle bundle : bundleContext.getBundles()) {
                     String id = getId(bundle);
-                    if (!clusterBundles.containsKey(id)) {
+                    if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
                         // the bundle is not present on the cluster, so it has to be uninstalled locally
                         try {
                             bundle.uninstall();
@@ -267,17 +267,21 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, groupName);
                 }
                 // clean bundles on the cluster not present locally
-                for (String id : clusterBundles.keySet()) {
-                    boolean found = false;
-                    for (Bundle bundle : bundleContext.getBundles()) {
-                        String localBundleId = getId(bundle);
-                        if (id.equals(localBundleId)) {
-                            found = true;
-                            break;
+                for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
+                    String id = entry.getKey();
+                    BundleState state = entry.getValue();
+                    if (state != null && isAllowed(group, Constants.CATEGORY, state.getLocation(), EventType.OUTBOUND)) {
+                        boolean found = false;
+                        for (Bundle bundle : bundleContext.getBundles()) {
+                            String localBundleId = getId(bundle);
+                            if (id.equals(localBundleId)) {
+                                found = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!found) {
-                        clusterBundles.remove(id);
+                        if (!found) {
+                            clusterBundles.remove(id);
+                        }
                     }
                 }
             } finally {

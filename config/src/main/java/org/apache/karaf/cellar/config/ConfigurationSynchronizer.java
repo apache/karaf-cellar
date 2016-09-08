@@ -156,7 +156,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 try {
                     for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
                         String pid = configuration.getPid();
-                        if (!clusterConfigurations.containsKey(pid)) {
+                        if (!clusterConfigurations.containsKey(pid) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
                             configuration.delete();
                         }
                     }
@@ -228,15 +228,17 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     }
                     // clean configurations on the cluster not present locally
                     for (String pid : clusterConfigurations.keySet()) {
-                        boolean found = false;
-                        for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
-                            if (configuration.getPid().equals(pid)) {
-                                found = true;
-                                break;
+                        if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
+                            boolean found = false;
+                            for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
+                                if (configuration.getPid().equals(pid)) {
+                                    found = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (!found) {
-                            clusterConfigurations.remove(pid);
+                            if (!found) {
+                                clusterConfigurations.remove(pid);
+                            }
                         }
                     }
                 } catch (IOException ex) {
