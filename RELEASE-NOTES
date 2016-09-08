@@ -15,6 +15,37 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.0.2
+                    =========================
+
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.0.2 is a maintenance release on the Cellar 4.x serie including important bug fixes.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-4538] - Cellar bundle regex is way too "global" in command and MBean
+    * [KARAF-4664] - Cellar can stop bundles whereas it should not
+    * [KARAF-4668] - Inconsistent cluster status for a bundle which cannot be started
+    * [KARAF-4670] - Race condition in the Activator.updated() of the org.apache.karaf.cellar.hazelcast
+    * [KARAF-4671] - cluster:bundle-list does not show symbolic names
+    * [KARAF-4678] - Cellar should provide service capability
+    * [KARAF-4683] - ClassNotFoundException: org.apache.karaf.cellar.config.ClusterConfigurationEvent on startup
+    * [KARAF-4694] - Downgrade to Hazelcast 3.6.2
+    * [KARAF-4698] - Cellar handling of cluster:bundle-uninstall when one of the cluster nodes is offline
+    * [KARAF-4699] - Check kubernetes POD label while discovering nodes
+
+** Improvement
+    * [KARAF-3869] - Use hazelcast bundle instead of hazelcast-all
+    * [KARAF-4256] - Use conditions to install cellar features
+    * [KARAF-4257] - Use req/cap in Cellar to be able to switch different implementation
+
+** Task
+    * [KARAF-4191] - Remove fabric8 karaf-features as it doesn't exists anymore
+
+
                     Apache Karaf Cellar 4.0.1
                     =========================
 
