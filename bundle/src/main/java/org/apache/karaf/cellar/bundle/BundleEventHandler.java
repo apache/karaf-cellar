@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The BundleEventHandler is responsible to process received cluster event for bundles.
@@ -91,8 +92,18 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     if (!isInstalled(event.getLocation())) {
                         installBundleFromLocation(event.getLocation());
                     }
-                    startBundle(event.getSymbolicName(), event.getVersion());
-                    LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
+                    try {
+                        startBundle(event.getSymbolicName(), event.getVersion());
+                        LOGGER.debug("CELLAR BUNDLE: starting {}/{}", event.getSymbolicName(), event.getVersion());
+                    } catch (Exception e) {
+                        // start failed, update cluster state
+                        Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + event.getSourceGroup().getName());
+                        BundleState state = clusterBundles.get(event.getSymbolicName() + "/" + event.getVersion());
+                        if (state != null) {
+                            state.setStatus(Bundle.INSTALLED);
+                            clusterBundles.put(event.getSymbolicName() + "/" + event.getVersion(), state);
+                        }
+                    }
                 } else if (event.getType() == Bundle.RESOLVED) {
                     stopBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: stopping {}/{}", event.getSymbolicName(), event.getVersion());
