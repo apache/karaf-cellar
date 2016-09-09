@@ -36,6 +36,7 @@
     * [KARAF-4694] - Downgrade to Hazelcast 3.6.2
     * [KARAF-4698] - Cellar handling of cluster:bundle-uninstall when one of the cluster nodes is offline
     * [KARAF-4699] - Check kubernetes POD label while discovering nodes
+    * [KARAF-4702] - BundleSynchronizer/ConfigurationSynchronizer do not check white/backlinks when syncing with cluster
 
 ** Improvement
     * [KARAF-3869] - Use hazelcast bundle instead of hazelcast-all
