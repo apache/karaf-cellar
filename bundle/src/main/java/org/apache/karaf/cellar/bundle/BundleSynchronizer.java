@@ -162,6 +162,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
                                         }
+                                    } else if (state.getStatus() == Bundle.RESOLVED) {
+                                        if (isStarted(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{} on node", symbolicName, version);
+                                            stopBundle(symbolicName, version);
+                                        }
                                     }
                                 } catch (BundleException e) {
                                     LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
