@@ -24,12 +24,14 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleReference;
+import org.osgi.framework.wiring.FrameworkWiring;
 import org.osgi.service.cm.Configuration;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Set;
@@ -163,9 +165,21 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
                                         }
                                     } else if (state.getStatus() == Bundle.RESOLVED) {
-                                        if (isStarted(state.getLocation())) {
-                                            LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{} on node", symbolicName, version);
-                                            stopBundle(symbolicName, version);
+                                        if (!isInstalled(state.getLocation())) {
+                                            LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
+                                            installBundleFromLocation(state.getLocation());
+                                        }
+                                        Bundle b = findBundle(state.getLocation());
+                                        if (b != null) {
+                                            if (b.getState() == Bundle.ACTIVE) {
+                                                LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{} on node", symbolicName, version);
+                                                stopBundle(symbolicName, version);
+                                            } else if (b.getState() == Bundle.INSTALLED) {
+                                                LOGGER.debug("CELLAR BUNDLE: resolving bundle {}/{} on node", symbolicName, version);
+                                                getBundleContext().getBundle(0).adapt(FrameworkWiring.class).resolveBundles(Collections.singleton(b));
+                                            }
+                                        } else {
+                                            LOGGER.warn("CELLAR BUNDLE: unable to find bundle located {} on node", state.getLocation());
                                         }
                                     }
                                 } catch (BundleException e) {

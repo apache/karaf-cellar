@@ -43,13 +43,7 @@ public class BundleSupport extends CellarSupport {
     }
 
     public boolean isInstalled(String location) {
-        Bundle[] bundles = getBundleContext().getBundles();
-        for (Bundle bundle : bundles) {
-            if (bundle.getLocation().equals(location)) {
-                return true;
-            }
-        }
-        return false;
+        return findBundle(location) != null;
     }
 
     public boolean isStarted(String location) {
@@ -172,5 +166,22 @@ public class BundleSupport extends CellarSupport {
 	public void setFeaturesService(FeaturesService featureService) {
 		this.featuresService = featureService;
 	}
+
+    /**
+     * Finds locally installed bundle by its location.
+     * 
+     * @param location
+     *            the location of the bundle to be found
+     * @return locally installed bundle for the specified location or <code>null</code> if there is no matching bundle installed
+     */
+    protected Bundle findBundle(String location) {
+        Bundle[] bundles = getBundleContext().getBundles();
+        for (Bundle bundle : bundles) {
+            if (bundle.getLocation().equals(location)) {
+                return bundle;
+            }
+        }
+        return null;
+    }
 
 }
