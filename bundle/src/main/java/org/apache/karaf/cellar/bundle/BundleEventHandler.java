@@ -22,10 +22,12 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.wiring.FrameworkWiring;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -105,8 +107,22 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                         }
                     }
                 } else if (event.getType() == Bundle.RESOLVED) {
-                    stopBundle(event.getSymbolicName(), event.getVersion());
-                    LOGGER.debug("CELLAR BUNDLE: stopping {}/{}", event.getSymbolicName(), event.getVersion());
+                    if (!isInstalled(event.getLocation())) {
+                        installBundleFromLocation(event.getLocation());
+                        LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
+                    }
+                    Bundle b = findBundle(event.getLocation());
+                    if (b != null) {
+                        if (b.getState() == Bundle.ACTIVE) {
+                            LOGGER.debug("CELLAR BUNDLE: stopping bundle {}/{} on node", event.getSymbolicName(), event.getVersion());
+                            stopBundle(event.getSymbolicName(), event.getVersion());
+                        } else if (b.getState() == Bundle.INSTALLED) {
+                            LOGGER.debug("CELLAR BUNDLE: resolving bundle {}/{} on node", event.getSymbolicName(), event.getVersion());
+                            getBundleContext().getBundle(0).adapt(FrameworkWiring.class).resolveBundles(Collections.singleton(b));
+                        }
+                    } else {
+                        LOGGER.warn("CELLAR BUNDLE: unable to find bundle located {} on node", event.getLocation());
+                    }
                 }
             } else
                 LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", event.getSymbolicName(), event.getSourceGroup().getName());
