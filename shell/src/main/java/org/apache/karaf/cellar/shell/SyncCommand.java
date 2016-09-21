@@ -97,8 +97,8 @@ public class SyncCommand extends ClusterCommandSupport {
             }
         } else {
             // we are in set mode
-            if (!policy.equalsIgnoreCase("cluster") && !policy.equalsIgnoreCase("node") && !policy.equalsIgnoreCase("disabled")) {
-                System.err.println("The sync policy " + policy + " is not valid. Valid sync policies are: cluster, node, disabled");
+            if (!policy.equalsIgnoreCase("cluster") && !policy.equalsIgnoreCase("node") && !policy.equalsIgnoreCase("clusterOnly") && !policy.equalsIgnoreCase("nodeOnly") && !policy.equalsIgnoreCase("disabled")) {
+                System.err.println("The sync policy " + policy + " is not valid. Valid sync policies are: cluster, node, clusterOnly, nodeOnly, disabled");
                 return null;
             }
             for (Group group : groups) {
