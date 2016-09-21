@@ -81,6 +81,15 @@ public class ListBundleCommand extends BundleCommandSupport {
                     table.column("Name");
                 }
 
+                if (ids != null && !ids.isEmpty()) {
+                    // do filtering by ids
+                    Set<String> matchingBundles = new HashSet<String>(selector(allBundles));
+                    for (Iterator<String> bundles = allBundles.keySet().iterator(); bundles.hasNext();) {
+                        if (!matchingBundles.contains(bundles.next())) {
+                            bundles.remove();
+                        }
+                    }
+                }
                 List<ExtendedBundleState> bundles = new ArrayList<ExtendedBundleState>(allBundles.values());
                 Collections.sort(bundles, new BundleStateComparator());
 
