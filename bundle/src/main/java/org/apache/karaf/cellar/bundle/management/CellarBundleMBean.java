@@ -67,6 +67,25 @@ public interface CellarBundleMBean {
     void stop(String group, String id) throws Exception;
 
     /**
+     * Update a bundle in a cluster group.
+     *
+     * @param group the cluster group name.
+     * @param id the bundle id.
+     * @throws Exception in case of update failure.
+     */
+    void update(String group, String id) throws Exception;
+
+    /**
+     * Update a bundle in a cluster group using a given location.
+     *
+     * @param group the cluster group name.
+     * @param id the bundle id.
+     * @param location the update bundle location.
+     * @throws Exception in case of update failure.
+     */
+    void update(String group, String id, String location) throws Exception;
+
+    /**
      * Updating blocking policy for a given bundle pattern.
      *
      * @param group the cluster group name where to apply the blocking policy.

@@ -17,10 +17,14 @@ import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.features.BundleInfo;
 import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
+import org.apache.karaf.util.bundles.BundleUtils;
+import org.osgi.framework.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,16 +119,44 @@ public class BundleSupport extends CellarSupport {
      *
      * @param symbolicName the bundle symbolic name.
      * @param version the bundle version.
+     * @param location the bundle update location.
      * @throws BundleException in case of update failure.
      */
-    public void updateBundle(String symbolicName, String version) throws BundleException {
+    public void updateBundle(String symbolicName, String version, String location) throws BundleException {
         Bundle[] bundles = getBundleContext().getBundles();
         if (bundles != null) {
             for (Bundle bundle : bundles) {
                 if (bundle.getSymbolicName().equals(symbolicName) && bundle.getHeaders().get("Bundle-Version").toString().equals(version)) {
-                    bundle.update();
+                    if (location != null) {
+                        try {
+                            update(bundle, new URL(location));
+                        } catch (Exception e) {
+                            throw new BundleException("Can't update bundle", e);
+                        }
+                    } else {
+                        String loc = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_UPDATELOCATION);
+                        if (loc != null && !loc.equals(bundle.getLocation())) {
+                            try {
+                                update(bundle, new URL(loc));
+                            } catch (Exception e) {
+                                throw new BundleException("Can't update bundle", e);
+                            }
+                        } else {
+                            bundle.update();
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private void update(Bundle bundle, URL location) throws IOException, BundleException {
+        try (InputStream is = location.openStream()) {
+            File file = BundleUtils.fixBundleWithUpdateLocation(is, location.toString());
+            try (FileInputStream fis = new FileInputStream(file)) {
+                bundle.update(fis);
+            }
+            file.delete();
         }
     }
 

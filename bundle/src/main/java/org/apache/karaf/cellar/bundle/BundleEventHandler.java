@@ -123,6 +123,8 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     } else {
                         LOGGER.warn("CELLAR BUNDLE: unable to find bundle located {} on node", event.getLocation());
                     }
+                } else if (event.getType() == BundleState.UPDATE) {
+                    updateBundle(event.getSymbolicName(), event.getVersion(), event.getLocation());
                 }
             } else
                 LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", event.getSymbolicName(), event.getSourceGroup().getName());

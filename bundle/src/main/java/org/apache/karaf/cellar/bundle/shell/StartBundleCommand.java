@@ -64,7 +64,7 @@ public class StartBundleCommand extends BundleCommandSupport {
             for (String bundle : bundles) {
                 BundleState state = clusterBundles.get(bundle);
                 if (state == null) {
-                    System.err.println("Bundle " + state + " not found in cluster group " + groupName);
+                    System.err.println("Bundle " + bundle + " not found in cluster group " + groupName);
                 }
                 String location = state.getLocation();
 

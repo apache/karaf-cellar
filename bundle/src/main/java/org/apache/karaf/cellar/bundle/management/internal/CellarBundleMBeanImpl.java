@@ -333,6 +333,68 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
     }
 
     @Override
+    public void update(String groupName, String id, String updateLocation) throws Exception {
+        // check if the cluster group exists
+        Group group = groupManager.findGroupByName(groupName);
+        if (group == null) {
+            throw new IllegalArgumentException("Cluster group " + groupName + " doesn't exist");
+        }
+
+        // check if the producer is ON
+        if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
+            throw new IllegalStateException("Cluster event producer is OFF for this node");
+        }
+
+        CellarSupport support = new CellarSupport();
+        support.setClusterManager(this.clusterManager);
+        support.setGroupManager(this.groupManager);
+        support.setConfigurationAdmin(this.configurationAdmin);
+
+        // update the cluster group
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+        try {
+            Map<String, BundleState> clusterBundles = clusterManager.getMap(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName);
+
+            List<String> bundles = selector(id, gatherBundles(groupName));
+
+            for (String bundle : bundles) {
+                BundleState state = clusterBundles.get(bundle);
+                if (state == null) {
+                    continue;
+                }
+                String location = state.getLocation();
+                if (updateLocation != null) {
+                    location = updateLocation;
+                }
+
+                // check if the bundle location is allowed outbound
+                if (!support.isAllowed(group, Constants.CATEGORY, location, EventType.OUTBOUND)) {
+                    continue;
+                }
+
+                // update the cluster state
+                state.setLocation(location);
+                clusterBundles.put(bundle, state);
+
+                // broadcast the cluster event
+                String[] split = bundle.split("/");
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, BundleState.UPDATE);
+                event.setSourceGroup(group);
+                event.setSourceNode(clusterManager.getNode());
+                eventProducer.produce(event);
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(originalClassLoader);
+        }
+    }
+
+    @Override
+    public void update(String groupName, String id) throws Exception {
+        update(groupName, id, null);
+    }
+
+    @Override
     public void block(String groupName, String bundlePattern, boolean whitelist, boolean blacklist, boolean in, boolean out) throws Exception {
         List<String> patterns = new ArrayList<String>();
 

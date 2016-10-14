@@ -20,6 +20,8 @@ import java.io.Serializable;
  */
 public class BundleState implements Serializable {
 
+    public static final int UPDATE = 555;
+
     private static final long serialVersionUID = 5933673686648413918L;
 
     private long id;
