@@ -290,7 +290,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 new String[]{"Name of the feature", "Version of the feature", "Whether the feature is installed or not",
                         "Location of the feature (on the cluster or the local node)",
                         "Feature block policy"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN});
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.BOOLEAN, SimpleType.STRING, SimpleType.STRING});
 
         TabularType tabularType = new TabularType("Features", "Table of all Karaf Cellar features",
                 featuresType, new String[]{"name", "version"});
