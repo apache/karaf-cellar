@@ -85,15 +85,23 @@ public class FeaturesEventHandler extends FeaturesSupport implements EventHandle
             FeatureEvent.EventType type = event.getType();
             Boolean isInstalled = isFeatureInstalledLocally(name, version);
             try {
-                if (FeatureEvent.EventType.FeatureInstalled.equals(type) && !isInstalled) {
+                if (FeatureEvent.EventType.FeatureInstalled.equals(type)) {
                     boolean noRefresh = event.getNoRefresh();
                     boolean noStart = event.getNoStart();
+                    boolean noManage = event.getNoManage();
+                    boolean upgrade = event.getUpgrade();
                     EnumSet<FeaturesService.Option> options = EnumSet.noneOf(FeaturesService.Option.class);
                     if (noRefresh) {
                         options.add(FeaturesService.Option.NoAutoRefreshBundles);
                     }
                     if (noStart) {
                         options.add(FeaturesService.Option.NoAutoStartBundles);
+                    }
+                    if (noManage) {
+                        options.add(FeaturesService.Option.NoAutoManageBundles);
+                    }
+                    if (upgrade) {
+                        options.add(FeaturesService.Option.Upgrade);
                     }
                     if (version != null) {
                         LOGGER.debug("CELLAR FEATURE: installing feature {}/{}", name, version);

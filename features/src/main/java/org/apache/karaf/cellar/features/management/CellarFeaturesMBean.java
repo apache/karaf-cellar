@@ -94,23 +94,13 @@ public interface CellarFeaturesMBean {
      *
      * @param group the cluster group name.
      * @param name the feature name.
-     * @param noClean true to not uninstall the bundles if the installation of the feature failed, false else.
-     * @param noRefresh true to not automatically refresh the bundles, false else.
-     * @throws Exception in case of install failure.
-     */
-    void installFeature(String group, String name, boolean noClean, boolean noRefresh) throws Exception;
-
-    /**
-     * Install a feature in a cluster group.
-     *
-     * @param group the cluster group name.
-     * @param name the feature name.
-     * @param noClean true to not uninstall the bundles if the installation of the feature failed, false else.
      * @param noRefresh true to not automatically refresh the bundles, false else.
      * @param noStart true to not automatically start the bundles, false else.
+     * @param noManage true to not automatically manage the bundles, false else.
+     * @param upgrade true to upgrade an existing feature or install it, false else.
      * @throws Exception in case of install failure.
      */
-    void installFeature(String group, String name, boolean noClean, boolean noRefresh, boolean noStart) throws Exception;
+    void installFeature(String group, String name, boolean noRefresh, boolean noStart, boolean noManage, boolean upgrade) throws Exception;
 
     /**
      * Install a feature in a cluster group.
@@ -128,24 +118,13 @@ public interface CellarFeaturesMBean {
      * @param group the cluster group name.
      * @param name the feature name.
      * @param version the feature version.
-     * @param noClean true to not uninstall the bundles if the installation of the feature failed, false else.
-     * @param noRefresh true to not automatically refresh the bundles, false else.
-     * @throws Exception in case of install failure.
-     */
-    void installFeature(String group, String name, String version, boolean noClean, boolean noRefresh) throws Exception;
-
-    /**
-     * Install a feature in a cluster group.
-     *
-     * @param group the cluster group name.
-     * @param name the feature name.
-     * @param version the feature version.
-     * @param noClean true to not uninstall the bundles if the installation of the feature failued, false else.
      * @param noRefresh true to not automatically refresh the bundles, false else.
      * @param noStart true to not automatically start the bundles, false else.
+     * @param noManage true to not automatically manage the bundles, false else.
+     * @param upgrade true to upgrade an existing feature or install it, false else.
      * @throws Exception in case of install failure.
      */
-    void installFeature(String group, String name, String version, boolean noClean, boolean noRefresh, boolean noStart) throws Exception;
+    void installFeature(String group, String name, String version, boolean noRefresh, boolean noStart, boolean noManage, boolean upgrade) throws Exception;
 
     /**
      * Uninstall a feature from a cluster group.

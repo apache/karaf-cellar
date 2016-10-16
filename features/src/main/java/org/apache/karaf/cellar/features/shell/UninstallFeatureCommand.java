@@ -125,7 +125,7 @@ public class UninstallFeatureCommand extends CellarCommandSupport {
                 clusterFeatures.put(foundKey, found);
 
                 // broadcast the cluster event
-                ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), false, noRefresh, false, FeatureEvent.EventType.FeatureUninstalled);
+                ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), noRefresh, false, false, false, FeatureEvent.EventType.FeatureUninstalled);
                 event.setSourceGroup(group);
                 eventProducer.produce(event);
             }

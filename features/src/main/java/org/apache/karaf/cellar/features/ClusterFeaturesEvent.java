@@ -28,6 +28,8 @@ public class ClusterFeaturesEvent extends Event {
     private String version;
     private Boolean noRefresh;
     private Boolean noStart;
+    private Boolean noManage;
+    private Boolean upgrade;
     private EventType type;
     private Node local;
 
@@ -37,15 +39,19 @@ public class ClusterFeaturesEvent extends Event {
         this.version = version;
         this.noRefresh = false;
         this.noStart = false;
+        this.noManage = false;
+        this.upgrade = false;
         this.type = type;
     }
 
-    public ClusterFeaturesEvent(String name, String version, Boolean noClean, Boolean noRefresh, Boolean noStart, EventType type) {
+    public ClusterFeaturesEvent(String name, String version, Boolean noRefresh, Boolean noStart, Boolean noManage, Boolean upgrade, EventType type) {
         super(name + separator + version);
         this.name = name;
         this.version = version;
         this.noRefresh = noRefresh;
         this.noStart = noStart;
+        this.noManage = noManage;
+        this.upgrade = upgrade;
         this.type = type;
     }
 
@@ -63,6 +69,14 @@ public class ClusterFeaturesEvent extends Event {
 
     public Boolean getNoStart() {
         return noStart;
+    }
+
+    public Boolean getNoManage() {
+        return noManage;
+    }
+
+    public Boolean getUpgrade() {
+        return upgrade;
     }
 
     public EventType getType() {

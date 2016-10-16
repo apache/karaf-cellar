@@ -41,14 +41,17 @@ import java.util.Map;
 @Service
 public class InstallFeatureCommand extends CellarCommandSupport {
 
-    @Option(name = "-c", aliases = {"--no-clean"}, description = "Do not uninstall bundles on failure", required = false, multiValued = false)
-    boolean noClean;
-
-    @Option(name = "-r", aliases = {"--no-auto-refresh"}, description = "Do not automatically refresh bundles", required = false, multiValued = false)
+    @Option(name = "-r", aliases = "--no-auto-refresh", description = "Do not automatically refresh bundles", required = false, multiValued = false)
     boolean noRefresh;
 
-    @Option(name = "-s", aliases = {"--no-auto-start"}, description = "Do not automatically start bundles", required = false, multiValued = false)
+    @Option(name = "-s", aliases = "--no-auto-start", description = "Do not start the bundles", required = false, multiValued = false)
     boolean noStart;
+
+    @Option(name = "-m", aliases = "--no-auto-manager", description = "Do not automatically manage bundles", required = false, multiValued = false)
+    boolean noManage;
+
+    @Option(name = "-u", aliases = "--upgrade", description = "Perform an upgrade of feature if previous version are installed or install it", required = false, multiValued = false)
+    boolean upgrade;
 
     @Argument(index = 0, name = "group", description = "The cluster group name", required = true, multiValued = false)
     @Completion(AllGroupsCompleter.class)
@@ -133,7 +136,7 @@ public class InstallFeatureCommand extends CellarCommandSupport {
                     clusterFeatures.put(foundKey, found);
 
                     // broadcast the cluster event
-                    ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
+                    ClusterFeaturesEvent event = new ClusterFeaturesEvent(found.getName(), found.getVersion(), noRefresh, noStart, noManage, upgrade, FeatureEvent.EventType.FeatureInstalled);
                     event.setSourceGroup(group);
                     eventProducer.produce(event);
                 } else {

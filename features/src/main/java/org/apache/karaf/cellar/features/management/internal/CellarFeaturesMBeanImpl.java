@@ -97,12 +97,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void installFeature(String groupName, String name, String version, boolean noClean, boolean noRefresh) throws Exception {
-        this.installFeature(groupName, name, version, noClean, noRefresh, false);
-    }
-
-    @Override
-    public void installFeature(String groupName, String name, String version, boolean noClean, boolean noRefresh, boolean noStart) throws Exception {
+    public void installFeature(String groupName, String name, String version, boolean noRefresh, boolean noStart, boolean noManage, boolean upgrade) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -164,14 +159,14 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noClean, noRefresh, noStart, FeatureEvent.EventType.FeatureInstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noRefresh, noStart, noManage, upgrade, FeatureEvent.EventType.FeatureInstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
 
     @Override
     public void installFeature(String groupName, String name, String version) throws Exception {
-        this.installFeature(groupName, name, version, false, false);
+        this.installFeature(groupName, name, version, false, false, false, false);
     }
 
     @Override
@@ -179,14 +174,10 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         this.installFeature(groupName, name, null);
     }
 
-    @Override
-    public void installFeature(String groupName, String name, boolean noClean, boolean noRefresh) throws Exception {
-        this.installFeature(groupName, name, null, noClean, noRefresh, false);
-    }
 
     @Override
-    public void installFeature(String groupName, String name, boolean noClean, boolean noRefresh, boolean noStart) throws Exception {
-        this.installFeature(groupName, name, null, noClean, noRefresh, noStart);
+    public void installFeature(String groupName, String name, boolean noRefresh, boolean noStart, boolean noManage, boolean upgrade) throws Exception {
+        this.installFeature(groupName, name, null, noRefresh, noStart, noManage, upgrade);
     }
 
     @Override
@@ -257,7 +248,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         }
 
         // broadcast the cluster event
-        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, false, noRefresh, false, FeatureEvent.EventType.FeatureUninstalled);
+        ClusterFeaturesEvent event = new ClusterFeaturesEvent(name, version, noRefresh, false, false, false, FeatureEvent.EventType.FeatureUninstalled);
         event.setSourceGroup(group);
         eventProducer.produce(event);
     }
