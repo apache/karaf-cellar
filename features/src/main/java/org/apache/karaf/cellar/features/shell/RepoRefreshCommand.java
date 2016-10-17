@@ -41,12 +41,9 @@ public class RepoRefreshCommand extends CellarCommandSupport {
     @Completion(AllGroupsCompleter.class)
     String groupName;
 
-    @Argument(index = 1, name = "name/url", description = "Shortcut name of the features repository or the full URL", required = true, multiValued = false)
+    @Argument(index = 1, name = "name/url", description = "Shortcut name of the features repository or the full URL", required = false, multiValued = false)
     @Completion(AvailableRepoNameCompleter.class)
     String nameOrUrl;
-
-    @Argument(index = 2, name = "version", description = "The version of the features repository if using features repository name as first argument. It should be empty if using the URL.", required = false, multiValued = false)
-    String version;
 
     @Reference
     private EventProducer eventProducer;
@@ -72,21 +69,26 @@ public class RepoRefreshCommand extends CellarCommandSupport {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            // get the cluster features repositories
-            Map<String, String> clusterFeaturesRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            String uri = null;
+            if (nameOrUrl != null) {
+                // get the cluster features repositories
+                Map<String, String> clusterFeaturesRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
-            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
-            if (uri == null) {
-                uri = new URI(nameOrUrl);
-            }
+                for (Map.Entry<String, String> entry : clusterFeaturesRepositories.entrySet()) {
+                    if (entry.getKey().equals(nameOrUrl) || entry.getValue().equals(nameOrUrl)) {
+                        uri = entry.getKey();
+                        break;
+                    }
+                }
 
-            if (clusterFeaturesRepositories.get(uri) == null) {
-                System.err.println("Features repository " + nameOrUrl + " doesn't exist in cluster group " + groupName);
-                return null;
+                if (uri == null) {
+                    System.err.println("Features repository " + nameOrUrl + " doesn't exist in cluster group " + groupName);
+                    return null;
+                }
             }
 
             // broadcast the cluster event
-            ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
+            ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri, RepositoryEvent.EventType.RepositoryAdded);
             event.setRefresh(true);
             event.setSourceGroup(group);
             event.setSourceNode(clusterManager.getNode());

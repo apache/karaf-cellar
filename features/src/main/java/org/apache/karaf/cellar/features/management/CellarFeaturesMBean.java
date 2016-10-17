@@ -75,10 +75,9 @@ public interface CellarFeaturesMBean {
      *
      * @param group the cluster group name.
      * @param repository the features repository name or URL.
-     * @param version the features repository version.
      * @throws Exception
      */
-    void refreshRepository(String group, String repository, String version) throws Exception;
+    void refreshRepository(String group, String repository) throws Exception;
 
     /**
      * Install a feature in a cluster group.

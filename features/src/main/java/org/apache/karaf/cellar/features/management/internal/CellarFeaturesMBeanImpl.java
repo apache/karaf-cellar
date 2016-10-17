@@ -461,7 +461,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
     }
 
     @Override
-    public void refreshRepository(String groupName, String nameOrUrl, String version) throws Exception {
+    public void refreshRepository(String groupName, String nameOrUrl) throws Exception {
         // check if the group exists
         Group group = groupManager.findGroupByName(groupName);
         if (group == null) {
@@ -476,20 +476,25 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         try {
-            // get the cluster features repositories
-            Map<String, String> clusterFeaturesRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
+            String uri = null;
+            if (nameOrUrl != null) {
+                // get the cluster features repositories
+                Map<String, String> clusterFeaturesRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
 
-            URI uri = featuresService.getRepositoryUriFor(nameOrUrl, version);
-            if (uri == null) {
-                uri = new URI(nameOrUrl);
-            }
+                for (Map.Entry<String, String> entry : clusterFeaturesRepositories.entrySet()) {
+                    if (entry.getKey().equals(nameOrUrl) || entry.getValue().equals(nameOrUrl)) {
+                        uri = entry.getKey();
+                        break;
+                    }
+                }
 
-            if (clusterFeaturesRepositories.get(uri) == null) {
-                throw new IllegalArgumentException("Features repository " + nameOrUrl + " doesn't exist in cluster group " + groupName);
+                if (uri == null) {
+                    throw new IllegalArgumentException("Features repository " + nameOrUrl + " doesn't exist in cluster group " + groupName);
+                }
             }
 
             // broadcast the cluster event
-            ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri.toString(), RepositoryEvent.EventType.RepositoryAdded);
+            ClusterRepositoryEvent event = new ClusterRepositoryEvent(uri, RepositoryEvent.EventType.RepositoryAdded);
             event.setRefresh(true);
             event.setSourceGroup(group);
             event.setSourceNode(clusterManager.getNode());

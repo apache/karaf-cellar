@@ -17,12 +17,14 @@ import org.apache.karaf.cellar.core.control.BasicSwitch;
 import org.apache.karaf.cellar.core.control.Switch;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventHandler;
+import org.apache.karaf.features.Repository;
 import org.apache.karaf.features.RepositoryEvent;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Handler for cluster features repository event.
@@ -80,11 +82,18 @@ public class RepositoryEventHandler extends FeaturesSupport implements EventHand
         String uri = event.getId();
         RepositoryEvent.EventType type = event.getType();
         try {
-            // TODO check if isAllowed
             if (RepositoryEvent.EventType.RepositoryAdded.equals(type)) {
                 if (event.getRefresh() != null && event.getRefresh()) {
-                    LOGGER.debug("CELLAR FEATURE: refresh repository {}", uri);
-                    featuresService.refreshRepository(new URI(uri));
+                    if (uri == null) {
+                        Repository[] repositories = featuresService.listRepositories();
+                        for (Repository repository : repositories) {
+                            LOGGER.debug("CELLAR FEATURE: refresh repository {}", repository.getURI().toString());
+                            featuresService.refreshRepository(repository.getURI());
+                        }
+                    } else {
+                        LOGGER.debug("CELLAR FEATURE: refresh repository {}", uri);
+                        featuresService.refreshRepository(new URI(uri));
+                    }
                 } else {
                     if (!isRepositoryRegisteredLocally(uri)) {
                         LOGGER.debug("CELLAR FEATURE: adding repository URI {}", uri);
