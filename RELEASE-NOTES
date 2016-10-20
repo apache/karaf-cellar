@@ -15,6 +15,34 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.0.3
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.0.3 is a maintenance release on the Cellar 4.x serie including important bug fixes and new
+ features (like the KAR file support and bundles/features update support).
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-4702] - BundleSynchronizer/ConfigurationSynchronizer do not check white/backlinks when syncing with cluster
+    * [KARAF-4708] - Cellar: stopped bundle state (Resolved) is not pulled from cluster by ByndleSynchronizer
+    * [KARAF-4722] - cluster:bundle-list shell command ignores the supplied ids argument
+    * [KARAF-4729] - cluster:feature-repo-refresh never works
+    * [KARAF-4759] - Unable to retrieve full list of features via jmx by calling cellar feature bean operation getFeatures
+
+** Dependency upgrade
+    * [KARAF-4754] - Upgrade to Hazelcast 3.7.2
+
+** Improvement
+    * [KARAF-4721] - Add support for clusterOnly and nodeOnly sync policies via shell command
+    * [KARAF-4736] - Cluster Feature Install options parity
+
+** New Feature
+    * [KARAF-4747] - Add kar cluster support
+    * [KARAF-4768] - Add bundle update support
+
                     Apache Karaf Cellar 4.0.2
                     =========================
 
