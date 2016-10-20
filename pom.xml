@@ -57,6 +57,7 @@
         <module>core</module>
         <module>config</module>
         <module>features</module>
+        <module>kar</module>
         <module>bundle</module>
         <module>obr</module>
         <module>dosgi</module>
@@ -231,6 +232,11 @@
             <dependency>
                 <groupId>org.apache.karaf</groupId>
                 <artifactId>org.apache.karaf.util</artifactId>
+                <version>${karaf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.kar</groupId>
+                <artifactId>org.apache.karaf.kar.core</artifactId>
                 <version>${karaf.version}</version>
             </dependency>
             <dependency>

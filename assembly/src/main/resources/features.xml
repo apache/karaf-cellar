@@ -59,6 +59,14 @@
         </conditional>
     </feature>
 
+    <feature name="cellar-kar" description="Karaf kar cluster support" version="${project.version}">
+        <conditional>
+            <condition>kar</condition>
+            <feature dependency="true">cellar-hazelcast</feature>
+            <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.kar/${project.version}</bundle>
+        </conditional>
+    </feature>
+
     <feature name="cellar-bundle" description="Bundle cluster support" version="${project.version}">
         <conditional>
             <condition>bundle</condition>
@@ -81,6 +89,7 @@
         <feature>cellar-config</feature>
         <feature>cellar-bundle</feature>
         <feature>cellar-features</feature>
+        <feature>cellar-kar</feature>
         <requirement>
             karaf.cellar.provider
         </requirement>

@@ -286,6 +286,26 @@ You can modify this list using the same command, or by editing the `etc/org.apac
 config.excluded.properties = service.factoryPid, felix.fileinstall.filename, felix.fileinstall.dir, felix.fileinstall.tmpdir, org.ops4j.pax.url.mvn.defaultRepositories
 ----
 
+===== KAR
+
+Karaf Cellar is able to send cluster event for KAR files installation and uninstallation.
+
+However, due to KAR limitations, it's not possible to fully store the KAR files state on the cluster.
+
+To install a KAR file on the cluster, you have to use the `cluster:kar-install` command:
+
+----
+karaf@root()> cluster:kar-install cluster_group mvn:...kar
+----
+
+This will send a cluster event to all members of the cluster group and it will install the KAR file on those nodes.
+
+On the other hand, you can uninstall a KAR from a cluster group using `cluster:kar-uninstall` command:
+
+----
+karaf@root()> cluster:kar-uninstall cluster_group kar_name
+----
+
 ===== OBR (optional)
 
 See the link:obr[OBR section] for details.
