@@ -33,6 +33,15 @@ Now you have Cellar features available in your Karaf instance:
 karaf@root()> feature:list |grep -i cellar
 ----
 
+[NOTE]
+====
+If you build Cellar on your machine with `mvn clean install`, the Cellar artifacts are on your local
+Maven repository (.m2/repository). If you use a Karaf with the same user on the same machine, then it
+will use your local artifacts. If you use a "remote" Karaf instance, then, you have to deploy the Cellar
+artifacts on a Maven repository (or filesystem) shared by all Karaf instances where you plan
+to use Cellar (you can change etc/org.ops4j.pax.url.mvn.cfg repositories).
+====
+
 ==== Starting Cellar
 
 To start Cellar in your Karaf instance, you only need to install the Cellar feature:
