@@ -117,7 +117,7 @@ public class RepoRemoveCommand extends CellarCommandSupport {
                 // looking for the URL in the list
                 boolean found = false;
                 for (String repository : clusterRepositories.keySet()) {
-                    if (repository.equals(repository)) {
+                    if (this.repository.equals(repository)) {
                         found = true;
                         break;
                     }
