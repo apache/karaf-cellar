@@ -335,7 +335,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             Dictionary<String, Object> properties = configuration.getProperties();
             if (properties != null) {
                 String propertyKey = groupName + Configurations.SEPARATOR + Constants.CATEGORY + Configurations.SEPARATOR + Configurations.SYNC;
-                return properties.get(propertyKey).toString();
+                if (properties.get(propertyKey) != null) {
+                    return properties.get(propertyKey).toString();
+                }
             }
         } catch (IOException e) {
             LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
