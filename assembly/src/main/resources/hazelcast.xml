@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hz:hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-3.6.xsd"
-           xmlns:hz="http://www.hazelcast.com/schema/config"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <hz:group>
-        <hz:name>cellar</hz:name>
-        <hz:password>pass</hz:password>
-    </hz:group>
-    <hz:management-center enabled="false">http://localhost:8080/mancenter</hz:management-center>
-    <hz:network>
-        <hz:port auto-increment="true" port-count="100">5701</hz:port>
-        <hz:outbound-ports>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-3.6.xsd">
+    <group>
+        <name>cellar</name>
+        <password>pass</password>
+    </group>
+    <management-center enabled="false">http://localhost:8080/mancenter</management-center>
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <outbound-ports>
             <!--
                 Allowed port range when connecting to other nodes.
                 0 or * means use system provided port.
             -->
-            <hz:ports>0</hz:ports>
-        </hz:outbound-ports>
-        <hz:join>
-            <hz:multicast enabled="true">
-                <hz:multicast-group>224.2.2.3</hz:multicast-group>
-                <hz:multicast-port>54327</hz:multicast-port>
-            </hz:multicast>
-            <hz:tcp-ip enabled="false">
-                <hz:interface>127.0.0.1</hz:interface>
-            </hz:tcp-ip>
-            <hz:aws enabled="false">
-                <hz:access-key>my-access-key</hz:access-key>
-                <hz:secret-key>my-secret-key</hz:secret-key>
+            <ports>0</ports>
+        </outbound-ports>
+        <join>
+            <multicast enabled="true">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="false">
+                <interface>127.0.0.1</interface>
+            </tcp-ip>
+            <aws enabled="false">
+                <access-key>my-access-key</access-key>
+                <secret-key>my-secret-key</secret-key>
                 <!--optional, default is us-east-1 -->
-                <hz:region>us-west-1</hz:region>
+                <region>us-west-1</region>
                 <!--optional, default is ec2.amazonaws.com. If set, region shouldn't be set as it will override this property -->
-                <hz:host-header>ec2.amazonaws.com</hz:host-header>
+                <host-header>ec2.amazonaws.com</host-header>
                 <!-- optional, only instances belonging to this group will be discovered, default will try all running instances -->
-                <hz:security-group-name>hazelcast-sg</hz:security-group-name>
-                <hz:tag-key>type</hz:tag-key>
-                <hz:tag-value>hz-nodes</hz:tag-value>
-            </hz:aws>
-        </hz:join>
-        <hz:interfaces enabled="false">
-            <hz:interface>10.10.1.*</hz:interface>
-        </hz:interfaces>
-        <hz:ssl enabled="false"/>
-        <hz:socket-interceptor enabled="false"/>
-        <hz:symmetric-encryption enabled="false">
+                <security-group-name>hazelcast-sg</security-group-name>
+                <tag-key>type</tag-key>
+                <tag-value>hz-nodes</tag-value>
+            </aws>
+        </join>
+        <interfaces enabled="false">
+            <interface>10.10.1.*</interface>
+        </interfaces>
+        <ssl enabled="false"/>
+        <socket-interceptor enabled="false"/>
+        <symmetric-encryption enabled="false">
             <!--
                encryption algorithm such as
                DES/ECB/PKCS5Padding,
@@ -51,22 +51,22 @@
                Blowfish,
                DESede
             -->
-            <hz:algorithm>PBEWithMD5AndDES</hz:algorithm>
+            <algorithm>PBEWithMD5AndDES</algorithm>
             <!-- salt value to use when generating the secret key -->
-            <hz:salt>thesalt</hz:salt>
+            <salt>thesalt</salt>
             <!-- pass phrase to use when generating the secret key -->
-            <hz:password>thepass</hz:password>
+            <password>thepass</password>
             <!-- iteration count to use when generating the secret key -->
-            <hz:iteration-count>19</hz:iteration-count>
-        </hz:symmetric-encryption>
-    </hz:network>
-    <hz:partition-group enabled="false"/>
-    <hz:executor-service>
-        <hz:pool-size>16</hz:pool-size>
+            <iteration-count>19</iteration-count>
+        </symmetric-encryption>
+    </network>
+    <partition-group enabled="false"/>
+    <executor-service>
+        <pool-size>16</pool-size>
         <!-- Queue capacity. 0 means Integer.MAX_VALUE -->
-        <hz:queue-capacity>0</hz:queue-capacity>
-    </hz:executor-service>
-    <hz:queue name="default">
+        <queue-capacity>0</queue-capacity>
+    </executor-service>
+    <queue name="default">
         <!--
             Maximum size of the queue. When a JVM's local queue size reaches the maximum,
             all put/offer operations will get blocked until the queue size
@@ -74,21 +74,21 @@
             Any integer between 0 and Integer.MAX_VALUE. 0 means
             Integer.MAX_VALUE. Default is 0.
         -->
-        <hz:max-size>0</hz:max-size>
+        <max-size>0</max-size>
         <!--
             Number of backups. If 1 is set as the backup-count for example,
             then all entries of the map will be copied to another JVM for
             fail-safety. 0 means no backup.
         -->
-        <hz:backup-count>1</hz:backup-count>
+        <backup-count>1</backup-count>
         <!--
             Number of async backups. 0 means no backup.
         -->
-        <hz:async-backup-count>0</hz:async-backup-count>
-        <hz:empty-queue-ttl>-1</hz:empty-queue-ttl>
-    </hz:queue>
+        <async-backup-count>0</async-backup-count>
+        <empty-queue-ttl>-1</empty-queue-ttl>
+    </queue>
 
-    <hz:map name="default">
+    <map name="default">
         <!--
             Data type that will be used for storing recordMap.
             Possible values:
@@ -96,31 +96,31 @@
                 OBJECT : values will be stored in their object forms
                 OFFHEAP : values will be stored in non-heap region of JVM
         -->
-        <hz:in-memory-format>BINARY</hz:in-memory-format>
+        <in-memory-format>BINARY</in-memory-format>
         <!--
             Number of backups. If 1 is set as the backup-count for example,
             then all entries of the map will be copied to another JVM for
             fail-safety. 0 means no backup.
         -->
-        <hz:backup-count>1</hz:backup-count>
+        <backup-count>1</backup-count>
         <!--
             Number of async backups. 0 means no backup.
         -->
-        <hz:async-backup-count>0</hz:async-backup-count>
+        <async-backup-count>0</async-backup-count>
         <!--
             Maximum number of seconds for each entry to stay in the map. Entries that are
             older than <time-to-live-seconds> and not updated for <time-to-live-seconds>
             will get automatically evicted from the map.
             Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
         -->
-        <hz:time-to-live-seconds>0</hz:time-to-live-seconds>
+        <time-to-live-seconds>0</time-to-live-seconds>
         <!--
             Maximum number of seconds for each entry to stay idle in the map. Entries that are
             idle(not touched) for more than <max-idle-seconds> will get
             automatically evicted from the map. Entry is touched if get, put or containsKey is called.
             Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. Default is 0.
         -->
-        <hz:max-idle-seconds>0</hz:max-idle-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
         <!--
             Valid values are:
             NONE (no eviction),
@@ -128,21 +128,21 @@
             LFU (Least Frequently Used).
             NONE is the default.
         -->
-        <hz:eviction-policy>NONE</hz:eviction-policy>
+        <eviction-policy>NONE</eviction-policy>
         <!--
             Maximum size of the map. When max size is reached,
             map is evicted based on the policy defined.
             Any integer between 0 and Integer.MAX_VALUE. 0 means
             Integer.MAX_VALUE. Default is 0.
         -->
-        <hz:max-size policy="PER_NODE">0</hz:max-size>
+        <max-size policy="PER_NODE">0</max-size>
         <!--
             When max. size is reached, specified percentage of
             the map will be evicted. Any integer between 0 and 100.
             If 25 is set for example, 25% of the entries will
             get evicted.
         -->
-        <hz:eviction-percentage>25</hz:eviction-percentage>
+        <eviction-percentage>25</eviction-percentage>
         <!--
             While recovering from split-brain (network partitioning),
             map entries in the small cluster will merge into the bigger cluster
@@ -158,54 +158,54 @@
             com.hazelcast.map.merge.HigherHitsMapMergePolicy ; entry with the higher hits wins.
             com.hazelcast.map.merge.LatestUpdateMapMergePolicy ; entry with the latest update wins.
         -->
-        <hz:merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</hz:merge-policy>
-    </hz:map>
-    <hz:map name="org.apache.karaf.cellar.log">
-        <hz:time-to-live-seconds>0</hz:time-to-live-seconds>
-        <hz:max-idle-seconds>0</hz:max-idle-seconds>
-        <hz:eviction-policy>LRU</hz:eviction-policy>
-        <hz:max-size policy="PER_PARTITION">5000</hz:max-size>
-        <hz:eviction-percentage>25</hz:eviction-percentage>
-        <hz:backup-count>0</hz:backup-count>
-    </hz:map>
+        <merge-policy>com.hazelcast.map.merge.PassThroughMergePolicy</merge-policy>
+    </map>
+    <map name="org.apache.karaf.cellar.log">
+        <time-to-live-seconds>0</time-to-live-seconds>
+        <max-idle-seconds>0</max-idle-seconds>
+        <eviction-policy>LRU</eviction-policy>
+        <max-size policy="PER_PARTITION">5000</max-size>
+        <eviction-percentage>25</eviction-percentage>
+        <backup-count>0</backup-count>
+    </map>
 
-    <hz:multimap name="default">
-        <hz:backup-count>1</hz:backup-count>
-        <hz:value-collection-type>SET</hz:value-collection-type>
-    </hz:multimap>
+    <multimap name="default">
+        <backup-count>1</backup-count>
+        <value-collection-type>SET</value-collection-type>
+    </multimap>
 
-    <hz:multimap name="default">
-        <hz:backup-count>1</hz:backup-count>
-        <hz:value-collection-type>SET</hz:value-collection-type>
-    </hz:multimap>
+    <multimap name="default">
+        <backup-count>1</backup-count>
+        <value-collection-type>SET</value-collection-type>
+    </multimap>
 
-    <hz:list name="default">
-        <hz:backup-count>1</hz:backup-count>
-    </hz:list>
+    <list name="default">
+        <backup-count>1</backup-count>
+    </list>
 
-    <hz:set name="default">
-        <hz:backup-count>1</hz:backup-count>
-    </hz:set>
+    <set name="default">
+        <backup-count>1</backup-count>
+    </set>
 
-    <hz:jobtracker name="default">
-        <hz:max-thread-size>0</hz:max-thread-size>
+    <jobtracker name="default">
+        <max-thread-size>0</max-thread-size>
         <!-- Queue size 0 means number of partitions * 2 -->
-        <hz:queue-size>0</hz:queue-size>
-        <hz:retry-count>0</hz:retry-count>
-        <hz:chunk-size>1000</hz:chunk-size>
-        <hz:communicate-stats>true</hz:communicate-stats>
-        <hz:topology-changed-strategy>CANCEL_RUNNING_OPERATION</hz:topology-changed-strategy>
-    </hz:jobtracker>
+        <queue-size>0</queue-size>
+        <retry-count>0</retry-count>
+        <chunk-size>1000</chunk-size>
+        <communicate-stats>true</communicate-stats>
+        <topology-changed-strategy>CANCEL_RUNNING_OPERATION</topology-changed-strategy>
+    </jobtracker>
 
-    <hz:semaphore name="default">
-        <hz:initial-permits>0</hz:initial-permits>
-        <hz:backup-count>1</hz:backup-count>
-        <hz:async-backup-count>0</hz:async-backup-count>
-    </hz:semaphore>
+    <semaphore name="default">
+        <initial-permits>0</initial-permits>
+        <backup-count>1</backup-count>
+        <async-backup-count>0</async-backup-count>
+    </semaphore>
 
-    <hz:serialization>
-        <hz:portable-version>0</hz:portable-version>
-    </hz:serialization>
+    <serialization>
+        <portable-version>0</portable-version>
+    </serialization>
 
-    <hz:services enable-defaults="true" />
-</hz:hazelcast>
+    <services enable-defaults="true" />
+</hazelcast>
