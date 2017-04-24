@@ -560,7 +560,7 @@ public class CellarFeaturesMBeanImpl extends StandardMBean implements CellarFeat
                 // looking for the URL in the list
                 boolean found = false;
                 for (String repository : clusterRepositories.keySet()) {
-                    if (repository.equals(repository)) {
+                    if (repository.equals(url)) {
                         found = true;
                         break;
                     }
