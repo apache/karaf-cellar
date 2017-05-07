@@ -138,6 +138,9 @@
 
     <feature name="cellar-etcd" description="Cellar Etcd discovery support" version="${project.version}">
         <feature>cellar-core</feature>
+        <bundle>mvn:com.netflix.feign/feign-core/${netflix.feign.version}</bundle>
+        <bundle>mvn:com.netflix.feign/feign-slf4j/${netflix.feign.version}</bundle>
+        <bundle>mvn:com.netflix.feign/feign-gson/${netflix.feign.version}</bundle>
         <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.etcd/${project.version}</bundle>
     </feature>
 
