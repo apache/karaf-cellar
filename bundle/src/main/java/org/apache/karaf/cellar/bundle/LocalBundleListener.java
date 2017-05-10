@@ -21,6 +21,7 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.SynchronousBundleListener;
+import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +91,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                     String version = event.getBundle().getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
                     String bundleLocation = event.getBundle().getLocation();
                     int status = event.getBundle().getState();
+                    int startLevel = event.getBundle().adapt(BundleStartLevel.class).getStartLevel();
 
                     if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.OUTBOUND)) {
 
@@ -111,6 +113,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                                 state.setVersion(version);
                                 state.setSymbolicName(symbolicName);
                                 state.setStatus(status);
+                                state.setStartLevel(startLevel);
                                 state.setLocation(bundleLocation);
                                 clusterBundles.put(symbolicName + "/" + version, state);
                             }
@@ -125,7 +128,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
             				}
                             
                             // broadcast the cluster event
-                            ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
+                            ClusterBundleEvent clusterBundleEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, startLevel, status);
                             clusterBundleEvent.setSourceGroup(group);
                             clusterBundleEvent.setSourceNode(clusterManager.getNode());
                             clusterBundleEvent.setLocal(clusterManager.getNode());

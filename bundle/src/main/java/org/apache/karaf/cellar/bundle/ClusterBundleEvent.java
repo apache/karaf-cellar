@@ -24,14 +24,16 @@ public class ClusterBundleEvent extends Event {
     private String symbolicName;
     private String version;
     private String location;
+    private Integer startLevel;
     private int type;
     private Node local;
 
-    public ClusterBundleEvent(String symbolicName, String version, String location, int type) {
+    public ClusterBundleEvent(String symbolicName, String version, String location, Integer startLevel, int type) {
         super(symbolicName + "/" + version);
         this.symbolicName = symbolicName;
         this.version = version;
         this.location = location;
+        this.startLevel = startLevel;
         this.type = type;
     }
 
@@ -57,6 +59,14 @@ public class ClusterBundleEvent extends Event {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Integer getStartLevel() {
+        return startLevel;
+    }
+
+    public void setStartLevel(Integer startLevel) {
+        this.startLevel = startLevel;
     }
 
     public int getType() {

@@ -24,6 +24,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleReference;
+import org.osgi.framework.startlevel.BundleStartLevel;
 import org.osgi.framework.wiring.FrameworkWiring;
 import org.osgi.service.cm.Configuration;
 import org.osgi.util.tracker.ServiceTracker;
@@ -143,14 +144,14 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                     if (state.getStatus() == Bundle.INSTALLED) {
                                         if (!isInstalled(state.getLocation())) {
                                             LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
-                                            installBundleFromLocation(state.getLocation());
+                                            installBundleFromLocation(state.getLocation(), state.getStartLevel());
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already installed on node", state.getLocation());
                                         }
                                     } else if (state.getStatus() == Bundle.ACTIVE) {
                                         if (!isInstalled(state.getLocation())) {
                                             LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
-                                            installBundleFromLocation(state.getLocation());
+                                            installBundleFromLocation(state.getLocation(), state.getStartLevel());
                                         }
                                         if (!isStarted(state.getLocation())) {
                                             LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{} on node", symbolicName, version);
@@ -161,7 +162,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                     } else if (state.getStatus() == Bundle.RESOLVED) {
                                         if (!isInstalled(state.getLocation())) {
                                             LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
-                                            installBundleFromLocation(state.getLocation());
+                                            installBundleFromLocation(state.getLocation(), state.getStartLevel());
                                         }
                                         Bundle b = findBundle(state.getLocation());
                                         if (b != null) {
@@ -235,6 +236,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     String version = bundle.getHeaders().get(org.osgi.framework.Constants.BUNDLE_VERSION);
                     String bundleLocation = bundle.getLocation();
                     int status = bundle.getState();
+                    int level = bundle.adapt(BundleStartLevel.class).getStartLevel();
 
                     String id = getId(bundle);
 
@@ -251,6 +253,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             name = (name == null) ? bundle.getLocation() : name;
                             bundleState.setId(bundleId);
                             bundleState.setName(name);
+                            bundleState.setStartLevel(level);
                             bundleState.setSymbolicName(symbolicName);
                             bundleState.setVersion(version);
                             bundleState.setLocation(bundleLocation);
@@ -258,7 +261,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             // update cluster state
                             clusterBundles.put(id, bundleState);
                             // send cluster event
-                            ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
+                            ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, level, status);
                             clusterEvent.setSourceGroup(group);
                             clusterEvent.setSourceNode(clusterManager.getNode());
                             clusterEvent.setLocal(clusterManager.getNode());
@@ -271,7 +274,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 bundleState.setStatus(status);
                                 clusterBundles.put(id, bundleState);
                                 // send cluster event
-                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, status);
+                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, null, status);
                                 clusterEvent.setSourceGroup(group);
                                 clusterEvent.setSourceNode(clusterManager.getNode());
                                 clusterEvent.setLocal(clusterManager.getNode());

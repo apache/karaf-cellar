@@ -52,6 +52,9 @@ public class InstallBundleCommand extends CellarCommandSupport {
     @Option(name = "-s", aliases = {"--start"}, description = "Start the bundle after installation", required = false, multiValued = false)
     boolean start;
 
+    @Option(name = "-l", aliases = {"--start-level"}, description = "Set the start level of the bundle", required = false, multiValued = false)
+    Integer level;
+
     @Reference
     private EventProducer eventProducer;
 
@@ -107,6 +110,7 @@ public class InstallBundleCommand extends CellarCommandSupport {
                     state.setName(name);
                     state.setSymbolicName(symbolicName);
                     state.setVersion(version);
+                    state.setStartLevel(level);
                     state.setId(clusterBundles.size());
                     state.setLocation(url);
                     if (start) {
@@ -122,11 +126,11 @@ public class InstallBundleCommand extends CellarCommandSupport {
                 // broadcast the cluster event
                 ClusterBundleEvent event;
                 if (start) {
-                    event = new ClusterBundleEvent(symbolicName, version, url, Bundle.ACTIVE);
+                    event = new ClusterBundleEvent(symbolicName, version, url, level, Bundle.ACTIVE);
                     event.setSourceGroup(group);
                     event.setSourceNode(clusterManager.getNode());
                 } else {
-                    event = new ClusterBundleEvent(symbolicName, version, url, Bundle.INSTALLED);
+                    event = new ClusterBundleEvent(symbolicName, version, url, level, Bundle.INSTALLED);
                     event.setSourceGroup(group);
                     event.setSourceNode(clusterManager.getNode());
                 }

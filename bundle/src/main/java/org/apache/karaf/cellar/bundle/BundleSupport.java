@@ -19,6 +19,7 @@ import org.apache.karaf.features.Feature;
 import org.apache.karaf.features.FeaturesService;
 import org.apache.karaf.util.bundles.BundleUtils;
 import org.osgi.framework.*;
+import org.osgi.framework.startlevel.BundleStartLevel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,10 +41,14 @@ public class BundleSupport extends CellarSupport {
      * Locally install a bundle.
      *
      * @param location the bundle location.
+     * @param level optional bundle start level.
      * @throws BundleException in case of installation failure.
      */
-    public void installBundleFromLocation(String location) throws BundleException {
-        getBundleContext().installBundle(location);
+    public void installBundleFromLocation(String location, Integer level) throws BundleException {
+        Bundle bundle = getBundleContext().installBundle(location);
+        if (level != null) {
+            bundle.adapt(BundleStartLevel.class).setStartLevel(level);
+        }
     }
 
     public boolean isInstalled(String location) {

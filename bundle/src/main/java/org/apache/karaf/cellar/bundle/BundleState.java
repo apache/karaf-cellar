@@ -29,6 +29,7 @@ public class BundleState implements Serializable {
     private String symbolicName;
     private String version;
     private String location;
+    private Integer startLevel;
     private int status;
     private byte[] data;
 
@@ -70,6 +71,14 @@ public class BundleState implements Serializable {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public Integer getStartLevel() {
+        return startLevel;
+    }
+
+    public void setStartLevel(Integer startLevel) {
+        this.startLevel = startLevel;
     }
 
     public int getStatus() {
