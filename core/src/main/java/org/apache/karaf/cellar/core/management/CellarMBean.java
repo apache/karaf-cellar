@@ -21,6 +21,17 @@ import javax.management.openmbean.TabularData;
 public interface CellarMBean {
 
     /**
+     * Shutdown the cluster on all nodes, removing the cellar feature.
+     */
+    void shutdown() throws Exception;
+
+    /**
+     * Shutdown the cluster on all nodes, optionally stopping the target instances.
+     * @param poweroff true to poweroff the nodes, false else.
+     */
+    void shutdown(boolean poweroff) throws Exception;
+
+    /**
      * Force the sync of the different nodes in the cluster.
      *
      * @throws Exception in case of sync failure.

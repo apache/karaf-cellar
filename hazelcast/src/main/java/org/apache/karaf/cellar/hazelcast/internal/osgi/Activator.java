@@ -279,6 +279,19 @@ public class Activator extends BaseActivator implements ManagedService {
         manageGroupResultHandler.setCommandStore(commandStore);
         register(EventHandler.class, manageGroupResultHandler);
 
+        LOGGER.debug("CELLAR HAZELCAST: register shutdown command handler");
+        ShutdownCommandHandler shutdownCommandHandler = new ShutdownCommandHandler();
+        shutdownCommandHandler.setBundleContext(bundleContext);
+        shutdownCommandHandler.setProducer(producer);
+        shutdownCommandHandler.setClusterManager(clusterManager);
+        shutdownCommandHandler.setGroupManager(groupManager);
+        register(EventHandler.class, shutdownCommandHandler);
+
+        LOGGER.debug("CELLAR HAZELCAST: register shutdown command result handler");
+        ShutdownResultHandler shutdownResultHandler = new ShutdownResultHandler();
+        shutdownResultHandler.setCommandStore(commandStore);
+        register(EventHandler.class, shutdownCommandHandler);
+
         LOGGER.debug("CELLAR HAZELCAST: start the synchronizer service tracker");
         synchronizerServiceTracker = new ServiceTracker<Synchronizer, Synchronizer>(bundleContext, Synchronizer.class, new ServiceTrackerCustomizer<Synchronizer, Synchronizer>() {
             @Override
