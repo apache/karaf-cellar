@@ -23,6 +23,7 @@ import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.framework.Bundle;
@@ -33,6 +34,9 @@ import java.util.Map;
 @Command(scope = "cluster", name = "bundle-start", description = "Start bundles in a cluster group")
 @Service
 public class StartBundleCommand extends BundleCommandSupport {
+
+    @Option(name = "-l", aliases = {"--start-level"}, description = "Set the start level of a bundle", required = false, multiValued = false)
+    Integer level;
 
     @Reference
     private EventProducer eventProducer;
@@ -83,7 +87,7 @@ public class StartBundleCommand extends BundleCommandSupport {
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.ACTIVE);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, level, Bundle.ACTIVE);
                 event.setSourceGroup(group);
                 event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);

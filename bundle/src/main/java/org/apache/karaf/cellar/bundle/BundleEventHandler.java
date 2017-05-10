@@ -85,14 +85,14 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     }
                 }
                 if (event.getType() == Bundle.INSTALLED) {
-                    installBundleFromLocation(event.getLocation());
+                    installBundleFromLocation(event.getLocation(), event.getStartLevel());
                     LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == Bundle.UNINSTALLED) {
                     uninstallBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
                 } else if (event.getType() == Bundle.ACTIVE) {
                     if (!isInstalled(event.getLocation())) {
-                        installBundleFromLocation(event.getLocation());
+                        installBundleFromLocation(event.getLocation(), event.getStartLevel());
                     }
                     try {
                         startBundle(event.getSymbolicName(), event.getVersion());
@@ -108,7 +108,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     }
                 } else if (event.getType() == Bundle.RESOLVED) {
                     if (!isInstalled(event.getLocation())) {
-                        installBundleFromLocation(event.getLocation());
+                        installBundleFromLocation(event.getLocation(), event.getStartLevel());
                         LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
                     }
                     Bundle b = findBundle(event.getLocation());

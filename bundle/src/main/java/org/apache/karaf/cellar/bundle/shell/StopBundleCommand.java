@@ -83,7 +83,7 @@ public class StopBundleCommand extends BundleCommandSupport {
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.RESOLVED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, null, Bundle.RESOLVED);
                 event.setSourceGroup(group);
                 event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);

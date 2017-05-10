@@ -70,6 +70,7 @@ public class ListBundleCommand extends BundleCommandSupport {
                 ShellTable table = new ShellTable();
                 table.column("ID").alignRight();
                 table.column("State");
+                table.column("Lvl");
                 table.column("Located");
                 table.column("Blocked");
                 table.column("Version");
@@ -151,12 +152,12 @@ public class ListBundleCommand extends BundleCommandSupport {
                         blocked = "out";
 
                     if (showLocation) {
-                        table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getLocation());
+                        table.addRow().addContent(bundle.getId(), status, bundle.getStartLevel(), located, blocked, bundle.getVersion(), bundle.getLocation());
                     } else {
                         if (showSymbolicName) {
-                            table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getSymbolicName());
+                            table.addRow().addContent(bundle.getId(), status, bundle.getStartLevel(), located, blocked, bundle.getVersion(), bundle.getSymbolicName());
                         } else {
-                            table.addRow().addContent(bundle.getId(), status, located, blocked, bundle.getVersion(), bundle.getName());
+                            table.addRow().addContent(bundle.getId(), status, bundle.getStartLevel(), located, blocked, bundle.getVersion(), bundle.getName());
                         }
                     }
                 }

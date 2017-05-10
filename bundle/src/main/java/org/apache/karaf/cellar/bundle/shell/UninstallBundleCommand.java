@@ -82,7 +82,7 @@ public class UninstallBundleCommand extends BundleCommandSupport {
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, Bundle.UNINSTALLED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, null, Bundle.UNINSTALLED);
                 event.setSourceGroup(group);
                 event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
