@@ -83,12 +83,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'cluster' for cluster group {}", group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR FEATURE: node is the first one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
+            pull(group);
             LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -99,12 +95,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull only)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR FEATURE: node is the first one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull only)");
+            pull(group);
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR FEATURE: updating cluster from the local node (push only)");
@@ -139,23 +131,33 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                             if (!isRepositoryRegisteredLocally(url)) {
                                 LOGGER.debug("CELLAR FEATURE: adding repository {}", url);
                                 featuresService.addRepository(new URI(url));
-                            } // TODO uninstall local features repositories not on the cluster ?
+                            }
                         } catch (MalformedURLException e) {
                             LOGGER.error("CELLAR FEATURE: failed to add repository URL {} (malformed)", url, e);
                         } catch (Exception e) {
                             LOGGER.error("CELLAR FEATURE: failed to add repository URL {}", url, e);
                         }
                     }
-                    // cleanup the local features repositories not present on the cluster
-                    try {
-                        for (Repository repository : featuresService.listRepositories()) {
-                            URI uri = repository.getURI();
-                            if (!clusterRepositories.containsKey(uri.toString())) {
-                                featuresService.removeRepository(uri);
+                    // cleanup the local features repositories not present on the cluster if the node is not the first one in the cluster group
+                    if (clusterManager.listNodesByGroup(group).size() > 1) {
+                        try {
+                            for (Repository repository : featuresService.listRepositories()) {
+                                URI uri = repository.getURI();
+                                boolean found = false;
+                                for (String clusterRepository : clusterRepositories.keySet()) {
+                                    if (clusterRepository.equals(uri.toString())) {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) {
+                                    LOGGER.debug("CELLAR FEATURE: removing repository {}", uri);
+                                    featuresService.removeRepository(uri);
+                                }
                             }
+                        } catch (Exception e) {
+                            LOGGER.warn("Can't get local features repositories", e);
                         }
-                    } catch (Exception e) {
-                        LOGGER.warn("Can't get local features repositories", e);
                     }
                 }
 
@@ -184,7 +186,16 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 } catch (Exception e) {
                                     LOGGER.error("CELLAR FEATURE: failed to install feature {}/{} ", new Object[]{state.getName(), state.getVersion()}, e);
                                 }
-                            } // TODO uninstall local features not on the cluster ?
+                            }
+                            // if feature has to be uninstalled locally (and node is not the first one in the cluster group)
+                            if (clusterManager.listNodesByGroup(group).size() > 1 && !clusterInstalled && locallyInstalled) {
+                                try {
+                                    LOGGER.debug("CELLAR FEATURE: uninstalling feature {}/{}", state.getName(), state.getVersion());
+                                    featuresService.uninstallFeature(state.getName(), state.getVersion());
+                                } catch (Exception e) {
+                                    LOGGER.error("CELLAR FEATURE: failed to uninstall feature {}/{}", new Object[]{state.getName(), state.getVersion()}, e);
+                                }
+                            }
                         } else LOGGER.trace("CELLAR FEATURE: feature {} is marked BLOCKED INBOUND for cluster group {}", name, groupName);
                     }
                 }
@@ -330,7 +341,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.error("CELLAR FEATURE: error while retrieving the sync policy", e);
         }
 
-        return "disabled";
+        return "cluster";
     }
 
 }

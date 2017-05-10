@@ -85,12 +85,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group {}", group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -101,12 +98,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull only)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull only)");
+            pull(group);
+            LOGGER.debug("CELLAR BUNDLE: node is the only one in the cluster group, no pull");
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR BUNDLE: updating cluster from the local node (push only)");
@@ -189,15 +183,17 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         }
                     }
                 }
-                // cleanup the local bundles not present on the cluster
-                for (Bundle bundle : bundleContext.getBundles()) {
-                    String id = getId(bundle);
-                    if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
-                        // the bundle is not present on the cluster, so it has to be uninstalled locally
-                        try {
-                            bundle.uninstall();
-                        } catch (Exception e) {
-                            LOGGER.warn("Can't uninstall {}", id, e);
+                // cleanup the local bundles not present on the cluster if the node is not the first one in the cluster group
+                if (clusterManager.listNodesByGroup(group).size() > 1) {
+                    for (Bundle bundle : bundleContext.getBundles()) {
+                        String id = getId(bundle);
+                        if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
+                            // the bundle is not present on the cluster, so it has to be uninstalled locally
+                            try {
+                                bundle.uninstall();
+                            } catch (Exception e) {
+                                LOGGER.warn("Can't uninstall {}", id, e);
+                            }
                         }
                     }
                 }
@@ -343,7 +339,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
         }
 
-        return "disabled";
+        return "cluster";
     }
 
 }

@@ -199,7 +199,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
             LOGGER.error("CELLAR OBR: error while retrieving the sync policy", e);
         }
 
-        return "disabled";
+        return "cluster";
     }
 
 }
