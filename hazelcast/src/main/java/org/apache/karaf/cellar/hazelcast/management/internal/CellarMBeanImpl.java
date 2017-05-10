@@ -321,4 +321,20 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         executionContext.execute(command);
     }
 
+    @Override
+    public void shutdown() throws Exception {
+        shutdown(false);
+    }
+
+    @Override
+    public void shutdown(boolean poweroff) throws Exception {
+        ShutdownCommand command = new ShutdownCommand(clusterManager.generateId());
+
+        Set<Node> nodes = clusterManager.listNodes();
+
+        command.setDestination(nodes);
+        command.setHalt(poweroff);
+        executionContext.execute(command);
+    }
+
 }
