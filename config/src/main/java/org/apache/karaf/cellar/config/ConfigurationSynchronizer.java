@@ -82,12 +82,9 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         }
         if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'cluster' for cluster group {}", group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
+            pull(group);
+            LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
             LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push after)");
             push(group);
         } else if (policy.equalsIgnoreCase("node")) {
@@ -98,12 +95,9 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             pull(group);
         } else if (policy.equalsIgnoreCase("clusterOnly")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'clusterOnly' for cluster group " + group.getName());
-            if (clusterManager.listNodesByGroup(group).size() > 1) {
-                LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull only)");
-                pull(group);
-            } else {
-                LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
-            }
+            LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull only)");
+            pull(group);
+            LOGGER.debug("CELLAR CONFIG: node is the first one in the cluster group, no pull");
         } else if (policy.equalsIgnoreCase("nodeOnly")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'nodeOnly' for cluster group " + group.getName());
             LOGGER.debug("CELLAR CONFIG: updating cluster from the local node (push only)");
@@ -152,16 +146,18 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         }
                     } else  LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
                 }
-                // cleanup the local configurations not present on the cluster
-                try {
-                    for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
-                        String pid = configuration.getPid();
-                        if (!clusterConfigurations.containsKey(pid) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
-                            configuration.delete();
+                // cleanup the local configurations not present on the cluster if the node is not the first one in the cluster
+                if (clusterManager.listNodesByGroup(group).size() > 1) {
+                    try {
+                        for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
+                            String pid = configuration.getPid();
+                            if (!clusterConfigurations.containsKey(pid) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                                configuration.delete();
+                            }
                         }
+                    } catch (Exception e) {
+                        LOGGER.warn("Can't get local configurations", e);
                     }
-                } catch (Exception e) {
-                    LOGGER.warn("Can't get local configurations", e);
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -274,7 +270,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             LOGGER.error("CELLAR CONFIG: error while retrieving the sync policy", e);
         }
 
-        return "disabled";
+        return "cluster";
     }
 
 }

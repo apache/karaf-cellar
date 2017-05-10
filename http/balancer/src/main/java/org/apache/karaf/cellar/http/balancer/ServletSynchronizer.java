@@ -183,10 +183,10 @@ public class ServletSynchronizer implements Synchronizer {
                 return properties.get(propertyKey).toString();
             }
         } catch (IOException e) {
-            LOGGER.error("CELLAR FEATURE: error while retrieving the sync policy", e);
+            LOGGER.error("CELLAR HTTP BALANCER: error while retrieving the sync policy", e);
         }
 
-        return "disabled";
+        return "cluster";
     }
 
     public void setClusterManager(ClusterManager clusterManager) {
