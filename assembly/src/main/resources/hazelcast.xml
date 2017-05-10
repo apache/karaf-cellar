@@ -208,4 +208,9 @@
     </hz:serialization>
 
     <hz:services enable-defaults="true" />
+
+    <hz:properties>
+        <hz:property name="hazelcast.max.no.heartbeat.seconds">60</hz:property>
+        <hz:property name="hazelcast.max.no.master.confirmation.seconds">120</hz:property>
+    </hz:properties>
 </hz:hazelcast>
