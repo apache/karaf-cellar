@@ -15,6 +15,34 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.1.0
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.1.0 is the first releaase on the Cellar 4.1.x series. This serie is fully compatible with 
+ Karaf 4.1.x.
+ This release brings important bug fixes and new features.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-4878] - Cellar Hazelcast unresponsive when ETH Down
+    * [KARAF-4908] - NullPointerException in FeaturesSynchronizer.getSyncPolicy
+    * [KARAF-4909] - NullPointerException in BundleSynchronizer.getSyncPolicy
+    * [KARAF-4911] - NullPointerException in ConfigurationSynchronize
+    * [KARAF-4938] -  HTTP session replication broken because Hazelcast dependency
+    * [KARAF-4941] - Node is not fully sync when joining a group
+    * [KARAF-4986] - A condition that is always true.
+    * [KARAF-5117] - cellar-etcd feature should install feign bundles
+
+** Dependency upgrade
+    * [KARAF-5097] - Upgrade to Hazelcast 3.8.1
+
+** Improvement
+    * [KARAF-4669] - Start level is ignored for bundles installed in cluster
+    * [KARAF-4940] - Add a cluster:shutdown command
+
                     Apache Karaf Cellar 4.0.3
                     =========================
   Overview
