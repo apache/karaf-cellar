@@ -13,13 +13,12 @@
  */
 package org.apache.karaf.cellar.webconsole;
 
+import org.apache.felix.utils.json.JSONWriter;
 import org.apache.felix.webconsole.AbstractWebConsolePlugin;
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.Node;
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,46 +173,42 @@ public class CellarPlugin extends AbstractWebConsolePlugin {
 
         final JSONWriter jw = new JSONWriter(pw);
 
-        try {
+        jw.object();
+        jw.key("status");
+        jw.value(getStatusLine(groups, nodes));
+        jw.key("groups");
+        jw.array();
+        for (Group g : groups) {
             jw.object();
-            jw.key("status");
-            jw.value(getStatusLine(groups, nodes));
-            jw.key("groups");
+            jw.key("name");
+            jw.value(g.getName());
+
+            Set<Node> members = g.getNodes();
+            jw.key("members");
             jw.array();
-            for (Group g : groups) {
-                jw.object();
-                jw.key("name");
-                jw.value(g.getName());
-
-                Set<Node> members = g.getNodes();
-                jw.key("members");
-                jw.array();
-                if (nodes != null) {
-                    for (Node n : members) {
-                        jw.object();
-                        jw.key("id");
-                        jw.value(n.getId());
-                        jw.endObject();
-                    }
+            if (nodes != null) {
+                for (Node n : members) {
+                    jw.object();
+                    jw.key("id");
+                    jw.value(n.getId());
+                    jw.endObject();
                 }
-
-                jw.endArray();
-                jw.key("actions");
-                jw.array();
-                boolean enable = true;
-                action(jw, enable, "removeNode", "Remove Node", "update");
-                action(jw, enable, "deleteGroup", "Delete Group", "delete");
-                jw.endArray();
-                jw.endObject();
             }
+
+            jw.endArray();
+            jw.key("actions");
+            jw.array();
+            boolean enable = true;
+            action(jw, enable, "removeNode", "Remove Node", "update");
+            action(jw, enable, "deleteGroup", "Delete Group", "delete");
             jw.endArray();
             jw.endObject();
-        } catch (JSONException je) {
-            throw new IOException(je.toString());
         }
+        jw.endArray();
+        jw.endObject();
     }
 
-    private void action(JSONWriter jw, boolean enabled, String op, String title, String image) throws JSONException {
+    private void action(JSONWriter jw, boolean enabled, String op, String title, String image) throws IOException {
         jw.object();
         jw.key("enabled").value(enabled);
         jw.key("op").value(op);

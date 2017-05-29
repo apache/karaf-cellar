@@ -64,6 +64,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.utils</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-servlet_3.0_spec</artifactId>
             <scope>provided</scope>
@@ -72,13 +77,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20070829</version>
-            <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -121,7 +119,8 @@
                         <Embed-Dependency>json</Embed-Dependency>
                         <Private-Package>
                             org.apache.karaf.cellar.webconsole.internal.osgi,
-                            org.apache.karaf.util.tracker;-split-package:=merge-first
+                            org.apache.karaf.util.tracker;-split-package:=merge-first,
+                            org.apache.felix.utils.json
                         </Private-Package>
                     </instructions>
                 </configuration>
