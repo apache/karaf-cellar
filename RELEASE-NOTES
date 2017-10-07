@@ -15,6 +15,28 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.1.1
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.1.1 is maintenance release on 4.1.x series.
+ This release brings an important bug fixes for cluster:features* commands and dependency updates.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-5137] - Cellar Features needs to felix utils as private package
+
+** Dependency upgrade
+    * [KARAF-5302] - Upgrade to Hazelcast 3.8.4
+    * [KARAF-5303] - Upgrade to Kubernetes Client 2.6.1
+    * [KARAF-5346] - Upgrade to Hazelcast 3.8.5
+    * [KARAF-5347] - Upgrade to Kubernetes Client 2.6.3
+
+** Task
+    * [KARAF-5148] - Replace use of org.json
+
                     Apache Karaf Cellar 4.1.0
                     =========================
   Overview
