@@ -176,8 +176,14 @@ public class CellarSupport {
         Set<String> whiteList = getListEntries(Configurations.WHITELIST, group, category, type);
         Set<String> blackList = getListEntries(Configurations.BLACKLIST, group, category, type);
 
+        if (blackList == null || whiteList == null) {
+            // If one list is missing, we probably have a configuration issue - do not synchronize anything
+            LOGGER.warn("No whitelist/blacklist found for " + group.getName() + ", check your configuration !");
+            return false;
+        }
+
         // if no white listed items we assume all are accepted.
-        if (whiteList != null && !whiteList.isEmpty()) {
+        if (!whiteList.isEmpty()) {
             result = false;
             for (String whiteListItem : whiteList) {
                 if (wildCardMatch(event, whiteListItem))
@@ -185,11 +191,13 @@ public class CellarSupport {
             }
         }
 
-        // if any blackList item matched, then false is returned.
-        if (blackList != null && !blackList.isEmpty()) {
-            for (String blackListItem : blackList) {
-                if (wildCardMatch(event, blackListItem)) {
-                    result = false;
+        if (result) {
+            // if any blackList item matched, then false is returned.
+            if (!blackList.isEmpty()) {
+                for (String blackListItem : blackList) {
+                    if (wildCardMatch(event, blackListItem)) {
+                        return false;
+                    }
                 }
             }
         }
