@@ -121,7 +121,7 @@ public class LocalBundleListener extends BundleSupport implements SynchronousBun
                             // check the features first
                         	List<Feature> matchingFeatures = retrieveFeature(bundleLocation);
                         	for (Feature feature : matchingFeatures) {
-            					if (!isAllowed(group, "features", feature.getName(), EventType.OUTBOUND)) {
+            					if (!isAllowed(group, "feature", feature.getName(), EventType.OUTBOUND)) {
             						LOGGER.trace("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED OUTBOUND for cluster group {}", bundleLocation, feature.getName(), group.getName());
             						return;
             					}

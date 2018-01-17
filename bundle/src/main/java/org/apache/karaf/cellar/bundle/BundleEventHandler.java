@@ -79,7 +79,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                 // check the features first
                 List<Feature> matchingFeatures = retrieveFeature(event.getLocation());
                 for (Feature feature : matchingFeatures) {
-                    if (!isAllowed(event.getSourceGroup(), "features", feature.getName(), EventType.INBOUND)) {
+                    if (!isAllowed(event.getSourceGroup(), "feature", feature.getName(), EventType.INBOUND)) {
                         LOGGER.trace("CELLAR BUNDLE: bundle {} is contained in feature {} marked BLOCKED INBOUND for cluster group {}", event.getLocation(), feature.getName(), event.getSourceGroup().getName());
                         return;
                     }
