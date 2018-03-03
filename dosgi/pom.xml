@@ -98,7 +98,7 @@
                             org.apache.karaf.shell*;resolution:=optional,
                             *
                         </Import-Package>
-                        <DynamicImport-Package>javax.*,org.w3c.*,org.xml.*,org.apache.karaf.cellar.*</DynamicImport-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
                         <Private-Package>
                             org.apache.karaf.cellar.dosgi.internal.osgi,
                             org.apache.karaf.util.tracker;-split-package:=merge-first,

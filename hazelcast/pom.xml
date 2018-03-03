@@ -108,6 +108,7 @@
                             org.apache.karaf.cellar.hazelcast.internal.osgi,
                             org.apache.karaf.cellar.hazelcast.management.internal
                         </Private-Package>
+                        <Dynamic-ImportPackage>*</Dynamic-ImportPackage>
                     </instructions>
                 </configuration>
             </plugin>
