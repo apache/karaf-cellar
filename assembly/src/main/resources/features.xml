@@ -167,4 +167,9 @@
         </conditional>
     </feature>
 
+    <feature name="cellar-documentation" description="Documentation of Karaf Cellar sub-project in HTML" version="${project.version}">
+        <feature>war</feature>
+        <bundle>mvn:org.apache.karaf.cellar/manual/${project.version}</bundle>
+    </feature>
+
 </features>

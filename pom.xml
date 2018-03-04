@@ -72,6 +72,7 @@
         <module>dns</module>
         <module>etcd</module>
         <module>webconsole</module>
+        <module>manual</module>
         <module>assembly</module>
         <module>samples</module>
         <module>itests</module>
@@ -403,7 +404,7 @@
                         <useReleaseProfile>false</useReleaseProfile>
                         <preparationGoals>clean install</preparationGoals>
                         <goals>deploy</goals>
-                        <arguments>-Prelease,deploy,manual</arguments>
+                        <arguments>-Prelease,deploy</arguments>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
                 </plugin>
@@ -578,16 +579,7 @@
 
     <profiles>
         <profile>
-            <id>manual</id>
-            <modules>
-                <module>manual</module>
-            </modules>
-        </profile>
-        <profile>
             <id>release</id>
-            <modules>
-                <module>manual</module>
-            </modules>
             <build>
                 <plugins>
                     <plugin>
