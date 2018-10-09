@@ -15,6 +15,36 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.0.5
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.0.5 is a maintenance release on the Cellar 4.x serie including important bug fixes and new
+ features (like the shutdown command).
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-5560] - Synchronization sometimes bypass whitelist/blacklist config
+    * [KARAF-5561] - Typo in hazelcast group name prevent blacklist/whitelist to be checked
+    * [KARAF-5636] - Enable Dynamic-Import * in Cellar Hazelcast for DOSGi transport
+
+** Improvement
+    * [KARAF-5139] - All cluster:* commands should use the node alias when possible
+    * [KARAF-5562] - Improve cellar groups configuration synchronisation from hazelcast
+
+** Task
+    * [KARAF-5148] - Replace use of org.json
+
+** Dependency upgrade
+    * [KARAF-5302] - Upgrade to Hazelcast 3.8.4
+    * [KARAF-5303] - Upgrade to Kubernetes Client 2.6.1
+    * [KARAF-5346] - Upgrade to Hazelcast 3.8.5
+    * [KARAF-5347] - Upgrade to Kubernetes Client 2.6.3
+    * [KARAF-5513] - Upgrade to Hazelcast 3.9.1
+    * [KARAF-5514] - Upgrade Kubernetes-client to version 3.1.0
+
                     Apache Karaf Cellar 4.0.4
                     =========================
   Overview
