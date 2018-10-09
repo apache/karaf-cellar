@@ -99,7 +99,11 @@ public abstract class GroupSupport extends ClusterCommandSupport {
                                 for (Node member : g.getNodes()) {
                                     // display only up and running nodes in the cluster
                                     if (clusterManager.findNodeById(member.getId()) != null) {
-                                        buffer.append(member.getId());
+                                        if (member.getAlias() != null) {
+                                            buffer.append(member.getAlias());
+                                        } else {
+                                            buffer.append(member.getId());
+                                        }
                                         if (member.equals(clusterManager.getNode())) {
                                             local = "x";
                                             buffer.append("(x)");

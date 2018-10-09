@@ -48,7 +48,12 @@ public class NodePingCommand extends ClusterCommandSupport {
             return null;
         }
 
-        System.out.println("PING " + node.getId());
+        String nodeName = node.getAlias();
+        if (nodeName == null) {
+            nodeName = node.getId();
+        }
+
+        System.out.println("PING " + nodeName);
         try {
             for (int i = 1; i <= iterations; i++) {
                 Long start = System.currentTimeMillis();
@@ -59,9 +64,9 @@ public class NodePingCommand extends ClusterCommandSupport {
                 Long stop = System.currentTimeMillis();
                 Long delay = stop - start;
                 if (delay >= TIMEOUT) {
-                    System.err.println(String.format("TIMEOUT %s %s", i, node.getId()));
+                    System.err.println(String.format("TIMEOUT %s %s", i, nodeName));
                 } else {
-                    System.out.println(String.format("from %s: req=%s time=%s ms", i, node.getId(), delay));
+                    System.out.println(String.format("from %s: req=%s time=%s ms", i, nodeName, delay));
                 }
                 Thread.sleep(interval);
             }

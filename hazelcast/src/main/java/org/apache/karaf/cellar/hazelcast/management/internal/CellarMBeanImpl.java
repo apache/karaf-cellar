@@ -130,10 +130,14 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
                 for (Map.Entry<String, String> handlerEntry : result.getHandlers().entrySet()) {
                     String handler = handlerEntry.getKey();
                     String status = handlerEntry.getValue();
+                    String nodeName = node.getAlias();
+                    if (nodeName == null) {
+                        nodeName = node.getId();
+                    }
                     boolean local = (node.equals(clusterManager.getNode()));
                     CompositeDataSupport data = new CompositeDataSupport(compositeType,
                             new String[]{"node", "handler", "status", "local"},
-                            new Object[]{node.getId(), handler, status, local});
+                            new Object[]{nodeName, handler, status, local});
                     table.put(data);
                 }
             }
@@ -201,9 +205,13 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         for (Node node : results.keySet()) {
             boolean local = (node.equals(clusterManager.getNode()));
             ConsumerSwitchResult consumerSwitchResult = results.get(node);
+            String nodeName = node.getAlias();
+            if (nodeName == null) {
+                nodeName = node.getId();
+            }
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
                     new String[]{"node", "status", "local"},
-                    new Object[]{node.getId(), consumerSwitchResult.getStatus(), local});
+                    new Object[]{nodeName, consumerSwitchResult.getStatus(), local});
             table.put(data);
         }
 
@@ -270,9 +278,13 @@ public class CellarMBeanImpl extends StandardMBean implements CellarMBean {
         for (Node node : results.keySet()) {
             boolean local = (node.equals(clusterManager.getNode()));
             ProducerSwitchResult producerSwitchResult = results.get(node);
+            String nodeName = node.getAlias();
+            if (nodeName == null) {
+                nodeName = node.getId();
+            }
             CompositeDataSupport data = new CompositeDataSupport(compositeType,
                     new String[]{"node", "status", "local"},
-                    new Object[]{node.getId(), producerSwitchResult.getStatus(), local});
+                    new Object[]{nodeName, producerSwitchResult.getStatus(), local});
             table.put(data);
         }
 

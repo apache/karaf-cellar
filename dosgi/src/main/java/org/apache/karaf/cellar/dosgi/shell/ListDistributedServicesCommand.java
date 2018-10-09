@@ -43,7 +43,11 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                     String serviceClass = endpointDescription.getServiceClass();
                     Set<Node> nodes = endpointDescription.getNodes();
                     for (Node node : nodes) {
-                        table.addRow().addContent(serviceClass, node.getId());
+                        String nodeName = node.getAlias();
+                        if (nodeName == null) {
+                            nodeName = node.getId();
+                        }
+                        table.addRow().addContent(serviceClass, nodeName);
                         serviceClass = "";
                     }
                 }
