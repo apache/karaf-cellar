@@ -25,11 +25,13 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 
+import static junit.framework.TestCase.assertTrue;
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class CellarSupportTest {
 
@@ -77,6 +79,23 @@ public class CellarSupportTest {
         expectedResult = false;
         result = support.isAllowed(defaultGroup,"config","org.apache.karaf.cellar.instance", EventType.INBOUND);
         assertEquals("Instance config should be allowed",expectedResult,result);
+    }
+
+    @Test
+    public void testBundleWildcard() {
+        CellarSupport support = new CellarSupport();
+
+        boolean test = support.wildCardMatch("this_is_a_test/1.0", "*");
+        assertTrue(test);
+
+        test = support.wildCardMatch("foo_bar", "foo*");
+        assertTrue(test);
+
+        test = support.wildCardMatch("foo_bar", "*bar");
+        assertTrue(test);
+
+        test = support.wildCardMatch("foo_bar", "hell*");
+        assertFalse(test);
     }
 
 }
