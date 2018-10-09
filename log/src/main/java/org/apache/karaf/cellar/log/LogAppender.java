@@ -38,9 +38,8 @@ public class LogAppender implements PaxAppender {
         ClusterLogKey key = new ClusterLogKey();
 
         Node node = clusterManager.getNode();
-        String nodeId = node.getId();
-
-        key.setNodeId(nodeId);
+        key.setNodeId(node.getId());
+        key.setNodeAlias(node.getAlias());
         key.setTimeStamp(event.getTimeStamp());
         key.setId(clusterManager.generateId());
 

@@ -81,7 +81,11 @@ public abstract class ProducerSupport extends ClusterCommandSupport {
                 if (result.getStatus()) {
                     statusString = "ON";
                 }
-                table.addRow().addContent(local, node.getId(), statusString);
+                String nodeName = node.getAlias();
+                if (nodeName == null) {
+                    nodeName = node.getId();
+                }
+                table.addRow().addContent(local, nodeName, statusString);
             }
             table.print(System.out);
         }

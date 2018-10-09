@@ -193,10 +193,14 @@ public class CellarLogMBeanImpl extends StandardMBean implements CellarLogMBean 
             for (Node node : results.keySet()) {
                 GetLogResult result = results.get(node);
                 Map<String, String> loggers = result.getLoggers();
+                String nodeName = node.getAlias();
+                if (nodeName == null) {
+                    nodeName = node.getId();
+                }
                 for (String l : loggers.keySet()) {
                     CompositeData data = new CompositeDataSupport(levelType,
                             new String[]{ "node", "logger", "level" },
-                            new Object[]{ node.getId(), l, loggers.get(l) });
+                            new Object[]{ nodeName, l, loggers.get(l) });
                     tabularData.put(data);
                 }
             }

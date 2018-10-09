@@ -84,7 +84,11 @@ public abstract class HandlersSupport extends ClusterCommandSupport {
                     for (Map.Entry<String,String>  handlerEntry: result.getHandlers().entrySet()) {
                         String handler =  handlerEntry.getKey();
                         String s = handlerEntry.getValue();
-                        table.addRow().addContent(local, node.getId(), s, handler);
+                        String nodeName = node.getAlias();
+                        if (nodeName == null) {
+                            nodeName = node.getId();
+                        }
+                        table.addRow().addContent(local, nodeName, s, handler);
                     }
                 }
             }
