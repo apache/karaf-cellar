@@ -22,6 +22,8 @@ Apache Software Foundation
 :toc-title: Apache Karaf Cellar 4.x - Documentation
 :numbered:
 
+image::asf_logo.png[pdfwidth=35%,align=center]
+
 == User Guide
 
 include::user-guide/introduction.adoc[]

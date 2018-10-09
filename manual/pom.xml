@@ -53,6 +53,8 @@
                             <attributes>
                                 <toc/>
                                 <linkcss>false</linkcss>
+                                <stylesheet>style/apache.css</stylesheet>
+                                <imagesdir>images</imagesdir>
                             </attributes>
                         </configuration>
                     </execution>
@@ -61,6 +63,7 @@
                     <sourceDirectory>src/main/asciidoc</sourceDirectory>
                     <headerFooter>true</headerFooter>
                     <imagesDir>src/main/asciidoc/images</imagesDir>
+                    <outputDirectory>target/generated-docs/html</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,6 +96,47 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <version>1.5.6</version>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.asciidoctor</groupId>
+                                <artifactId>asciidoctorj-pdf</artifactId>
+                                <version>1.5.0-alpha.16</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                            <outputDirectory>target/generated-docs/pdf</outputDirectory>
+                            <preserveDirectories>true</preserveDirectories>
+                            <headerFooter>true</headerFooter>
+                            <backend>pdf</backend>
+                            <attributes>
+                                <project-version>${project.version}</project-version>
+                                <pdf-stylesdir>${project.basedir}/src/main/theme</pdf-stylesdir>
+                                <pdf-style>apache</pdf-style>
+                                <pdf-fontsdir>${project.basedir}/src/main/theme/fonts</pdf-fontsdir>
+                                <imagesdir>images</imagesdir>
+                                <icons>font</icons>
+                                <pagenums>true</pagenums>
+                                <toc/>
+                                <idprefix/>
+                                <idseparator>-</idseparator>
+                                <sectnums>true</sectnums>
+                            </attributes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-pdf-doc</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <version>1.6</version>
@@ -105,17 +149,13 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <mkdir dir="target"/>
-                                        <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html"/>
-                                        <echo message="Generating PDF using Prince XML (http://www.princexml.com/)"/>
-                                        <exec executable="prince">
-                                            <arg value="target/documentation.html"/>
-                                            <arg value="target/documentation.pdf"/>
-                                            <arg value="--log"/>
-                                            <arg value="${project.build.directory}/prince.log"/>
-                                        </exec>
-                                        <attachartifact file="target/documentation.html" type="html"/>
-                                        <attachartifact file="target/documentation.pdf" type="pdf"/>
+                                        <mkdir dir="target" />
+                                        <copy file="${project.build.directory}/generated-docs/html/index.html" tofile="target/documentation.html" />
+                                        <copy file="${project.build.directory}/generated-docs/html/images/asf_logo.png" tofile="target/images/asf_logo.png" />
+                                        <copy file="${project.build.directory}/generated-docs/pdf/index.pdf" tofile="target/documentation.pdf" />
+                                        <attachartifact file="target/documentation.html" type="html" />
+                                        <attachartifact file="target/images/asf_logo.png" type="image" />
+                                        <attachartifact file="target/documentation.pdf" type="pdf" />
                                     </tasks>
                                 </configuration>
                             </execution>
