@@ -15,6 +15,35 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.1.2
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.1.2 is maintenance release on 4.1.x series.
+ This release brings an important bug fixes for cluster:features* commands and dependency updates.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-5560] - Synchronization sometimes bypass whitelist/blacklist config
+    * [KARAF-5561] - Typo in hazelcast group name prevent blacklist/whitelist to be checked
+    * [KARAF-5636] - Enable Dynamic-Import * in Cellar Hazelcast for DOSGi transport
+
+** Improvement
+    * [KARAF-5139] - All cluster:* commands should use the node alias when possible
+    * [KARAF-5562] - Improve cellar groups configuration synchronisation from hazelcast
+    * [KARAF-5651] - Add a feature for the cellar manual
+
+** Dependency upgrade
+    * [KARAF-3560] - Upgrade to junit 4.12
+    * [KARAF-5513] - Upgrade to Hazelcast 3.9.1
+    * [KARAF-5514] - Upgrade Kubernetes-client to version 3.1.0
+    * [KARAF-5817] - Upgrade to maven-bundle-plugin 3.5.1
+
+** Documentation
+    * [KARAF-5899] - Use the asciidoctor-maven-plugin and custom ASF theme for the manual generation
+
                     Apache Karaf Cellar 4.1.1
                     =========================
   Overview
