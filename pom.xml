@@ -30,7 +30,7 @@
 
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
-    <version>4.0.5</version>
+    <version>4.0.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
@@ -81,7 +81,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/karaf-cellar.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/karaf-cellar.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=karaf-cellar.git;a=summary</url>
-      <tag>cellar-4.0.5</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <issueManagement>
