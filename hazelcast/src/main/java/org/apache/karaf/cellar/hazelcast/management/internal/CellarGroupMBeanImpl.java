@@ -167,7 +167,11 @@ public class CellarGroupMBeanImpl extends StandardMBean implements CellarGroupMB
             for (Node node : group.getNodes()) {
                 // display only up and running nodes in the cluster
                 if (clusterManager.findNodeById(node.getId()) != null) {
-                    members.append(node.getId());
+                    if (node.getAlias() != null) {
+                        members.append(node.getAlias());
+                    } else {
+                        members.append(node.getId());
+                    }
                     members.append(" ");
                 }
             }

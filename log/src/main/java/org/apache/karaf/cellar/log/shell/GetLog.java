@@ -99,7 +99,11 @@ public class GetLog extends CellarCommandSupport {
                 GetLogResult result = results.get(node);
                 Map<String, String> loggers = result.getLoggers();
                 for (String logger : loggers.keySet()) {
-                    table.addRow().addContent(local, node.getId(), logger, loggers.get(logger));
+                    String nodeName = node.getAlias();
+                    if (nodeName == null) {
+                        nodeName = node.getId();
+                    }
+                    table.addRow().addContent(local, nodeName, logger, loggers.get(logger));
                 }
             }
         }
