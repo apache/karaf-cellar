@@ -21,6 +21,7 @@ import java.io.Serializable;
 public class ClusterLogKey implements Serializable {
 
     private String nodeId;
+    private String nodeAlias;
     private long timeStamp;
     private String id;
 
@@ -30,6 +31,14 @@ public class ClusterLogKey implements Serializable {
 
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public String getNodeAlias() {
+        return nodeAlias;
+    }
+
+    public void setNodeAlias(String nodeAlias) {
+        this.nodeAlias = nodeAlias;
     }
 
     public long getTimeStamp() {
