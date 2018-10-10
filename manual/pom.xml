@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>4.1.2-SNAPSHOT</version>
+        <version>4.1.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -51,7 +51,7 @@
                             <backend>html5</backend>
                             <doctype>article</doctype>
                             <attributes>
-                                <toc/>
+                                <toc />
                                 <linkcss>false</linkcss>
                             </attributes>
                         </configuration>
@@ -105,17 +105,17 @@
                                 </goals>
                                 <configuration>
                                     <tasks>
-                                        <mkdir dir="target"/>
-                                        <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html"/>
-                                        <echo message="Generating PDF using Prince XML (http://www.princexml.com/)"/>
+                                        <mkdir dir="target" />
+                                        <copy file="${project.build.directory}/generated-docs/index.html" tofile="target/documentation.html" />
+                                        <echo message="Generating PDF using Prince XML (http://www.princexml.com/)" />
                                         <exec executable="prince">
-                                            <arg value="target/documentation.html"/>
-                                            <arg value="target/documentation.pdf"/>
-                                            <arg value="--log"/>
-                                            <arg value="${project.build.directory}/prince.log"/>
+                                            <arg value="target/documentation.html" />
+                                            <arg value="target/documentation.pdf" />
+                                            <arg value="--log" />
+                                            <arg value="${project.build.directory}/prince.log" />
                                         </exec>
-                                        <attachartifact file="target/documentation.html" type="html"/>
-                                        <attachartifact file="target/documentation.pdf" type="pdf"/>
+                                        <attachartifact file="target/documentation.html" type="html" />
+                                        <attachartifact file="target/documentation.pdf" type="pdf" />
                                     </tasks>
                                 </configuration>
                             </execution>
