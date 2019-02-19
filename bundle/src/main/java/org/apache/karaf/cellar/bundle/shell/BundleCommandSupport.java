@@ -121,14 +121,26 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                         if (matcher.matches()) {
                             bundles.add(bundle);
                         } else {
-                            // no match on bundle name, fall back to symbolic name and check if it matches the regex
+                            // no match on bundle name, fall back to id and check if it matches the regex
+                            matcher = namePattern.matcher(bundleSplit[0]);
+                            if (matcher.matches()) {
+                                bundles.add(bundle);
+                            }
+                        }
+                    } else if (state.getSymbolicName() != null) {
+                        // bundle symbolic name is populated, check if it matches the regex
+                        matcher = namePattern.matcher(state.getSymbolicName());
+                        if (matcher.matches()) {
+                            bundles.add(bundle);
+                        } else {
+                            // no match on bundle symbolic name, fall back to id and check if it matches the regex
                             matcher = namePattern.matcher(bundleSplit[0]);
                             if (matcher.matches()) {
                                 bundles.add(bundle);
                             }
                         }
                     } else {
-                        // no bundle name, fall back to symbolic name and check if it matches the regex
+                        // no bundle name, fall back to id and check if it matches the regex
                         matcher = namePattern.matcher(bundleSplit[0]);
                         if (matcher.matches()) {
                             bundles.add(bundle);
@@ -151,15 +163,30 @@ public abstract class BundleCommandSupport extends CellarCommandSupport {
                 if (matcher.matches()) {
                     bundles.add(bundle);
                 } else {
-                    // no match on bundle name, fall back to symbolic name and check if it matches the regex
-                    matcher = namePattern.matcher(bundle);
+                    // no match on bundle name, fall back to id and check if it matches the regex
+                    String[] idSplit = bundle.split("/");
+                    matcher = namePattern.matcher(idSplit[0]);
+                    if (matcher.matches()) {
+                        bundles.add(bundle);
+                    }
+                }
+            } else if (state.getSymbolicName() != null) {
+                // bundle symbolic name is populated, check if it matches the regex
+                matcher = namePattern.matcher(state.getSymbolicName());
+                if (matcher.matches()) {
+                    bundles.add(bundle);
+                } else {
+                    // no match on bundle symbolic name, fall back to id and check if it matches the regex
+                    String[] idSplit = bundle.split("/");
+                    matcher = namePattern.matcher(idSplit[0]);
                     if (matcher.matches()) {
                         bundles.add(bundle);
                     }
                 }
             } else {
-                // no bundle name, fall back to symbolic name and check if it matches the regex
-                matcher = namePattern.matcher(bundle);
+                // no bundle name, fall back to id and check if it matches the regex
+                String[] idSplit = bundle.split("/");
+                matcher = namePattern.matcher(idSplit[0]);
                 if (matcher.matches()) {
                     bundles.add(bundle);
                 }
