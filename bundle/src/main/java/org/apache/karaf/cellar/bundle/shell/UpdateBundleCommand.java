@@ -91,7 +91,7 @@ public class UpdateBundleCommand extends BundleCommandSupport {
             }
 
             // update cluster state
-            state.setLocation(updateLocation);
+            state.setLocation(location);
             clusterBundles.put(bundle, state);
 
             // broadcast the cluster event
