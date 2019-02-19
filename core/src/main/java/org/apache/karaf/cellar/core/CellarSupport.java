@@ -213,6 +213,9 @@ public class CellarSupport {
      * @return true if the item string matches the pattern, false else.
      */
     protected boolean wildCardMatch(String item, String pattern) {
+        if (item == null || pattern == null) {
+            return false;
+        }
         // update the pattern to have a valid regex pattern
         pattern = pattern.replace("*", ".*");
         // use the regex
