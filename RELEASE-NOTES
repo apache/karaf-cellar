@@ -15,6 +15,24 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.1.3
+                    =========================
+  Overview
+  --------
+
+ Apache Karaf Cellar 4.1.3 is maintenance release on 4.1.x series.
+ This release brings bug fixes on local listener, on bundles selection and bundles update,
+ and update the HTTP load balancer to work with any HTTP service version.
+
+  Changelog
+  ---------
+** Bug
+    * [KARAF-4992] - Slave cluster searches log on Master's log path.
+    * [KARAF-6013] - Setting node alias breaks synchonization
+    * [KARAF-6162] - cluster:bundle-update doesn't work
+    * [KARAF-6163] - Extend http service version range in Cellar load balancer
+    * [KARAF-6165] - cluster:bundle-start doesn't work
+
                     Apache Karaf Cellar 4.1.2
                     =========================
   Overview
