@@ -27,7 +27,7 @@ public class HazelcastNode implements Node {
     private String id;
     private String host;
     private int port;
-    private String alias;
+    private transient String alias;
 
     public HazelcastNode(Member member) {
         InetSocketAddress address = member.getSocketAddress();
