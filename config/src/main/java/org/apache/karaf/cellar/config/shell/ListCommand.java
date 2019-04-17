@@ -26,10 +26,7 @@ import org.apache.karaf.shell.api.action.Option;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.service.cm.Configuration;
 
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Command(scope = "cluster", name = "config-list", description = "List the configurations in a cluster group")
 @Service
@@ -90,6 +87,9 @@ public class ListCommand extends ConfigCommandSupport {
                         if (onlyCluster)
                             continue;
                     }
+                    if (state.getClusterPids() != null && !state.getClusterPids().isEmpty()) {
+                        located += " (cluster = " + state.getClusterPids() + ")";
+                    }
 
                     String blocked = "";
                     boolean inbound = support.isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND);
@@ -126,31 +126,51 @@ public class ListCommand extends ConfigCommandSupport {
 
     private Map<String, ConfigurationState> gatherConfigurations() throws Exception {
         Map<String, ConfigurationState> configurations = new HashMap<String, ConfigurationState>();
+        Map<String, List<ConfigurationState>> configurationsByFileName = new HashMap<String, List<ConfigurationState>>();
+        ConfigurationSupport support = new ConfigurationSupport();
 
         // retrieve cluster configurations
         Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
         for (String key : clusterConfigurations.keySet()) {
             Properties properties = clusterConfigurations.get(key);
             ConfigurationState state = new ConfigurationState();
+            state.setPid(key);
             state.setProperties(properties);
             state.setCluster(true);
             state.setLocal(false);
             configurations.put(key, state);
+            String filename = support.getKarafFilename(properties);
+            if (filename != null) {
+                configurationsByFileName.putIfAbsent(filename, new ArrayList<ConfigurationState>());
+                configurationsByFileName.get(filename).add(state);
+            }
         }
 
         // retrieve local configurations
         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
             String key = configuration.getPid();
-            if (configurations.containsKey(key)) {
-                ConfigurationState state = configurations.get(key);
-                state.setLocal(true);
-            } else {
-                ConfigurationState state = new ConfigurationState();
-                state.setLocal(true);
+
+            String filename = support.getKarafFilename(configuration.getProperties());
+
+            ConfigurationState state = configurations.get(key);
+            if (state == null) {
+                state = new ConfigurationState();
                 state.setCluster(false);
-                ConfigurationSupport support = new ConfigurationSupport();
                 state.setProperties(support.dictionaryToProperties(configuration.getProperties()));
                 configurations.put(key, state);
+            }
+            state.setLocal(true);
+
+            if (filename != null && configurationsByFileName.containsKey(filename)) {
+                state.setCluster(true);
+                state.setClusterPids(new ArrayList<String>());
+                List<ConfigurationState> states = configurationsByFileName.get(filename);
+                for (ConfigurationState otherState : states) {
+                    if (!otherState.getPid().equals(key)) {
+                        configurations.remove(otherState.getPid());
+                        state.getClusterPids().add(otherState.getPid());
+                    }
+                }
             }
         }
 
@@ -162,6 +182,8 @@ public class ListCommand extends ConfigCommandSupport {
         private Properties properties;
         private boolean cluster;
         private boolean local;
+        private String pid;
+        private List<String> clusterPids;
 
         public Properties getProperties() {
             return properties;
@@ -185,6 +207,22 @@ public class ListCommand extends ConfigCommandSupport {
 
         public void setLocal(boolean local) {
             this.local = local;
+        }
+
+        public String getPid() {
+            return pid;
+        }
+
+        public void setPid(String pid) {
+            this.pid = pid;
+        }
+
+        public List<String> getClusterPids() {
+            return clusterPids;
+        }
+
+        public void setClusterPids(List<String> clusterPids) {
+            this.clusterPids = clusterPids;
         }
     }
 
