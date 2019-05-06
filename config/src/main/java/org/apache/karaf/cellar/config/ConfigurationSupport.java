@@ -18,9 +18,9 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
+import shaded.org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -32,6 +32,7 @@ public class ConfigurationSupport extends CellarSupport {
 
     private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
     private static final String KARAF_CELLAR_FILENAME = "karaf.cellar.filename";
+    private static final String KARAF_CELLAR_CONTENT = "karaf.cellar.content";
     private static final String KARAF_CELLAR_REMOVED = "karaf.cellar.removed";
 
     protected File storage;
@@ -121,6 +122,11 @@ public class ConfigurationSupport extends CellarSupport {
                     String value = dictionary.get(key).toString();
                     value = value.substring(value.lastIndexOf(File.separatorChar) + 1);
                     result.put(KARAF_CELLAR_FILENAME, value);
+                    try {
+                        result.put(KARAF_CELLAR_CONTENT, readFile(new File(storage, value)));
+                    } catch (IOException e) {
+                        // Cannot read file
+                    }
                 } else if (!isExcludedProperty(key)) {
                     Object value = dictionary.get(key);
                     result.put(key, value);
@@ -173,6 +179,8 @@ public class ConfigurationSupport extends CellarSupport {
                 if (key.equals(KARAF_CELLAR_FILENAME)) {
                     String value = dictionary.get(key).toString();
                     result.put(FELIX_FILEINSTALL_FILENAME, new File(storage, value).toURI().toString());
+                } else if (key.equals(KARAF_CELLAR_CONTENT)) {
+                    // skip
                 } else {
                     Object value = dictionary.get(key);
                     result.put(key, value);
@@ -212,7 +220,7 @@ public class ConfigurationSupport extends CellarSupport {
      * Persist a configuration to a storage.
      * @param cfg the configuration to store.
      */
-    protected void persistConfiguration(Configuration cfg) {
+    protected void persistConfiguration(Configuration cfg, Dictionary clusterDictionary) {
         try {
             File storageFile = getStorageFile(cfg.getProperties());
 
@@ -224,36 +232,42 @@ public class ConfigurationSupport extends CellarSupport {
                 return;
             }
 
-            org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
-            List<String> propertiesToRemove = new ArrayList<String>();
-            Set<String> set = p.keySet();
+            String content = clusterDictionary == null ? null : (String) clusterDictionary.get(KARAF_CELLAR_CONTENT);
 
-            for (String key : set) {
-                if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
-                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
-                        && !KARAF_CELLAR_FILENAME.equals(key)
-                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
-                    propertiesToRemove.add(key);
+            if (content == null) {
+                org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
+                List<String> propertiesToRemove = new ArrayList<String>();
+                Set<String> set = p.keySet();
+
+                for (String key : set) {
+                    if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
+                            && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                            && !KARAF_CELLAR_FILENAME.equals(key)
+                            && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
+                        propertiesToRemove.add(key);
+                    }
                 }
-            }
 
-            for (String key : propertiesToRemove) {
-                p.remove(key);
-            }
-            Dictionary props = cfg.getProperties();
-            for (Enumeration<String> keys = props.keys(); keys.hasMoreElements(); ) {
-                String key = keys.nextElement();
-                if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
-                        && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
-                        && !KARAF_CELLAR_FILENAME.equals(key)
-                        && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
-                    p.put(key, (String) props.get(key));
+                for (String key : propertiesToRemove) {
+                    p.remove(key);
                 }
-            }
+                Dictionary props = cfg.getProperties();
+                for (Enumeration<String> keys = props.keys(); keys.hasMoreElements(); ) {
+                    String key = keys.nextElement();
+                    if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
+                            && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                            && !KARAF_CELLAR_FILENAME.equals(key)
+                            && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
+                        p.put(key, (String) props.get(key));
+                    }
+                }
 
-            // save the cfg file
-            storage.mkdirs();
-            p.save();
+                // save the cfg file
+                storage.mkdirs();
+                p.save();
+            } else {
+                writeFile(storageFile, content);
+            }
         } catch (Exception e) {
             // nothing to do
         }
@@ -302,6 +316,31 @@ public class ConfigurationSupport extends CellarSupport {
 
     public void setStorage(File storage) {
         this.storage = storage;
+    }
+
+    private String readFile(File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+
+        try {
+            String line = reader.readLine();
+            StringBuilder sb = new StringBuilder();
+
+            while(line != null){
+                sb.append(line).append("\n");
+                line = reader.readLine();
+            }
+            return sb.toString();
+        } finally {
+            reader.close();
+        }
+    }
+    private void writeFile(File file, String content) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+        try {
+            writer.write(content);
+        } finally {
+            writer.close();
+        }
     }
 
 }
