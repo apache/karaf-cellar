@@ -24,10 +24,7 @@ import org.osgi.service.cm.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Dictionary;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * LocalConfigurationListener is listening for local configuration changes.
@@ -74,7 +71,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
                             if (clusterConfigurations.containsKey(pid)) {
                                 // update the configurations in the cluster group
-                                clusterConfigurations.remove(pid);
+                                clusterConfigurations.put(pid, getDeletedConfigurationMarker(clusterConfigurations.get(pid)));
                                 // send the cluster event
                                 ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
                                 clusterConfigurationEvent.setType(event.getType());

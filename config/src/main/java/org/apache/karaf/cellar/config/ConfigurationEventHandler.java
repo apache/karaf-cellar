@@ -83,11 +83,10 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                 if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
                     // delete the configuration
                     if (localConfiguration != null) {
-                        localConfiguration.delete();
-                        deleteStorage(pid);
+                        deleteConfiguration(localConfiguration);
                     }
                 } else {
-                    if (clusterDictionary != null) {
+                    if (clusterDictionary != null && shouldReplicateConfig(clusterDictionary)) {
                         if (localConfiguration == null) {
                             // Create new configuration
                             localConfiguration = createLocalConfiguration(pid, clusterDictionary);

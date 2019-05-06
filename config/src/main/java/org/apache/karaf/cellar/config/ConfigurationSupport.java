@@ -32,6 +32,7 @@ public class ConfigurationSupport extends CellarSupport {
 
     private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
     private static final String KARAF_CELLAR_FILENAME = "karaf.cellar.filename";
+    private static final String KARAF_CELLAR_REMOVED = "karaf.cellar.removed";
 
     protected File storage;
 
@@ -100,6 +101,10 @@ public class ConfigurationSupport extends CellarSupport {
         return true;
     }
 
+    public boolean shouldReplicateConfig(Dictionary clusterDictionary) {
+        return clusterDictionary.get(KARAF_CELLAR_REMOVED) == null;
+    }
+
     /**
      * Filter a dictionary, and populate a target dictionary.
      *
@@ -122,6 +127,14 @@ public class ConfigurationSupport extends CellarSupport {
                 }
             }
         }
+        return result;
+    }
+
+    public Properties getDeletedConfigurationMarker(Dictionary dictionary) {
+        Properties result = new Properties();
+        result.put(org.osgi.framework.Constants.SERVICE_PID, dictionary.get(org.osgi.framework.Constants.SERVICE_PID));
+        result.put(KARAF_CELLAR_FILENAME, dictionary.get(KARAF_CELLAR_FILENAME));
+        result.put(KARAF_CELLAR_REMOVED, true);
         return result;
     }
 
@@ -270,13 +283,17 @@ public class ConfigurationSupport extends CellarSupport {
     }
 
     /**
-     * Delete the storage of a configuration.
+     * Delete the configuration.
      *
-     * @param pid the configuration PID to delete.
+     * @param localConfiguration the configuration PID to delete.
      */
-    protected void deleteStorage(String pid) {
-        File cfgFile = new File(storage, pid + ".cfg");
-        cfgFile.delete();
+    protected void deleteConfiguration(Configuration localConfiguration) throws IOException {
+        String filename = getKarafFilename(localConfiguration.getProperties());
+        localConfiguration.delete();
+        File cfgFile = new File(storage, filename == null ? (localConfiguration.getPid() + ".cfg") : filename);
+        if (cfgFile.exists()) {
+            cfgFile.delete();
+        }
     }
 
     public File getStorage() {
