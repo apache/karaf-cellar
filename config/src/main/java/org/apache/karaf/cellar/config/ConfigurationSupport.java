@@ -29,10 +29,10 @@ import java.util.*;
  */
 public class ConfigurationSupport extends CellarSupport {
 
-    private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
-    private static final String KARAF_CELLAR_FILENAME = "karaf.cellar.filename";
-    private static final String KARAF_CELLAR_CONTENT = "karaf.cellar.content";
-    private static final String KARAF_CELLAR_REMOVED = "karaf.cellar.removed";
+    public static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
+    public static final String KARAF_CELLAR_FILENAME = "karaf.cellar.filename";
+    public static final String KARAF_CELLAR_CONTENT = "karaf.cellar.content";
+    public static final String KARAF_CELLAR_REMOVED = "karaf.cellar.removed";
 
     protected File storage;
 
@@ -42,7 +42,7 @@ public class ConfigurationSupport extends CellarSupport {
      * @param dictionary the source dictionary.
      * @return the corresponding properties.
      */
-    public Properties dictionaryToProperties(Dictionary dictionary) {
+    public static Properties dictionaryToProperties(Dictionary dictionary) {
         Properties properties = new Properties();
         if (dictionary != null) {
             Enumeration keys = dictionary.keys();
