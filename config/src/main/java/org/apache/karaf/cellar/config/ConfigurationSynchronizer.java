@@ -160,7 +160,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                         filenames.remove(null);
                         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
                             String pid = configuration.getPid();
-                            if (!clusterConfigurations.containsKey(pid) && !filenames.contains(getKarafFilename(configuration.getProperties())) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                            if ((!clusterConfigurations.containsKey(pid) || !shouldReplicateConfig(clusterConfigurations.get(pid))) && !filenames.contains(getKarafFilename(configuration.getProperties())) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
                                 LOGGER.debug("CELLAR CONFIG: deleting local configuration {} which is not present in cluster", pid);
                                 deleteConfiguration(configuration);
                             }
