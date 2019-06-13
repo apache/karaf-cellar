@@ -14,7 +14,7 @@
 
 === Core runtime and Hazelcast
 
-Cellar uses Hazelcast as cluster engine.
+Cellar uses Hazelcast as the cluster engine.
 
 When you install the cellar feature, a hazelcast feature is automatically installed, providing the `etc/hazelcast.xml`
 configuration file.
@@ -90,8 +90,8 @@ By default, it will bind to all interfaces on the node machine. It's possible to
 
 [NOTE]
 ====
-In previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled in the same time.
-In Hazelcast 3.3.x (the version currently used by Cellar 3.0.x), only one discover mechanism can be enabled at a time. Cellar uses multicast by default (tcp-ip is disabled).
+In previous Hazelcast versions (especially the one used by Cellar 2.3.x), it was possible to have multicast and tcp-ip enabled at the same time.
+In Hazelcast 3.3.x (the version currently used by Cellar 3.0.x), only one discovery mechanism can be enabled at a time. Cellar uses multicast by default (tcp-ip is disabled).
 If your network or network interface don't support multicast, you have to enable tcp-ip and disable multicast.
 ====
 
@@ -114,7 +114,7 @@ You can also discover nodes located on a Amazon instance:
             </aws>
 ----
 
-Third, you can specific on which network interface the cluster is running (whatever the discovery mechanism used). By default, Hazelcast listens on all interfaces (0.0.0.0).
+Thirdly, you can specific on which network interface the cluster is running (whatever the discovery mechanism used). By default, Hazelcast listens on all interfaces (0.0.0.0).
 But you can specify an interface:
 
 ----

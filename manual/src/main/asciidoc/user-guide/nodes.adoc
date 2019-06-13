@@ -43,7 +43,7 @@ See link:hazelcast[Core Configuration section] for details.
 
 [NOTE]
 ====
-In Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a change in Hazelcast, it's no more possible to have both.
+In Cellar 2.3.x, Cellar used both multicast and tcp-ip by default. Due to a change in Hazelcast, it's not possible any more to have both.
 Now, in Cellar 3.0.x, the default configuration is multicast enabled, tcp-ip disabled.
 See link:hazelcast[Core Configuration section] for details.
 ====
@@ -74,7 +74,7 @@ It's where you can control the status of the different components.
 
 ==== Synchronizers and sync policy
 
-A synchronizer is invoked when you:
+A synchronizer is invoked when:
 
 * Cellar starts
 * a node joins a cluster group (see link:groups for details about cluster groups)
@@ -153,7 +153,7 @@ When the producer is off, it means that the node is "isolated" from the cluster 
 to the other nodes.
 
 On the other hand, a node receives the cluster events on a consumer. Like for the producer, you can see and control the
-consumer using dedicated command:
+consumer using a dedicated command:
 
 ----
 karaf@node1()> cluster:consumer-status
@@ -173,7 +173,7 @@ x | localhost:5701 | ON
 When the consumer is off, it means that node is "isolated" from the cluster as it doesn't receive "inbound" cluster events
 from the other nodes.
 
-Different cluster events are involved. For instance, we have cluster event for feature, for bundle, for configuration, for OBR, etc.
+Different cluster events are involved. For instance, we have cluster events for feature, for bundle, for configuration, for OBR, etc.
 When a consumer receives a cluster event, it delegates the handling of the cluster event to a specific handler, depending of the
 type of the cluster event.
 You can see the different handlers and their status using the cluster:handler-status command:
@@ -194,12 +194,12 @@ dealt by the handler.
 
 ==== Listeners
 
-The listeners are listening for local resource change.
+The listeners are listening for local resource changes.
 
-For instance, when you install a feature (with `feature:install`), the feature listener traps the change and broadcast this
+For instance, when you install a feature (with `feature:install`), the feature listener traps the change and broadcasts this
 change as a cluster event to other nodes.
 
-To avoid some unexpected behaviors (especially when you stop a node), most of the listeners are switch off by default.
+To avoid some unexpected behaviors (especially when you stop a node), most of the listeners are switched off by default.
 
 The listeners status are configured in the `etc/org.apache.karaf.cellar.node.cfg` configuration file.
 
