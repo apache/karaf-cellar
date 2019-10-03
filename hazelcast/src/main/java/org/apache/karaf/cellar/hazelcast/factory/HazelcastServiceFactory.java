@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.hazelcast.factory;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -48,7 +49,12 @@ public class HazelcastServiceFactory {
     }
 
     public void update(Map properties) throws InterruptedException {
-        configurationManager.isUpdated(properties);
+        if (configurationManager.isUpdated(properties) && instance != null) {
+            // updating the member list
+            HazelcastConfigurationManager.LOGGER.info("Updating the member list to: {}", configurationManager.getDiscoveredMemberSet());
+            instance.getConfig().getNetworkConfig().getJoin().getTcpIpConfig()
+                    .setMembers(new LinkedList<String>(configurationManager.getDiscoveredMemberSet()));
+        }
     }
 
     /**
