@@ -122,6 +122,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
                 Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+                Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
 
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
                     // get the features repositories from the cluster to update locally
@@ -138,7 +139,8 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         }
                     }
                     // cleanup the local features repositories not present on the cluster if the node is not the first one in the cluster group
-                    if (clusterManager.listNodesByGroup(group).size() > 1) {
+
+                    if (synchronizers.containsKey(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName)) {
                         try {
                             for (Repository repository : featuresService.listRepositories()) {
                                 URI uri = repository.getURI();
@@ -227,6 +229,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
                 Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+                Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
 
                 Repository[] repositoryList = new Repository[0];
                 Feature[] featuresList = new Feature[0];
@@ -260,6 +263,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         }
                     }
                 }
+                synchronizers.put(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName, true);
 
                 // push features to the cluster group
                 if (featuresList != null && featuresList.length > 0) {
