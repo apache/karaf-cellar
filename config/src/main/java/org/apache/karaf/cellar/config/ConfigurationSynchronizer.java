@@ -123,7 +123,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
                 // get configurations on the cluster to update local configurations
                 for (String pid : clusterConfigurations.keySet()) {
-                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND) && shouldReplicateConfig(clusterConfigurations.get(pid))) {
                         Dictionary clusterDictionary = clusterConfigurations.get(pid);
                         try {
                             // update the local configuration if needed
@@ -153,7 +153,9 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     try {
                         Set<String> filenames = new HashSet();
                         for (Properties configuration : clusterConfigurations.values()) {
-                            filenames.add(getKarafFilename(configuration));
+                            if (shouldReplicateConfig(configuration)) {
+                                filenames.add(getKarafFilename(configuration));
+                            }
                         }
                         filenames.remove(null);
                         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
