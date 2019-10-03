@@ -127,7 +127,6 @@ public class ListCommand extends ConfigCommandSupport {
     private Map<String, ConfigurationState> gatherConfigurations() throws Exception {
         Map<String, ConfigurationState> configurations = new HashMap<String, ConfigurationState>();
         Map<String, List<ConfigurationState>> configurationsByFileName = new HashMap<String, List<ConfigurationState>>();
-        ConfigurationSupport support = new ConfigurationSupport();
 
         // retrieve cluster configurations
         Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
@@ -139,7 +138,7 @@ public class ListCommand extends ConfigCommandSupport {
             state.setCluster(true);
             state.setLocal(false);
             configurations.put(key, state);
-            String filename = support.getKarafFilename(properties);
+            String filename = properties.getProperty(ConfigurationSupport.KARAF_CELLAR_FILENAME);
             if (filename != null) {
                 configurationsByFileName.putIfAbsent(filename, new ArrayList<ConfigurationState>());
                 configurationsByFileName.get(filename).add(state);
@@ -150,13 +149,13 @@ public class ListCommand extends ConfigCommandSupport {
         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
             String key = configuration.getPid();
 
-            String filename = support.getKarafFilename(configuration.getProperties());
+            String filename = (String) configuration.getProperties().get(ConfigurationSupport.KARAF_CELLAR_FILENAME);
 
             ConfigurationState state = configurations.get(key);
             if (state == null) {
                 state = new ConfigurationState();
                 state.setCluster(false);
-                state.setProperties(support.dictionaryToProperties(configuration.getProperties()));
+                state.setProperties(ConfigurationSupport.dictionaryToProperties(configuration.getProperties()));
                 configurations.put(key, state);
             }
             state.setLocal(true);
