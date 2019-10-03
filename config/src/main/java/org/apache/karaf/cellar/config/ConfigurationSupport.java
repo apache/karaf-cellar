@@ -127,7 +127,7 @@ public class ConfigurationSupport extends CellarSupport {
 
     public Configuration findLocalConfiguration(String pid, Dictionary dictionary) throws IOException, InvalidSyntaxException {
         String filter;
-        Object filename = dictionary.get(KARAF_CELLAR_FILENAME);
+        Object filename = dictionary != null ? dictionary.get(KARAF_CELLAR_FILENAME) : null;
         if (filename != null) {
             String uri = new File(storage, filename.toString()).toURI().toString();
             filter = "(|(" + FELIX_FILEINSTALL_FILENAME + "=" + uri + ")(" + KARAF_CELLAR_FILENAME + "=" + dictionary.get(KARAF_CELLAR_FILENAME) + ")(" + org.osgi.framework.Constants.SERVICE_PID + "=" + pid + "))";
