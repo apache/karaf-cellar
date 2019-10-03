@@ -237,14 +237,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     // clean configurations on the cluster not present locally
                     for (String pid : clusterConfigurations.keySet()) {
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            boolean found = false;
-                            for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
-                                if (configuration.getPid().equals(pid)) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
+                            if (findLocalConfiguration(pid,clusterConfigurations.get(pid)) == null) {
                                 clusterConfigurations.remove(pid);
                             }
                         }
