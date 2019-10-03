@@ -122,7 +122,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
                 Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-                Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
+                Map<String, Boolean> synchronizers = getSynchronizerMap();
 
                 if (clusterRepositories != null && !clusterRepositories.isEmpty()) {
                     // get the features repositories from the cluster to update locally
@@ -163,6 +163,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 }
 
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
+                    boolean featuresInitialized = synchronizers.containsKey(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
                     // get the features from the cluster group and update locally
                     for (FeatureState state : clusterFeatures.values()) {
                         String name = state.getName();
@@ -189,7 +190,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 }
                             }
                             // if feature has to be uninstalled locally (and node is not the first one in the cluster group)
-                            if (clusterManager.listNodesByGroup(group).size() > 1 && !clusterInstalled && locallyInstalled) {
+                            if (featuresInitialized && !clusterInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURE: uninstalling feature {}/{}", state.getName(), state.getVersion());
                                     featuresService.uninstallFeature(state.getName(), state.getVersion());
@@ -229,7 +230,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
 
                 Map<String, String> clusterRepositories = clusterManager.getMap(Constants.REPOSITORIES_MAP + Configurations.SEPARATOR + groupName);
                 Map<String, FeatureState> clusterFeatures = clusterManager.getMap(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
-                Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
+                Map<String, Boolean> synchronizers = getSynchronizerMap();
 
                 Repository[] repositoryList = new Repository[0];
                 Feature[] featuresList = new Feature[0];
@@ -316,6 +317,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                         }
                     }
                 }
+                synchronizers.put(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName, true);
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
