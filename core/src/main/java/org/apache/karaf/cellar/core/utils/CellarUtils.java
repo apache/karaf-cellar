@@ -13,12 +13,20 @@
  */
 package org.apache.karaf.cellar.core.utils;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.karaf.cellar.core.Configurations;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Generic Cellar utils class.
@@ -28,6 +36,8 @@ public class CellarUtils {
     public static enum MergeType {
         MERGA
     }
+
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(CellarUtils.class);
 
     public static final String MERGABLE = "MERGABLE[%s]";
     public static final String MERGABLE_REGEX = "MERGABLE\\[([^\\s]+[\\,]*[\\s]*)*\\]";
@@ -129,4 +139,51 @@ public class CellarUtils {
             return true;
         }
     }
+
+    /**
+     * Retrieves the value of the configuration property from the specified configuration. If the property is not found or there is an error
+     * retrieving it, return the provided default value.
+     *
+     * @param configurationAdmin
+     *            the config admin service instance
+     * @param configurationId
+     *            the configuration PID to be retrieved
+     * @param propertyKey
+     *            the key of the property entry to look up
+     * @param defaultValue
+     *            a value to be returned, if the property is not present in the configuration or there is an error retrieving it
+     * @return the value of the configuration property from the specified configuration. If the property is not found or there is an error
+     *         retrieving it, return the provided default value
+     */
+    public static String getConfigurationProperty(ConfigurationAdmin configurationAdmin, String configurationId,
+            String propertyKey, String defaultValue) {
+        String propertyValue = null;
+        try {
+            Configuration configuration = configurationAdmin.getConfiguration(configurationId, null);
+            Dictionary<String, Object> properties = configuration.getProperties();
+            if (properties != null) {
+                propertyValue = (String) properties.get(propertyKey);
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Error while retrieving the " + propertyKey + " entry from coonfiguration " + configurationId,
+                    e);
+        }
+
+        return propertyValue != null ? propertyValue : defaultValue;
+    }
+
+    /**
+     * Returns the flag value, indicating if the resources (bundles, configuration, features), not present on cluster, should be uninstalled
+     * on cluster sync by corresponding synchronizers.
+     * 
+     * @param configurationAdmin
+     *            the config admin service instance
+     * @return the flag value, indicating if the resources (bundles, configuration, features), not present on cluster, should be uninstalled
+     *         on cluster sync by corresponding synchronizers
+     */
+    public static boolean doCleanupResourcesNotPresentInCluster(ConfigurationAdmin configurationAdmin) {
+        return Boolean.parseBoolean(getConfigurationProperty(configurationAdmin, Configurations.NODE,
+                "org.apache.karaf.cellar.cleanupResourcesNotPresentInCluster", "true"));
+    }
+
 }
