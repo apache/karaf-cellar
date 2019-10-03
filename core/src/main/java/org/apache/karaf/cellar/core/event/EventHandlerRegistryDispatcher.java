@@ -66,4 +66,10 @@ public class EventHandlerRegistryDispatcher<E extends Event> implements EventDis
         this.threadPool = threadPool;
     }
 
+    public void destroy() {
+        if (threadPool != null) {
+            threadPool.shutdown();
+        }
+    }
+
 }
