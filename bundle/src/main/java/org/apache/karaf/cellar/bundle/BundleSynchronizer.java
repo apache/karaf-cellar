@@ -127,21 +127,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-                // cleanup the local bundles not present on the cluster if the node is not the first one in the cluster group
-                if (clusterManager.listNodesByGroup(group).size() > 1) {
-                    for (Bundle bundle : bundleContext.getBundles()) {
-                        String id = getId(bundle);
-                        if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
-                            // the bundle is not present on the cluster, so it has to be uninstalled locally
-                            try {
-                                LOGGER.debug("CELLAR BUNDLE: uninstalling local bundle {} which is not present in cluster", id);
-                                bundle.uninstall();
-                            } catch (Exception e) {
-                                LOGGER.warn("Can't uninstall {}", id, e);
-                            }
-                        }
-                    }
-                }
+
                 // get the bundles on the cluster to update local bundles
                 for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
                     String id = entry.getKey();
