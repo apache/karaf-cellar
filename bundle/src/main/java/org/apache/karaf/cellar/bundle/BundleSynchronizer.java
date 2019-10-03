@@ -141,13 +141,13 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                             if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
                                 try {
                                     if (state.getStatus() == Bundle.INSTALLED) {
-                                        ensureInstalled(state, state.getStartLevel());
+                                        ensureInstalled(state);
                                         if (isStarted(state.getLocation())) {
                                             refreshBundle(findBundle(state.getLocation()));
                                             LOGGER.debug("CELLAR BUNDLE: refreshing {}/{}", state.getSymbolicName(), state.getVersion());
                                         }
                                     } else if (state.getStatus() == Bundle.ACTIVE) {
-                                        ensureInstalled(state, state.getStartLevel());
+                                        ensureInstalled(state);
                                         if (!isStarted(state.getLocation())) {
                                             // Store the id in a list so we can install all bundles before trying to start them,
                                             // this way if a bundle depend on another one that is not install yet but is part of the same update, the start won't fail.
@@ -156,7 +156,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
                                         }
                                     } else if (state.getStatus() == Bundle.RESOLVED) {
-                                        ensureInstalled(state, state.getStartLevel());
+                                        ensureInstalled(state);
                                         Bundle b = findBundle(state.getLocation());
                                         if (b != null) {
                                             if (b.getState() == Bundle.ACTIVE) {
@@ -361,11 +361,11 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
      * @param state the cluster bundle state
      * @throws BundleException in case of bundle operation errors
      */
-    private void ensureInstalled(BundleState state, int startLevel) throws BundleException {
+    private void ensureInstalled(BundleState state) throws BundleException {
         Bundle existingBundle = findBundle(state.getLocation());
         if (existingBundle == null) {
             LOGGER.debug("CELLAR BUNDLE: installing bundle located {} on node", state.getLocation());
-            installBundleFromLocation(state.getLocation(), startLevel);
+            installBundleFromLocation(state.getLocation(), state.getStartLevel());
         } else if (requiresUpdate(existingBundle)) {
             LOGGER.debug("CELLAR BUNDLE: updating bundle located {} on node", state.getLocation());
             existingBundle.update();
