@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.apache.karaf.features.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.cm.Configuration;
@@ -163,7 +164,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 }
 
                 if (clusterFeatures != null && !clusterFeatures.isEmpty()) {
-                    boolean featuresInitialized = synchronizers.containsKey(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
+                    boolean doUninstallFeaturesNotPresentInCluster = CellarUtils.doCleanupResourcesNotPresentInCluster(configurationAdmin) && synchronizers.containsKey(Constants.FEATURES_MAP + Configurations.SEPARATOR + groupName);
                     // get the features from the cluster group and update locally
                     for (FeatureState state : clusterFeatures.values()) {
                         String name = state.getName();
@@ -190,7 +191,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                                 }
                             }
                             // if feature has to be uninstalled locally (and node is not the first one in the cluster group)
-                            if (featuresInitialized && !clusterInstalled && locallyInstalled) {
+                            if (doUninstallFeaturesNotPresentInCluster && !clusterInstalled && locallyInstalled) {
                                 try {
                                     LOGGER.debug("CELLAR FEATURE: uninstalling feature {}/{}", state.getName(), state.getVersion());
                                     featuresService.uninstallFeature(state.getName(), state.getVersion());

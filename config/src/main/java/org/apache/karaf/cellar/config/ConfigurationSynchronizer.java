@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.apache.karaf.features.BootFinished;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -148,7 +149,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     } else  LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
                 }
                 // cleanup the local configurations not present on the cluster if the node is not the first one in the cluster
-                if (getSynchronizerMap().containsKey(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName)) {
+                if (CellarUtils.doCleanupResourcesNotPresentInCluster(configurationAdmin) && getSynchronizerMap().containsKey(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName)) {
                     try {
                         Set<String> filenames = new HashSet();
                         for (Properties configuration : clusterConfigurations.values()) {
