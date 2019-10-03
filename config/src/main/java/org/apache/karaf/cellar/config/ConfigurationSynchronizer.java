@@ -137,7 +137,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 localDictionary = new Properties();
 
                             localDictionary = filter(localDictionary);
-                            if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
+                            if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary) && shouldReplicateConfig(clusterDictionary)) {
                                 LOGGER.debug("CELLAR CONFIG: updating configration {} on node", pid);
                                 clusterDictionary = convertPropertiesFromCluster(clusterDictionary);
                                 localConfiguration.update((Dictionary) clusterDictionary);
@@ -160,7 +160,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             String pid = configuration.getPid();
                             if (!clusterConfigurations.containsKey(pid) && !filenames.contains(getKarafFilename(configuration.getProperties())) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
                                 LOGGER.debug("CELLAR CONFIG: deleting local configuration {} which is not present in cluster", pid);
-                                configuration.delete();
+                                deleteConfiguration(configuration);
                             }
                         }
                     } catch (Exception e) {
