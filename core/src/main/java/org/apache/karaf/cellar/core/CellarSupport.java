@@ -248,4 +248,8 @@ public class CellarSupport {
         this.groupManager = groupManager;
     }
 
+    @SuppressWarnings("unchecked")
+    protected Map<String, Boolean> getSynchronizerMap() {
+        return clusterManager.getMap("org.apache.karaf.cellar.synchronizers");
+    }
 }

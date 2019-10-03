@@ -118,7 +118,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             LOGGER.debug("CELLAR CONFIG: pulling configurations from cluster group {}", groupName);
 
             Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-            Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -147,11 +146,12 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     } else  LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
                 }
                 // cleanup the local configurations not present on the cluster if the node is not the first one in the cluster
-                if (synchronizers.containsKey(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName)) {
+                if (getSynchronizerMap().containsKey(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName)) {
                     try {
                         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
                             String pid = configuration.getPid();
                             if (!clusterConfigurations.containsKey(pid) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                                LOGGER.debug("CELLAR CONFIG: deleting local configuration {} which is not present in cluster", pid);
                                 configuration.delete();
                             }
                         }
@@ -181,7 +181,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             String groupName = group.getName();
             LOGGER.debug("CELLAR CONFIG: pushing configurations to cluster group {}", groupName);
             Map<String, Properties> clusterConfigurations = clusterManager.getMap(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName);
-            Map<String, Boolean> synchronizers = clusterManager.getMap("org.apache.karaf.cellar.bundle.synchronizers");
 
             ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
             try {
@@ -238,7 +237,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             }
                         }
                     }
-                    synchronizers.put(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName, true);
+                    getSynchronizerMap().putIfAbsent(Constants.CONFIGURATION_MAP + Configurations.SEPARATOR + groupName, true);
                 } catch (IOException ex) {
                     LOGGER.error("CELLAR CONFIG: failed to read configuration (IO error)", ex);
                 } catch (InvalidSyntaxException ex) {
