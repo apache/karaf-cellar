@@ -82,8 +82,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
         String policy = getSyncPolicy(group);
         if (policy == null) {
             LOGGER.warn("CELLAR BUNDLE: sync policy is not defined for cluster group {}", group.getName());
-        }
-        if (policy.equalsIgnoreCase("cluster")) {
+        } else if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR BUNDLE: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR BUNDLE: updating node from the cluster (pull first)");
             pull(group);
@@ -148,9 +147,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                     BundleState state = entry.getValue();
 
                     String[] tokens = id.split("/");
-                    String symbolicName = tokens[0];
-                    String version = tokens[1];
-                    if (tokens != null && tokens.length == 2) {
+                    if (tokens.length == 2) {
+                        String symbolicName = tokens[0];
+                        String version = tokens[1];
                         if (state != null) {
                             String bundleLocation = state.getLocation();
                             if (isAllowed(group, Constants.CATEGORY, bundleLocation, EventType.INBOUND)) {
@@ -335,7 +334,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             LOGGER.error("CELLAR BUNDLE: error while retrieving the sync policy", e);
         }
 
-        return "cluster";
+        return null;
     }
 
     /**

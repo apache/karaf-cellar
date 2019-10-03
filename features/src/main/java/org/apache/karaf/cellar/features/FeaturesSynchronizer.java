@@ -80,8 +80,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
         String policy = getSyncPolicy(group);
         if (policy == null) {
             LOGGER.warn("CELLAR FEATURE: sync policy is not defined for cluster group {}", group.getName());
-        }
-        if (policy.equalsIgnoreCase("cluster")) {
+        } else if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR FEATURE: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR FEATURE: updating node from the cluster (pull first)");
             pull(group);
@@ -341,7 +340,7 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
             LOGGER.error("CELLAR FEATURE: error while retrieving the sync policy", e);
         }
 
-        return "cluster";
+        return null;
     }
 
 }
