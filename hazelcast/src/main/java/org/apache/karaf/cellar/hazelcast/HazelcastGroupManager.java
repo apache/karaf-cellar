@@ -108,7 +108,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
         }
     }
 
-    private boolean updatePropertiesFromHazelcastMap(Dictionary<String, Object> properties, String key, Object value) {
+    private synchronized boolean updatePropertiesFromHazelcastMap(Dictionary<String, Object> properties, String key, Object value) {
         if (!(value instanceof Map)) {
             return false;
         }
@@ -145,7 +145,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
         return changed;
     }
 
-    private Map<String, Object> getUpdatesForHazelcastMap(Dictionary<String, Object> properties) {
+    private synchronized Map<String, Object> getUpdatesForHazelcastMap(Dictionary<String, Object> properties) {
         Map<String,Object> updates = new HashMap<String,Object>();
         if (properties == null) {
             return updates;
