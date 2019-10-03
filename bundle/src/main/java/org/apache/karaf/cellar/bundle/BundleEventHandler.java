@@ -22,12 +22,10 @@ import org.apache.karaf.cellar.core.event.EventType;
 import org.apache.karaf.features.Feature;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.wiring.FrameworkWiring;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -85,8 +83,13 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                     }
                 }
                 if (event.getType() == Bundle.INSTALLED) {
-                    installBundleFromLocation(event.getLocation(), event.getStartLevel());
-                    LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
+                    if (!isInstalled(event.getLocation())) {
+                        installBundleFromLocation(event.getLocation(), event.getStartLevel());
+                        LOGGER.debug("CELLAR BUNDLE: installing {}/{}", event.getSymbolicName(), event.getVersion());
+                    } else if (isStarted(event.getLocation())) {
+                        refreshBundle(findBundle(event.getLocation()));
+                        LOGGER.debug("CELLAR BUNDLE: refreshing {}/{}", event.getSymbolicName(), event.getVersion());
+                    }
                 } else if (event.getType() == Bundle.UNINSTALLED) {
                     uninstallBundle(event.getSymbolicName(), event.getVersion());
                     LOGGER.debug("CELLAR BUNDLE: uninstalling {}/{}", event.getSymbolicName(), event.getVersion());
@@ -118,7 +121,7 @@ public class BundleEventHandler extends BundleSupport implements EventHandler<Cl
                             stopBundle(event.getSymbolicName(), event.getVersion());
                         } else if (b.getState() == Bundle.INSTALLED) {
                             LOGGER.debug("CELLAR BUNDLE: resolving bundle {}/{} on node", event.getSymbolicName(), event.getVersion());
-                            getBundleContext().getBundle(0).adapt(FrameworkWiring.class).resolveBundles(Collections.singleton(b));
+                            resolveBundle(b);
                         }
                     } else {
                         LOGGER.warn("CELLAR BUNDLE: unable to find bundle located {} on node", event.getLocation());
