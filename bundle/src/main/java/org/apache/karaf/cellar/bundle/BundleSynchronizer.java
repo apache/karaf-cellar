@@ -282,7 +282,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                 bundleState.setStatus(status);
                                 clusterBundles.put(id, bundleState);
                                 // send cluster event
-                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, null, status);
+                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, level, status);
                                 clusterEvent.setSourceGroup(group);
                                 clusterEvent.setSourceNode(clusterManager.getNode());
                                 clusterEvent.setLocal(clusterManager.getNode());
