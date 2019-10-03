@@ -157,7 +157,6 @@ public class ListCommand extends ConfigCommandSupport {
                 state = new ConfigurationState();
                 state.setCluster(false);
                 state.setProperties(support.dictionaryToProperties(configuration.getProperties()));
-                state.setLocal(true);
                 configurations.put(key, state);
             }
             state.setLocal(true);
