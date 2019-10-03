@@ -16,17 +16,27 @@ package org.apache.karaf.cellar.core.event;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Event handler service registry dispatcher.
  */
 public class EventHandlerRegistryDispatcher<E extends Event> implements EventDispatcher<E> {
 
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(EventHandlerRegistryDispatcher.class);
     private ExecutorService threadPool;
     private EventHandlerRegistry handlerRegistry;
 
     public void init() {
         if (threadPool == null) {
-            threadPool = Executors.newCachedThreadPool();
+            if (Boolean.getBoolean(this.getClass().getName() + ".threadPool.singleThreadExecutor")) {
+                LOGGER.info("Will use an Executor that uses a single worker thread");
+                threadPool = Executors.newSingleThreadExecutor();
+            } else {
+                LOGGER.info("Will use an Executor with a pool of threads");
+                threadPool = Executors.newCachedThreadPool();
+            }
         }
     }
 
