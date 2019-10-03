@@ -149,6 +149,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
             state.setSymbolicName(symbolicName);
             state.setVersion(version);
             state.setId(clusterBundles.size());
+            state.setStartLevel(level);
             state.setLocation(location);
             if (start) {
                 state.setStatus(Bundle.ACTIVE);
@@ -273,7 +274,8 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, null, Bundle.ACTIVE);
+
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, state.getStartLevel(), Bundle.ACTIVE);
                 event.setSourceGroup(group);
                 event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
@@ -327,7 +329,7 @@ public class CellarBundleMBeanImpl extends StandardMBean implements CellarBundle
 
                 // broadcast the cluster event
                 String[] split = bundle.split("/");
-                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, null, Bundle.RESOLVED);
+                ClusterBundleEvent event = new ClusterBundleEvent(split[0], split[1], location, state.getStartLevel(), Bundle.RESOLVED);
                 event.setSourceGroup(group);
                 event.setSourceNode(clusterManager.getNode());
                 eventProducer.produce(event);
