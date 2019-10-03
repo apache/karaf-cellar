@@ -79,8 +79,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
         String policy = getSyncPolicy(group);
         if (policy == null) {
             LOGGER.warn("CELLAR OBR: sync policy is not defined for cluster group {}", group.getName());
-        }
-        if (policy.equalsIgnoreCase("cluster")) {
+        } else if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR OBR: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR OBR: updating node from the cluster (pull first)");
             pull(group);
@@ -199,7 +198,7 @@ public class ObrUrlSynchronizer extends ObrSupport implements Synchronizer {
             LOGGER.error("CELLAR OBR: error while retrieving the sync policy", e);
         }
 
-        return "cluster";
+        return null;
     }
 
 }
