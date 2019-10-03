@@ -141,7 +141,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 LOGGER.debug("CELLAR CONFIG: updating configration {} on node", pid);
                                 clusterDictionary = convertPropertiesFromCluster(clusterDictionary);
                                 localConfiguration.update((Dictionary) clusterDictionary);
-                                persistConfiguration(localConfiguration);
+                                persistConfiguration(localConfiguration, clusterDictionary);
                             }
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read local configuration", ex);
