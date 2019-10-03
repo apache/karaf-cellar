@@ -18,7 +18,6 @@ import org.apache.karaf.cellar.core.Configurations;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import shaded.org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.net.URI;
@@ -120,12 +119,12 @@ public class ConfigurationSupport extends CellarSupport {
                 String key = (String) sourceKeys.nextElement();
                 if (key.equals(FELIX_FILEINSTALL_FILENAME)) {
                     String value = dictionary.get(key).toString();
-                    value = value.substring(value.lastIndexOf(File.separatorChar) + 1);
+                    value = value.substring(value.lastIndexOf("/") + 1);
                     result.put(KARAF_CELLAR_FILENAME, value);
                     try {
                         result.put(KARAF_CELLAR_CONTENT, readFile(new File(storage, value)));
                     } catch (IOException e) {
-                        // Cannot read file
+                        LOGGER.error("CELLAR CONFIG: Could not read the content of the file: " + value, e);
                     }
                 } else if (!isExcludedProperty(key)) {
                     Object value = dictionary.get(key);
@@ -269,7 +268,7 @@ public class ConfigurationSupport extends CellarSupport {
                 writeFile(storageFile, content);
             }
         } catch (Exception e) {
-            // nothing to do
+            LOGGER.error("CELLAR CONFIG: Issue when trying to persist configuration file", e);
         }
     }
 
