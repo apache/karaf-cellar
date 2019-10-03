@@ -98,6 +98,8 @@ public class Activator extends BaseActivator implements ManagedService {
 
     private HashMap updatedConfig;
 
+    private EventHandlerRegistryDispatcher dispatcher;
+
     @Override
     public void doStart() throws Exception {
 
@@ -144,7 +146,7 @@ public class Activator extends BaseActivator implements ManagedService {
         extender.init();
 
         LOGGER.debug("CELLAR HAZELCAST: init dispatcher");
-        EventHandlerRegistryDispatcher dispatcher = new EventHandlerRegistryDispatcher();
+        dispatcher = new EventHandlerRegistryDispatcher();
         dispatcher.setHandlerRegistry(eventHandlerRegistry);
         dispatcher.init();
 
@@ -401,6 +403,10 @@ public class Activator extends BaseActivator implements ManagedService {
         if (combinedClassLoader != null) {
             combinedClassLoader.destroy();
             combinedClassLoader = null;
+        }
+        if (dispatcher != null) {
+            dispatcher.destroy();
+            dispatcher = null;
         }
     }
 
