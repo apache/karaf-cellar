@@ -24,7 +24,10 @@ import org.osgi.service.cm.ConfigurationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * LocalConfigurationListener is listening for local configuration changes.
@@ -89,7 +92,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
                             Properties distributedDictionary = clusterConfigurations.get(pid);
 
-                            if (!equals(localDictionary, distributedDictionary)) {
+                            if (!equals(localDictionary, distributedDictionary) && canDistributeConfig(localDictionary)) {
                                 // update the configurations in the cluster group
                                 clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                                 // send the cluster event

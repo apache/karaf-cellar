@@ -15,6 +15,7 @@ package org.apache.karaf.cellar.config;
 
 import org.apache.karaf.cellar.core.CellarSupport;
 import org.apache.karaf.cellar.core.Configurations;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
@@ -30,6 +31,7 @@ import java.util.*;
 public class ConfigurationSupport extends CellarSupport {
 
     private static final String FELIX_FILEINSTALL_FILENAME = "felix.fileinstall.filename";
+    private static final String KARAF_CELLAR_FILENAME = "karaf.cellar.filename";
 
     protected File storage;
 
@@ -76,16 +78,25 @@ public class ConfigurationSupport extends CellarSupport {
         Enumeration sourceKeys = source.keys();
         while (sourceKeys.hasMoreElements()) {
             Object key = sourceKeys.nextElement();
-            Object sourceValue = source.get(key);
-            Object targetValue = target.get(key);
-            if (sourceValue != null && targetValue == null)
-                return false;
-            if (sourceValue == null && targetValue != null)
-                return false;
-            if (!sourceValue.equals(targetValue))
-                return false;
+            if (!key.equals(org.osgi.framework.Constants.SERVICE_PID)) {
+                Object sourceValue = source.get(key);
+                Object targetValue = target.get(key);
+                if (sourceValue != null && targetValue == null)
+                    return false;
+                if (sourceValue == null && targetValue != null)
+                    return false;
+                if (!sourceValue.equals(targetValue))
+                    return false;
+            }
         }
 
+        return true;
+    }
+
+    public boolean canDistributeConfig(Dictionary dictionary) {
+        if (dictionary.get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
+            return dictionary.get(KARAF_CELLAR_FILENAME) != null;
+        }
         return true;
     }
 
@@ -101,7 +112,55 @@ public class ConfigurationSupport extends CellarSupport {
             Enumeration sourceKeys = dictionary.keys();
             while (sourceKeys.hasMoreElements()) {
                 String key = (String) sourceKeys.nextElement();
-                if (!isExcludedProperty(key)) {
+                if (key.equals(FELIX_FILEINSTALL_FILENAME)) {
+                    String value = dictionary.get(key).toString();
+                    value = value.substring(value.lastIndexOf(File.separatorChar) + 1);
+                    result.put(KARAF_CELLAR_FILENAME, value);
+                } else if (!isExcludedProperty(key)) {
+                    Object value = dictionary.get(key);
+                    result.put(key, value);
+                }
+            }
+        }
+        return result;
+    }
+
+    public Configuration findLocalConfiguration(String pid, Dictionary dictionary) throws IOException, InvalidSyntaxException {
+        String filter;
+        Object filename = dictionary.get(KARAF_CELLAR_FILENAME);
+        if (filename != null) {
+            String uri = new File(storage, filename.toString()).toURI().toString();
+            filter = "(|(" + FELIX_FILEINSTALL_FILENAME + "=" + uri + ")(" + KARAF_CELLAR_FILENAME + "=" + dictionary.get(KARAF_CELLAR_FILENAME) + ")(" + org.osgi.framework.Constants.SERVICE_PID + "=" + pid + "))";
+        } else {
+            filter = "(" + org.osgi.framework.Constants.SERVICE_PID + "=" + pid + ")";
+        }
+
+        Configuration[] localConfigurations = configurationAdmin.listConfigurations(filter);
+
+        return (localConfigurations != null && localConfigurations.length > 0) ? localConfigurations[0] : null;
+    }
+
+    public Configuration createLocalConfiguration(String pid, Dictionary clusterDictionary) throws IOException {
+        Configuration localConfiguration;
+        Object factoryPid = clusterDictionary.get(ConfigurationAdmin.SERVICE_FACTORYPID);
+        if (factoryPid != null) {
+            localConfiguration = configurationAdmin.createFactoryConfiguration(factoryPid.toString(), null);
+        } else {
+            localConfiguration = configurationAdmin.getConfiguration(pid, null);
+        }
+        return localConfiguration;
+    }
+
+    public Dictionary convertPropertiesFromCluster(Dictionary dictionary) {
+        Dictionary result = new Properties();
+        if (dictionary != null) {
+            Enumeration sourceKeys = dictionary.keys();
+            while (sourceKeys.hasMoreElements()) {
+                String key = (String) sourceKeys.nextElement();
+                if (key.equals(KARAF_CELLAR_FILENAME)) {
+                    String value = dictionary.get(key).toString();
+                    result.put(FELIX_FILEINSTALL_FILENAME, new File(storage, value).toURI().toString());
+                } else {
                     Object value = dictionary.get(key);
                     result.put(key, value);
                 }
@@ -138,34 +197,18 @@ public class ConfigurationSupport extends CellarSupport {
 
     /**
      * Persist a configuration to a storage.
-     *
-     * @param admin the configuration admin service.
-     * @param pid the configuration PID to store.
-     * @param props the properties to store, linked to the configuration PID.
+     * @param cfg the configuration to store.
      */
-    protected void persistConfiguration(ConfigurationAdmin admin, String pid, Dictionary props) {
+    protected void persistConfiguration(Configuration cfg) {
         try {
-            if (pid.matches(".*-.*-.*-.*-.*")) {
-                // it's UUID
-                return;
+            File storageFile = getStorageFile(cfg.getProperties());
+
+            if (storageFile == null && cfg.getProperties().get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
+                storageFile = new File(storage, cfg.getPid() + ".cfg");
             }
-            File storageFile = new File(storage, pid + ".cfg");
-            Configuration cfg = admin.getConfiguration(pid, null);
-            if (cfg != null && cfg.getProperties() != null) {
-                Object val = cfg.getProperties().get(FELIX_FILEINSTALL_FILENAME);
-                try {
-                    if (val instanceof URL) {
-                        storageFile = new File(((URL) val).toURI());
-                    }
-                    if (val instanceof URI) {
-                        storageFile = new File((URI) val);
-                    }
-                    if (val instanceof String) {
-                        storageFile = new File(new URL((String) val).toURI());
-                    }
-                } catch (Exception e) {
-                    throw new IOException(e.getMessage(), e);
-                }
+            if (storageFile == null) {
+                // it's a factory configuration without filename specified, cannot save
+                return;
             }
 
             org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
@@ -175,6 +218,7 @@ public class ConfigurationSupport extends CellarSupport {
             for (String key : set) {
                 if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
                         && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                        && !KARAF_CELLAR_FILENAME.equals(key)
                         && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
                     propertiesToRemove.add(key);
                 }
@@ -183,11 +227,12 @@ public class ConfigurationSupport extends CellarSupport {
             for (String key : propertiesToRemove) {
                 p.remove(key);
             }
-
+            Dictionary props = cfg.getProperties();
             for (Enumeration<String> keys = props.keys(); keys.hasMoreElements(); ) {
                 String key = keys.nextElement();
                 if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
                         && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
+                        && !KARAF_CELLAR_FILENAME.equals(key)
                         && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
                     p.put(key, (String) props.get(key));
                 }
@@ -199,6 +244,29 @@ public class ConfigurationSupport extends CellarSupport {
         } catch (Exception e) {
             // nothing to do
         }
+    }
+
+    private File getStorageFile(Dictionary properties) throws IOException {
+        File storageFile = null;
+        Object val = properties.get(FELIX_FILEINSTALL_FILENAME);
+        try {
+            if (val instanceof URL) {
+                storageFile = new File(((URL) val).toURI());
+            }
+            if (val instanceof URI) {
+                storageFile = new File((URI) val);
+            }
+            if (val instanceof String) {
+                storageFile = new File(new URL((String) val).toURI());
+            }
+        } catch (Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+        return storageFile;
+    }
+
+    public String getKarafFilename(Dictionary dictionary) {
+        return (String) filter(dictionary).get(KARAF_CELLAR_FILENAME);
     }
 
     /**
