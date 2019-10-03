@@ -45,8 +45,8 @@ import org.apache.karaf.util.tracker.annotation.Services;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.cm.ConfigurationListener;
 import org.osgi.service.cm.ManagedService;
+import org.osgi.service.cm.SynchronousConfigurationListener;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
@@ -197,7 +197,7 @@ public class Activator extends BaseActivator implements ManagedService {
         groupManager.setConfigurationAdmin(configurationAdmin);
         groupManager.setEventTransportFactory(eventTransportFactory);
         groupManager.init();
-        register(new Class[]{GroupManager.class, ConfigurationListener.class}, groupManager);
+        register(new Class[]{GroupManager.class, SynchronousConfigurationListener.class}, groupManager);
 
         LOGGER.debug("CELLAR HAZELCAST: create Cellar membership listener");
         CellarMembershipListener membershipListener = new CellarMembershipListener(hazelcastInstance);
