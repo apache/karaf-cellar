@@ -24,7 +24,7 @@ It's also possible to enable local resources listeners: these listeners broadcas
 Please note that this behavior is disabled by default as it can have side effects (especially when a node is stopped).
 Enabling listeners is at your own risk.
 
-The nodes list could be discovered (using unicast or multicast), or "static" defined (using a couple hostname or IP
+The nodes list could be discovered (using unicast or multicast), or else defined in a static way (using a hostname/IP
 and port list).
 
 Cellar is able to synchronize:
@@ -33,30 +33,31 @@ Cellar is able to synchronize:
 * config
 * features
 
-Optionally, Cellar also support synchronization of OSGi EventAdmin, OBR (URLs and bundles).
+Optionally, Cellar also supports synchronization of OSGi EventAdmin, OBR (URLs and bundles).
 
 The second goal is to provide a Distributed OSGi runtime. It means that using Cellar, you are able to call an OSGi
 service located on a remote instance. See the link:transport[transport and DOSGi section] of the user guide.
 
-Finally, Cellar also provides "runtime clustering" by providing dedicated feature like:
+Finally, Cellar also provides "runtime clustering" by providing dedicated features like:
 
 * HTTP load balancing
 * HTTP sessions replication
 * log centralization
+
 Please, see the sections dedicated to those features.
 
 ==== Cross topology
 
 This is the default Cellar topology. Cellar is installed on all nodes, each node has the same function.
 
-It means that you can perform actions on any node, it will be broadcasted to all others nodes.
+It means that you can perform actions on any node, it will be broadcast to all other nodes.
 
 ==== Star topology
 
 In this topology, if Cellar is installed on all nodes, you perform actions only on one specific node (the "manager").
 
-To do that, the "manager" is a standard Cellar node, and the event producing is disable on all others nodes
+To do that, the "manager" is a standard Cellar node, and the event producing is disabled on all other nodes
 (`cluster:producer-stop` on all "managed" nodes).
 
-Like this, only the "manager" will send event to the nodes (which are able to consumer and handle), but no event can
+Like this, only the "manager" will send event to the nodes (which are able to consume and handle), but no event can
 be produced on the nodes.

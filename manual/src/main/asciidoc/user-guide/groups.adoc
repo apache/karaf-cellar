@@ -14,9 +14,9 @@
 
 === Cellar groups
 
-You can define groups in Cellar. A group allows you to define specific nodes and resources that are to be
-working together. This permits some nodes (those outside the group) not to need to sync'ed with changes of
-a node within a group.
+You can define groups in Cellar. A group allows you to define specific nodes and resources that are to 
+work together. This means that nodes outside the group are not sync'ed with the
+changes of a node within a group.
 
 By default, the Cellar nodes go into the default group:
 
@@ -37,7 +37,7 @@ You can create a new group using the group-create command:
 karaf@root()> cluster:group-create test
 ----
 
-For now, the test group hasn't any nodes:
+For now, the test group hasn't got any nodes:
 
 ----
 karaf@node1()> cluster:group-list
@@ -55,7 +55,7 @@ Cellar can manipulate features and features repositories on cluster groups.
 
 You can use `cluster:feature-*` commands or the corresponding MBean for that.
 
-You can list the features repositories on a given cluster group:
+You can list the features repositories for a given cluster group:
 
 ----
 karaf@node1()> cluster:feature-repo-list default
@@ -189,13 +189,13 @@ You can uninstall a bundle from a cluster group using the `cluster:bundle-uninst
 karaf@node1()> cluster:bundle-uninstall default commons-lang
 ----
 
-Like for the feature, Cellar provides a bundle listener disabled by default in `etc/org.apache.karaf.cellar.nodes.cfg`:
+As for features, Cellar provides a bundle listener that is disabled by default in `etc/org.apache.karaf.cellar.nodes.cfg`:
 
 ----
 bundle.listener = false
 ----
 
-The bundle listener listens the following local bundle changes:
+The bundle listener listens for the following local bundle changes:
 
 * install bundle
 * start bundle
@@ -257,18 +257,19 @@ You can delete the whole config using the `cluster:config-delete` command:
 karaf@node1()> cluster:config-delete default my.config
 ----
 
-Like for feature and bundle, Cellar provides a config listener disabled by default in `etc/org.apache.karaf.cellar.nodes.cfg`:
+As for features and bundles, Cellar provides a config listener that is disabled by default in `etc/org.apache.karaf.cellar.nodes.cfg`:
 
 ----
 config.listener = false
 ----
 
-The config listener listens the following local config changes:
+The config listener listens for the following local config changes:
+
 * create a config
 * add/delete/change a property
 * delete a config
 
-As some properties may be local to a node, Cellar excludes some property by default.
+As some properties may be local to a node, Cellar excludes some properties by default.
 You can see the current excluded properties using the `cluster:config-property-excluded` command:
 
 ----
@@ -323,7 +324,7 @@ It allows you to block or allow some resources on the cluster.
 By adding a resource id in a blacklist, you block the resource.
 By adding a resource id in a whitelist, you allow the resource.
 
-For instance, for feature, you can use the `cluster:feature-block` command to display or modify the current blocking policy for features:
+For example, for features, you can use the `cluster:feature-block` command to display or modify the current blocking policy for features:
 
 ----
 karaf@node1()> cluster:feature-block default
@@ -340,7 +341,7 @@ OUTBOUND:
 * is a wildcard.
 ====
 
-You have the equivalent command for bundle and config:
+You have the equivalent command for bundles and config:
 
 ----
 karaf@node1()> cluster:bundle-block default

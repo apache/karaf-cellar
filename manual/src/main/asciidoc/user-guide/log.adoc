@@ -18,7 +18,7 @@ Apache Karaf Cellar is able to centralize and manage log service on each node.
 
 ==== Enable Cellar log
 
-Centralized log support is an optionnal feature that you can install using:
+Centralized log support is an optional feature that you can install using:
 
 ----
 karaf@root()> feature:install cellar-log

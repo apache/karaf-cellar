@@ -35,4 +35,4 @@ memory of the default group and will also be broadcasted to all other default gr
 This happens for all PIDs but not for org.apache.karaf.cellar.node which is marked as blacklisted
 and will never be written or read from the distributed memory, nor will be broadcasted via the topic.
 
-The user can add/remove any PID he wishes to the whitelist/blacklist.
+The user can add/remove any PID they wish to the whitelist/blacklist.
