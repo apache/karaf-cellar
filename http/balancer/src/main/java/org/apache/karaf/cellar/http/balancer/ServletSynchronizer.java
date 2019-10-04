@@ -64,8 +64,7 @@ public class ServletSynchronizer implements Synchronizer {
         String policy = getSyncPolicy(group);
         if (policy == null) {
             LOGGER.warn("CELLAR HTTP BALANCER: sync policy is not defined for cluster group {}", group.getName());
-        }
-        if (policy.equalsIgnoreCase("cluster")) {
+        } else if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR HTTP BALANCER: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR HTTP BALANCER: updating node from the cluster (pull first)");
             pull(group);
@@ -186,7 +185,7 @@ public class ServletSynchronizer implements Synchronizer {
             LOGGER.error("CELLAR HTTP BALANCER: error while retrieving the sync policy", e);
         }
 
-        return "cluster";
+        return null;
     }
 
     public void setClusterManager(ClusterManager clusterManager) {

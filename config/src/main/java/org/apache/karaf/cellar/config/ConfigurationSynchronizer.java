@@ -79,8 +79,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
         String policy = getSyncPolicy(group);
         if (policy == null) {
             LOGGER.warn("CELLAR CONFIG: sync policy is not defined for cluster group {}", group.getName());
-        }
-        if (policy.equalsIgnoreCase("cluster")) {
+        } else if (policy.equalsIgnoreCase("cluster")) {
             LOGGER.debug("CELLAR CONFIG: sync policy set as 'cluster' for cluster group {}", group.getName());
             LOGGER.debug("CELLAR CONFIG: updating node from the cluster (pull first)");
             pull(group);
@@ -270,7 +269,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             LOGGER.error("CELLAR CONFIG: error while retrieving the sync policy", e);
         }
 
-        return "cluster";
+        return null;
     }
 
 }
