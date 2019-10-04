@@ -25,7 +25,6 @@ import org.osgi.service.cm.ConfigurationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Properties;
@@ -76,27 +75,31 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         String pid = event.getId();
 
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-
-            Properties clusterDictionary = clusterConfigurations.get(pid);
+            Dictionary clusterDictionary = clusterConfigurations.get(pid);
             try {
                 // update the local configuration
-                Configuration[] localConfigurations = configurationAdmin.listConfigurations("(service.pid=" + pid + ")");
+                Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
+
                 if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
                     // delete the configuration
-                    if (localConfigurations != null && localConfigurations.length > 0) {
-                        localConfigurations[0].delete();
-                        deleteStorage(pid);
+                    if (localConfiguration != null) {
+                        deleteConfiguration(localConfiguration);
                     }
                 } else {
-                    if (clusterDictionary != null) {
-                        Configuration localConfiguration = configurationAdmin.getConfiguration(pid, null);
+                    if (clusterDictionary != null && shouldReplicateConfig(clusterDictionary)) {
+                        if (localConfiguration == null) {
+                            // Create new configuration
+                            localConfiguration = createLocalConfiguration(pid, clusterDictionary);
+                        }
                         Dictionary localDictionary = localConfiguration.getProperties();
                         if (localDictionary == null)
                             localDictionary = new Properties();
                         localDictionary = filter(localDictionary);
-                        if (!equals(clusterDictionary, localDictionary)) {
-                            localConfiguration.update((Dictionary) clusterDictionary);
-                            persistConfiguration(configurationAdmin, pid, clusterDictionary);
+                        if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
+                            Dictionary convertedDictionary = convertPropertiesFromCluster(clusterDictionary);
+
+                            localConfiguration.update(convertedDictionary);
+                            persistConfiguration(localConfiguration, clusterDictionary);
                         }
                     }
                 }

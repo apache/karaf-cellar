@@ -70,8 +70,17 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                         if (event.getType() == ConfigurationEvent.CM_DELETED) {
 
                             if (clusterConfigurations.containsKey(pid)) {
-                                // update the configurations in the cluster group
-                                clusterConfigurations.remove(pid);
+                                String filename = (String) clusterConfigurations.get(pid).get(KARAF_CELLAR_FILENAME);
+                                List<String> matchingPids = new ArrayList<String>();
+                                for (Map.Entry<String, Properties> entry : clusterConfigurations.entrySet()) {
+                                    if (filename.equals(entry.getValue().get(KARAF_CELLAR_FILENAME))) {
+                                        matchingPids.add(entry.getKey());
+                                    }
+                                }
+                                for (String matchingPid : matchingPids) {
+                                    // update the configurations in the cluster group
+                                    clusterConfigurations.put(matchingPid, getDeletedConfigurationMarker(clusterConfigurations.get(matchingPid)));
+                                }
                                 // send the cluster event
                                 ClusterConfigurationEvent clusterConfigurationEvent = new ClusterConfigurationEvent(pid);
                                 clusterConfigurationEvent.setType(event.getType());
@@ -80,7 +89,6 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                                 clusterConfigurationEvent.setLocal(clusterManager.getNode());
                                 eventProducer.produce(clusterConfigurationEvent);
                             }
-
                         } else {
 
                             Configuration conf = configurationAdmin.getConfiguration(pid, null);
@@ -89,7 +97,7 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
 
                             Properties distributedDictionary = clusterConfigurations.get(pid);
 
-                            if (!equals(localDictionary, distributedDictionary)) {
+                            if (!equals(localDictionary, distributedDictionary) && canDistributeConfig(localDictionary)) {
                                 // update the configurations in the cluster group
                                 clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                                 // send the cluster event

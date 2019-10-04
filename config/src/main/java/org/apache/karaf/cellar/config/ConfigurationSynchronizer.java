@@ -28,10 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Dictionary;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The ConfigurationSynchronizer is called when Cellar starts or when a node joins a cluster group.
@@ -125,20 +122,25 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
 
                 // get configurations on the cluster to update local configurations
                 for (String pid : clusterConfigurations.keySet()) {
-                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                    if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND) && shouldReplicateConfig(clusterConfigurations.get(pid))) {
                         Dictionary clusterDictionary = clusterConfigurations.get(pid);
                         try {
                             // update the local configuration if needed
-                            Configuration localConfiguration = configurationAdmin.getConfiguration(pid, null);
+                            Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
+                            if (localConfiguration == null) {
+                                // Create new configuration
+                                localConfiguration = createLocalConfiguration(pid, clusterDictionary);
+                            }
                             Dictionary localDictionary = localConfiguration.getProperties();
                             if (localDictionary == null)
                                 localDictionary = new Properties();
 
                             localDictionary = filter(localDictionary);
-                            if (!equals(clusterDictionary, localDictionary)) {
+                            if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary) && shouldReplicateConfig(clusterDictionary)) {
                                 LOGGER.debug("CELLAR CONFIG: updating configration {} on node", pid);
+                                clusterDictionary = convertPropertiesFromCluster(clusterDictionary);
                                 localConfiguration.update((Dictionary) clusterDictionary);
-                                persistConfiguration(configurationAdmin, pid, clusterDictionary);
+                                persistConfiguration(localConfiguration, clusterDictionary);
                             }
                         } catch (IOException ex) {
                             LOGGER.error("CELLAR CONFIG: failed to read local configuration", ex);
@@ -148,16 +150,26 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 // cleanup the local configurations not present on the cluster if the node is not the first one in the cluster
                 if (clusterManager.listNodesByGroup(group).size() > 1) {
                     try {
+                        Set<String> filenames = new HashSet();
+                        for (Properties configuration : clusterConfigurations.values()) {
+                            if (shouldReplicateConfig(configuration)) {
+                                filenames.add(getKarafFilename(configuration));
+                            }
+                        }
+                        filenames.remove(null);
                         for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
                             String pid = configuration.getPid();
-                            if (!clusterConfigurations.containsKey(pid) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
-                                configuration.delete();
+                            if ((!clusterConfigurations.containsKey(pid) || !shouldReplicateConfig(clusterConfigurations.get(pid))) && !filenames.contains(getKarafFilename(configuration.getProperties())) && isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND)) {
+                                LOGGER.debug("CELLAR CONFIG: deleting local configuration {} which is not present in cluster", pid);
+                                deleteConfiguration(configuration);
                             }
                         }
                     } catch (Exception e) {
                         LOGGER.warn("Can't get local configurations", e);
                     }
                 }
+            } catch (Exception ex) {
+                LOGGER.error("CELLAR CONFIG: failed to read cluster configuration", ex);
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
@@ -206,7 +218,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                                 eventProducer.produce(event);
                             } else {
                                 Dictionary clusterDictionary = clusterConfigurations.get(pid);
-                                if (!equals(clusterDictionary, localDictionary)) {
+                                if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
                                     LOGGER.debug("CELLAR CONFIG: updating configuration pid {} on the cluster", pid);
                                     // update cluster configurations
                                     clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
@@ -224,14 +236,7 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     // clean configurations on the cluster not present locally
                     for (String pid : clusterConfigurations.keySet()) {
                         if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                            boolean found = false;
-                            for (Configuration configuration : configurationAdmin.listConfigurations(null)) {
-                                if (configuration.getPid().equals(pid)) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (!found) {
+                            if (findLocalConfiguration(pid,clusterConfigurations.get(pid)) == null) {
                                 clusterConfigurations.remove(pid);
                             }
                         }

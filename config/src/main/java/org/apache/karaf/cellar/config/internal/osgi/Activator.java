@@ -97,6 +97,7 @@ public class Activator extends BaseActivator implements ManagedService {
         localConfigurationListener.setGroupManager(groupManager);
         localConfigurationListener.setConfigurationAdmin(configurationAdmin);
         localConfigurationListener.setEventProducer(eventProducer);
+        localConfigurationListener.setStorage(storage);
         localConfigurationListener.init();
         register(ConfigurationListener.class, localConfigurationListener);
 
