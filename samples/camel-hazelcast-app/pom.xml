@@ -34,7 +34,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <camel.version>2.9.0</camel.version>
+        <camel.version>2.24.2</camel.version>
     </properties>
 
     <modules>
