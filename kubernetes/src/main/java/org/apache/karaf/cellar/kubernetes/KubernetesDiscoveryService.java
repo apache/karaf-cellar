@@ -20,6 +20,7 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 
+import okhttp3.TlsVersion;
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,8 +36,29 @@ public class KubernetesDiscoveryService implements DiscoveryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KubernetesDiscoveryService.class);
 
-    private String kubernetesHost;
-    private String kubernetesPort;
+    private String kubernetesMaster;
+    private String kubernetesApiVersion;
+    private String kubernetesTrustCertificates;
+    private String kubernetesDisableHostnameVerification;
+    private String kubernetesCertsCaFile;
+    private String kubernetesCertsCaData;
+    private String kubernetesCertsClientFile;
+    private String kubernetesCertsClientData;
+    private String kubernetesCertsClientKeyFile;
+    private String kubernetesCertsClientKeyData;
+    private String kubernetesCertsClientKeyAlgo;
+    private String kubernetesCertsClientKeyPassphrase;
+    private String kubernetesAuthBasicUsername;
+    private String kubernetesAuthBasicPassword;
+    private String kubernetesOauthToken;
+    private int kubernetesWatchReconnectInterval;
+    private int kubernetesWatchReconnectLimit;
+    private String kubernetesUserAgent;
+    private String kubernetesTlsVersion;
+    private String kubernetesTruststoreFile;
+    private String kubernetesTruststorePassphrase;
+    private String kubernetesKeystoreFile;
+    private String kubernetesKeystorePassphrase;
     private String kubernetesPodLabelKey;
     private String kubernetesPodLabelValue;
 
@@ -48,9 +70,32 @@ public class KubernetesDiscoveryService implements DiscoveryService {
 
     public void init() {
         try {
-            String kubernetesUrl = "http://" + kubernetesHost + ":" + kubernetesPort;
-            LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesUrl);
-            Config config = new ConfigBuilder().withMasterUrl(kubernetesUrl).build();
+            LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesMaster);
+            Config config = new ConfigBuilder()
+                    .withMasterUrl(kubernetesMaster)
+                    .withApiVersion(kubernetesApiVersion)
+                    .withTrustCerts(Boolean.parseBoolean(kubernetesTrustCertificates))
+                    .withDisableHostnameVerification(Boolean.parseBoolean(kubernetesDisableHostnameVerification))
+                    .withCaCertFile(kubernetesCertsCaFile)
+                    .withCaCertData(kubernetesCertsCaData)
+                    .withClientCertFile(kubernetesCertsClientFile)
+                    .withClientCertData(kubernetesCertsClientData)
+                    .withClientKeyFile(kubernetesCertsClientKeyFile)
+                    .withClientKeyData(kubernetesCertsClientKeyData)
+                    .withClientKeyAlgo(kubernetesCertsClientKeyAlgo)
+                    .withClientKeyPassphrase(kubernetesCertsClientKeyPassphrase)
+                    .withUsername(kubernetesAuthBasicUsername)
+                    .withPassword(kubernetesAuthBasicPassword)
+                    .withOauthToken(kubernetesOauthToken)
+                    .withWatchReconnectInterval(kubernetesWatchReconnectInterval)
+                    .withWatchReconnectLimit(kubernetesWatchReconnectLimit)
+                    .withUserAgent(kubernetesUserAgent)
+                    .withTlsVersions(TlsVersion.forJavaName(kubernetesTlsVersion))
+                    .withTrustStoreFile(kubernetesTruststoreFile)
+                    .withTrustStorePassphrase(kubernetesTruststorePassphrase)
+                    .withKeyStoreFile(kubernetesKeystoreFile)
+                    .withKeyStorePassphrase(kubernetesKeystorePassphrase)
+                    .build();
             kubernetesClient = new DefaultKubernetesClient(config);
             LOGGER.debug("CELLAR KUBERNETES: discovery service initialized");
         } catch (Exception e) {
@@ -99,22 +144,6 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         // nothing to do for Kubernetes
     }
 
-    public String getKubernetesHost() {
-        return kubernetesHost;
-    }
-
-    public void setKubernetesHost(String kubernetesHost) {
-        this.kubernetesHost = kubernetesHost;
-    }
-
-    public String getKubernetesPort() {
-        return kubernetesPort;
-    }
-
-    public void setKubernetesPort(String kubernetesPort) {
-        this.kubernetesPort = kubernetesPort;
-    }
-
     public String getKubernetesPodLabelKey() {
         return kubernetesPodLabelKey;
     }
@@ -131,4 +160,187 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         this.kubernetesPodLabelValue = kubernetesPodLabelValue;
     }
 
+    public String getKubernetesMaster() {
+        return kubernetesMaster;
+    }
+
+    public void setKubernetesMaster(String kubernetesMaster) {
+        this.kubernetesMaster = kubernetesMaster;
+    }
+
+    public String getKubernetesApiVersion() {
+        return kubernetesApiVersion;
+    }
+
+    public void setKubernetesApiVersion(String kubernetesApiVersion) {
+        this.kubernetesApiVersion = kubernetesApiVersion;
+    }
+
+    public String getKubernetesTrustCertificates() {
+        return kubernetesTrustCertificates;
+    }
+
+    public void setKubernetesTrustCertificates(String kubernetesTrustCertificates) {
+        this.kubernetesTrustCertificates = kubernetesTrustCertificates;
+    }
+
+    public String getKubernetesDisableHostnameVerification() {
+        return kubernetesDisableHostnameVerification;
+    }
+
+    public void setKubernetesDisableHostnameVerification(String kubernetesDisableHostnameVerification) {
+        this.kubernetesDisableHostnameVerification = kubernetesDisableHostnameVerification;
+    }
+
+    public String getKubernetesCertsCaFile() {
+        return kubernetesCertsCaFile;
+    }
+
+    public void setKubernetesCertsCaFile(String kubernetesCertsCaFile) {
+        this.kubernetesCertsCaFile = kubernetesCertsCaFile;
+    }
+
+    public String getKubernetesCertsCaData() {
+        return kubernetesCertsCaData;
+    }
+
+    public void setKubernetesCertsCaData(String kubernetesCertsCaData) {
+        this.kubernetesCertsCaData = kubernetesCertsCaData;
+    }
+
+    public String getKubernetesCertsClientFile() {
+        return kubernetesCertsClientFile;
+    }
+
+    public void setKubernetesCertsClientFile(String kubernetesCertsClientFile) {
+        this.kubernetesCertsClientFile = kubernetesCertsClientFile;
+    }
+
+    public String getKubernetesCertsClientData() {
+        return kubernetesCertsClientData;
+    }
+
+    public void setKubernetesCertsClientData(String kubernetesCertsClientData) {
+        this.kubernetesCertsClientData = kubernetesCertsClientData;
+    }
+
+    public String getKubernetesCertsClientKeyFile() {
+        return kubernetesCertsClientKeyFile;
+    }
+
+    public void setKubernetesCertsClientKeyFile(String kubernetesCertsClientKeyFile) {
+        this.kubernetesCertsClientKeyFile = kubernetesCertsClientKeyFile;
+    }
+
+    public String getKubernetesCertsClientKeyData() {
+        return kubernetesCertsClientKeyData;
+    }
+
+    public void setKubernetesCertsClientKeyData(String kubernetesCertsClientKeyData) {
+        this.kubernetesCertsClientKeyData = kubernetesCertsClientKeyData;
+    }
+
+    public String getKubernetesCertsClientKeyAlgo() {
+        return kubernetesCertsClientKeyAlgo;
+    }
+
+    public void setKubernetesCertsClientKeyAlgo(String kubernetesCertsClientKeyAlgo) {
+        this.kubernetesCertsClientKeyAlgo = kubernetesCertsClientKeyAlgo;
+    }
+
+    public String getKubernetesCertsClientKeyPassphrase() {
+        return kubernetesCertsClientKeyPassphrase;
+    }
+
+    public void setKubernetesCertsClientKeyPassphrase(String kubernetesCertsClientKeyPassphrase) {
+        this.kubernetesCertsClientKeyPassphrase = kubernetesCertsClientKeyPassphrase;
+    }
+
+    public String getKubernetesAuthBasicUsername() {
+        return kubernetesAuthBasicUsername;
+    }
+
+    public void setKubernetesAuthBasicUsername(String kubernetesAuthBasicUsername) {
+        this.kubernetesAuthBasicUsername = kubernetesAuthBasicUsername;
+    }
+
+    public String getKubernetesAuthBasicPassword() {
+        return kubernetesAuthBasicPassword;
+    }
+
+    public void setKubernetesAuthBasicPassword(String kubernetesAuthBasicPassword) {
+        this.kubernetesAuthBasicPassword = kubernetesAuthBasicPassword;
+    }
+
+    public String getKubernetesOauthToken() {
+        return kubernetesOauthToken;
+    }
+
+    public void setKubernetesOauthToken(String kubernetesOauthToken) {
+        this.kubernetesOauthToken = kubernetesOauthToken;
+    }
+
+    public int getKubernetesWatchReconnectInterval() {
+        return kubernetesWatchReconnectInterval;
+    }
+
+    public void setKubernetesWatchReconnectInterval(String kubernetesWatchReconnectInterval) {
+        this.kubernetesWatchReconnectInterval = Integer.parseInt(kubernetesWatchReconnectInterval);
+    }
+
+    public int getKubernetesWatchReconnectLimit() {
+        return kubernetesWatchReconnectLimit;
+    }
+
+    public void setKubernetesWatchReconnectLimit(String kubernetesWatchReconnectLimit) {
+        this.kubernetesWatchReconnectLimit = Integer.parseInt(kubernetesWatchReconnectLimit);
+    }
+
+    public String getKubernetesUserAgent() {
+        return kubernetesUserAgent;
+    }
+
+    public void setKubernetesUserAgent(String kubernetesUserAgent) {
+        this.kubernetesUserAgent = kubernetesUserAgent;
+    }
+
+    public String getKubernetesTlsVersion() {
+        return kubernetesTlsVersion;
+    }
+
+    public void setKubernetesTlsVersion(String kubernetesTlsVersion) {
+        this.kubernetesTlsVersion = kubernetesTlsVersion;
+    }
+
+    public String getKubernetesTruststoreFile() {
+        return kubernetesTruststoreFile;
+    }
+
+    public void setKubernetesTruststoreFile(String kubernetesTruststoreFile) {
+        this.kubernetesTruststoreFile = kubernetesTruststoreFile;
+    }
+
+    public String getKubernetesTruststorePassphrase() {
+        return kubernetesTruststorePassphrase;
+    }
+
+    public void setKubernetesTruststorePassphrase(String kubernetesTruststorePassphrase) {
+        this.kubernetesTruststorePassphrase = kubernetesTruststorePassphrase;
+    }
+
+    public String getKubernetesKeystoreFile() {
+        return kubernetesKeystoreFile;
+    }
+
+    public void setKubernetesKeystoreFile(String kubernetesKeystoreFile) {
+        this.kubernetesKeystoreFile = kubernetesKeystoreFile;
+    }
+
+    public String getKubernetesKeystorePassphrase() {
+        return kubernetesKeystorePassphrase;
+    }
+
+    public void setKubernetesKeystorePassphrase(String kubernetesKeystorePassphrase) {
+        this.kubernetesKeystorePassphrase = kubernetesKeystorePassphrase;
+    }
 }
