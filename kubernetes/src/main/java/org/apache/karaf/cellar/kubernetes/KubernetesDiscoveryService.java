@@ -68,34 +68,38 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         LOGGER.debug("CELLAR KUBERNETES: create discovery service");
     }
 
+    Config createConfig() {
+        return new ConfigBuilder()
+                .withMasterUrl(kubernetesMaster)
+                .withApiVersion(kubernetesApiVersion)
+                .withTrustCerts(Boolean.parseBoolean(kubernetesTrustCertificates))
+                .withDisableHostnameVerification(Boolean.parseBoolean(kubernetesDisableHostnameVerification))
+                .withCaCertFile(kubernetesCertsCaFile)
+                .withCaCertData(kubernetesCertsCaData)
+                .withClientCertFile(kubernetesCertsClientFile)
+                .withClientCertData(kubernetesCertsClientData)
+                .withClientKeyFile(kubernetesCertsClientKeyFile)
+                .withClientKeyData(kubernetesCertsClientKeyData)
+                .withClientKeyAlgo(kubernetesCertsClientKeyAlgo)
+                .withClientKeyPassphrase(kubernetesCertsClientKeyPassphrase)
+                .withUsername(kubernetesAuthBasicUsername)
+                .withPassword(kubernetesAuthBasicPassword)
+                .withOauthToken(kubernetesOauthToken)
+                .withWatchReconnectInterval(kubernetesWatchReconnectInterval)
+                .withWatchReconnectLimit(kubernetesWatchReconnectLimit)
+                .withUserAgent(kubernetesUserAgent)
+                .withTlsVersions(TlsVersion.forJavaName(kubernetesTlsVersion))
+                .withTrustStoreFile(kubernetesTruststoreFile)
+                .withTrustStorePassphrase(kubernetesTruststorePassphrase)
+                .withKeyStoreFile(kubernetesKeystoreFile)
+                .withKeyStorePassphrase(kubernetesKeystorePassphrase)
+                .build();
+    }
+
     public void init() {
         try {
             LOGGER.debug("CELLAR KUBERNETES: query API at {} ...", kubernetesMaster);
-            Config config = new ConfigBuilder()
-                    .withMasterUrl(kubernetesMaster)
-                    .withApiVersion(kubernetesApiVersion)
-                    .withTrustCerts(Boolean.parseBoolean(kubernetesTrustCertificates))
-                    .withDisableHostnameVerification(Boolean.parseBoolean(kubernetesDisableHostnameVerification))
-                    .withCaCertFile(kubernetesCertsCaFile)
-                    .withCaCertData(kubernetesCertsCaData)
-                    .withClientCertFile(kubernetesCertsClientFile)
-                    .withClientCertData(kubernetesCertsClientData)
-                    .withClientKeyFile(kubernetesCertsClientKeyFile)
-                    .withClientKeyData(kubernetesCertsClientKeyData)
-                    .withClientKeyAlgo(kubernetesCertsClientKeyAlgo)
-                    .withClientKeyPassphrase(kubernetesCertsClientKeyPassphrase)
-                    .withUsername(kubernetesAuthBasicUsername)
-                    .withPassword(kubernetesAuthBasicPassword)
-                    .withOauthToken(kubernetesOauthToken)
-                    .withWatchReconnectInterval(kubernetesWatchReconnectInterval)
-                    .withWatchReconnectLimit(kubernetesWatchReconnectLimit)
-                    .withUserAgent(kubernetesUserAgent)
-                    .withTlsVersions(TlsVersion.forJavaName(kubernetesTlsVersion))
-                    .withTrustStoreFile(kubernetesTruststoreFile)
-                    .withTrustStorePassphrase(kubernetesTruststorePassphrase)
-                    .withKeyStoreFile(kubernetesKeystoreFile)
-                    .withKeyStorePassphrase(kubernetesKeystorePassphrase)
-                    .build();
+            Config config = createConfig();
             kubernetesClient = new DefaultKubernetesClient(config);
             LOGGER.debug("CELLAR KUBERNETES: discovery service initialized");
         } catch (Exception e) {
