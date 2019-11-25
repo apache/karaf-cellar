@@ -65,9 +65,9 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
 
     // Deprecated constants, use the fabric8 default ones -> see io.fabric8.kubernetes.client.Config
     @Deprecated
-    private static final String KUBERNETES_HOST = "host";
+    static final String KUBERNETES_HOST = "host";
     @Deprecated
-    private static final String KUBERNETES_PORT = "port";
+    static final String KUBERNETES_PORT = "port";
 
     private static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
     private static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";

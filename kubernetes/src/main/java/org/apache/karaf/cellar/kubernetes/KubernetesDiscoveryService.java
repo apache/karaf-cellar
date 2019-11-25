@@ -289,7 +289,9 @@ public class KubernetesDiscoveryService implements DiscoveryService {
     }
 
     public void setKubernetesWatchReconnectInterval(String kubernetesWatchReconnectInterval) {
-        this.kubernetesWatchReconnectInterval = Integer.parseInt(kubernetesWatchReconnectInterval);
+        if (kubernetesWatchReconnectInterval != null) {
+            this.kubernetesWatchReconnectInterval = Integer.parseInt(kubernetesWatchReconnectInterval);
+        }
     }
 
     public int getKubernetesWatchReconnectLimit() {
@@ -297,7 +299,9 @@ public class KubernetesDiscoveryService implements DiscoveryService {
     }
 
     public void setKubernetesWatchReconnectLimit(String kubernetesWatchReconnectLimit) {
-        this.kubernetesWatchReconnectLimit = Integer.parseInt(kubernetesWatchReconnectLimit);
+        if (kubernetesWatchReconnectLimit != null) {
+            this.kubernetesWatchReconnectLimit = Integer.parseInt(kubernetesWatchReconnectLimit);
+        }
     }
 
     public String getKubernetesUserAgent() {
