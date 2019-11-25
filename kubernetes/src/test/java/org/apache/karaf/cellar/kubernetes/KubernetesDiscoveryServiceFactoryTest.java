@@ -10,6 +10,7 @@ import org.osgi.framework.ServiceRegistration;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import static org.apache.karaf.cellar.kubernetes.KubernetesDiscoveryServiceTest.EXPECTED_KUBERNETES_MASTER;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -41,5 +42,25 @@ public class KubernetesDiscoveryServiceFactoryTest {
 
         KubernetesDiscoveryService registeredService = (KubernetesDiscoveryService)service.getValue();
         assertEquals("http://foo:55555", registeredService.getKubernetesMaster());
+    }
+
+    @Test
+    public void verifyUpdatedNewMasterHasPrecedence() throws Exception {
+        properties.put(KubernetesDiscoveryServiceFactory.KUBERNETES_HOST, "foo");
+        properties.put(KubernetesDiscoveryServiceFactory.KUBERNETES_PORT, "55555");
+        properties.put(ConfigKey.KUBERNETES_MASTER.propertyName, EXPECTED_KUBERNETES_MASTER);
+
+        Capture<Object> service = newCapture();
+        Capture<Dictionary<String, ?>> serviceProperties = newCapture();
+
+        expect(bundleContext.registerService(
+                eq(DiscoveryService.class.getName()),
+                capture(service),
+                capture(serviceProperties))).andReturn(registration);
+        replay(bundleContext);
+        serviceFactory.updated(ANY_PID, properties);
+
+        KubernetesDiscoveryService registeredService = (KubernetesDiscoveryService)service.getValue();
+        assertEquals(EXPECTED_KUBERNETES_MASTER, registeredService.getKubernetesMaster());
     }
 }
