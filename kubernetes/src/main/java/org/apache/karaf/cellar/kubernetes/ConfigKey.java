@@ -1,6 +1,8 @@
 package org.apache.karaf.cellar.kubernetes;
 
 import io.fabric8.kubernetes.client.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Dictionary;
 
@@ -32,6 +34,7 @@ public enum ConfigKey {
     KUBERNETES_TRUSTSTORE_PASSPHRASE(Config.KUBERNETES_TRUSTSTORE_PASSPHRASE_PROPERTY),
     KUBERNETES_KEYSTORE_FILE(Config.KUBERNETES_KEYSTORE_FILE_PROPERTY),
     KUBERNETES_KEYSTORE_PASSPHRASE(Config.KUBERNETES_KEYSTORE_PASSPHRASE_PROPERTY);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigKey.class);
     String propertyName;
 
     ConfigKey(String propertyName) {
@@ -41,13 +44,16 @@ public enum ConfigKey {
     public String getValue(Dictionary properties) {
         // Highest priority
         String value = (String)properties.get(propertyName);
+        LOGGER.debug("Properties : {}", value);
 
         if (value == null) {
             // Second priority
             value = System.getProperty(propertyName);
+            LOGGER.debug("System properties : {}", value);
 
             if (value == null) {
                 value = System.getenv(name());
+                LOGGER.debug("Environment variables : {}", value);
             }
         }
 

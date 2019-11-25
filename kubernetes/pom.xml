@@ -47,6 +47,12 @@
             <artifactId>kubernetes-client</artifactId>
         </dependency>
 
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
         <!-- OSGi -->
         <dependency>
             <groupId>org.apache.karaf</groupId>
