@@ -1,6 +1,8 @@
 package org.apache.karaf.cellar.kubernetes;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -10,6 +12,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -19,6 +22,7 @@ public class ConfigKeyTest {
     private static final String EXPECTED_PROP_VALUE = "properties value";
     private static final String EXPECTED_SYSPROP_VALUE = "system properties value";
     private static final String EXPECTED_ENVVAR_VALUE = "envvar value";
+    private Properties originalProperties = new Properties();
 
     public static class GetValueTestRun {
 
@@ -36,6 +40,16 @@ public class ConfigKeyTest {
             }
         }
 
+    }
+
+    @Before
+    public void setup() {
+        originalProperties.putAll(System.getProperties());
+    }
+
+    @After
+    public void tearDown() {
+        System.setProperties(originalProperties);
     }
 
     private void verifyEnvvar(ConfigKey key) throws Exception {
