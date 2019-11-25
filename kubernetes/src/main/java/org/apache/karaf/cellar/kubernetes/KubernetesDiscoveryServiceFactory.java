@@ -69,8 +69,10 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
     @Deprecated
     static final String KUBERNETES_PORT = "port";
 
-    private static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
-    private static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";
+    static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
+    static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";
+    static final String DEFAULT_POD_LABEL_KEY = "name";
+    static final String DEFAULT_POD_LABEL_VALUE = "cellar";
 
     private final Map<String, ServiceRegistration> registrations = new ConcurrentHashMap<String, ServiceRegistration>();
 
@@ -114,11 +116,11 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
                 }
                 String kubernetesPodLabelKey = (String) properties.get(KUBERNETES_POD_LABEL_KEY);
                 if (kubernetesPodLabelKey == null) {
-                    kubernetesPodLabelKey = "name";
+                    kubernetesPodLabelKey = DEFAULT_POD_LABEL_KEY;
                 }
                 String kubernetesPodLabelValue = (String) properties.get(KUBERNETES_POD_LABEL_VALUE);
                 if (kubernetesPodLabelValue == null) {
-                    kubernetesPodLabelValue = "cellar";
+                    kubernetesPodLabelValue = DEFAULT_POD_LABEL_VALUE;
                 }
 
 

@@ -38,8 +38,8 @@ public class KubernetesDiscoveryService implements DiscoveryService {
 
     private String kubernetesMaster;
     private String kubernetesApiVersion;
-    private String kubernetesTrustCertificates;
-    private String kubernetesDisableHostnameVerification;
+    private boolean kubernetesTrustCertificates;
+    private boolean kubernetesDisableHostnameVerification;
     private String kubernetesCertsCaFile;
     private String kubernetesCertsCaData;
     private String kubernetesCertsClientFile;
@@ -72,8 +72,8 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         return new ConfigBuilder()
                 .withMasterUrl(kubernetesMaster)
                 .withApiVersion(kubernetesApiVersion)
-                .withTrustCerts(Boolean.parseBoolean(kubernetesTrustCertificates))
-                .withDisableHostnameVerification(Boolean.parseBoolean(kubernetesDisableHostnameVerification))
+                .withTrustCerts(kubernetesTrustCertificates)
+                .withDisableHostnameVerification(kubernetesDisableHostnameVerification)
                 .withCaCertFile(kubernetesCertsCaFile)
                 .withCaCertData(kubernetesCertsCaData)
                 .withClientCertFile(kubernetesCertsClientFile)
@@ -180,20 +180,24 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         this.kubernetesApiVersion = kubernetesApiVersion;
     }
 
-    public String getKubernetesTrustCertificates() {
+    public boolean isKubernetesTrustCertificates() {
         return kubernetesTrustCertificates;
     }
 
     public void setKubernetesTrustCertificates(String kubernetesTrustCertificates) {
-        this.kubernetesTrustCertificates = kubernetesTrustCertificates;
+        if (kubernetesTrustCertificates != null) {
+            this.kubernetesTrustCertificates = Boolean.parseBoolean(kubernetesTrustCertificates);
+        }
     }
 
-    public String getKubernetesDisableHostnameVerification() {
+    public boolean isKubernetesDisableHostnameVerification() {
         return kubernetesDisableHostnameVerification;
     }
 
     public void setKubernetesDisableHostnameVerification(String kubernetesDisableHostnameVerification) {
-        this.kubernetesDisableHostnameVerification = kubernetesDisableHostnameVerification;
+        if (kubernetesDisableHostnameVerification != null) {
+            this.kubernetesDisableHostnameVerification = Boolean.parseBoolean(kubernetesDisableHostnameVerification);
+        }
     }
 
     public String getKubernetesCertsCaFile() {
