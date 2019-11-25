@@ -13,13 +13,12 @@
  */
 package org.apache.karaf.cellar.kubernetes;
 
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
-import io.fabric8.kubernetes.api.model.Pod;
-import io.fabric8.kubernetes.api.model.PodList;
-
 import okhttp3.TlsVersion;
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.slf4j.Logger;
@@ -146,6 +145,10 @@ public class KubernetesDiscoveryService implements DiscoveryService {
     @Override
     public void signOut() {
         // nothing to do for Kubernetes
+    }
+
+    void setKubernetesClient(KubernetesClient kubernetesClient) {
+        this.kubernetesClient = kubernetesClient;
     }
 
     public String getKubernetesPodLabelKey() {

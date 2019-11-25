@@ -1,37 +1,84 @@
 package org.apache.karaf.cellar.kubernetes;
 
+import io.fabric8.kubernetes.api.model.DoneablePod;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodList;
+import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.Config;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.PodResource;
 import okhttp3.TlsVersion;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.mock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class KubernetesDiscoveryServiceTest {
-    static String EXPECTED_KUBERNETES_MASTER = "http://master/";
-    static String EXPECTED_KUBERNETES_API_VERSION = "api version";
-    static String EXPECTED_KUBERNETES_TRUST_CERTIFICATES = "true";
-    static String EXPECTED_KUBERNETES_DISABLE_HOSTNAME_VERIFICATION = "true";
-    static String EXPECTED_KUBERNETES_CERTS_CA_FILE = "certs ca file";
-    static String EXPECTED_KUBERNETES_CERTS_CA_DATA = "certs ca data";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_FILE = "certs client file";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_DATA = "certs client data";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_FILE = "certs client key file";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_DATA = "certs client key data";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_ALGO = "certs client key algo";
-    static String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_PASSPHRASE = "certs client key passphrase";
-    static String EXPECTED_KUBERNETES_AUTH_BASIC_USERNAME = "auth basic username";
-    static String EXPECTED_KUBERNETES_AUTH_BASIC_PASSWORD = "auth basic password";
-    static String EXPECTED_KUBERNETES_OAUTH_TOKEN = "oauth token";
-    static String EXPECTED_KUBERNETES_WATCH_RECONNECT_INTERVAL = "10";
-    static String EXPECTED_KUBERNETES_WATCH_RECONNECT_LIMIT = "20";
-    static String EXPECTED_KUBERNETES_USER_AGENT = "user agent";
-    static String EXPECTED_KUBERNETES_TLS_VERSION = "TLSv1.3";
-    static String EXPECTED_KUBERNETES_TRUSTSTORE_FILE = "truststore file";
-    static String EXPECTED_KUBERNETES_TRUSTSTORE_PASSPHRASE = "truststore passphrase";
-    static String EXPECTED_KUBERNETES_KEYSTORE_FILE = "keystore file";
-    static String EXPECTED_KUBERNETES_KEYSTORE_PASSPHRASE = "keystore passphrase";
-    private KubernetesDiscoveryService service = new KubernetesDiscoveryService();
+    static final String EXPECTED_KUBERNETES_MASTER = "http://master/";
+    static final String EXPECTED_KUBERNETES_API_VERSION = "api version";
+    static final String EXPECTED_KUBERNETES_TRUST_CERTIFICATES = "true";
+    static final String EXPECTED_KUBERNETES_DISABLE_HOSTNAME_VERIFICATION = "true";
+    static final String EXPECTED_KUBERNETES_CERTS_CA_FILE = "certs ca file";
+    static final String EXPECTED_KUBERNETES_CERTS_CA_DATA = "certs ca data";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_FILE = "certs client file";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_DATA = "certs client data";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_FILE = "certs client key file";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_DATA = "certs client key data";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_ALGO = "certs client key algo";
+    static final String EXPECTED_KUBERNETES_CERTS_CLIENT_KEY_PASSPHRASE = "certs client key passphrase";
+    static final String EXPECTED_KUBERNETES_AUTH_BASIC_USERNAME = "auth basic username";
+    static final String EXPECTED_KUBERNETES_AUTH_BASIC_PASSWORD = "auth basic password";
+    static final String EXPECTED_KUBERNETES_OAUTH_TOKEN = "oauth token";
+    static final String EXPECTED_KUBERNETES_WATCH_RECONNECT_INTERVAL = "10";
+    static final String EXPECTED_KUBERNETES_WATCH_RECONNECT_LIMIT = "20";
+    static final String EXPECTED_KUBERNETES_USER_AGENT = "user agent";
+    static final String EXPECTED_KUBERNETES_TLS_VERSION = "TLSv1.3";
+    static final String EXPECTED_KUBERNETES_TRUSTSTORE_FILE = "truststore file";
+    static final String EXPECTED_KUBERNETES_TRUSTSTORE_PASSPHRASE = "truststore passphrase";
+    static final String EXPECTED_KUBERNETES_KEYSTORE_FILE = "keystore file";
+    static final String EXPECTED_KUBERNETES_KEYSTORE_PASSPHRASE = "keystore passphrase";
+    static final String EXPECTED_KUBERNETES_POD_LABEL_KEY = "pod label key";
+    static final String EXPECTED_KUBERNETES_POD_LABEL_VALUE = "pod label value";
+    static final String EXPECTED_POD_ID = "192.168.0.1";
+    private KubernetesClient kubernetesClient = mock(KubernetesClient.class);
+    private final MixedOperation<Pod, PodList, DoneablePod, PodResource<Pod, DoneablePod>> pods = mock(MixedOperation.class);
+    private final PodList podList = new PodList();
+    private final KubernetesDiscoveryService service = new KubernetesDiscoveryService();
+    private final Pod pod = new Pod();
+    private final ObjectMeta metadata = new ObjectMeta();
+    private final PodStatus status = new PodStatus();
+    private final List<Pod> items = Arrays.asList(pod);
+    private final Map<String, String> labels = new HashMap<>();
+
+    @Before
+    public void setup() {
+        labels.put(EXPECTED_KUBERNETES_POD_LABEL_KEY, EXPECTED_KUBERNETES_POD_LABEL_VALUE);
+        service.setKubernetesPodLabelKey(EXPECTED_KUBERNETES_POD_LABEL_KEY);
+        service.setKubernetesPodLabelValue(EXPECTED_KUBERNETES_POD_LABEL_VALUE);
+        service.setKubernetesClient(kubernetesClient);
+
+        expect(kubernetesClient.pods()).andReturn(pods);
+        expect(pods.list()).andReturn(podList);
+        podList.setItems(items);
+        pod.setMetadata(metadata);
+        pod.setStatus(status);
+        metadata.setLabels(labels);
+        status.setPodIP(EXPECTED_POD_ID);
+        replay(kubernetesClient, pods);
+    }
 
     @Test
     public void createConfig() {
@@ -87,5 +134,34 @@ public class KubernetesDiscoveryServiceTest {
         assertEquals(EXPECTED_KUBERNETES_TRUSTSTORE_PASSPHRASE, config.getTrustStorePassphrase());
         assertEquals(EXPECTED_KUBERNETES_KEYSTORE_FILE, config.getKeyStoreFile());
         assertEquals(EXPECTED_KUBERNETES_KEYSTORE_PASSPHRASE, config.getKeyStorePassphrase());
+    }
+
+    @Test
+    public void discoverMembers() {
+        Set<String> memberIps = service.discoverMembers();
+        assertEquals(1, memberIps.size());
+        assertEquals(EXPECTED_POD_ID, memberIps.iterator().next());
+    }
+
+    @Test
+    public void discoverMembersUnexpectedPodLabelKey() {
+        service.setKubernetesPodLabelKey("unexpected");
+        assertTrue(service.discoverMembers().isEmpty());
+    }
+
+    @Test
+    public void discoverMembersUnexpectedPodLabelValue() {
+        service.setKubernetesPodLabelValue("unexpected");
+        assertTrue(service.discoverMembers().isEmpty());
+    }
+
+    @Test
+    public void discoverMembersLogException() {
+        reset(kubernetesClient);
+        expect(kubernetesClient.pods()).andThrow(new RuntimeException("Test exception"));
+        replay(kubernetesClient);
+
+        // Should return empty set because exception was caught and logged
+        assertTrue(service.discoverMembers().isEmpty());
     }
 }
