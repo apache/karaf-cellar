@@ -89,6 +89,13 @@ public class HazelcastConfigurationManager {
                           tcpIpConfig.getMembers().add(discoveredMember);
                        }
                     }
+                    Iterator<String> iterator = tcpIpConfig.getMembers().iterator();
+                    while(iterator.hasNext()) {
+                    	String member = iterator.next(); 
+                    	if(!discoveredMemberSet.contains(member)) {
+                    		iterator.remove();
+                    	}
+                    }
                     updated = Boolean.TRUE;
                 }
             }
