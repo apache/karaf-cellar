@@ -85,7 +85,7 @@ public class HazelcastConfigurationManager {
                     LOGGER.debug("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
                     discoveredMemberSet = newDiscoveredMemberSet;
                     for(String discoveredMember:discoveredMemberSet){
-                       if(discoveredMember!=null && !discoveredMember.equals("null") && !tcpIpConfig.getMembers().contains(discoveredMember)){
+                       if(!String.valueOf(discoveredMember).equals("null") && !tcpIpConfig.getMembers().contains(discoveredMember)){
                           tcpIpConfig.getMembers().add(discoveredMember);
                        }
                     }
