@@ -40,6 +40,7 @@ public class HazelcastConfigurationManager {
 
     private Set<String> discoveredMemberSet = new LinkedHashSet<String>();
     private List<DiscoveryService> discoveryServices;
+	private TcpIpConfig tcpIpConfig;
 
     /**
      * Build a Hazelcast {@link com.hazelcast.config.Config}.
@@ -64,7 +65,7 @@ public class HazelcastConfigurationManager {
                     LOGGER.trace("HAZELCAST STARTUP DISCOVERY: service {} found members {}", service, discovered);
                 }
             }
-            TcpIpConfig tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
+            tcpIpConfig = config.getNetworkConfig().getJoin().getTcpIpConfig();
             tcpIpConfig.getMembers().addAll(discoveredMemberSet);
         }
         return config;
@@ -83,6 +84,11 @@ public class HazelcastConfigurationManager {
                 if (!CellarUtils.collectionEquals(discoveredMemberSet, newDiscoveredMemberSet)) {
                     LOGGER.debug("Hazelcast discoveredMemberSet has been changed from {} to {}", discoveredMemberSet, newDiscoveredMemberSet);
                     discoveredMemberSet = newDiscoveredMemberSet;
+					for(String discoveredMember:discoveredMemberSet){
+						if(discoveredMember!=null && !tcpIpConfig.getMembers().contains(discoveredMember)){
+							tcpIpConfig.getMembers().add(discoveredMember);
+						}
+					}
                     updated = Boolean.TRUE;
                 }
             }
