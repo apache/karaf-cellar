@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>4.1.3-jahia1-SNAPSHOT</version>
+        <version>4.1.3-jahia1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -58,7 +58,7 @@
             <artifactId>org.osgi.compendium</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Karaf features -->
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
