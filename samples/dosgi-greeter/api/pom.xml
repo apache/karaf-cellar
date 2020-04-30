@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf.cellar.samples</groupId>
         <artifactId>dosgi-greeter</artifactId>
-        <version>4.1.3-jahia1</version>
+        <version>4.1.3-jahia2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
