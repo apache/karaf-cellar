@@ -26,7 +26,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationEvent;
-import org.osgi.service.cm.ConfigurationListener;
+import org.osgi.service.cm.SynchronousConfigurationListener;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.*;
  * The role of this class is to provide means of creating groups, setting nodes to groups etc.
  * Keep in sync the distributed group configuration with the locally persisted.
  */
-public class HazelcastGroupManager implements GroupManager, EntryListener<String,Object>, ConfigurationListener {
+public class HazelcastGroupManager implements GroupManager, EntryListener<String,Object>, SynchronousConfigurationListener {
 
     private static final transient Logger LOGGER = org.slf4j.LoggerFactory.getLogger(HazelcastGroupManager.class);
 
@@ -108,7 +108,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
         }
     }
 
-    private boolean updatePropertiesFromHazelcastMap(Dictionary<String, Object> properties, String key, Object value) {
+    private synchronized boolean updatePropertiesFromHazelcastMap(Dictionary<String, Object> properties, String key, Object value) {
         if (!(value instanceof Map)) {
             return false;
         }
@@ -145,7 +145,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
         return changed;
     }
 
-    private Map<String, Object> getUpdatesForHazelcastMap(Dictionary<String, Object> properties) {
+    private synchronized Map<String, Object> getUpdatesForHazelcastMap(Dictionary<String, Object> properties) {
         Map<String,Object> updates = new HashMap<String,Object>();
         if (properties == null) {
             return updates;
