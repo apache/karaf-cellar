@@ -27,6 +27,30 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_API_VERSION;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_AUTH_BASIC_PASSWORD;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_AUTH_BASIC_USERNAME;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_AUTH_TOKEN;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CA_DATA;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CA_FILE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_DATA;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_FILE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_ALGO;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_DATA;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_FILE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_PASSPHRASE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_DISABLE_HOSTNAME_VERIFICATION;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_KEYSTORE_FILE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_KEYSTORE_PASSPHRASE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_MASTER;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TLS_VERSIONS;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TRUSTSTORE_FILE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TRUSTSTORE_PASSPHRASE;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TRUST_CERTIFICATES;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_USER_AGENT;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_WATCH_RECONNECTINTERVAL;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_WATCH_RECONNECTLIMIT;
+
 /**
  * A factory for Kubernetes discovery services.
  */
@@ -39,10 +63,16 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KubernetesDiscoveryServiceFactory.class);
 
-    private static final String KUBERNETES_HOST = "host";
-    private static final String KUBERNETES_PORT = "port";
-    private static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
-    private static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";
+    // Deprecated constants, use the fabric8 default ones -> see io.fabric8.kubernetes.client.Config
+    @Deprecated
+    static final String KUBERNETES_HOST = "host";
+    @Deprecated
+    static final String KUBERNETES_PORT = "port";
+
+    static final String KUBERNETES_POD_LABEL_KEY = "pod.label.key";
+    static final String KUBERNETES_POD_LABEL_VALUE = "pod.label.value";
+    static final String DEFAULT_POD_LABEL_KEY = "name";
+    static final String DEFAULT_POD_LABEL_VALUE = "cellar";
 
     private final Map<String, ServiceRegistration> registrations = new ConcurrentHashMap<String, ServiceRegistration>();
 
@@ -86,15 +116,44 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
                 }
                 String kubernetesPodLabelKey = (String) properties.get(KUBERNETES_POD_LABEL_KEY);
                 if (kubernetesPodLabelKey == null) {
-                    kubernetesPodLabelKey = "name";
+                    kubernetesPodLabelKey = DEFAULT_POD_LABEL_KEY;
                 }
                 String kubernetesPodLabelValue = (String) properties.get(KUBERNETES_POD_LABEL_VALUE);
                 if (kubernetesPodLabelValue == null) {
-                    kubernetesPodLabelValue = "cellar";
+                    kubernetesPodLabelValue = DEFAULT_POD_LABEL_VALUE;
                 }
 
-                kubernetesDiscoveryService.setKubernetesHost(kubernetesHost);
-                kubernetesDiscoveryService.setKubernetesPort(kubernetesPort);
+
+                String kubernetesMaster = KUBERNETES_MASTER.getValue(properties);
+
+                // Keep compatibility with old configuration scheme
+                if (kubernetesMaster == null) {
+                    kubernetesMaster = "http://" + kubernetesHost + ":" + kubernetesPort;
+                }
+
+                kubernetesDiscoveryService.setKubernetesMaster(kubernetesMaster);
+                kubernetesDiscoveryService.setKubernetesApiVersion(KUBERNETES_API_VERSION.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesTrustCertificates(KUBERNETES_TRUST_CERTIFICATES.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesDisableHostnameVerification(KUBERNETES_DISABLE_HOSTNAME_VERIFICATION.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsCaFile(KUBERNETES_CERTS_CA_FILE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsCaData(KUBERNETES_CERTS_CA_DATA.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientFile(KUBERNETES_CERTS_CLIENT_FILE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientData(KUBERNETES_CERTS_CLIENT_DATA.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientKeyFile(KUBERNETES_CERTS_CLIENT_KEY_FILE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientKeyData(KUBERNETES_CERTS_CLIENT_KEY_DATA.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientKeyAlgo(KUBERNETES_CERTS_CLIENT_KEY_ALGO.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesCertsClientKeyPassphrase(KUBERNETES_CERTS_CLIENT_KEY_PASSPHRASE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesAuthBasicUsername(KUBERNETES_AUTH_BASIC_USERNAME.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesAuthBasicPassword(KUBERNETES_AUTH_BASIC_PASSWORD.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesOauthToken(KUBERNETES_AUTH_TOKEN.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesWatchReconnectInterval(KUBERNETES_WATCH_RECONNECTINTERVAL.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesWatchReconnectLimit(KUBERNETES_WATCH_RECONNECTLIMIT.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesUserAgent(KUBERNETES_USER_AGENT.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesTlsVersion(KUBERNETES_TLS_VERSIONS.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesTruststoreFile(KUBERNETES_TRUSTSTORE_FILE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesTruststorePassphrase(KUBERNETES_TRUSTSTORE_PASSPHRASE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesKeystoreFile(KUBERNETES_KEYSTORE_FILE.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesKeystorePassphrase(KUBERNETES_KEYSTORE_PASSPHRASE.getValue(properties));
                 kubernetesDiscoveryService.setKubernetesPodLabelKey(kubernetesPodLabelKey);
                 kubernetesDiscoveryService.setKubernetesPodLabelValue(kubernetesPodLabelValue);
 

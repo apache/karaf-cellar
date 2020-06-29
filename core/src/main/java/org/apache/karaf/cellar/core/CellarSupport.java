@@ -172,7 +172,6 @@ public class CellarSupport {
      * @param type the event type (inbound, outbound).
      */
     public Boolean isAllowed(Group group, String category, String event, EventType type) {
-        Boolean result = true;
         Set<String> whiteList = getListEntries(Configurations.WHITELIST, group, category, type);
         Set<String> blackList = getListEntries(Configurations.BLACKLIST, group, category, type);
 
@@ -183,21 +182,23 @@ public class CellarSupport {
         }
 
         // if no white listed items we assume all are accepted.
+        Boolean result = true;
         if (!whiteList.isEmpty()) {
             result = false;
             for (String whiteListItem : whiteList) {
-                if (wildCardMatch(event, whiteListItem))
+                if (wildCardMatch(event, whiteListItem)) {
                     result = true;
+                    break;
+                }
             }
         }
 
         if (result) {
+            // we passed whitelist, now check the blacklist
             // if any blackList item matched, then false is returned.
-            if (!blackList.isEmpty()) {
-                for (String blackListItem : blackList) {
-                    if (wildCardMatch(event, blackListItem)) {
-                        return false;
-                    }
+            for (String blackListItem : blackList) {
+                if (wildCardMatch(event, blackListItem)) {
+                    return false;
                 }
             }
         }
@@ -248,4 +249,8 @@ public class CellarSupport {
         this.groupManager = groupManager;
     }
 
+    @SuppressWarnings("unchecked")
+    protected Map<String, Boolean> getSynchronizerMap() {
+        return clusterManager.getMap("org.apache.karaf.cellar.synchronizers");
+    }
 }

@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.apache.karaf.features.BootFinished;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -32,10 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The BundleSynchronizer is called when Cellar starts or a node joins a cluster group.
@@ -128,6 +126,8 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
             try {
                 // get the bundles on the cluster to update local bundles
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+
+                List<String> bundleToStart = new ArrayList<String>();
                 for (Map.Entry<String, BundleState> entry : clusterBundles.entrySet()) {
                     String id = entry.getKey();
                     BundleState state = entry.getValue();
@@ -153,8 +153,9 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                             installBundleFromLocation(state.getLocation(), state.getStartLevel());
                                         }
                                         if (!isStarted(state.getLocation())) {
-                                            LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{} on node", symbolicName, version);
-                                            startBundle(symbolicName, version);
+                                            // Store the id in a list so we can install all bundles before trying to start them,
+                                            // this way if a bundle depend on another one that is not install yet but is part of the same update, the start won't fail.
+                                            bundleToStart.add(id);
                                         } else {
                                             LOGGER.debug("CELLAR BUNDLE: bundle located {} already started on node", state.getLocation());
                                         }
@@ -177,19 +178,34 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                                         }
                                     }
                                 } catch (BundleException e) {
-                                    LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
+                                    resolveBundleException(id, e);
                                 }
                             } else LOGGER.trace("CELLAR BUNDLE: bundle {} is marked BLOCKED INBOUND for cluster group {}", bundleLocation, groupName);
                         }
                     }
                 }
+
+                for (String id : bundleToStart) {
+                    String[] tokens = id.split("/");
+                    String symbolicName = tokens[0];
+                    String version = tokens[1];
+
+                    try {
+                        LOGGER.debug("CELLAR BUNDLE: starting bundle {}/{} on node", symbolicName, version);
+                        startBundle(symbolicName, version);
+                    } catch (BundleException e) {
+                        resolveBundleException(id, e);
+                    }
+                }
+
                 // cleanup the local bundles not present on the cluster if the node is not the first one in the cluster group
-                if (clusterManager.listNodesByGroup(group).size() > 1) {
+                if (CellarUtils.doCleanupResourcesNotPresentInCluster(configurationAdmin) && getSynchronizerMap().containsKey(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName)) {
                     for (Bundle bundle : bundleContext.getBundles()) {
                         String id = getId(bundle);
                         if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
                             // the bundle is not present on the cluster, so it has to be uninstalled locally
                             try {
+                                LOGGER.debug("CELLAR BUNDLE: uninstalling local bundle {} which is not present in cluster", id);
                                 bundle.uninstall();
                             } catch (Exception e) {
                                 LOGGER.warn("Can't uninstall {}", id, e);
@@ -268,12 +284,12 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         } else {
                             BundleState bundleState = clusterBundles.get(id);
                             if (bundleState.getStatus() != status) {
-                                LOGGER.debug("CELLAR BUNDLE: updating bundle {} on the cluster", id);
+                                LOGGER.debug("CELLAR BUNDLE: updating bundle id: {}, name: {}, location: {} status: {} on the cluster", id, symbolicName, bundleLocation, status);
                                 // update cluster state
                                 bundleState.setStatus(status);
                                 clusterBundles.put(id, bundleState);
                                 // send cluster event
-                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, null, status);
+                                ClusterBundleEvent clusterEvent = new ClusterBundleEvent(symbolicName, version, bundleLocation, level, status);
                                 clusterEvent.setSourceGroup(group);
                                 clusterEvent.setSourceNode(clusterManager.getNode());
                                 clusterEvent.setLocal(clusterManager.getNode());
@@ -301,6 +317,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         }
                     }
                 }
+                getSynchronizerMap().putIfAbsent(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName, true);
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
@@ -343,5 +360,16 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
 
         return null;
     }
+
+    private void resolveBundleException(String id, BundleException e) {
+        if (BundleException.RESOLVE_ERROR == e.getType()) {
+            // we log unresolved dependencies in DEBUG
+            LOGGER.warn("CELLAR BUNDLE: Bundle {} has unresolved dependencies and won't be started now", id);
+            LOGGER.debug("CELLAR BUNDLE: Error while starting bundle {}.", id, e);
+        } else {
+            LOGGER.error("CELLAR BUNDLE: failed to pull bundle {}", id, e);
+        }
+    }
+
 
 }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache</groupId>
         <artifactId>apache</artifactId>
-        <version>21</version>
+        <version>23</version>
         <relativePath />
     </parent>
 
@@ -41,11 +41,11 @@
         <felix.bundlerepository.version>2.0.10</felix.bundlerepository.version>
         <felix.utils.version>1.11.0</felix.utils.version>
         <felix.webconsole.version>4.2.14</felix.webconsole.version>
-        <hazelcast.version>3.12.4</hazelcast.version>
+        <hazelcast.version>3.12.8</hazelcast.version>
         <jclouds.version>2.1.2</jclouds.version>
         <joda-time.version>2.10</joda-time.version>
-        <junit.version>4.12</junit.version>
-        <karaf.version>4.2.7</karaf.version>
+        <junit.version>4.13</junit.version>
+        <karaf.version>4.2.8</karaf.version>
         <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
         <slf4j.version>1.7.7</slf4j.version>
