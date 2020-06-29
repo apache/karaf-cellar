@@ -19,6 +19,7 @@ import org.apache.karaf.cellar.core.Synchronizer;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
 import org.apache.karaf.cellar.core.event.EventType;
+import org.apache.karaf.cellar.core.utils.CellarUtils;
 import org.apache.karaf.features.BootFinished;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -198,12 +199,13 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                 }
 
                 // cleanup the local bundles not present on the cluster if the node is not the first one in the cluster group
-                if (clusterManager.listNodesByGroup(group).size() > 1) {
+                if (CellarUtils.doCleanupResourcesNotPresentInCluster(configurationAdmin) && getSynchronizerMap().containsKey(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName)) {
                     for (Bundle bundle : bundleContext.getBundles()) {
                         String id = getId(bundle);
                         if (!clusterBundles.containsKey(id) && isAllowed(group, Constants.CATEGORY, bundle.getLocation(), EventType.INBOUND)) {
                             // the bundle is not present on the cluster, so it has to be uninstalled locally
                             try {
+                                LOGGER.debug("CELLAR BUNDLE: uninstalling local bundle {} which is not present in cluster", id);
                                 bundle.uninstall();
                             } catch (Exception e) {
                                 LOGGER.warn("Can't uninstall {}", id, e);
@@ -315,6 +317,7 @@ public class BundleSynchronizer extends BundleSupport implements Synchronizer {
                         }
                     }
                 }
+                getSynchronizerMap().putIfAbsent(Constants.BUNDLE_MAP + Configurations.SEPARATOR + groupName, true);
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
