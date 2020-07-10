@@ -4,3 +4,4 @@ target
 .settings
 .idea
 *.i??
+/.metadata/
