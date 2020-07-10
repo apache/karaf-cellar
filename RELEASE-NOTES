@@ -15,6 +15,56 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.2.0
+                    =========================
+  Overview
+  --------
+
+Apache Karaf Cellar 4.2.0 is the first release in the 4.2.x series.
+
+Cellar 4.2.x is an improvement based on 4.1.x with major update, especially Hazelcast. It doesn't contain change in design (planned for 4.3.x).
+
+  Changelog
+  ---------
+
+** Bug
+    * [KARAF-4992] - Slave cluster searches log on Master's log path.
+    * [KARAF-6013] - Setting node alias breaks synchonization
+    * [KARAF-6162] - cluster:bundle-update doesn't work
+    * [KARAF-6165] - cluster:bundle-start doesn't work
+    * [KARAF-6175] - Adding Cellar as boot feature throw a NPE
+    * [KARAF-6233] - Cellar config PID are not correct in blacklist
+    * [KARAF-6267] - Group Join issue in Cellar
+    * [KARAF-6354] - Use ${karaf.etc} property instead of hardcoding "etc" on configfile element (features.xml)
+    * [KARAF-6783] - Add nodes from discovery services
+
+** New Feature
+    * [KARAF-6762] - Possibility to use JCache with appended hazelcast instance
+
+** Improvement
+    * [KARAF-5139] - All cluster:* commands should use the node alias when possible
+    * [KARAF-5562] - Improve cellar groups configuration synchronisation from hazelcast
+    * [KARAF-6530] - Implement better support to configure Kubernetes API client
+
+** Dependency upgrade
+    * [KARAF-3560] - Upgrade to junit 4.12
+    * [KARAF-5598] - Upgrade to Hazelcast 3.9.4
+    * [KARAF-5936] - Upgrade to maven-scm-publish-plugin 3.0.0 and asciidoctor-maven-plugin 1.5.6
+    * [KARAF-5946] - Upgrade to commons-lang3 3.8.1
+    * [KARAF-5960] - Upgrade to Apache POM 21
+    * [KARAF-5963] - Upgrade to gson 2.8.5
+    * [KARAF-5964] - Upgrade to Netflix Feign 8.18.0
+    * [KARAF-5965] - Upgrade to kubernetes-client 4.0.5
+    * [KARAF-5966] - Upgrade to joda-time 2.10
+    * [KARAF-5967] - Upgrade to Felix BundleRepository 2.0.10
+    * [KARAF-5968] - Upgrade to Felix Utils 1.11.0
+    * [KARAF-6509] - Update Hazelcast and Kubernetes client to latest released version
+    * [KARAF-6711] - Upgrade to Apache pom parent 23
+    * [KARAF-6775] - Upgrade to hazelcast 3.12.8
+
+** Documentation
+    * [KARAF-5899] - Use the asciidoctor-maven-plugin and custom ASF theme for the manual generation
+
                     Apache Karaf Cellar 4.1.1
                     =========================
   Overview
