@@ -247,7 +247,10 @@ public class FeaturesSynchronizer extends FeaturesSupport implements Synchronize
                 if (repositoryList != null && repositoryList.length > 0) {
                     for (Repository repository : repositoryList) {
                         try {
-                            if (!clusterRepositories.containsKey(repository.getURI().toString())) {
+                            if (repository != null
+                                    && repository.getURI() != null
+                                    && repository.getName() != null
+                                    && !clusterRepositories.containsKey(repository.getURI().toString())) {
                                 LOGGER.debug("CELLAR FEATURE: pushing repository {} in cluster group {}", repository.getName(), groupName);
                                 // updating cluster state
                                 clusterRepositories.put(repository.getURI().toString(), repository.getName());
