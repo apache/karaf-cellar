@@ -73,7 +73,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
 
             if (hazelcastGroupsConfig.isEmpty()) {
                 // First one to be here - initialize hazelcast map with local configuration
-                LOGGER.debug("CELLAR HAZELCAST: intialize cluster with local config");
+                LOGGER.debug("CELLAR HAZELCAST: initialize cluster with local config");
 
                 Map<String, Object> updates = getUpdatesForHazelcastMap(properties);
                 hazelcastGroupsConfig.putAll(updates);
@@ -343,7 +343,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
     public Map<String, Group> listGroups() {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            Map<String, Group> res = new HashMap<String, Group>();
+            Map<String, Group> res = new HashMap<>();
             Thread.currentThread().setContextClassLoader(combinedClassLoader);
             Map<Node, Set<String>> nodes = getClusterGroups();
 
@@ -806,10 +806,34 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
     }
 
     private Configuration getConfigurationForGroups() throws IOException {
+        try {
+            int max = 0;
+            while (configurationAdmin.listConfigurations("(service.pid=" + Configurations.GROUP + ")") == null && max < 100) {
+                Thread.sleep(500);
+                max++;
+            }
+            if (max == 100) {
+                LOGGER.warn("Timeout while loading {} configuration", Configurations.GROUP);
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
         return configurationAdmin.getConfiguration(Configurations.GROUP, null);
     }
 
     private Configuration getConfigurationForNode() throws IOException {
+        try {
+            int max = 0;
+            while (configurationAdmin.listConfigurations("(service.pid=" + Configurations.NODE + ")") == null && max < 100) {
+                Thread.sleep(500);
+                max++;
+            }
+            if (max == 100) {
+                LOGGER.warn("Timeout while loading {} configuration", Configurations.NODE);
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
         return configurationAdmin.getConfiguration(Configurations.NODE, null);
     }
 
