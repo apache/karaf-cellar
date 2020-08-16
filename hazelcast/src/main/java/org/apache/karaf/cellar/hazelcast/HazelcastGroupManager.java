@@ -348,6 +348,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
             Map<Node, Set<String>> nodes = getClusterGroups();
 
             Set<String> groups = convertStringToSet((String) localConfig.get(Configurations.GROUPS_KEY));
+
             groups.add(Configurations.DEFAULT_GROUP_NAME);
 
             for (String groupName : groups) {
@@ -651,8 +652,8 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
      */
     protected Set<String> convertStringToSet(String string) {
         if (string == null)
-            return Collections.emptySet();
-        Set<String> result = new TreeSet<String>();
+            return new TreeSet<>();
+        Set<String> result = new TreeSet<>();
         String[] groupNames = string.split(",");
 
         if (groupNames != null && groupNames.length > 0) {
