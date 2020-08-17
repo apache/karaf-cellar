@@ -18,7 +18,7 @@ package org.apache.karaf.cellar.log;
 
 import java.io.Serializable;
 
-public class ClusterLogKey implements Serializable {
+public class ClusterLogKey implements Serializable, Comparable<ClusterLogKey> {
 
     private String nodeId;
     private String nodeAlias;
@@ -55,6 +55,11 @@ public class ClusterLogKey implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(ClusterLogKey o) {
+        return new Long(this.timeStamp - o.timeStamp).intValue();
     }
 
 }
