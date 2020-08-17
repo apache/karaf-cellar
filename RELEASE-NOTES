@@ -15,6 +15,25 @@
  * limitations under the License.
  */
 
+                    Apache Karaf Cellar 4.2.1
+                    =========================
+  Overview
+  --------
+
+Apache Karaf Cellar 4.2.1 is a maintenance release on the 4.2.x series. It includes important fixes.
+
+  Changelog
+  ---------
+
+** Bug
+    * [KARAF-4874] - Distributed log service no order of messages, no serialization
+    * [KARAF-6793] - Cellar. No synchronizer found for feature.
+    * [KARAF-6813] - Warning while starting cellar bundle activator
+    * [KARAF-6814] - Node is not member of default at bootstrap
+
+** Dependency upgrade
+    * [KARAF-6787] - Upgrade to maven-bundle-plugin 5.1.1
+
                     Apache Karaf Cellar 4.2.0
                     =========================
   Overview
