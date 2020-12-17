@@ -162,9 +162,9 @@ public class ConfigurationSupport extends CellarSupport {
         Configuration localConfiguration;
         Object factoryPid = clusterDictionary.get(ConfigurationAdmin.SERVICE_FACTORYPID);
         if (factoryPid != null) {
-            localConfiguration = configurationAdmin.createFactoryConfiguration(factoryPid.toString(), null);
+            localConfiguration = configurationAdmin.createFactoryConfiguration(factoryPid.toString(), "?");
         } else {
-            localConfiguration = configurationAdmin.getConfiguration(pid, null);
+            localConfiguration = configurationAdmin.getConfiguration(pid, "?");
         }
         return localConfiguration;
     }
