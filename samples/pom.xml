@@ -24,7 +24,7 @@
     <parent>
         <artifactId>cellar</artifactId>
         <groupId>org.apache.karaf</groupId>
-        <version>4.1.3-jahia3</version>
+        <version>4.1.3-jahia4-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
