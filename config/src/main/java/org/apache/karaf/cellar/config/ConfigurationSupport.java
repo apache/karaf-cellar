@@ -226,7 +226,7 @@ public class ConfigurationSupport extends CellarSupport {
             if (storageFile == null && cfg.getProperties().get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
                 storageFile = new File(storage, cfg.getPid() + ".cfg");
             }
-            if (storageFile == null) {
+            if (storageFile == null || (!storageFile.getName().endsWith(".cfg") && !storageFile.getName().endsWith(".config"))) {
                 // it's a factory configuration without filename specified, cannot save
                 return;
             }
