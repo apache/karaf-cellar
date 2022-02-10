@@ -118,7 +118,7 @@ public class ConfigurationSupport extends CellarSupport {
             while (sourceKeys.hasMoreElements()) {
                 String key = (String) sourceKeys.nextElement();
                 if (key.equals(FELIX_FILEINSTALL_FILENAME)) {
-                    String value = dictionary.get(key).toString();
+                    String value = URI.create(dictionary.get(key).toString()).getPath();
                     value = value.substring(value.lastIndexOf("/") + 1);
                     result.put(KARAF_CELLAR_FILENAME, value);
                     try {
