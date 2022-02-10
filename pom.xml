@@ -74,8 +74,6 @@
         <module>webconsole</module>
         <module>manual</module>
         <module>assembly</module>
-        <module>samples</module>
-        <module>itests</module>
     </modules>
 
     <scm>
