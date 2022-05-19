@@ -26,6 +26,7 @@ import org.osgi.framework.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -111,10 +112,9 @@ public class ExportServiceListener implements ServiceListener {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
-            String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
-            if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
+            String[] interfaces = getExportedInterfaces(serviceReference);
+            if (interfaces.length > 0) {
+                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", (Object) interfaces);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
@@ -159,10 +159,9 @@ public class ExportServiceListener implements ServiceListener {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-            String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
-            if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
+            String[] interfaces = getExportedInterfaces(serviceReference);
+            if (interfaces.length > 0) {
+                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster", (Object) interfaces);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
@@ -186,6 +185,21 @@ public class ExportServiceListener implements ServiceListener {
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
         }
+    }
+
+
+    private String[] getExportedInterfaces(ServiceReference serviceReference) {
+        Object property = serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
+        if (property != null) {
+            if (property instanceof String)
+                return ((String) property).split(Constants.INTERFACE_SEPARATOR);
+            if (property instanceof String[])
+                return (String[]) property;
+            if (property instanceof Collection)
+                return (String[])((Collection) property).toArray();
+            LOGGER.warn("CELLAR DOSGI: Illegal value type on property {} on service reference {}", Constants.EXPORTED_INTERFACES, serviceReference);
+        }
+        return Constants.NO_EXPORTED_INTERFACES;
     }
 
     /**
