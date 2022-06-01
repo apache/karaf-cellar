@@ -47,6 +47,19 @@ public class EndpointDescription implements MultiNode {
         properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
     }
 
+    /**
+     * Constructor with service parameters
+     *
+     * @param id
+     * @param node
+     */
+    public EndpointDescription(String id, Node node, Map<String, Object> properties) {
+        this.id = id;
+        this.nodes.add(node);
+        this.properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
+        this.properties.putAll(properties);
+    }
+
 
     /**
      * Tests the properties of this <code>EndpointDescription</code> against
@@ -76,9 +89,9 @@ public class EndpointDescription implements MultiNode {
             dictionary.put(key, value);
         }
         /*
-           * we can use matchCase here since properties already supports case
-           * insensitive key lookup.
-           */
+         * we can use matchCase here since properties already supports case
+         * insensitive key lookup.
+         */
         return f.matchCase(dictionary);
     }
 
@@ -90,13 +103,13 @@ public class EndpointDescription implements MultiNode {
         return nodes;
     }
 
-     public void setNodes(Set<Node> nodes) {
-         if(nodes != null) {
-             for(Node node:nodes) {
-                 this.nodes.add(node);
-             }
-         }
-     }
+    public void setNodes(Set<Node> nodes) {
+        if(nodes != null) {
+            for(Node node:nodes) {
+                this.nodes.add(node);
+            }
+        }
+    }
 
     public Map<String, Object> getProperties() {
         return properties;

@@ -44,7 +44,7 @@ public class ExportServiceListener implements ServiceListener {
     private BundleContext bundleContext;
     private Map<String, EndpointDescription> remoteEndpoints;
 
-    private final Map<String, EventConsumer> consumers = new HashMap<String, EventConsumer>();
+    private final Map<String, EventConsumer> consumers = new HashMap<>();
 
     private Node node;
 
@@ -54,7 +54,7 @@ public class ExportServiceListener implements ServiceListener {
         bundleContext.addServiceListener(this);
 
         // lookup for already exported services
-        ServiceReference[] references = null;
+        ServiceReference[] references;
         try {
             String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
             references = bundleContext.getServiceReferences((String) null, filter);
@@ -112,17 +112,29 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
+            String exportedParameters = (String) serviceReference.getProperty(Constants.EXPORTED_PARAMETERS);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
+
+                HashMap<String, Object> parameters = new HashMap<>();
+
+                if (exportedParameters != null && exportedParameters.length() > 0) {
+                    LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParameters);
+                    for (String parameter : exportedParameters.split(Constants.COMMA_SEPARATOR)) {
+                        parameters.put(parameter, serviceReference.getProperty(parameter));
+                    }
+                } else {
+                    LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", exportedServices);
+                }
+
+                String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
-                for (String iface : exportedInterfaces) {
+                for (String exportedInterface : exportedInterfaces) {
                     // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = iface + Constants.SEPARATOR + version.toString();
+                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString();
 
                     EndpointDescription endpoint;
 
@@ -130,7 +142,11 @@ public class ExportServiceListener implements ServiceListener {
                         endpoint = remoteEndpoints.get(endpointId);
                         endpoint.getNodes().add(node);
                     } else {
-                        endpoint = new EndpointDescription(endpointId, node);
+                        if (parameters.isEmpty()) {
+                            endpoint = new EndpointDescription(endpointId, node);
+                        } else {
+                            endpoint = new EndpointDescription(endpointId, node, parameters);
+                        }
                     }
 
                     remoteEndpoints.put(endpointId, endpoint);
@@ -162,7 +178,7 @@ public class ExportServiceListener implements ServiceListener {
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
                 LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
+                String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
