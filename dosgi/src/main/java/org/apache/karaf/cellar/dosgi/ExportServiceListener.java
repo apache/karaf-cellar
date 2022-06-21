@@ -112,19 +112,19 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
-            String exportedParameters = (String) serviceReference.getProperty(Constants.EXPORTED_PARAMETERS);
             if (exportedServices != null && exportedServices.length() > 0) {
 
-                HashMap<String, Object> parameters = new HashMap<>();
+                HashMap<String, Object> exportedParameters = new HashMap();
 
-                if (exportedParameters != null && exportedParameters.length() > 0) {
-                    LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParameters);
-                    for (String parameter : exportedParameters.split(Constants.COMMA_SEPARATOR)) {
-                        parameters.put(parameter, serviceReference.getProperty(parameter));
+                for (String key : serviceReference.getPropertyKeys()) {
+                    // skip service private and instance properties
+                    if (!key.startsWith(Constants.DOT) && !key.contains(Constants.SERVICE_DOT)) {
+                        exportedParameters.put(key, serviceReference.getProperty(key));
                     }
-                } else {
-                    LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", exportedServices);
                 }
+                exportedParameters.remove(org.osgi.framework.Constants.OBJECTCLASS);
+
+                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParameters);
 
                 String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
@@ -142,11 +142,8 @@ public class ExportServiceListener implements ServiceListener {
                         endpoint = remoteEndpoints.get(endpointId);
                         endpoint.getNodes().add(node);
                     } else {
-                        if (parameters.isEmpty()) {
-                            endpoint = new EndpointDescription(endpointId, node);
-                        } else {
-                            endpoint = new EndpointDescription(endpointId, node, parameters);
-                        }
+                        exportedParameters.put(org.osgi.framework.Constants.OBJECTCLASS, exportedInterface);
+                        endpoint = new EndpointDescription(endpointId, node, exportedParameters);
                     }
 
                     remoteEndpoints.put(endpointId, endpoint);

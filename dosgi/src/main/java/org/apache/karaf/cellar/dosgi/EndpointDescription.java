@@ -36,27 +36,15 @@ public class EndpointDescription implements MultiNode {
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
     /**
-     * Constructor
+     * Constructor with service properties
      *
      * @param id
      * @param node
-     */
-    public EndpointDescription(String id, Node node) {
-        this.id = id;
-        this.nodes.add(node);
-        properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
-    }
-
-    /**
-     * Constructor with service parameters
-     *
-     * @param id
-     * @param node
+     * @param properties
      */
     public EndpointDescription(String id, Node node, Map<String, Object> properties) {
         this.id = id;
         this.nodes.add(node);
-        this.properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
         this.properties.putAll(properties);
     }
 

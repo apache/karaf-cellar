@@ -18,15 +18,16 @@ package org.apache.karaf.cellar.dosgi;
  */
 public abstract class Constants {
 
+    public static final String DOT = ".";
     public static final String SEPARATOR = "/";
     public static final String ALL_INTERFACES = "*";
     public static final String COMMA_SEPARATOR = ",";
+    public static final String SERVICE_DOT = "service.";
     public static final String INTERFACE_PREFIX = "org.apache.karaf.cellar.dosgi";
     public static final String REQUEST_PREFIX = "org.apache.karaf.cellar.dosgi.request";
     public static final String RESULT_PREFIX = "org.apache.karaf.cellar.dosgi.result";
     public static final String REMOTE_ENDPOINTS = "org.apache.karaf.cellar.dosgi.endpoints";
     public static final String EXPORTED_INTERFACES = "service.exported.interfaces";
-    public static final String EXPORTED_PARAMETERS = "service.exported.parameters";
     public static final String ENDPOINT_FRAMEWORK_UUID = "frameworkUUID";
 
 }
