@@ -114,15 +114,7 @@ public class ExportServiceListener implements ServiceListener {
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
 
-                HashMap<String, Object> exportedParameters = new HashMap();
-
-                for (String key : serviceReference.getPropertyKeys()) {
-                    // skip service private and instance properties
-                    if (!key.startsWith(Constants.DOT) && !key.contains(Constants.SERVICE_DOT)) {
-                        exportedParameters.put(key, serviceReference.getProperty(key));
-                    }
-                }
-                exportedParameters.remove(org.osgi.framework.Constants.OBJECTCLASS);
+                HashMap<String, Object> exportedParameters = getExportedParameters(serviceReference);
 
                 LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParameters);
 
@@ -134,7 +126,7 @@ public class ExportServiceListener implements ServiceListener {
                 for (String exportedInterface : exportedInterfaces) {
                     // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString();
+                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString() + Constants.SEPARATOR + exportedParameters.hashCode();
 
                     EndpointDescription endpoint;
 
@@ -174,16 +166,19 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster", exportedServices);
+
+                HashMap<String, Object> exportedParameters = getExportedParameters(serviceReference);
+
+                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster with parameters {}", exportedServices, exportedParameters);
                 String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
-                for (String iface : exportedInterfaces) {
+                for (String exportedInterface : exportedInterfaces) {
                     // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = iface + Constants.SEPARATOR + version.toString();
+                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString() + Constants.SEPARATOR + exportedParameters.hashCode();
 
                     EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
                     endpointDescription.getNodes().remove(node);
@@ -238,6 +233,19 @@ public class ExportServiceListener implements ServiceListener {
             }
         }
         return interfaceList;
+    }
+
+    private HashMap<String, Object> getExportedParameters(ServiceReference serviceReference) {
+        HashMap<String, Object> exportedParameters = new HashMap();
+
+        for (String key : serviceReference.getPropertyKeys()) {
+            // skip service private and instance properties
+            if (!key.startsWith(Constants.DOT) && !key.contains(Constants.SERVICE_DOT)) {
+                exportedParameters.put(key, serviceReference.getProperty(key));
+            }
+        }
+        exportedParameters.remove(org.osgi.framework.Constants.OBJECTCLASS);
+        return exportedParameters;
     }
 
     public ClusterManager getClusterManager() {

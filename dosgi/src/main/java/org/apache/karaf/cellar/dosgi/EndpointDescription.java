@@ -104,15 +104,7 @@ public class EndpointDescription implements MultiNode {
     }
 
     public final String getServiceClass() {
-        String result = null;
-
-        if(id != null) {
-            String[] parts = id.split(Constants.SEPARATOR);
-            if(parts != null && parts.length > 0) {
-                result = parts[0];
-            }
-        }
-        return result;
+        return (String) properties.get(org.osgi.framework.Constants.OBJECTCLASS);
     }
 
     @Override
