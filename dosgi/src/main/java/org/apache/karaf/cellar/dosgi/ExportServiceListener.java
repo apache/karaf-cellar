@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Listener called when a new service is exported.
@@ -114,9 +115,11 @@ public class ExportServiceListener implements ServiceListener {
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
 
-                HashMap<String, Object> exportedParameters = getExportedParameters(serviceReference);
+                Map<String, Object> exportedParametersMap = getExportedParameters(serviceReference);
 
-                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParameters);
+                String exportedParameters = concatenateExportedParameters(exportedParametersMap);
+
+                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster with parameters {}", exportedServices, exportedParametersMap);
 
                 String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
@@ -126,7 +129,7 @@ public class ExportServiceListener implements ServiceListener {
                 for (String exportedInterface : exportedInterfaces) {
                     // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString() + Constants.SEPARATOR + exportedParameters.hashCode();
+                    String endpointId = exportedInterface + exportedParameters + version.toString();
 
                     EndpointDescription endpoint;
 
@@ -134,8 +137,8 @@ public class ExportServiceListener implements ServiceListener {
                         endpoint = remoteEndpoints.get(endpointId);
                         endpoint.getNodes().add(node);
                     } else {
-                        exportedParameters.put(org.osgi.framework.Constants.OBJECTCLASS, exportedInterface);
-                        endpoint = new EndpointDescription(endpointId, node, exportedParameters);
+                        exportedParametersMap.put(org.osgi.framework.Constants.OBJECTCLASS, exportedInterface);
+                        endpoint = new EndpointDescription(endpointId, node, exportedParametersMap);
                     }
 
                     remoteEndpoints.put(endpointId, endpoint);
@@ -167,9 +170,12 @@ public class ExportServiceListener implements ServiceListener {
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
 
-                HashMap<String, Object> exportedParameters = getExportedParameters(serviceReference);
+                Map<String, Object> exportedParametersMap = getExportedParameters(serviceReference);
 
-                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster with parameters {}", exportedServices, exportedParameters);
+                String exportedParameters = concatenateExportedParameters(exportedParametersMap);
+
+                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster with parameters {}", exportedServices, exportedParametersMap);
+
                 String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
@@ -178,7 +184,7 @@ public class ExportServiceListener implements ServiceListener {
                 for (String exportedInterface : exportedInterfaces) {
                     // add endpoint description to the set.
                     Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = exportedInterface + Constants.SEPARATOR + version.toString() + Constants.SEPARATOR + exportedParameters.hashCode();
+                    String endpointId = exportedInterface + exportedParameters + version.toString();
 
                     EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
                     endpointDescription.getNodes().remove(node);
@@ -222,7 +228,6 @@ public class ExportServiceListener implements ServiceListener {
                         } else {
                             classLoader = ClassLoader.getSystemClassLoader();
                         }
-
                         Class clazz = classLoader.loadClass(s);
                         String ifaceName = clazz.getCanonicalName();
                         interfaceList.add(ifaceName);
@@ -235,9 +240,9 @@ public class ExportServiceListener implements ServiceListener {
         return interfaceList;
     }
 
-    private HashMap<String, Object> getExportedParameters(ServiceReference serviceReference) {
-        HashMap<String, Object> exportedParameters = new HashMap();
-
+    private Map<String, Object> getExportedParameters(ServiceReference serviceReference) {
+        // sorted map for reproducible endpointId results
+        TreeMap<String, Object> exportedParameters = new TreeMap();
         for (String key : serviceReference.getPropertyKeys()) {
             // skip service private and instance properties
             if (!key.startsWith(Constants.DOT) && !key.contains(Constants.SERVICE_DOT)) {
@@ -246,6 +251,15 @@ public class ExportServiceListener implements ServiceListener {
         }
         exportedParameters.remove(org.osgi.framework.Constants.OBJECTCLASS);
         return exportedParameters;
+    }
+
+    private String concatenateExportedParameters(Map<String, Object> exportedParameters) {
+        String sortedExportedParameters = Constants.SEPARATOR;
+        if (exportedParameters.isEmpty()) return sortedExportedParameters;
+        for (Map.Entry<String, Object> entry : exportedParameters.entrySet()) {
+            sortedExportedParameters = sortedExportedParameters + entry.getKey() + "=" + entry.getValue() + Constants.SEPARATOR;
+        }
+        return sortedExportedParameters;
     }
 
     public ClusterManager getClusterManager() {
