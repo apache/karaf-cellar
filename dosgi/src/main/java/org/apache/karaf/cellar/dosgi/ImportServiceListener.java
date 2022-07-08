@@ -51,6 +51,8 @@ public class ImportServiceListener implements ListenerHook, Runnable {
 
     private Set<ListenerInfo> pendingListeners = new LinkedHashSet<ListenerInfo>();
 
+    private final Map<ListenerInfo, EndpointDescription> assignedListeners = new HashMap<ListenerInfo, EndpointDescription>();
+
     private final Map<EndpointDescription, ServiceRegistration> registrations = new HashMap<EndpointDescription, ServiceRegistration>();
 
     private final Map<String, EventProducer> producers = new HashMap<String, EventProducer>();
@@ -126,7 +128,10 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                 }
 
                 for (EndpointDescription endpoint : matches) {
-                    unImportService(endpoint);
+                    assignedListeners.remove(listenerInfo);
+                    if (!assignedListeners.containsValue(endpoint)) {
+                        unImportService(endpoint);
+                    }
                 }
 
                 pendingListeners.remove(listenerInfo);
@@ -165,11 +170,11 @@ public class ImportServiceListener implements ListenerHook, Runnable {
     /**
      * Import a remote service to the service registry.
      *
-     * @param endpoint the endpoint to import.
+     * @param endpoint     the endpoint to import.
      * @param listenerInfo the associated listener info.
      */
     private void importService(EndpointDescription endpoint, ListenerInfo listenerInfo) {
-        LOGGER.debug("CELLAR DOSGI: importing remote service");
+        LOGGER.debug("CELLAR DOSGI: importing remote service {}", endpoint.getServiceClass());
 
         EventProducer requestProducer = producers.get(endpoint.getId());
         if (requestProducer == null) {
@@ -185,9 +190,6 @@ public class ImportServiceListener implements ListenerHook, Runnable {
             resultConsumer.start();
         }
 
-        producers.put(endpoint.getId(), requestProducer);
-        consumers.put(endpoint.getId(), resultConsumer);
-
         ExecutionContext executionContext = new ClusteredExecutionContext(requestProducer, commandStore);
 
         RemoteServiceFactory remoteServiceFactory = new RemoteServiceFactory(endpoint, clusterManager, executionContext);
@@ -195,6 +197,7 @@ public class ImportServiceListener implements ListenerHook, Runnable {
                 remoteServiceFactory,
                 new Hashtable<String, Object>(endpoint.getProperties()));
         registrations.put(endpoint, registration);
+        assignedListeners.put(listenerInfo, endpoint);
         pendingListeners.remove(listenerInfo);
     }
 
@@ -204,6 +207,8 @@ public class ImportServiceListener implements ListenerHook, Runnable {
      * @param endpoint the endpoint to un-register.
      */
     private void unImportService(EndpointDescription endpoint) {
+        LOGGER.debug("CELLAR DOSGI: un-importing remote service {}", endpoint.getServiceClass());
+
         ServiceRegistration registration = registrations.get(endpoint);
         registration.unregister();
 
