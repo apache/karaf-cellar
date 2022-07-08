@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 /**
  * Handler for cluster remote service invocation event.
@@ -75,7 +76,7 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
                 return result.getResult();
             }
         }
-        return null;
+        throw new CancellationException(String.format("No remote service execution results for %s", serviceClass));
     }
 
 }

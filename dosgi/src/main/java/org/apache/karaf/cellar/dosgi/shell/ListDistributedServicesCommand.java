@@ -48,7 +48,6 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                             nodeName = node.getId();
                         }
                         table.addRow().addContent(serviceClass, nodeName);
-                        serviceClass = "";
                     }
                 }
                 table.print(System.out);
