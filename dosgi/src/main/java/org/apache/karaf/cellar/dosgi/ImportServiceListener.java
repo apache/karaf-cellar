@@ -88,6 +88,7 @@ public class ImportServiceListener implements ListenerHook {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            // create a clone of remote endpoint descriptions to avoid concurrency concerns while iterating it
             final Set<EndpointDescription> endpointDescriptions = new HashSet(remoteEndpoints.values());
             for (ListenerInfo listenerInfo : (Collection<ListenerInfo>) listeners) {
                 if (listenerInfo.getFilter() == null) {
@@ -116,6 +117,7 @@ public class ImportServiceListener implements ListenerHook {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+            // create a clone of remote endpoint descriptions to avoid concurrency concerns while iterating it
             final Set<EndpointDescription> endpointDescriptions = new HashSet(remoteEndpoints.values());
             for (ListenerInfo listenerInfo : (Collection<ListenerInfo>) listeners) {
                 if (listenerInfo.getFilter() == null) {
@@ -170,7 +172,8 @@ public class ImportServiceListener implements ListenerHook {
     /**
      * Check if there is a match for the current {@link ListenerInfo} for importing.
      *
-     * @param listenerInfo the listener info.
+     * @param listenerInfo         the listener info.
+     * @param endpointDescriptions local copy of remote endpoint descriptions.
      */
     private boolean checkListener(ListenerInfo listenerInfo, Set<EndpointDescription> endpointDescriptions) {
         // could be removed by bundles restarting
@@ -294,7 +297,8 @@ public class ImportServiceListener implements ListenerHook {
         @Override
         public void run() {
             try {
-                final Set<Map.Entry<String, EndpointDescription>> localRemoteEndpointEntries = new HashSet<Map.Entry<String, EndpointDescription>>(importServiceListener.remoteEndpoints.entrySet());
+                // create a clone of remote endpoints to avoid concurrency concerns while iterating it
+                final Set<Map.Entry<String, EndpointDescription>> localRemoteEndpointEntries = new HashSet(importServiceListener.remoteEndpoints.entrySet());
                 final Set<EndpointDescription> localRemoteEndpointValues = new HashSet(localRemoteEndpointEntries.size());
                 final Set<String> localRemoteEndpointKeys = new HashSet(localRemoteEndpointEntries.size());
                 for (Map.Entry<String, EndpointDescription> localRemoteEndpointEntry : localRemoteEndpointEntries) {
@@ -324,7 +328,7 @@ public class ImportServiceListener implements ListenerHook {
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error("CELLAR DOSGI: " + e.getClass().getSimpleName() + " / " + e.getMessage());
+                LOGGER.error("CELLAR DOSGI: {} / {}", e.getClass().getSimpleName(), e.getMessage());
             }
         }
     }
