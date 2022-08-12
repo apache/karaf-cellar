@@ -123,9 +123,7 @@ public class ImportServiceListener implements ListenerHook {
                 if (listenerInfo.getFilter() == null) {
                     LOGGER.trace("CELLAR DOSGI: skip removing listener with no filter for bundle {}", listenerInfo.getBundleContext().getBundle().getBundleId());
                     LOGGER.trace("CELLAR DOSGI: removing pending listener for bundle {}", listenerInfo.getBundleContext().getBundle().getBundleId());
-                    if (!pendingListeners.remove(listenerInfo)) {
-                        LOGGER.warn("CELLAR DOSGI: missing pending listener for bundle {} for removal!", listenerInfo.getBundleContext().getBundle().getBundleId());
-                    }
+                    pendingListeners.remove(listenerInfo);
                 } else {
                     if (listenerInfo.getBundleContext() == bundleContext) {
                         LOGGER.trace("CELLAR DOSGI: skip removing listener {} with same bundle context for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
