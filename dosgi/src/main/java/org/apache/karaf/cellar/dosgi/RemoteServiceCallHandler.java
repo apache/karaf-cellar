@@ -41,7 +41,7 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
     public static final String SWITCH_ID = "org.apache.karaf.cellar.dosgi.switch";
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(RemoteServiceCallHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteServiceCallHandler.class);
 
     private final Switch dosgiSwitch = new BasicSwitch(SWITCH_ID);
 

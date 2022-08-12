@@ -32,13 +32,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class RemovedNodeServiceTracker implements Runnable {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(RemovedNodeServiceTracker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemovedNodeServiceTracker.class);
 
     private ClusterManager clusterManager;
 
     private Map<String, EndpointDescription> remoteEndpoints;
 
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public void init() {
         remoteEndpoints = clusterManager.getMap(Constants.REMOTE_ENDPOINTS);
@@ -60,7 +60,7 @@ public class RemovedNodeServiceTracker implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.trace("CELLAR DOSGI: running the service tracker task");
+        LOGGER.trace("CELLAR DOSGI: running the remote node tracker task");
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             if (!remoteEndpoints.isEmpty()) {

@@ -36,15 +36,16 @@ public class EndpointDescription implements MultiNode {
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
     /**
-     * Constructor
+     * Constructor with service properties
      *
      * @param id
      * @param node
+     * @param properties
      */
-    public EndpointDescription(String id, Node node) {
+    public EndpointDescription(String id, Node node, Map<String, Object> properties) {
         this.id = id;
         this.nodes.add(node);
-        properties.put(org.osgi.framework.Constants.OBJECTCLASS,getServiceClass());
+        this.properties.putAll(properties);
     }
 
 
@@ -54,8 +55,8 @@ public class EndpointDescription implements MultiNode {
      *
      * @param filter The filter to test.
      * @return <code>true</code> If the properties of this
-     *         <code>EndpointDescription</code> match the filter,
-     *         <code>false</code> otherwise.
+     * <code>EndpointDescription</code> match the filter,
+     * <code>false</code> otherwise.
      * @throws IllegalArgumentException If <code>filter</code> contains an
      *                                  invalid filter string that cannot be parsed.
      */
@@ -64,8 +65,7 @@ public class EndpointDescription implements MultiNode {
         try {
             f = FrameworkUtil.createFilter(filter);
         } catch (InvalidSyntaxException e) {
-            IllegalArgumentException iae = new IllegalArgumentException(e.getMessage());
-            iae.initCause(e);
+            IllegalArgumentException iae = new IllegalArgumentException(e.getMessage(), e);
             throw iae;
         }
 
@@ -76,9 +76,9 @@ public class EndpointDescription implements MultiNode {
             dictionary.put(key, value);
         }
         /*
-           * we can use matchCase here since properties already supports case
-           * insensitive key lookup.
-           */
+         * we can use matchCase here since properties already supports case
+         * insensitive key lookup.
+         */
         return f.matchCase(dictionary);
     }
 
@@ -90,28 +90,20 @@ public class EndpointDescription implements MultiNode {
         return nodes;
     }
 
-     public void setNodes(Set<Node> nodes) {
-         if(nodes != null) {
-             for(Node node:nodes) {
-                 this.nodes.add(node);
-             }
-         }
-     }
+    public void setNodes(Set<Node> nodes) {
+        if (nodes != null) {
+            for (Node node : nodes) {
+                this.nodes.add(node);
+            }
+        }
+    }
 
     public Map<String, Object> getProperties() {
         return properties;
     }
 
     public final String getServiceClass() {
-        String result = null;
-
-        if(id != null) {
-            String[] parts = id.split(Constants.SEPARATOR);
-            if(parts != null && parts.length > 0) {
-                result = parts[0];
-            }
-        }
-        return result;
+        return (String) properties.get(org.osgi.framework.Constants.OBJECTCLASS);
     }
 
     @Override
@@ -125,11 +117,7 @@ public class EndpointDescription implements MultiNode {
 
         EndpointDescription endpointDescription = (EndpointDescription) o;
 
-        if (id != null ? !id.equals(endpointDescription.id) : endpointDescription.id != null) {
-            return false;
-        }
-
-        return true;
+        return id != null ? id.equals(endpointDescription.id) : endpointDescription.id == null;
     }
 
     @Override

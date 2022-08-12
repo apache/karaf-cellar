@@ -28,9 +28,9 @@ import java.util.List;
  */
 public class RemoteServiceFactory implements ServiceFactory {
 
-    private EndpointDescription description;
-    private ClusterManager clusterManager;
-    private ExecutionContext executionContext;
+    private final EndpointDescription description;
+    private final ClusterManager clusterManager;
+    private final ExecutionContext executionContext;
 
     public RemoteServiceFactory(EndpointDescription description, ClusterManager clusterManager, ExecutionContext executionContext) {
         this.description = description;
@@ -43,12 +43,12 @@ public class RemoteServiceFactory implements ServiceFactory {
         ClassLoader classLoader = new RemoteServiceProxyClassLoader(bundle);
         List<Class> interfaces = new ArrayList<Class>();
         String interfaceName = description.getServiceClass();
-            try {
-                interfaces.add(classLoader.loadClass(interfaceName));
-            } catch (ClassNotFoundException e) {
-                // Ignore
-            }
-        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(description.getId(), interfaceName,clusterManager,executionContext);
+        try {
+            interfaces.add(classLoader.loadClass(interfaceName));
+        } catch (ClassNotFoundException e) {
+            // Ignore
+        }
+        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(description.getId(), interfaceName, clusterManager, executionContext);
         return Proxy.newProxyInstance(classLoader, interfaces.toArray(new Class[interfaces.size()]), handler);
     }
 

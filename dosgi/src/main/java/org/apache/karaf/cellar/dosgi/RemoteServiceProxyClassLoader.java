@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  */
 public class RemoteServiceProxyClassLoader extends ClassLoader {
 
-    private Bundle bundle;
+    private final Bundle bundle;
 
     public RemoteServiceProxyClassLoader(Bundle bundle) {
         this.bundle = bundle;

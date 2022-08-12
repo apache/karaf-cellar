@@ -16,6 +16,8 @@ package org.apache.karaf.cellar.dosgi;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.HashMap;
+
 public class EndpointDescriptionTest {
 
     String objectClass = "org.apache.karaf.cellar.dosgi.Test";
@@ -24,11 +26,14 @@ public class EndpointDescriptionTest {
     @Test
     public void testMatches() throws Exception {
         // this is a dummy test for testing the behaviour of matches method
+        String version = "1.0.0";
         String testEndpointFilter = String.format(filterPattern, objectClass);
-        String endpointId = objectClass + Constants.SEPARATOR + "1.0.0";
+        String endpointId = objectClass + Constants.SEPARATOR + version;
+        HashMap<String, Object> exportedProperties = new HashMap<String, Object>();
+        exportedProperties.put(org.osgi.framework.Constants.OBJECTCLASS, objectClass);
 
-        EndpointDescription endpointDescription1 = new EndpointDescription(endpointId, null);
-        EndpointDescription endpointDescription2 = new EndpointDescription(endpointId, null);
+        EndpointDescription endpointDescription1 = new EndpointDescription(endpointId, null, exportedProperties);
+        EndpointDescription endpointDescription2 = new EndpointDescription(endpointId, null, exportedProperties);
         Assert.assertTrue(endpointDescription1.matches(testEndpointFilter));
         Assert.assertTrue(endpointDescription2.matches(testEndpointFilter));
     }

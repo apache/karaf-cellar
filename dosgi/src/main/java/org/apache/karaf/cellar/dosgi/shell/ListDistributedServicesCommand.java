@@ -21,8 +21,9 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.support.table.ShellTable;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
-import java.util.Set;
 
 @Command(scope = "cluster", name = "service-list", description = "List the services available on the cluster")
 @Service
@@ -38,17 +39,31 @@ public class ListDistributedServicesCommand extends CellarCommandSupport {
                 ShellTable table = new ShellTable();
                 table.column("Service Class");
                 table.column("Provider Node");
-                for (Map.Entry<String, EndpointDescription> entry : remoteEndpoints.entrySet()) {
+                table.column("Endpoint ID");
+                Map.Entry<String, EndpointDescription>[] entrySet = remoteEndpoints.entrySet().toArray(new Map.Entry[0]);
+                Arrays.sort(entrySet, new Comparator<Map.Entry<String, EndpointDescription>>() {
+                    @Override
+                    public int compare(Map.Entry<String, EndpointDescription> a, Map.Entry<String, EndpointDescription> b) {
+                        return a.getKey().compareTo(b.getKey());
+                    }
+                });
+                for (Map.Entry<String, EndpointDescription> entry : entrySet) {
                     EndpointDescription endpointDescription = entry.getValue();
                     String serviceClass = endpointDescription.getServiceClass();
-                    Set<Node> nodes = endpointDescription.getNodes();
+                    String endpointId = endpointDescription.getId();
+                    Node[] nodes = endpointDescription.getNodes().toArray(new Node[0]);
+                    Arrays.sort(nodes, new Comparator<Node>() {
+                        @Override
+                        public int compare(Node a, Node b) {
+                            return (a.getHost() + a.getPort()).compareTo(b.getHost() + b.getPort());
+                        }
+                    });
                     for (Node node : nodes) {
                         String nodeName = node.getAlias();
                         if (nodeName == null) {
                             nodeName = node.getId();
                         }
-                        table.addRow().addContent(serviceClass, nodeName);
-                        serviceClass = "";
+                        table.addRow().addContent(serviceClass, nodeName, endpointId);
                     }
                 }
                 table.print(System.out);
