@@ -122,42 +122,38 @@ public class ImportServiceListener implements ListenerHook {
             for (ListenerInfo listenerInfo : (Collection<ListenerInfo>) listeners) {
                 if (listenerInfo.getFilter() == null) {
                     LOGGER.trace("CELLAR DOSGI: skip removing listener with no filter for bundle {}", listenerInfo.getBundleContext().getBundle().getBundleId());
-                    LOGGER.trace("CELLAR DOSGI: removing pending listener for bundle {}", listenerInfo.getBundleContext().getBundle().getBundleId());
-                    pendingListeners.remove(listenerInfo);
+                } else if (listenerInfo.getBundleContext() == bundleContext) {
+                    LOGGER.trace("CELLAR DOSGI: skip removing listener {} with same bundle context for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
+                } else if (!listenerRegistrations.containsKey(listenerInfo)) {
+                    LOGGER.trace("CELLAR DOSGI: skip removing unregistered listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
                 } else {
-                    if (listenerInfo.getBundleContext() == bundleContext) {
-                        LOGGER.trace("CELLAR DOSGI: skip removing listener {} with same bundle context for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
-                    } else if (!listenerRegistrations.containsKey(listenerInfo)) {
-                        LOGGER.trace("CELLAR DOSGI: skip removing unregistered listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
-                    } else {
-                        // make sure we only match remote services for this listener
-                        String filter = "(&" + listenerInfo.getFilter() + "(!(" + Constants.ENDPOINT_FRAMEWORK_UUID + "=" + clusterManager.getNode().getId() + ")))";
-                        // iterate through known services and un-import them if needed
-                        Set<EndpointDescription> filteredEndpointEndpointDescriptions = new LinkedHashSet();
-                        for (EndpointDescription endpointDescription : endpointDescriptions) {
-                            if (endpointDescription.matches(filter)) {
-                                filteredEndpointEndpointDescriptions.add(endpointDescription);
-                            }
+                    // make sure we only match remote services for this listener
+                    String filter = "(&" + listenerInfo.getFilter() + "(!(" + Constants.ENDPOINT_FRAMEWORK_UUID + "=" + clusterManager.getNode().getId() + ")))";
+                    // iterate through known services and un-import them if needed
+                    Set<EndpointDescription> filteredEndpointEndpointDescriptions = new LinkedHashSet();
+                    for (EndpointDescription endpointDescription : endpointDescriptions) {
+                        if (endpointDescription.matches(filter)) {
+                            filteredEndpointEndpointDescriptions.add(endpointDescription);
                         }
-                        synchronized (listenerRegistrations) {
-                            for (EndpointDescription filteredEndpointEndpointDescription : filteredEndpointEndpointDescriptions) {
-                                Iterator<Map.Entry<ListenerInfo, String>> iterator = listenerRegistrations.entrySet().iterator();
-                                while (iterator.hasNext()) {
-                                    Map.Entry<ListenerInfo, String> entry = iterator.next();
-                                    if (entry.getKey().equals(listenerInfo) && entry.getValue().equals(filteredEndpointEndpointDescription.getId())) {
-                                        LOGGER.trace("CELLAR DOSGI: removing registered listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
-                                        iterator.remove();
-                                    }
-                                }
-                                // un-import service from registry if last listener for this filter is removed
-                                if (!listenerRegistrations.containsValue(filteredEndpointEndpointDescription.getId())) {
-                                    unImportService(filteredEndpointEndpointDescription.getId());
-                                }
-                            }
-                        }
-                        LOGGER.trace("CELLAR DOSGI: removing pending listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
-                        pendingListeners.remove(listenerInfo);
                     }
+                    synchronized (listenerRegistrations) {
+                        for (EndpointDescription filteredEndpointEndpointDescription : filteredEndpointEndpointDescriptions) {
+                            Iterator<Map.Entry<ListenerInfo, String>> iterator = listenerRegistrations.entrySet().iterator();
+                            while (iterator.hasNext()) {
+                                Map.Entry<ListenerInfo, String> entry = iterator.next();
+                                if (entry.getKey().equals(listenerInfo) && entry.getValue().equals(filteredEndpointEndpointDescription.getId())) {
+                                    LOGGER.trace("CELLAR DOSGI: removing registered listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
+                                    iterator.remove();
+                                }
+                            }
+                            // un-import service from registry if last listener for this filter is removed
+                            if (!listenerRegistrations.containsValue(filteredEndpointEndpointDescription.getId())) {
+                                unImportService(filteredEndpointEndpointDescription.getId());
+                            }
+                        }
+                    }
+                    LOGGER.trace("CELLAR DOSGI: removing pending listener {} for bundle {}", listenerInfo.getFilter(), listenerInfo.getBundleContext().getBundle().getBundleId());
+                    pendingListeners.remove(listenerInfo);
                 }
             }
         } finally {
