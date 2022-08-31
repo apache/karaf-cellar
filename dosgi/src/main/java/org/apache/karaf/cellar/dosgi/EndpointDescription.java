@@ -32,8 +32,9 @@ import java.util.Set;
 public class EndpointDescription implements MultiNode {
 
     private final String id;
-    private final Set<Node> nodes = new LinkedHashSet<Node>();
-    private final Map<String, Object> properties = new HashMap<String, Object>();
+    private final String filter;
+    private final Set<Node> nodes = new LinkedHashSet();
+    private final Map<String, Object> properties = new HashMap();
 
     /**
      * Constructor with service properties
@@ -46,27 +47,65 @@ public class EndpointDescription implements MultiNode {
         this.id = id;
         this.nodes.add(node);
         this.properties.putAll(properties);
+        this.filter = createFilterString(properties, false);
     }
 
+    /**
+     * Constructor LDAP filter string from service properties
+     * with or without object class
+     *
+     * @param properties
+     * @param includeObjectClass
+     */
+    public static String createFilterString(Map<String, Object> properties, boolean includeObjectClass) {
+        if (properties.size() == 0) {
+            return null;
+        }
+        int filterCount = 0;
+        StringBuilder filterStringBuilder = new StringBuilder();
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            if (entry.getValue() instanceof String) {
+                switch (entry.getKey()) {
+                    case org.osgi.framework.Constants.OBJECTCLASS:
+                        if (includeObjectClass) {
+                            filterStringBuilder.append("(").append(entry.getKey()).append("=").append(entry.getValue()).append(")");
+                            filterCount++;
+                        }
+                        break;
+                    default:
+                        filterStringBuilder.append("(").append(entry.getKey()).append("=").append(entry.getValue()).append(")");
+                        filterCount++;
+                        break;
+                }
+            }
+        }
+        if (filterCount == 1) {
+            return filterStringBuilder.toString();
+        } else if (filterCount > 1) {
+            return filterStringBuilder.insert(0, "(&").append(')').toString();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Tests the properties of this <code>EndpointDescription</code> against
      * the given filter using a case insensitive match.
      *
-     * @param filter The filter to test.
+     * @param filterString The filter to test.
      * @return <code>true</code> If the properties of this
      * <code>EndpointDescription</code> match the filter,
      * <code>false</code> otherwise.
      * @throws IllegalArgumentException If <code>filter</code> contains an
      *                                  invalid filter string that cannot be parsed.
      */
-    public boolean matches(String filter) {
-        Filter f;
+    public boolean matches(String filterString) {
+        Filter filter;
         try {
-            f = FrameworkUtil.createFilter(filter);
+            filter = FrameworkUtil.createFilter(filterString);
         } catch (InvalidSyntaxException e) {
-            IllegalArgumentException iae = new IllegalArgumentException(e.getMessage(), e);
-            throw iae;
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException(e.getMessage(), e);
+            throw illegalArgumentException;
         }
 
         Dictionary dictionary = new Properties();
@@ -76,14 +115,26 @@ public class EndpointDescription implements MultiNode {
             dictionary.put(key, value);
         }
         /*
-         * we can use matchCase here since properties already supports case
-         * insensitive key lookup.
+         * we can use matchCase here since properties already supports case-insensitive key lookup.
          */
-        return f.matchCase(dictionary);
+        return filter.matchCase(dictionary);
     }
 
     public String getId() {
         return id;
+    }
+
+    public String getVersion() {
+        String result = null;
+        String[] parts = id.split(Constants.SEPARATOR);
+        if (parts != null && parts.length > 0) {
+            result = parts[parts.length - 1];
+        }
+        return result;
+    }
+
+    public String getFilter() {
+        return filter;
     }
 
     public Set<Node> getNodes() {

@@ -18,6 +18,8 @@ import org.apache.karaf.cellar.core.command.ExecutionContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceFactory;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -28,27 +30,32 @@ import java.util.List;
  */
 public class RemoteServiceFactory implements ServiceFactory {
 
-    private final EndpointDescription description;
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteServiceFactory.class);
+
     private final ClusterManager clusterManager;
     private final ExecutionContext executionContext;
+    private final EndpointDescription endpointDescription;
 
-    public RemoteServiceFactory(EndpointDescription description, ClusterManager clusterManager, ExecutionContext executionContext) {
-        this.description = description;
+    public RemoteServiceFactory(ClusterManager clusterManager, ExecutionContext executionContext, EndpointDescription endpointDescription) {
         this.clusterManager = clusterManager;
         this.executionContext = executionContext;
+        this.endpointDescription = endpointDescription;
     }
 
     @Override
     public Object getService(Bundle bundle, ServiceRegistration registration) {
         ClassLoader classLoader = new RemoteServiceProxyClassLoader(bundle);
-        List<Class> interfaces = new ArrayList<Class>();
-        String interfaceName = description.getServiceClass();
+        List<Class> interfaces = new ArrayList();
+        String endpointId = endpointDescription.getId();
+        String filter = endpointDescription.getFilter();
+        String serviceClass = endpointDescription.getServiceClass();
         try {
-            interfaces.add(classLoader.loadClass(interfaceName));
+            interfaces.add(classLoader.loadClass(serviceClass));
         } catch (ClassNotFoundException e) {
             // Ignore
         }
-        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(description.getId(), interfaceName, clusterManager, executionContext);
+        LOGGER.trace("CELLAR DOSGI: Creating remote service invocation handler for service {} with filter {} having endpoint Id", serviceClass, filter, endpointId);
+        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(endpointId, filter, serviceClass, clusterManager, executionContext);
         return Proxy.newProxyInstance(classLoader, interfaces.toArray(new Class[interfaces.size()]), handler);
     }
 

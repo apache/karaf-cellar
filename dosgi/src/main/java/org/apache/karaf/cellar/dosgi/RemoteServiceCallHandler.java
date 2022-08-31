@@ -52,10 +52,10 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
     /**
      * Handle a cluster remote service call event.
      *
-     * @param event the cluster event to handle.
+     * @param remoteServiceCall the cluster event to handle.
      */
     @Override
-    public void handle(RemoteServiceCall event) {
+    public void handle(RemoteServiceCall remoteServiceCall) {
 
         // check if the handler switch is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
@@ -63,15 +63,27 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
             return;
         }
 
+        long dosgiBundleId = bundleContext.getBundle().getBundleId();
+
         Object targetService = null;
 
-        if (event != null) {
-            ServiceReference[] serviceReferences = null;
+        if (remoteServiceCall != null) {
+            ServiceReference[] serviceReferences;
+            // concatenate filter
             try {
-                serviceReferences = bundleContext.getServiceReferences(event.getServiceClass(), null);
-                if (serviceReferences != null && serviceReferences.length > 0) {
-                    targetService = bundleContext.getService(serviceReferences[0]);
-                    bundleContext.ungetService(serviceReferences[0]);
+                serviceReferences = bundleContext.getServiceReferences(remoteServiceCall.getServiceClass(), remoteServiceCall.getFilter());
+                LOGGER.trace("CELLAR DOSGI: handling remote call for service class {}", remoteServiceCall.getServiceClass());
+                if (serviceReferences != null) {
+                    for (ServiceReference serviceReference : serviceReferences) {
+                        targetService = bundleContext.getService(serviceReference);
+                        bundleContext.ungetService(serviceReference);
+                        // check if bundle is a local service and not a DOSGi remote service
+                        if (serviceReference.getBundle().getBundleId() != dosgiBundleId) {
+                            LOGGER.trace("CELLAR DOSGI: found local provider {} for service class {} and filter {}",
+                                    serviceReference.getBundle().getBundleId(), remoteServiceCall.getServiceClass(), remoteServiceCall.getFilter());
+                            break;
+                        }
+                    }
                 }
             } catch (InvalidSyntaxException e) {
                 LOGGER.error("CELLAR DOSGI: failed to lookup service", e);
@@ -79,19 +91,19 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
             if (targetService != null) {
                 Class[] classes = new Class[0];
-                if (event.getArguments() != null && event.getArguments().size() > 0) {
-                    classes = new Class[event.getArguments().size()];
+                if (remoteServiceCall.getArguments() != null && remoteServiceCall.getArguments().size() > 0) {
+                    classes = new Class[remoteServiceCall.getArguments().size()];
                     int i = 0;
-                    for (Object obj : event.getArguments()) {
+                    for (Object obj : remoteServiceCall.getArguments()) {
                         classes[i++] = obj.getClass();
                     }
                 }
 
-                RemoteServiceResult result = new RemoteServiceResult(event.getId());
-                EventProducer producer = eventTransportFactory.getEventProducer(Constants.RESULT_PREFIX + Constants.SEPARATOR + event.getSourceNode().getId() + event.getEndpointId(), false);
+                RemoteServiceResult result = new RemoteServiceResult(remoteServiceCall.getId());
+                EventProducer producer = eventTransportFactory.getEventProducer(Constants.RESULT_PREFIX + Constants.SEPARATOR + remoteServiceCall.getSourceNode().getId() + remoteServiceCall.getEndpointId(), false);
                 try {
-                    Method method = getMethod(classes, targetService, event);
-                    Object obj = method.invoke(targetService, event.getArguments().toArray());
+                    Method method = getMethod(classes, targetService, remoteServiceCall);
+                    Object obj = method.invoke(targetService, remoteServiceCall.getArguments().toArray());
                     result.setResult(obj);
                     producer.produce(result);
 
@@ -118,17 +130,17 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
      *
      * @param eventParamTypes
      * @param targetService
-     * @param event
+     * @param remoteServiceCall
      * @return a method instance from the <code>Object targetService<code/>
      * @throws NoSuchMethodException
      */
-    private Method getMethod(Class[] eventParamTypes, Object targetService, RemoteServiceCall event) throws NoSuchMethodException {
+    private Method getMethod(Class[] eventParamTypes, Object targetService, RemoteServiceCall remoteServiceCall) throws NoSuchMethodException {
 
         Method result = null;
         if (eventParamTypes.length > 0) {
             for (Method remoteMethod : targetService.getClass().getMethods()) {
                 //need to find a method with a matching name and with the same number of parameters
-                if (remoteMethod.getName().equals(event.getMethod()) && remoteMethod.getParameterTypes().length == eventParamTypes.length) {
+                if (remoteMethod.getName().equals(remoteServiceCall.getMethod()) && remoteMethod.getParameterTypes().length == eventParamTypes.length) {
                     boolean allParamsFound = true;
                     for (int i = 0; i < remoteMethod.getParameterTypes().length; i++) {
                         allParamsFound = allParamsFound && ClassUtils.isAssignable(eventParamTypes[i], remoteMethod.getParameterTypes()[i]);
@@ -142,12 +154,12 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
                 }
             }
         } else {
-            result = targetService.getClass().getMethod(event.getMethod());
+            result = targetService.getClass().getMethod(remoteServiceCall.getMethod());
         }
 
         //if method was not found go out with a bang
         if (result == null) {
-            throw new NoSuchMethodException(String.format("No match for method [%s] %s", event.getMethod(), Arrays.toString(eventParamTypes)));
+            throw new NoSuchMethodException(String.format("No match for method [%s] %s", remoteServiceCall.getMethod(), Arrays.toString(eventParamTypes)));
         }
 
         return result;

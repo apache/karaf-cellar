@@ -23,6 +23,7 @@ import java.util.List;
 public class RemoteServiceCall extends Command<RemoteServiceResult> {
 
     private String endpointId;
+    private String filter;
     private String method;
     private String serviceClass;
     private List<Object> arguments;
@@ -31,12 +32,20 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
         super(id);
     }
 
-    public List<Object> getArguments() {
-        return arguments;
+    public String getEndpointId() {
+        return endpointId;
     }
 
-    public void setArguments(List<Object> arguments) {
-        this.arguments = arguments;
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     public String getMethod() {
@@ -55,12 +64,12 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
         this.serviceClass = serviceClass;
     }
 
-    public String getEndpointId() {
-        return endpointId;
+    public List<Object> getArguments() {
+        return arguments;
     }
 
-    public void setEndpointId(String endpointId) {
-        this.endpointId = endpointId;
+    public void setArguments(List<Object> arguments) {
+        this.arguments = arguments;
     }
 
 }

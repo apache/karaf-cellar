@@ -31,12 +31,14 @@ import java.util.concurrent.CancellationException;
 public class RemoteServiceInvocationHandler implements InvocationHandler {
 
     private final String endpointId;
+    private final String filter;
     private final String serviceClass;
     private final ClusterManager clusterManager;
     private final ExecutionContext executionContext;
 
-    public RemoteServiceInvocationHandler(String endpointId, String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
+    public RemoteServiceInvocationHandler(String endpointId, String filter, String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
         this.endpointId = endpointId;
+        this.filter = filter;
         this.serviceClass = serviceClass;
         this.clusterManager = clusterManager;
         this.executionContext = executionContext;
@@ -46,6 +48,7 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
     public Object invoke(Object o, Method method, Object[] arguments) throws Throwable {
         RemoteServiceCall remoteServiceCall = new RemoteServiceCall(clusterManager.generateId());
         remoteServiceCall.setEndpointId(endpointId);
+        remoteServiceCall.setFilter(filter);
         remoteServiceCall.setMethod(method.getName());
         remoteServiceCall.setServiceClass(serviceClass);
         List argumentList = new LinkedList();
@@ -76,7 +79,7 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
                 return result.getResult();
             }
         }
-        throw new CancellationException(String.format("No remote service execution results for %s", serviceClass));
+        throw new CancellationException(String.format("No remote service execution results for service %s with endpoint Id %s", serviceClass, endpointId));
     }
 
 }
