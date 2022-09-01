@@ -48,6 +48,7 @@ public class RemoteServiceFactory implements ServiceFactory {
         List<Class> interfaces = new ArrayList();
         String endpointId = endpointDescription.getId();
         String filter = endpointDescription.getFilter();
+        String version = endpointDescription.getVersion();
         String serviceClass = endpointDescription.getServiceClass();
         try {
             interfaces.add(classLoader.loadClass(serviceClass));
@@ -55,7 +56,7 @@ public class RemoteServiceFactory implements ServiceFactory {
             // Ignore
         }
         LOGGER.trace("CELLAR DOSGI: Creating remote service invocation handler for service {} with filter {} having endpoint Id", serviceClass, filter, endpointId);
-        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(endpointId, filter, serviceClass, clusterManager, executionContext);
+        RemoteServiceInvocationHandler handler = new RemoteServiceInvocationHandler(endpointId, filter, version, serviceClass, clusterManager, executionContext);
         return Proxy.newProxyInstance(classLoader, interfaces.toArray(new Class[interfaces.size()]), handler);
     }
 

@@ -26,6 +26,8 @@ import org.apache.karaf.cellar.core.exception.RemoteServiceInvocationException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.service.cm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,19 +71,25 @@ public class RemoteServiceCallHandler extends CellarSupport implements EventHand
 
         if (remoteServiceCall != null) {
             ServiceReference[] serviceReferences;
-            // concatenate filter
             try {
-                serviceReferences = bundleContext.getServiceReferences(remoteServiceCall.getServiceClass(), remoteServiceCall.getFilter());
+                // get all service references and versions for this class and filter
+                serviceReferences = bundleContext.getAllServiceReferences(remoteServiceCall.getServiceClass(), remoteServiceCall.getFilter());
                 LOGGER.trace("CELLAR DOSGI: handling remote call for service class {}", remoteServiceCall.getServiceClass());
                 if (serviceReferences != null) {
+                    Version versionMin = remoteServiceCall.getVersion() == null ? Version.emptyVersion : new Version(remoteServiceCall.getVersion());
+                    Version versionMax = new Version(versionMin.getMajor() + 1, 0, 0);
+                    VersionRange versionRange = new VersionRange(VersionRange.LEFT_CLOSED, versionMin, versionMax, VersionRange.RIGHT_OPEN);
                     for (ServiceReference serviceReference : serviceReferences) {
-                        targetService = bundleContext.getService(serviceReference);
-                        bundleContext.ungetService(serviceReference);
-                        // check if bundle is a local service and not a DOSGi remote service
+                        // avoid remote DOSGi registered services
                         if (serviceReference.getBundle().getBundleId() != dosgiBundleId) {
-                            LOGGER.trace("CELLAR DOSGI: found local provider {} for service class {} and filter {}",
-                                    serviceReference.getBundle().getBundleId(), remoteServiceCall.getServiceClass(), remoteServiceCall.getFilter());
-                            break;
+                            // match version range
+                            if (versionRange.includes(serviceReference.getBundle().getVersion())) {
+                                LOGGER.trace("CELLAR DOSGI: found local provider {} for service class {} for version {} and filter {}",
+                                        serviceReference.getBundle().getBundleId(), remoteServiceCall.getServiceClass(), versionRange, remoteServiceCall.getFilter());
+                                targetService = bundleContext.getService(serviceReference);
+                                bundleContext.ungetService(serviceReference);
+                                break;
+                            }
                         }
                     }
                 }

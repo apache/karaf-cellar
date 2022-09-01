@@ -25,6 +25,7 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
     private String endpointId;
     private String filter;
     private String method;
+    private String version;
     private String serviceClass;
     private List<Object> arguments;
 
@@ -54,6 +55,14 @@ public class RemoteServiceCall extends Command<RemoteServiceResult> {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public String getServiceClass() {

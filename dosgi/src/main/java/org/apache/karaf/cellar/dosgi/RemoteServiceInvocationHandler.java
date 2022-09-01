@@ -32,24 +32,27 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
 
     private final String endpointId;
     private final String filter;
+    private final String version;
     private final String serviceClass;
     private final ClusterManager clusterManager;
     private final ExecutionContext executionContext;
 
-    public RemoteServiceInvocationHandler(String endpointId, String filter, String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
+    public RemoteServiceInvocationHandler(String endpointId, String filter, String version, String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
         this.endpointId = endpointId;
         this.filter = filter;
+        this.version = version;
         this.serviceClass = serviceClass;
         this.clusterManager = clusterManager;
         this.executionContext = executionContext;
     }
 
     @Override
-    public Object invoke(Object o, Method method, Object[] arguments) throws Throwable {
+    public Object invoke(Object object, Method method, Object[] arguments) throws Throwable {
         RemoteServiceCall remoteServiceCall = new RemoteServiceCall(clusterManager.generateId());
         remoteServiceCall.setEndpointId(endpointId);
         remoteServiceCall.setFilter(filter);
         remoteServiceCall.setMethod(method.getName());
+        remoteServiceCall.setVersion(version);
         remoteServiceCall.setServiceClass(serviceClass);
         List argumentList = new LinkedList();
 
