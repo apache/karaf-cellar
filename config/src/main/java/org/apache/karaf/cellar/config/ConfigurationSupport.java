@@ -226,14 +226,19 @@ public class ConfigurationSupport extends CellarSupport {
             if (storageFile == null && cfg.getProperties().get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
                 storageFile = new File(storage, cfg.getPid() + ".cfg");
             }
-            if (storageFile == null || (!storageFile.getName().endsWith(".cfg") && !storageFile.getName().endsWith(".config"))) {
+
+            String name = storageFile.getName().toLowerCase();
+            boolean isCfg = name.endsWith(".cfg") || name.endsWith(".config");
+            boolean isYml = name.endsWith(".yml") || name.endsWith(".yaml");
+
+            if (storageFile == null || (!isCfg && !isYml)) {
                 // it's a factory configuration without filename specified, cannot save
                 return;
             }
 
             String content = clusterDictionary == null ? null : (String) clusterDictionary.get(KARAF_CELLAR_CONTENT);
 
-            if (content == null) {
+            if (content == null && isCfg) {
                 org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
                 List<String> propertiesToRemove = new ArrayList<String>();
                 Set<String> set = p.keySet();
@@ -264,7 +269,7 @@ public class ConfigurationSupport extends CellarSupport {
                 // save the cfg file
                 storage.mkdirs();
                 p.save();
-            } else {
+            } else if (content != null) {
                 writeFile(storageFile, content);
             }
         } catch (Exception e) {
