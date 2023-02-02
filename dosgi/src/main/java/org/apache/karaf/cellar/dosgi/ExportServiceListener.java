@@ -195,11 +195,29 @@ public class ExportServiceListener implements ServiceListener {
                 return ((String) property).split(Constants.INTERFACE_SEPARATOR);
             if (property instanceof String[])
                 return (String[]) property;
+            if (property instanceof Class)
+                return getClassBinaryNames(serviceReference, property);
+            if (property instanceof Class[])
+                return getClassBinaryNames(serviceReference, (Object[]) property);
             if (property instanceof Collection)
-                return (String[])((Collection) property).toArray();
-            LOGGER.warn("CELLAR DOSGI: Illegal value type on property {} on service reference {}", Constants.EXPORTED_INTERFACES, serviceReference);
+                return getClassBinaryNames(serviceReference, ((Collection) property).toArray());
+            LOGGER.warn("CELLAR DOSGI: Illegal value type of property {} on service reference {}", Constants.EXPORTED_INTERFACES, serviceReference);
         }
         return Constants.NO_EXPORTED_INTERFACES;
+    }
+
+    private String[] getClassBinaryNames(ServiceReference serviceReference, Object... classes) {
+        String[] names = new String[classes.length];
+        for (int i = 0; i < classes.length; ++i) {
+            Object o = classes[i];
+            if (o instanceof String)
+                names[i] = (String) o;
+            else if (o instanceof Class)
+                names[i] = ((Class)o).getName();
+            else
+                LOGGER.warn("CELLAR DOSGI: Illegal value type of property {} on service reference {}", Constants.EXPORTED_INTERFACES, serviceReference);
+        }
+        return names;
     }
 
     /**
