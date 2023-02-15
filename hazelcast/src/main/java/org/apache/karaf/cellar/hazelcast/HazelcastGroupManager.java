@@ -67,9 +67,9 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
             Dictionary<String, Object> properties = groupsConfiguration.getProperties();
 
             // create a listener for group configuration.
-            IMap<String,Object> hazelcastGroupsConfig = getClusterGroupsConfig();
+            ReplicatedMap<String,Object> hazelcastGroupsConfig = getClusterGroupsConfig();
 
-            hazelcastGroupsConfig.addEntryListener(this, true);
+            hazelcastGroupsConfig.addEntryListener(this);
 
             if (hazelcastGroupsConfig.isEmpty()) {
                 // First one to be here - initialize hazelcast map with local configuration
@@ -175,7 +175,7 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
                             String groupKey = key.substring(0, idx);
                             getOrCreateMap(updates, groupKey).put(key, value);
                         } else {
-                            LOGGER.warn("CELLAR HAZELCAST: found group property that is not prefixed with a group name: {}. Skipping it", key); 
+                            LOGGER.warn("CELLAR HAZELCAST: found group property that is not prefixed with a group name: {}. Skipping it", key);
                         }
                     }
                 }
@@ -812,12 +812,12 @@ public class HazelcastGroupManager implements GroupManager, EntryListener<String
         return configurationAdmin.getConfiguration(Configurations.NODE, null);
     }
 
-    private IMap<Node, Set<String>> getClusterGroups() {
-        return instance.getMap(HAZELCAST_GROUPS);
+    private ReplicatedMap<Node, Set<String>> getClusterGroups() {
+        return instance.getReplicatedMap(HAZELCAST_GROUPS);
     }
 
-    private IMap<String, Object> getClusterGroupsConfig() {
-        return instance.getMap(HAZELCAST_GROUPS_CONFIG);
+    private ReplicatedMap<String, Object> getClusterGroupsConfig() {
+        return instance.getReplicatedMap(HAZELCAST_GROUPS_CONFIG);
     }
 
     private void updateConfiguration(Configuration cfg, Dictionary<String, Object> properties) throws IOException {

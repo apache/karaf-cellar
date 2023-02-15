@@ -48,7 +48,7 @@ public class HazelcastClusterManager extends HazelcastInstanceAware implements C
      */
     @Override
     public Map getMap(String mapName) {
-        return instance.getMap(mapName);
+        return instance.getReplicatedMap(mapName);
     }
 
     /**
