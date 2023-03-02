@@ -42,13 +42,14 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
     @Override
     public void handle(ClusterConfigurationEvent event) {
+        LOGGER.debug("Cluster event {}", event.getId());
 
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.debug("CELLAR CONFIG: {} switch is OFF, cluster event not handled", SWITCH_ID);
             return;
         }
-        
+
         if (groupManager == null) {
         	//in rare cases for example right after installation this happens!
         	LOGGER.error("CELLAR CONFIG: retrieved event {} while groupManager is not available yet!", event);
@@ -75,36 +76,49 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
         String pid = event.getId();
 
         if (isAllowed(event.getSourceGroup(), Constants.CATEGORY, pid, EventType.INBOUND)) {
-            Dictionary clusterDictionary = clusterConfigurations.get(pid);
-            try {
-                // update the local configuration
-                Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
-
-                if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
-                    // delete the configuration
+            synchronized (clusterConfigurations) {
+                Dictionary clusterDictionary = clusterConfigurations.get(pid);
+                try {
+                    // update the local configuration
+                    Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
                     if (localConfiguration != null) {
-                        deleteConfiguration(localConfiguration);
+                        LOGGER.debug("Local config found, pid = {}, from {}", localConfiguration.getPid(), pid);
+                    } else {
+                        LOGGER.debug("Local config not found for {}", pid);
                     }
-                } else {
-                    if (clusterDictionary != null && shouldReplicateConfig(clusterDictionary)) {
-                        if (localConfiguration == null) {
-                            // Create new configuration
-                            localConfiguration = createLocalConfiguration(pid, clusterDictionary);
-                        }
-                        Dictionary localDictionary = localConfiguration.getProperties();
-                        if (localDictionary == null)
-                            localDictionary = new Properties();
-                        localDictionary = filter(localDictionary);
-                        if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
-                            Dictionary convertedDictionary = convertPropertiesFromCluster(clusterDictionary);
 
-                            localConfiguration.update(convertedDictionary);
-                            persistConfiguration(localConfiguration, clusterDictionary);
+                    if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
+                        // delete the configuration
+                        if (localConfiguration != null) {
+                            deleteConfiguration(localConfiguration);
+                        }
+                    } else {
+                        if (clusterDictionary != null && shouldReplicateConfig(clusterDictionary)) {
+                            if (localConfiguration == null) {
+                                // Create new configuration
+                                localConfiguration = createLocalConfiguration(pid, clusterDictionary);
+                                LOGGER.debug("Local config created - local pid: {}, from {} ", localConfiguration.getPid(), pid);
+                            }
+                            Dictionary localDictionary = localConfiguration.getProperties();
+                            if (localDictionary == null) {
+                                localDictionary = new Properties();
+                            }
+                            localDictionary = filter(localDictionary);
+                            if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
+                                Dictionary convertedDictionary = convertPropertiesFromCluster(clusterDictionary);
+
+                                localConfiguration.update(convertedDictionary);
+                                persistConfiguration(localConfiguration, clusterDictionary);
+                                if (!clusterConfigurations.containsKey(localConfiguration.getPid())) {
+                                    Properties p = dictionaryToProperties(filter(localConfiguration.getProperties()));
+                                    clusterConfigurations.put(localConfiguration.getPid(), p);
+                                }
+                            }
                         }
                     }
+                } catch (Exception ex) {
+                    LOGGER.error("CELLAR CONFIG: failed to read cluster configuration", ex);
                 }
-            } catch (Exception ex) {
-                LOGGER.error("CELLAR CONFIG: failed to read cluster configuration", ex);
             }
         } else LOGGER.trace("CELLAR CONFIG: configuration PID {} is marked BLOCKED INBOUND for cluster group {}", pid, groupName);
     }
