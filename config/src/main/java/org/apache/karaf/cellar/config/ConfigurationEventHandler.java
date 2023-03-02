@@ -42,8 +42,6 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
 
     @Override
     public void handle(ClusterConfigurationEvent event) {
-        LOGGER.debug("Cluster event {}", event.getId());
-
         // check if the handler is ON
         if (this.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.debug("CELLAR CONFIG: {} switch is OFF, cluster event not handled", SWITCH_ID);
@@ -81,15 +79,10 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                 try {
                     // update the local configuration
                     Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
-                    if (localConfiguration != null) {
-                        LOGGER.debug("Local config found, pid = {}, from {}", localConfiguration.getPid(), pid);
-                    } else {
-                        LOGGER.debug("Local config not found for {}", pid);
-                    }
-
                     if (event.getType() != null && event.getType() == ConfigurationEvent.CM_DELETED) {
                         // delete the configuration
                         if (localConfiguration != null) {
+                            LOGGER.debug("Local config found, deleting it - pid = {}, from {}", localConfiguration.getPid(), pid);
                             deleteConfiguration(localConfiguration);
                         }
                     } else {
@@ -98,6 +91,8 @@ public class ConfigurationEventHandler extends ConfigurationSupport implements E
                                 // Create new configuration
                                 localConfiguration = createLocalConfiguration(pid, clusterDictionary);
                                 LOGGER.debug("Local config created - local pid: {}, from {} ", localConfiguration.getPid(), pid);
+                            } else {
+                                LOGGER.debug("Local config found, updating - pid = {}, from {}", localConfiguration.getPid(), pid);
                             }
                             Dictionary localDictionary = localConfiguration.getProperties();
                             if (localDictionary == null) {

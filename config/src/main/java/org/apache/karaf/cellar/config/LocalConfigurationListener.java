@@ -49,8 +49,6 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
             return;
         }
 
-        LOGGER.debug("Local event {}", event.getPid());
-
         // check if the producer is ON
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.debug("CELLAR CONFIG: cluster event producer is OFF");
@@ -58,6 +56,8 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
         }
 
         String pid = event.getPid();
+
+        LOGGER.debug("Local event {}, type {}", pid, event.getType());
 
         Set<Group> groups = groupManager.listLocalGroups();
 
@@ -70,18 +70,17 @@ public class LocalConfigurationListener extends ConfigurationSupport implements 
                     synchronized (clusterConfigurations) {
                         try {
                             if (event.getType() == ConfigurationEvent.CM_DELETED) {
-
                                 if (clusterConfigurations.containsKey(pid)) {
                                     String filename = (String) clusterConfigurations.get(pid).get(KARAF_CELLAR_FILENAME);
                                     List<String> matchingPids = new ArrayList<String>();
                                     for (Map.Entry<String, Properties> entry : clusterConfigurations.entrySet()) {
-                                        if (filename.equals(entry.getValue().get(KARAF_CELLAR_FILENAME))) {
+                                        if (filename.equals(entry.getValue().get(KARAF_CELLAR_FILENAME)) && entry.getValue().get(KARAF_CELLAR_REMOVED) == null) {
                                             matchingPids.add(entry.getKey());
                                         }
                                     }
                                     for (String matchingPid : matchingPids) {
                                         // update the configurations in the cluster group
-                                        LOGGER.debug("Deleting config {}", matchingPid);
+                                        LOGGER.debug("Marking config {} for deletion", matchingPid);
                                         clusterConfigurations.put(matchingPid, getDeletedConfigurationMarker(clusterConfigurations.get(matchingPid)));
                                     }
                                     // send the cluster event
