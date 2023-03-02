@@ -124,7 +124,6 @@ public class ConfigurationSupport extends CellarSupport {
                     try {
                         result.put(KARAF_CELLAR_CONTENT, readFile(new File(storage, value)));
                     } catch (IOException e) {
-                        e.printStackTrace();
                         // Cannot read file
                     }
                 } else if (!isExcludedProperty(key)) {
