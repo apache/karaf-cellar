@@ -124,8 +124,8 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                 // get configurations on the cluster to update local configurations
                 for (String pid : clusterConfigurations.keySet()) {
                     if (isAllowed(group, Constants.CATEGORY, pid, EventType.INBOUND) && shouldReplicateConfig(clusterConfigurations.get(pid))) {
-                        Dictionary clusterDictionary = clusterConfigurations.get(pid);
-                        synchronized (clusterDictionary) {
+                        synchronized (clusterConfigurations) {
+                            Dictionary clusterDictionary = clusterConfigurations.get(pid);
                             try {
                                 // update the local configuration if needed
                                 Configuration localConfiguration = findLocalConfiguration(pid, clusterDictionary);
@@ -200,7 +200,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 Configuration[] localConfigurations;
-                synchronized (clusterConfigurations) {
                     try {
                         localConfigurations = configurationAdmin.listConfigurations(null);
                         // push local configurations to the cluster
@@ -208,34 +207,37 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                             String pid = localConfiguration.getPid();
                             // check if the pid is marked as local.
                             if (isAllowed(group, Constants.CATEGORY, pid, EventType.OUTBOUND)) {
-                                Dictionary localDictionary = localConfiguration.getProperties();
-                                localDictionary = filter(localDictionary);
-                                if (!clusterConfigurations.containsKey(pid)) {
-                                    LOGGER.debug("CELLAR CONFIG: creating configuration pid {} on the cluster", pid);
-                                    // update cluster configurations
-                                    clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
-                                    // send cluster event
-                                    ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
-                                    event.setSourceGroup(group);
-                                    event.setSourceNode(clusterManager.getNode());
-                                    event.setLocal(clusterManager.getNode());
-                                    eventProducer.produce(event);
-                                } else {
-                                    Dictionary clusterDictionary = clusterConfigurations.get(pid);
-                                    if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
-                                        LOGGER.debug("CELLAR CONFIG: updating configuration pid {} on the cluster", pid);
+                                synchronized (clusterConfigurations) {
+                                    Dictionary localDictionary = localConfiguration.getProperties();
+                                    localDictionary = filter(localDictionary);
+                                    if (!clusterConfigurations.containsKey(pid)) {
+                                        LOGGER.debug("CELLAR CONFIG: creating configuration pid {} on the cluster", pid);
                                         // update cluster configurations
                                         clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
                                         // send cluster event
                                         ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
                                         event.setSourceGroup(group);
-                                        event.setLocal(clusterManager.getNode());
                                         event.setSourceNode(clusterManager.getNode());
+                                        event.setLocal(clusterManager.getNode());
                                         eventProducer.produce(event);
+                                    } else {
+                                        Dictionary clusterDictionary = clusterConfigurations.get(pid);
+                                        if (!equals(clusterDictionary, localDictionary) && canDistributeConfig(localDictionary)) {
+                                            LOGGER.debug("CELLAR CONFIG: updating configuration pid {} on the cluster", pid);
+                                            // update cluster configurations
+                                            clusterConfigurations.put(pid, dictionaryToProperties(localDictionary));
+                                            // send cluster event
+                                            ClusterConfigurationEvent event = new ClusterConfigurationEvent(pid);
+                                            event.setSourceGroup(group);
+                                            event.setLocal(clusterManager.getNode());
+                                            event.setSourceNode(clusterManager.getNode());
+                                            eventProducer.produce(event);
+                                        }
                                     }
                                 }
-                            } else
+                            } else {
                                 LOGGER.trace("CELLAR CONFIG: configuration with PID {} is marked BLOCKED OUTBOUND for cluster group {}", pid, groupName);
+                            }
                         }
                         // clean configurations on the cluster not present locally
                         for (String pid : clusterConfigurations.keySet()) {
@@ -251,7 +253,6 @@ public class ConfigurationSynchronizer extends ConfigurationSupport implements S
                     } catch (InvalidSyntaxException ex) {
                         LOGGER.error("CELLAR CONFIG: failed to read configuration (invalid filter syntax)", ex);
                     }
-                }
             } finally {
                 Thread.currentThread().setContextClassLoader(originalClassLoader);
             }
