@@ -219,19 +219,21 @@ public class ConfigurationSupport extends CellarSupport {
      * Persist a configuration to a storage.
      * @param cfg the configuration to store.
      */
-    protected void persistConfiguration(Configuration cfg, Dictionary clusterDictionary) {
+    protected void persistConfiguration(String pid, String factoryPid, Dictionary localDictionary, Dictionary clusterDictionary) {
         try {
-            File storageFile = getStorageFile(cfg.getProperties());
+            File storageFile = getStorageFile(localDictionary);
 
-            if (storageFile == null && cfg.getProperties().get(ConfigurationAdmin.SERVICE_FACTORYPID) != null) {
-                storageFile = new File(storage, cfg.getPid() + ".cfg");
+            if (storageFile == null && factoryPid != null) {
+                storageFile = new File(storage, pid + ".cfg");
             }
-
+            if( storageFile == null) {
+                return;
+            }
             String name = storageFile.getName().toLowerCase();
             boolean isCfg = name.endsWith(".cfg") || name.endsWith(".config");
             boolean isYml = name.endsWith(".yml") || name.endsWith(".yaml");
 
-            if (storageFile == null || (!isCfg && !isYml)) {
+            if (!isCfg && !isYml) {
                 // it's a factory configuration without filename specified, cannot save
                 return;
             }
@@ -239,6 +241,7 @@ public class ConfigurationSupport extends CellarSupport {
             String content = clusterDictionary == null ? null : (String) clusterDictionary.get(KARAF_CELLAR_CONTENT);
 
             if (content == null && isCfg) {
+                LOGGER.debug("Persisting file base on properties, has content was null in KARAF_CELLAR_CONTENT");
                 org.apache.felix.utils.properties.Properties p = new org.apache.felix.utils.properties.Properties(storageFile);
                 List<String> propertiesToRemove = new ArrayList<String>();
                 Set<String> set = p.keySet();
@@ -255,14 +258,13 @@ public class ConfigurationSupport extends CellarSupport {
                 for (String key : propertiesToRemove) {
                     p.remove(key);
                 }
-                Dictionary props = cfg.getProperties();
-                for (Enumeration<String> keys = props.keys(); keys.hasMoreElements(); ) {
+                for (Enumeration<String> keys = localDictionary.keys(); keys.hasMoreElements(); ) {
                     String key = keys.nextElement();
                     if (!org.osgi.framework.Constants.SERVICE_PID.equals(key)
                             && !ConfigurationAdmin.SERVICE_FACTORYPID.equals(key)
                             && !KARAF_CELLAR_FILENAME.equals(key)
                             && !FELIX_FILEINSTALL_FILENAME.equals(key)) {
-                        p.put(key, (String) props.get(key));
+                        p.put(key, (String) localDictionary.get(key));
                     }
                 }
 
@@ -270,6 +272,7 @@ public class ConfigurationSupport extends CellarSupport {
                 storage.mkdirs();
                 p.save();
             } else if (content != null) {
+                LOGGER.debug("Persisting file base on KARAF_CELLAR_CONTENT");
                 writeFile(storageFile, content);
             }
         } catch (Exception e) {
@@ -279,19 +282,21 @@ public class ConfigurationSupport extends CellarSupport {
 
     private File getStorageFile(Dictionary properties) throws IOException {
         File storageFile = null;
-        Object val = properties.get(FELIX_FILEINSTALL_FILENAME);
-        try {
-            if (val instanceof URL) {
-                storageFile = new File(((URL) val).toURI());
+        if (properties != null) {
+            Object val = properties.get(FELIX_FILEINSTALL_FILENAME);
+            try {
+                if (val instanceof URL) {
+                    storageFile = new File(((URL) val).toURI());
+                }
+                if (val instanceof URI) {
+                    storageFile = new File((URI) val);
+                }
+                if (val instanceof String) {
+                    storageFile = new File(new URL((String) val).toURI());
+                }
+            } catch (Exception e) {
+                throw new IOException(e.getMessage(), e);
             }
-            if (val instanceof URI) {
-                storageFile = new File((URI) val);
-            }
-            if (val instanceof String) {
-                storageFile = new File(new URL((String) val).toURI());
-            }
-        } catch (Exception e) {
-            throw new IOException(e.getMessage(), e);
         }
         return storageFile;
     }
