@@ -223,7 +223,7 @@ public class ConfigurationSupport extends CellarSupport {
         try {
             File storageFile = getStorageFile(localDictionary);
 
-            if (storageFile == null && factoryPid != null) {
+            if (storageFile == null && (localDictionary != null && localDictionary.get(ConfigurationAdmin.SERVICE_FACTORYPID) != null)) {
                 storageFile = new File(storage, pid + ".cfg");
             }
             if( storageFile == null) {
