@@ -61,11 +61,11 @@ The PDF manual is the right place to find any information about Karaf Cellar.
 
 Alternatively, you can also find out how to get started here:
 
-http://karaf.apache.org/subprojects/cellar
+https://karaf.apache.org/projects.html
 
 If you need more help try talking to us on our mailing lists
 
-http://karaf.apache.org/site/mailinglists.html
+https://karaf.apache.org/community.html
 
 If you find any issues with Apache Karaf, please submit reports
 with JIRA here:
@@ -76,7 +76,7 @@ We welcome contributions, and encourage you to get involved in the
 Karaf community. If you'd like to learn more about how you can
 contribute, please see:
 
-http://karaf.apache.org/index/community/contributing.html
+https://karaf.apache.org/community.html
 
 Thanks for using Apache Karaf Decanter !
 
