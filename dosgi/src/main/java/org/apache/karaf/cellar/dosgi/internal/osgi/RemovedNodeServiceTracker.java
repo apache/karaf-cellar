@@ -32,15 +32,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class RemovedNodeServiceTracker implements Runnable {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(RemovedNodeServiceTracker.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemovedNodeServiceTracker.class);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ClusterManager clusterManager;
-
     private Map<String, EndpointDescription> remoteEndpoints;
 
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
     public void init() {
+        // Creates or returns a Hazelcast distributed map instance with the specified name
         remoteEndpoints = clusterManager.getMap(Constants.REMOTE_ENDPOINTS);
         scheduler.scheduleWithFixedDelay(this, 10, 10, TimeUnit.SECONDS);
     }
@@ -60,11 +58,11 @@ public class RemovedNodeServiceTracker implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.trace("CELLAR DOSGI: running the service tracker task");
+        LOGGER.trace("CELLAR DOSGI: running the remote node tracker task");
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             if (!remoteEndpoints.isEmpty()) {
-                LOGGER.trace("CELLAR DOSGI: found {} remote endpoints", remoteEndpoints.size());
+                LOGGER.trace("CELLAR DOSGI: found {} remote endpoint(s)", remoteEndpoints.size());
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
                 final Set<Node> activeNodes = clusterManager.listNodes();
 
