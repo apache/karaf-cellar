@@ -44,7 +44,7 @@
         <hazelcast.version>3.12.8</hazelcast.version>
         <jclouds.version>2.1.2</jclouds.version>
         <joda-time.version>2.10</joda-time.version>
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
         <karaf.version>4.2.8</karaf.version>
         <osgi.version>6.0.0</osgi.version>
         <osgi.compendium.version>5.0.0</osgi.compendium.version>
