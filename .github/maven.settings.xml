@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<settings>
+    <servers>
+        <server>
+            <id>thirdparty-releases</id>
+            <username>${env.NEXUS_USERNAME}</username>
+            <password>${env.NEXUS_PASSWORD}</password>
+        </server>
+        <server>
+            <id>thirdparty-snapshots</id>
+            <username>${env.NEXUS_USERNAME}</username>
+            <password>${env.NEXUS_PASSWORD}</password>
+        </server>
+    </servers>
+    <profiles>
+        <profile>
+            <id>jahia-nexus</id>
+            <properties>
+                <altSnapshotDeploymentRepository>thirdparty-snapshots::default::https://devtools.jahia.com/nexus/content/repositories/thirdparty-snapshots</altSnapshotDeploymentRepository>
+                <altReleaseDeploymentRepository>thirdparty-releases::default::https://devtools.jahia.com/nexus/content/repositories/thirdparty-releases</altReleaseDeploymentRepository>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>jahia-nexus</activeProfile>
+    </activeProfiles>
+</settings>

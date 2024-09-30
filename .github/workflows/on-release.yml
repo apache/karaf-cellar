@@ -1,0 +1,70 @@
+# This workflow is triggered when someone create a new release in GitHub
+# This releases is Jahia exclusive
+name: Trigger Release creation
+
+on:
+  release:
+    types: [ prereleased ]
+
+jobs:
+  on-release:
+    runs-on: ubuntu-latest
+    name: Release module
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set environment variables from parameters
+        shell: bash
+        run: |
+          echo "NEXUS_USERNAME=${{ secrets.NEXUS_USERNAME }}" >> $GITHUB_ENV
+          echo "NEXUS_PASSWORD=${{ secrets.NEXUS_PASSWORD }}" >> $GITHUB_ENV
+      # Setting up the SSH agent to be able to commit back to the repository
+      # https://github.com/webfactory/ssh-agent
+      - uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.GH_SSH_PRIVATE_KEY_JAHIACI }}
+
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: 'temurin'
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+      - name: Release with Maven
+        run: |
+          echo "Check that we are on a jahia branch"
+          if [[ ! ${{ steps.extract_branch.outputs.branch }} =~ ^.*jahia.*$ ]]; then
+            echo "Not on a jahia branch, exiting"
+            exit 0
+          fi
+          TAG_VERSION="${{ github.event.release.tag_name }}" # e.g. cellar-2.20.12-jahia1
+          FINAL_RELEASE_VERSION=${TAG_VERSION:7} # extract 2.20.12-jahia1 from the tag
+          REVISION=$(echo $FINAL_RELEASE_VERSION  | grep -Eo '[0-9]+$') # extract 1 from 2.20.12-jahia1
+          NEXT_REVISION=$(expr $REVISION + 1) # add 1 to 
+          NEXT_DEVELOPMENT_VERSION="$(echo $FINAL_RELEASE_VERSION | cut -d'-' -f1)-jahia${NEXT_REVISION}"-SNAPSHOT # e.g. 2.20.12-jahia2-SNAPSHOT
+
+          echo "Variables used for the release:"
+          echo "- tag version: $TAG_VERSION"
+          echo "- final version: $FINAL_RELEASE_VERSION"
+          echo "- revision: $REVISION"
+          echo "- next revision: $NEXT_REVISION"
+          echo "- next dev version: $NEXT_DEVELOPMENT_VERSION"
+          [[ -z "$TAG_VERSION" ]] && { echo "Tag is empty" ; exit 0; }
+          [[ -z "$FINAL_RELEASE_VERSION" ]] && { echo "final release version is empty" ; exit 0; }
+          [[ -z "$REVISION" ]] && { echo "revision is empty" ; exit 0; }
+          [[ -z "$NEXT_REVISION" ]] && { echo "next revision is empty" ; exit 0; }
+          [[ -z "$NEXT_DEVELOPMENT_VERSION" ]] && { echo "next development version is empty" ; exit 0; }
+          echo "Releasing version $FINAL_RELEASE_VERSION with tag $TAG_VERSION"
+          #mvn -ntp -B -s .github/maven.settings.xml -DdryRun=false -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true -DskipLocalStaging=true \
+          #-Dtag=$TAG_VERSION -DreleaseVersion=$FINAL_RELEASE_VERSION -DdevelopmentVersion="$NEXT_DEVELOPMENT_VERSION" -DscmCommentPrefix="[skip ci] [maven-release-plugin] " \
+          #-Darguments="-DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true -DskipLocalStaging=true" release:prepare 
+          #mvn -ntp -B -s .github/maven.settings.xml -DdryRun=false -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true -DskipLocalStaging=true \
+          #-Darguments="-DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true -DskipLocalStaging=true" release:perform
