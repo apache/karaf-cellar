@@ -208,9 +208,10 @@
     </serialization>
 
     <services enable-defaults="true" />
-    
+
     <properties>
         <property name="hazelcast.max.no.heartbeat.seconds">60</property>
         <property name="hazelcast.max.no.master.confirmation.seconds">120</property>
     </properties>
 </hazelcast>
+

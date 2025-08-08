@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -50,15 +50,15 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <artifactId>osgi.core</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
+            <artifactId>osgi.cmpn</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Karaf features -->
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -91,7 +91,7 @@
                             org.apache.karaf.cellar.bundle*
                         </Export-Package>
                         <Import-Package>
-                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.slf4j;version="[2.0,3)";resolution:=optional,
                             org.apache.karaf.shell*;resolution:=optional,
                             *
                         </Import-Package>
