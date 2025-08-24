@@ -37,7 +37,7 @@
     <properties>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <easymock.version>3.6</easymock.version>
-        <fabric8.kubernetes-client.version>4.6.3</fabric8.kubernetes-client.version>
+        <fabric8.kubernetes-client.version>4.13.3</fabric8.kubernetes-client.version>
         <felix.bundlerepository.version>2.0.10</felix.bundlerepository.version>
         <felix.utils.version>1.11.0</felix.utils.version>
         <felix.webconsole.version>4.2.14</felix.webconsole.version>
