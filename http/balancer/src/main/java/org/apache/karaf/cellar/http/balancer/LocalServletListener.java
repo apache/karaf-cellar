@@ -19,8 +19,9 @@ import org.apache.karaf.cellar.core.Group;
 import org.apache.karaf.cellar.core.GroupManager;
 import org.apache.karaf.cellar.core.control.SwitchStatus;
 import org.apache.karaf.cellar.core.event.EventProducer;
-import org.ops4j.pax.web.service.spi.ServletEvent;
-import org.ops4j.pax.web.service.spi.ServletListener;
+import org.ops4j.pax.web.service.spi.model.events.ServletEventData;
+import org.ops4j.pax.web.service.spi.model.events.WebElementEvent;
+import org.ops4j.pax.web.service.spi.model.events.WebElementEventListener;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ import java.util.*;
  * Listen local node servlet event, in order to update the cluster servlet map
  * and send a cluster event to the other nodes
  */
-public class LocalServletListener implements ServletListener {
+public class LocalServletListener implements WebElementEventListener {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(LocalServletListener.class);
 
@@ -42,14 +43,21 @@ public class LocalServletListener implements ServletListener {
     private EventProducer eventProducer;
 
     @Override
-    public synchronized void servletEvent(ServletEvent servletEvent) {
+    public synchronized void registrationEvent(WebElementEvent event) {
+
+        // only listen for servlet event
+        if (!(event.getData() instanceof ServletEventData)) {
+            return;
+        }
 
         if (eventProducer.getSwitch().getStatus().equals(SwitchStatus.OFF)) {
             LOGGER.warn("CELLAR HTTP BALANCER: cluster event producer is OFF");
             return;
         }
 
-        Servlet servlet = servletEvent.getServlet();
+        ServletEventData data = (ServletEventData) event.getData();
+        Servlet servlet = data.getServlet();
+
         if (servlet != null && servlet.getClass().getName().equals(CellarBalancerProxyServlet.class.getName())) {
             LOGGER.trace("CELLAR HTTP BALANCER: ignoring CellarBalancerProxyServlet servlet event");
             return;
@@ -60,13 +68,13 @@ public class LocalServletListener implements ServletListener {
         BalancedServletUtil util = new BalancedServletUtil();
         util.setClusterManager(clusterManager);
         util.setConfigurationAdmin(configurationAdmin);
-        String alias = servletEvent.getAlias();
+        String alias = data.getAlias();
         String location = util.constructLocation(alias);
 
         for (Group group : localGroups) {
             Map<String, List<String>> clusterServlets = clusterManager.getMap(Constants.BALANCER_MAP + Configurations.SEPARATOR + group.getName());
 
-            if (servletEvent.getType() == ServletEvent.DEPLOYED) {
+            if (event.getType() == WebElementEvent.State.DEPLOYED) {
                 // update the cluster servlets
                 List<String> locations = clusterServlets.get(alias);
                 if (locations == null) {
@@ -78,15 +86,15 @@ public class LocalServletListener implements ServletListener {
                     locations.add(location);
                     clusterServlets.put(alias, locations);
                     // send cluster event
-                    ClusterBalancerEvent event = new ClusterBalancerEvent(alias, ClusterBalancerEvent.ADDING, locations);
-                    event.setSourceGroup(group);
-                    event.setSourceNode(clusterManager.getNode());
-                    event.setLocal(clusterManager.getNode());
-                    eventProducer.produce(event);
+                    ClusterBalancerEvent cellarEvent = new ClusterBalancerEvent(alias, ClusterBalancerEvent.ADDING, locations);
+                    cellarEvent.setSourceGroup(group);
+                    cellarEvent.setSourceNode(clusterManager.getNode());
+                    cellarEvent.setLocal(clusterManager.getNode());
+                    eventProducer.produce(cellarEvent);
                 } else {
                     LOGGER.debug("CELLAR HTTP BALANCER: location {} already defined for servlet {} on cluster", location, alias);
                 }
-            } else if (servletEvent.getType() == ServletEvent.UNDEPLOYED) {
+            } else if (event.getType() == WebElementEvent.State.UNDEPLOYED) {
                 List<String> locations = clusterServlets.get(alias);
                 if (locations == null)
                     locations = new ArrayList<String>();
@@ -96,11 +104,11 @@ public class LocalServletListener implements ServletListener {
                     // update cluster state
                     clusterServlets.put(alias, locations);
                     // send cluster event
-                    ClusterBalancerEvent event = new ClusterBalancerEvent(alias, ClusterBalancerEvent.REMOVING, locations);
-                    event.setSourceGroup(group);
-                    event.setSourceNode(clusterManager.getNode());
-                    event.setLocal(clusterManager.getNode());
-                    eventProducer.produce(event);
+                    ClusterBalancerEvent cellarEvent = new ClusterBalancerEvent(alias, ClusterBalancerEvent.REMOVING, locations);
+                    cellarEvent.setSourceGroup(group);
+                    cellarEvent.setSourceNode(clusterManager.getNode());
+                    cellarEvent.setLocal(clusterManager.getNode());
+                    eventProducer.produce(cellarEvent);
                 }
                 if (locations.isEmpty()) {
                     LOGGER.debug("CELLAR HTTP BALANCER: destroying servlet {} from cluster", alias);
@@ -109,7 +117,6 @@ public class LocalServletListener implements ServletListener {
                 }
             }
         }
-
     }
 
     public void setClusterManager(ClusterManager clusterManager) {

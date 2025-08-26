@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf.cellar</groupId>
         <artifactId>http</artifactId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>4.4.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -34,7 +34,7 @@
     <name>Apache Karaf :: Cellar :: HTTP :: Balancer</name>
 
     <properties>
-        <pax.web.version>4.2.0</pax.web.version>
+        <pax.web.version>8.0.33</pax.web.version>
     </properties>
 
     <dependencies>
@@ -71,13 +71,15 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.osgi.framework</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.osgi.service.cm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.util.tracker</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -110,10 +112,10 @@
                             org.apache.karaf.cellar.http.balancer*
                         </Export-Package>
                         <Import-Package>
-                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.slf4j;version="[2,3)";resolution:=optional,
                             org.apache.commons.logging;resolution:=optional,
-                            javax.servlet;version="[2,5)",
-                            org.ops4j.pax.web.service.spi;version="[4,7)",
+                            javax.servlet;version="[4,8)",
+                            org.ops4j.pax.web.service.spi;version="[8,9)",
                             *
                         </Import-Package>
                         <Private-Package>

@@ -28,7 +28,7 @@ import org.apache.karaf.util.tracker.BaseActivator;
 import org.apache.karaf.util.tracker.annotation.ProvideService;
 import org.apache.karaf.util.tracker.annotation.RequireService;
 import org.apache.karaf.util.tracker.annotation.Services;
-import org.ops4j.pax.web.service.spi.ServletListener;
+import org.ops4j.pax.web.service.spi.model.events.WebElementEventListener;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ import java.util.Hashtable;
 
 @Services(
         provides = {
-                @ProvideService(ServletListener.class),
+                @ProvideService(WebElementEventListener.class),
                 @ProvideService(EventHandler.class),
                 @ProvideService(Synchronizer.class),
                 @ProvideService(CellarHttpMBean.class)
@@ -111,7 +111,7 @@ public class Activator extends BaseActivator {
         servletListener.setGroupManager(groupManager);
         servletListener.setConfigurationAdmin(configurationAdmin);
         servletListener.setEventProducer(eventProducer);
-        register(ServletListener.class, servletListener);
+        register(WebElementEventListener.class, servletListener);
 
         LOGGER.debug("CELLAR HTTP BALANCER: register MBean");
         CellarHttpMBeanImpl mbean = new CellarHttpMBeanImpl();
