@@ -24,7 +24,7 @@
     <parent>
         <artifactId>cellar</artifactId>
         <groupId>org.apache.karaf</groupId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>4.4.8-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.karaf.cellar</groupId>
@@ -45,13 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.osgi.framework</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -69,8 +63,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -111,9 +105,9 @@
                             org.apache.karaf.cellar.webconsole*
                         </Export-Package>
                         <Import-Package>
-                            org.slf4j;version="[1.6,2)";resolution:=optional,
-                            javax.servlet*;version="[3,4)",
-                            org.apache.felix.webconsole*;version="[3,5)",
+                            org.slf4j;version="[2,3)";resolution:=optional,
+                            javax.servlet*;version="[4,8)",
+                            org.apache.felix.webconsole*;version="[8,9)",
                             *
                         </Import-Package>
                         <Embed-Dependency>json</Embed-Dependency>

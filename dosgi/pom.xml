@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.karaf</groupId>
         <artifactId>cellar</artifactId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>4.4.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -47,16 +47,16 @@
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.osgi.framework</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.compendium</artifactId>
-            <scope>provided</scope>
+            <artifactId>org.osgi.service.cm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -93,7 +93,7 @@
                             org.apache.karaf.cellar.dosgi*
                         </Export-Package>
                         <Import-Package>
-                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.slf4j;version="[2,3)";resolution:=optional,
                             org.apache.karaf.shell*;resolution:=optional,
                             *
                         </Import-Package>

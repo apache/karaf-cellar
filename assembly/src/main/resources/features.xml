@@ -149,6 +149,7 @@
         <conditional>
             <condition>webconsole</condition>
             <feature dependency="true">cellar-hazelcast</feature>
+            <feature>http</feature>
             <bundle>mvn:org.apache.karaf.cellar/org.apache.karaf.cellar.webconsole/${project.version}</bundle>
         </conditional>
     </feature>
