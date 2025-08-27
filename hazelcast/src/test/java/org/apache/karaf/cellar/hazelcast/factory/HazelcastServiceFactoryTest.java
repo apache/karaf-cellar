@@ -32,6 +32,7 @@ public class HazelcastServiceFactoryTest {
         // networks where multicast is disabled. Use a custom hazelcast.xml
         // configuration that disables multicast and enables tcp on 127.0.0.1
         System.setProperty("karaf.etc", "src/test/resources/etc");
+        System.setProperty("hazelcast.ignoreXxeProtectionFailures", "true");
         System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.setConfigurationManager(new HazelcastConfigurationManager());
@@ -50,6 +51,7 @@ public class HazelcastServiceFactoryTest {
     @Test
     public void testDefaultInstanceWithSaxon() throws InterruptedException {
         System.setProperty("karaf.etc", "src/test/resources/etc");
+        System.setProperty("hazelcast.ignoreXxeProtectionFailures", "true");
         System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
         HazelcastServiceFactory factory = new HazelcastServiceFactory();
         factory.setConfigurationManager(new HazelcastConfigurationManager());
