@@ -16,36 +16,34 @@ package org.apache.karaf.cellar.itests;
 import static org.junit.Assert.assertNotNull;
 
 import org.apache.karaf.cellar.core.ClusterManager;
+import org.apache.karaf.itests.KarafTestSupport;
+import org.apache.karaf.jaas.boot.principal.RolePrincipal;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+
+import java.util.stream.Stream;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class CellarEventTest extends CellarTestSupport {
 
     @Test
-    @Ignore
     public void testCellarEventFeatureInstall() throws Exception {
         installCellar();
-        Thread.sleep(DEFAULT_TIMEOUT);
-        ClusterManager clusterManager = getOsgiService(ClusterManager.class);
-        assertNotNull(clusterManager);
-        
-        System.err.println(executeCommand("features:install cellar-event"));
-    }
 
-    @After
-    public void tearDown() {
-        try {
-            unInstallCellar();
-        } catch (Exception ex) {
-            //Ignore
-        }
+        System.out.println(executeCommand("feature:install cellar-eventadmin", new RolePrincipal("admin")));
+        
+        String features = executeCommand("feature:list -i");
+        System.out.println(features);
+        assertContains("cellar-eventadmin", features);
     }
 
 }
