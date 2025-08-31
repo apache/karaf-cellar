@@ -13,15 +13,6 @@
  */
 package org.apache.karaf.cellar.itests;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
-
-import org.apache.karaf.cellar.core.ClusterManager;
-import org.apache.karaf.cellar.core.Node;
-import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -32,74 +23,35 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 @ExamReactorStrategy(PerClass.class)
 public class CellarFeaturesTest extends CellarTestSupport {
 
-    private static final String UNINSTALLED = "[uninstalled]";
-    private static final String INSTALLED = "[installed  ]";
-
     @Test
-    @Ignore
     public void testCellarFeaturesModule() throws InterruptedException {
         installCellar();
-        createCellarChild("child1");
-        Thread.sleep(DEFAULT_TIMEOUT);
-        ClusterManager clusterManager = getOsgiService(ClusterManager.class);
-        assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("instance:list"));
+        System.out.println("Checking if maven feature is installed locally ...");
+        String features = executeCommand("feature:list -i");
+        System.out.println(features);
+        assertContainsNot("maven", features);
 
-        String eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
+        System.out.println("Creating test cluster group ...");
+        System.out.println(executeCommand("cluster:group-create test"));
 
-        //Test feature sync - install
-        System.err.println(executeCommand("features:install eventadmin"));
-        Thread.sleep(5000);
-        eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
+        System.out.println("Adding Karaf standard features repository to the test cluster group ...");
+        System.out.println(executeCommand("cluster:feature-repo-add test mvn:org.apache.karaf.features/standard/" + System.getProperty("karaf.version") + "/xml/features"));
 
-        //Test feature sync - uninstall
-        System.err.println(executeCommand("features:uninstall eventadmin"));
-        Thread.sleep(5000);
-        eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
+        System.out.println("Installing maven feature on the test cluster group ...");
+        System.out.println(executeCommand("cluster:feature-install test maven"));
 
-        //Test feature command - install
-        System.err.println(executeCommand("cluster:feature-install default eventadmin"));
-        Thread.sleep(5000);
-        eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
+        String clusterFeatures = executeCommand("cluster:feature-list -i test");
+        System.out.println(clusterFeatures);
+        assertContains("maven", clusterFeatures);
 
-        //Test feature command - uninstall
-        System.err.println(executeCommand("cluster:feature-uninstall default eventadmin"));
-        Thread.sleep(5000);
-        eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(UNINSTALLED));
+        System.out.println("Local node join test cluster group ...");
+        System.out.println(executeCommand("cluster:group-join test"));
 
-        //Test feature command - install - before a node joins
-        System.err.println(executeCommand("cluster:feature-install testgroup eventadmin"));
-        System.err.println(executeCommand("cluster:group-set testgroup " + getNodeIdOfChild("child1")));
-        Thread.sleep(5000);
-        eventadminFeatureStatus = executeCommand("instance:connect child1 features:list | grep eventadmin");
-        System.err.println(eventadminFeatureStatus);
-        assertTrue(eventadminFeatureStatus.startsWith(INSTALLED));
-
-        Node localNode = clusterManager.getNode();
-        Set<Node> nodes = clusterManager.listNodes();
-        System.err.println(executeCommand("cluster:node-list"));
-        assertTrue("There should be at least 2 cellar nodes running", 2 <= nodes.size());
-    }
-
-    @After
-    public void tearDown() {
-        try {
-            destroyCellarChild("child1");
-            unInstallCellar();
-        } catch (Exception ex) {
-            //Ignore
-        }
+        System.out.println("Checking maven feature installed locally ...");
+        features = executeCommand("feature:list -i");
+        System.out.println(features);
+        assertContains("maven", features);
     }
 
 }

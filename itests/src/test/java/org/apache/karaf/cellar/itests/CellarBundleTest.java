@@ -17,39 +17,33 @@ import static org.junit.Assert.assertNotNull;
 
 import org.apache.karaf.cellar.core.ClusterManager;
 import org.apache.karaf.features.FeaturesService;
+import org.apache.karaf.itests.KarafTestSupport;
+import org.apache.karaf.jaas.boot.principal.RolePrincipal;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
+
+import java.util.stream.Stream;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class CellarBundleTest extends CellarTestSupport {
 
     @Test
-    @Ignore
     public void testCellarBundleModule() throws Exception {
-    	FeaturesService featuresService = getOsgiService(FeaturesService.class);
-    	assertNotNull(featuresService);
-    	
         installCellar();
-        Thread.sleep(DEFAULT_TIMEOUT);
-        ClusterManager clusterManager = getOsgiService(ClusterManager.class);
-        assertNotNull(clusterManager);
 
-        System.err.println(executeCommand("cluster:bundle-list default"));
-    }
-
-    @After
-    public void tearDown() {
-        try {
-            unInstallCellar();
-        } catch (Exception ex) {
-            //Ignore
-        }
+        String bundles = executeCommand("cluster:bundle-list default");
+        System.out.println(bundles);
+        assertNotNull(bundles);
+        assertContains("local", bundles);
     }
 
 }
