@@ -69,7 +69,7 @@ Optionally, you can install additional features.
 The cellar-event feature adds support of OSGi EventAdmin on the cluster:
 
 ----
-karaf@root()> feature:install cellar-event
+karaf@root()> feature:install cellar-eventadmin
 ----
 
 The cellar-obr feature adds support of OBR sync on the cluster:
