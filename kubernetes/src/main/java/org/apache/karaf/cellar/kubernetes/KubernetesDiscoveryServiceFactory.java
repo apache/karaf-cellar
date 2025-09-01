@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.kubernetes;
 
+import io.fabric8.kubernetes.client.Config;
 import org.apache.karaf.cellar.core.discovery.DiscoveryService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -40,9 +41,11 @@ import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIE
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_FILE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_CERTS_CLIENT_KEY_PASSPHRASE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_DISABLE_HOSTNAME_VERIFICATION;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_ENABLE_AUTOCONFIGURE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_KEYSTORE_FILE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_KEYSTORE_PASSPHRASE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_MASTER;
+import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_NAMESPACE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TLS_VERSIONS;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TRUSTSTORE_FILE;
 import static org.apache.karaf.cellar.kubernetes.ConfigKey.KUBERNETES_TRUSTSTORE_PASSPHRASE;
@@ -131,8 +134,10 @@ public class KubernetesDiscoveryServiceFactory implements ManagedServiceFactory 
                     kubernetesMaster = "http://" + kubernetesHost + ":" + kubernetesPort;
                 }
 
+                kubernetesDiscoveryService.setKubernetesAutoconfigure(KUBERNETES_ENABLE_AUTOCONFIGURE.getValue(properties));
                 kubernetesDiscoveryService.setKubernetesMaster(kubernetesMaster);
                 kubernetesDiscoveryService.setKubernetesApiVersion(KUBERNETES_API_VERSION.getValue(properties));
+                kubernetesDiscoveryService.setKubernetesNamespace(KUBERNETES_NAMESPACE.getValue(properties));
                 kubernetesDiscoveryService.setKubernetesTrustCertificates(KUBERNETES_TRUST_CERTIFICATES.getValue(properties));
                 kubernetesDiscoveryService.setKubernetesDisableHostnameVerification(KUBERNETES_DISABLE_HOSTNAME_VERIFICATION.getValue(properties));
                 kubernetesDiscoveryService.setKubernetesCertsCaFile(KUBERNETES_CERTS_CA_FILE.getValue(properties));
