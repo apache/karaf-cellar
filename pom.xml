@@ -30,12 +30,12 @@
 
     <groupId>org.apache.karaf</groupId>
     <artifactId>cellar</artifactId>
-    <version>4.4.8-SNAPSHOT</version>
+    <version>4.4.8</version>
     <packaging>pom</packaging>
     <name>Apache Karaf :: Cellar</name>
 
     <properties>
-        <project.build.outputTimestamp>1695310533</project.build.outputTimestamp>
+        <project.build.outputTimestamp>1756702292</project.build.outputTimestamp>
         <maven.compiler.target>11</maven.compiler.target>
         <fabric8.kubernetes-client.version>4.13.3</fabric8.kubernetes-client.version>
         <felix.webconsole.version>4.2.14</felix.webconsole.version>
@@ -77,7 +77,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/karaf-cellar.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/karaf-cellar.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=karaf-cellar.git;a=summary</url>
-      <tag>HEAD</tag>
+      <tag>cellar-4.4.8</tag>
   </scm>
 
     <issueManagement>
