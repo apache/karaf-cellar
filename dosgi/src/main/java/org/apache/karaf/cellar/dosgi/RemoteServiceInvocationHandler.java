@@ -23,43 +23,50 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 /**
  * Handler for cluster remote service invocation event.
  */
 public class RemoteServiceInvocationHandler implements InvocationHandler {
 
-    private String endpointId;
-    private String serviceClass;
-    private ClusterManager clusterManager;
-    private ExecutionContext executionContext;
+    private final String endpointId;
+    private final String filter;
+    private final String version;
+    private final String serviceClass;
+    private final ClusterManager clusterManager;
+    private final ExecutionContext executionContext;
 
-    public RemoteServiceInvocationHandler(String endpointId,String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
+    public RemoteServiceInvocationHandler(String endpointId, String filter, String version, String serviceClass, ClusterManager clusterManager, ExecutionContext executionContext) {
         this.endpointId = endpointId;
+        this.filter = filter;
+        this.version = version;
         this.serviceClass = serviceClass;
         this.clusterManager = clusterManager;
         this.executionContext = executionContext;
     }
 
     @Override
-    public Object invoke(Object o, Method method, Object[] arguments) throws Throwable {
+    public Object invoke(Object object, Method method, Object[] arguments) throws Throwable {
         RemoteServiceCall remoteServiceCall = new RemoteServiceCall(clusterManager.generateId());
         remoteServiceCall.setEndpointId(endpointId);
+        remoteServiceCall.setFilter(filter);
         remoteServiceCall.setMethod(method.getName());
+        remoteServiceCall.setVersion(version);
         remoteServiceCall.setServiceClass(serviceClass);
         List argumentList = new LinkedList();
 
-        if(arguments != null && arguments.length > 0) {
-            for(Object arg:arguments) {
+        if (arguments != null && arguments.length > 0) {
+            for (Object arg : arguments) {
                 argumentList.add(arg);
             }
         }
 
         remoteServiceCall.setArguments(argumentList);
-        Map<Node,RemoteServiceResult> results =  executionContext.execute(remoteServiceCall);
+        Map<Node, RemoteServiceResult> results = executionContext.execute(remoteServiceCall);
 
-        if(results != null) {
-            for(Map.Entry<Node,RemoteServiceResult> entry:results.entrySet()) {
+        if (results != null) {
+            for (Map.Entry<Node, RemoteServiceResult> entry : results.entrySet()) {
                 RemoteServiceResult result = entry.getValue();
 
                 // an exception being thrown by the remote service call must be raised locally
@@ -75,7 +82,7 @@ public class RemoteServiceInvocationHandler implements InvocationHandler {
                 return result.getResult();
             }
         }
-        return null;
+        throw new CancellationException(String.format("No remote service execution results for service %s with endpoint Id %s", serviceClass, endpointId));
     }
 
 }
