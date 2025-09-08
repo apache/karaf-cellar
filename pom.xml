@@ -40,7 +40,7 @@
         <fabric8.kubernetes-client.version>4.13.3</fabric8.kubernetes-client.version>
         <felix.webconsole.version>4.2.14</felix.webconsole.version>
         <hazelcast.version>3.12.13</hazelcast.version>
-        <jclouds.version>2.1.2</jclouds.version>
+        <jclouds.version>2.7.0</jclouds.version>
         <joda-time.version>2.14.0</joda-time.version>
         <karaf.version>4.4.8</karaf.version>
         <netflix.feign.version>8.18.0</netflix.feign.version>
