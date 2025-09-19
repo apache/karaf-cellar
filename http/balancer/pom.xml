@@ -34,7 +34,7 @@
     <name>Apache Karaf :: Cellar :: HTTP :: Balancer</name>
 
     <properties>
-        <pax.web.version>8.0.33</pax.web.version>
+        <pax.web.version>8.0.34</pax.web.version>
     </properties>
 
     <dependencies>
