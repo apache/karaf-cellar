@@ -28,18 +28,18 @@ public class ExportServiceListenerTest {
     public void testGetServiceInterfaces() throws Exception {
         System.out.println("Test Service interfaces with null service");
         Set<String> expectedResult = new LinkedHashSet<String>();
-        Set<String> result = listener.getServiceInterfaces(null,null);
-        Assert.assertEquals(expectedResult,result);
+        Set<String> result = listener.getServiceInterfaces(null, null);
+        Assert.assertEquals(expectedResult, result);
 
-        result = listener.getServiceInterfaces(null,new String[] {"*"});
-        Assert.assertEquals(expectedResult,result);
+        result = listener.getServiceInterfaces(null, new String[]{"*"});
+        Assert.assertEquals(expectedResult, result);
 
         System.out.println("Test Service interfaces with ArrayList and wildcard services");
-        result = listener.getServiceInterfaces(new ArrayList(),new String[] {"*"});
+        result = listener.getServiceInterfaces(new ArrayList(), new String[]{"*"});
         Assert.assertTrue(result.contains("java.util.List"));
 
         System.out.println("Test Service interfaces with ArrayList and List/Serializable services");
-        result = listener.getServiceInterfaces(new ArrayList(),new String[] {"java.util.List","java.io.Serializable"});
+        result = listener.getServiceInterfaces(new ArrayList(), new String[]{"java.util.List", "java.io.Serializable"});
         Assert.assertTrue(result.contains("java.util.List"));
         Assert.assertTrue(result.contains("java.io.Serializable"));
     }

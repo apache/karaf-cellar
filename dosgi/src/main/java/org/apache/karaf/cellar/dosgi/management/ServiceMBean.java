@@ -21,6 +21,6 @@ import java.util.Map;
  */
 public interface ServiceMBean {
 
-    public Map<String, List<String>> getServices();
+    Map<String, List<String>> getServices();
 
 }

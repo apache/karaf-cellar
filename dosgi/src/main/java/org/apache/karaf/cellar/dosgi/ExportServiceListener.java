@@ -30,22 +30,20 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Listener called when a new service is exported.
  */
 public class ExportServiceListener implements ServiceListener {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(ExportServiceListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExportServiceListener.class);
 
-    private ClusterManager clusterManager;
-    private EventTransportFactory eventTransportFactory;
-
-    private BundleContext bundleContext;
+    private final Map<String, EventConsumer> consumers = new HashMap<>();
     private Map<String, EndpointDescription> remoteEndpoints;
-
-    private final Map<String, EventConsumer> consumers = new HashMap<String, EventConsumer>();
-
+    private EventTransportFactory eventTransportFactory;
+    private ClusterManager clusterManager;
+    private BundleContext bundleContext;
     private Node node;
 
     public void init() {
@@ -54,7 +52,7 @@ public class ExportServiceListener implements ServiceListener {
         bundleContext.addServiceListener(this);
 
         // lookup for already exported services
-        ServiceReference[] references = null;
+        ServiceReference[] references;
         try {
             String filter = "(" + Constants.EXPORTED_INTERFACES + "=" + Constants.ALL_INTERFACES + ")";
             references = bundleContext.getServiceReferences((String) null, filter);
@@ -113,37 +111,45 @@ public class ExportServiceListener implements ServiceListener {
 
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: registering services {} in the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
-                Object service = bundleContext.getService(serviceReference);
+                Map<String, Object> serviceProperties = getServiceProperties(serviceReference, false);
 
+                LOGGER.debug("CELLAR DOSGI: registering service(s) {} in the cluster with parameter(s) {}", exportedServices, serviceProperties);
+
+                String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
+                Object service = bundleContext.getService(serviceReference);
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
-                for (String iface : exportedInterfaces) {
-                    // add endpoint description to the set.
-                    Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = iface + Constants.SEPARATOR + version.toString();
+                for (String exportedInterface : exportedInterfaces) {
+                    if (!exportedInterface.trim().isEmpty()) {
+                        // add endpoint description to the set, the endpoint ID must contain all significant service identifiers
+                        String version = serviceReference.getBundle().getVersion().toString();
+                        String endpointId = exportedInterface + concatenateServiceProperties(serviceProperties) + version;
 
-                    EndpointDescription endpoint;
+                        EndpointDescription endpoint;
 
-                    if (remoteEndpoints.containsKey(endpointId)) {
-                        endpoint = remoteEndpoints.get(endpointId);
-                        endpoint.getNodes().add(node);
-                    } else {
-                        endpoint = new EndpointDescription(endpointId, node);
-                    }
+                        if (remoteEndpoints.containsKey(endpointId)) {
+                            LOGGER.debug("CELLAR DOSGI: adding endpoint ID to existing node {}", endpointId);
+                            endpoint = remoteEndpoints.get(endpointId);
+                            endpoint.getNodes().add(node);
+                        } else {
+                            LOGGER.debug("CELLAR DOSGI: creating new endpoint ID {}", endpointId);
+                            serviceProperties.put(org.osgi.framework.Constants.OBJECTCLASS, exportedInterface);
+                            endpoint = new EndpointDescription(endpointId, node, serviceProperties);
+                        }
 
-                    remoteEndpoints.put(endpointId, endpoint);
+                        remoteEndpoints.put(endpointId, endpoint);
 
-                    // register the endpoint consumer
-                    EventConsumer consumer = consumers.get(endpointId);
-                    if (consumer == null) {
-                        consumer = eventTransportFactory.getEventConsumer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpointId, false);
-                        consumers.put(endpointId, consumer);
-                    } else if (!consumer.isConsuming()) {
-                        consumer.start();
+                        // register the endpoint consumer
+                        EventConsumer consumer = consumers.get(endpointId);
+                        if (consumer == null) {
+                            consumer = eventTransportFactory.getEventConsumer(Constants.INTERFACE_PREFIX + Constants.SEPARATOR + endpointId, false);
+                            consumers.put(endpointId, consumer);
+                        } else if (!consumer.isConsuming()) {
+                            consumer.start();
+                        }
                     }
                 }
+                bundleContext.ungetService(serviceReference);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -161,27 +167,34 @@ public class ExportServiceListener implements ServiceListener {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             String exportedServices = (String) serviceReference.getProperty(Constants.EXPORTED_INTERFACES);
             if (exportedServices != null && exportedServices.length() > 0) {
-                LOGGER.debug("CELLAR DOSGI: un-register service {} from the cluster", exportedServices);
-                String[] interfaces = exportedServices.split(Constants.INTERFACE_SEPARATOR);
+
+                Map<String, Object> serviceProperties = getServiceProperties(serviceReference, false);
+
+                LOGGER.debug("CELLAR DOSGI: un-register service(s) {} from the cluster with parameter(s) {}", exportedServices, serviceProperties);
+
+                String[] interfaces = exportedServices.split(Constants.COMMA_SEPARATOR);
                 Object service = bundleContext.getService(serviceReference);
 
                 Set<String> exportedInterfaces = getServiceInterfaces(service, interfaces);
 
-                for (String iface : exportedInterfaces) {
-                    // add endpoint description to the set.
-                    Version version = serviceReference.getBundle().getVersion();
-                    String endpointId = iface + Constants.SEPARATOR + version.toString();
+                for (String exportedInterface : exportedInterfaces) {
+                    if (!exportedInterface.trim().isEmpty()) {
+                        // add endpoint description to the set.
+                        Version version = serviceReference.getBundle().getVersion();
+                        String endpointId = exportedInterface + concatenateServiceProperties(serviceProperties) + version.toString();
 
-                    EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
-                    endpointDescription.getNodes().remove(node);
-                    // if the endpoint is used for export from other nodes too, then put it back.
-                    if (endpointDescription.getNodes().size() > 0) {
-                        remoteEndpoints.put(endpointId, endpointDescription);
+                        EndpointDescription endpointDescription = remoteEndpoints.remove(endpointId);
+                        endpointDescription.getNodes().remove(node);
+                        // if the endpoint is used for export from other nodes too, then put it back.
+                        if (endpointDescription.getNodes().size() > 0) {
+                            remoteEndpoints.put(endpointId, endpointDescription);
+                        }
+
+                        EventConsumer eventConsumer = consumers.remove(endpointId);
+                        eventConsumer.stop();
                     }
-
-                    EventConsumer eventConsumer = consumers.remove(endpointId);
-                    eventConsumer.stop();
                 }
+                bundleContext.ungetService(serviceReference);
             }
         } finally {
             Thread.currentThread().setContextClassLoader(originalClassLoader);
@@ -214,7 +227,6 @@ public class ExportServiceListener implements ServiceListener {
                         } else {
                             classLoader = ClassLoader.getSystemClassLoader();
                         }
-
                         Class clazz = classLoader.loadClass(s);
                         String ifaceName = clazz.getCanonicalName();
                         interfaceList.add(ifaceName);
@@ -225,6 +237,30 @@ public class ExportServiceListener implements ServiceListener {
             }
         }
         return interfaceList;
+    }
+
+    private Map<String, Object> getServiceProperties(ServiceReference serviceReference, boolean includeObjectClass) {
+        // sorted map for reproducible endpointId results
+        TreeMap<String, Object> serviceProperties = new TreeMap();
+        for (String key : serviceReference.getPropertyKeys()) {
+            // skip service private and instance properties
+            if (!key.startsWith(Constants.DOT) && !key.contains(Constants.SERVICE_DOT)) {
+                serviceProperties.put(key, serviceReference.getProperty(key));
+            }
+        }
+        if (!includeObjectClass) {
+            serviceProperties.remove(org.osgi.framework.Constants.OBJECTCLASS);
+        }
+        return serviceProperties;
+    }
+
+    private String concatenateServiceProperties(Map<String, Object> serviceProperties) {
+        String sortedServiceProperties = Constants.SEPARATOR;
+        if (serviceProperties.isEmpty()) return sortedServiceProperties;
+        for (Map.Entry<String, Object> entry : serviceProperties.entrySet()) {
+            sortedServiceProperties = sortedServiceProperties + entry.getKey() + "=" + entry.getValue() + Constants.SEPARATOR;
+        }
+        return sortedServiceProperties;
     }
 
     public ClusterManager getClusterManager() {
