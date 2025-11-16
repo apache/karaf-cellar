@@ -28,4 +28,5 @@ public abstract class Constants {
     public static final String EXPORTED_INTERFACES = "service.exported.interfaces";
     public static final String ENDPOINT_FRAMEWORK_UUID = "frameworkUUID";
 
+    public static final String[] NO_EXPORTED_INTERFACES = {};
 }
