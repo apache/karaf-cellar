@@ -130,3 +130,88 @@ pod.label.value=cellar
 
 In case you change the file, the discovery service will check again for new nodes. If new nodes are found, Hazelcast configuration will be
 updated and the instance restarted.
+
+===== Hazelcast configuration for Kubernetes
+
+Even within Kubernetes, the default `hazelcast.xml` will discover nodes on the network via multicast. If this is not desired, make sure to disable multicast discovery and enable TCP/IP in `hazelcast.xml`. You can also disable the port auto-increment, since each container will have a different IP, and a predictable port is preferable:
+
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+    ....
+    <network>
+        <port auto-increment="false">5701</port>
+        <join>
+            <multicast enabled="false" />
+            <tcp-ip enabled="true" connection-timeout-seconds="120" />
+        </join>
+        ....
+    </network>
+    ....
+</hazelcast>
+
+----
+
+===== Using Kubernetes service accounts
+
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/[Kubernetes service accounts] allow the processes running within pods to access the Kubernetes API server. Make sure the chosen service account has the appropriate authorization to enumerate Karaf Cellar pods in the appropriate Kubernetes namespace(s). Minimally, allow `get`, `watch` and `list` for `pod` resources:
+
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role / ClusterRole
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+
+----
+
+===== Kubernetes client automatic configuration
+
+The Kubernetes client used by Karaf Cellar supports autoconfiguration as described https://github.com/fabric8io/kubernetes-client#configuring-the-client[here]. This is turned off by default in Karaf Cellar. However, this feature can be turned on by using the setting `kubernetes.autoConfig = true` in the Karaf Cellar Kubernetes discovery service.
+
+Note: not all the options provided by the Kubernetes client are actually usable within Cellar.
+
+Here is a sample `etc/org.apache.karaf.cellar.kubernetes-mycellarcluster.cfg`:
+
+----
+pod.label.key=cellar_cluster
+pod.label.value=mycluster
+kubernetes.autoConfig=true
+----
+
+Such a setup is suitable to be dropped in a docker container intended to run in a pod configured as follows:
+
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    cellar_cluster: mycellarcluster
+...
+spec:
+  automountServiceAccountToken: true
+...
+----
+
+===== Manual Kubernetes service account configuration
+
+If the automatic configuration does not work, a good starting point to replicate the same function manually would be:
+
+----
+pod.label.key=cellar_cluster
+pod.label.value=mycluster
+
+kubernetes.master=https://$[env:KUBERNETES_SERVICE_HOST]:$[env:KUBERNETES_SERVICE_PORT_HTTPS]
+kubernetes.api.version=v1
+
+kubernetes.certs.ca.file=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+kubernetes.auth.token=$[secret:kube-secrets/kubernetes.io/serviceaccount/token]
+kubernetes.namespace=$[secret:kube-secrets/kubernetes.io/serviceaccount/namespace]
+----
+
+The above relies on Karaf's configuration admin environment and secret interpolation. See https://karaf.apache.org/manual/latest/#_secret_files[Secret files] and https://karaf.apache.org/manual/latest/#_environment_variables[Environment variables] in the Karaf manual. You will have to https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#service-account-admission-controller[configure kubernetes to mount service account secrets] at `${karaf.etc}/kube-secrets`, or, alternatively, provide a symlink towards `/var/run/secrets`, or change the corresponding setting in `config.properties`:

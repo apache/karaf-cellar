@@ -150,6 +150,7 @@ public class KubernetesDiscoveryServiceFactoryTest {
         properties.put(KUBERNETES_KEYSTORE_PASSPHRASE.propertyName, EXPECTED_KUBERNETES_KEYSTORE_PASSPHRASE);
         update();
         assertEquals(EXPECTED_KUBERNETES_API_VERSION, registeredService.getKubernetesApiVersion());
+        assertEquals(EXPECTED_KUBERNETES_API_VERSION, registeredService.getKubernetesApiVersion());
         assertEquals(Boolean.parseBoolean(EXPECTED_KUBERNETES_TRUST_CERTIFICATES), registeredService.isKubernetesTrustCertificates());
         assertEquals(Boolean.parseBoolean(EXPECTED_KUBERNETES_DISABLE_HOSTNAME_VERIFICATION), registeredService.isKubernetesDisableHostnameVerification());
         assertEquals(EXPECTED_KUBERNETES_CERTS_CA_FILE, registeredService.getKubernetesCertsCaFile());

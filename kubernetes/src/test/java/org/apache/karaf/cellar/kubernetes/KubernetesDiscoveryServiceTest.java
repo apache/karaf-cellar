@@ -29,6 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class KubernetesDiscoveryServiceTest {
     static final String EXPECTED_KUBERNETES_MASTER = "http://master/";
     static final String EXPECTED_KUBERNETES_API_VERSION = "api version";
+    static final String EXPECTED_KUBERNETES_NAMESPACE = "default";
     static final String EXPECTED_KUBERNETES_TRUST_CERTIFICATES = "true";
     static final String EXPECTED_KUBERNETES_DISABLE_HOSTNAME_VERIFICATION = "true";
     static final String EXPECTED_KUBERNETES_CERTS_CA_FILE = "certs ca file";
@@ -84,6 +85,7 @@ public class KubernetesDiscoveryServiceTest {
     public void createConfig() {
         service.setKubernetesMaster(EXPECTED_KUBERNETES_MASTER);
         service.setKubernetesApiVersion(EXPECTED_KUBERNETES_API_VERSION);
+        service.setKubernetesNamespace(EXPECTED_KUBERNETES_NAMESPACE);
         service.setKubernetesTrustCertificates(EXPECTED_KUBERNETES_TRUST_CERTIFICATES);
         service.setKubernetesDisableHostnameVerification(EXPECTED_KUBERNETES_DISABLE_HOSTNAME_VERIFICATION);
         service.setKubernetesCertsCaFile(EXPECTED_KUBERNETES_CERTS_CA_FILE);
@@ -109,6 +111,7 @@ public class KubernetesDiscoveryServiceTest {
         Config config = service.createConfig();
         assertEquals(EXPECTED_KUBERNETES_MASTER, config.getMasterUrl());
         assertEquals(EXPECTED_KUBERNETES_API_VERSION, config.getApiVersion());
+        assertEquals(EXPECTED_KUBERNETES_NAMESPACE, config.getNamespace());
         assertTrue(config.isTrustCerts());
         assertTrue(config.isDisableHostnameVerification());
         assertEquals(EXPECTED_KUBERNETES_CERTS_CA_FILE, config.getCaCertFile());

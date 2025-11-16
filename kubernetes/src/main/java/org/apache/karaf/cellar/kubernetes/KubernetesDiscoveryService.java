@@ -13,6 +13,7 @@
  */
 package org.apache.karaf.cellar.kubernetes;
 
+import io.fabric8.kubernetes.api.model.ObjectMeta;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.client.Config;
@@ -35,8 +36,11 @@ public class KubernetesDiscoveryService implements DiscoveryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KubernetesDiscoveryService.class);
 
+    private boolean kubernetesAutoconfigure;
+
     private String kubernetesMaster;
     private String kubernetesApiVersion;
+    private String kubernetesNamespace;
     private boolean kubernetesTrustCertificates;
     private boolean kubernetesDisableHostnameVerification;
     private String kubernetesCertsCaFile;
@@ -68,31 +72,46 @@ public class KubernetesDiscoveryService implements DiscoveryService {
     }
 
     Config createConfig() {
-        return new ConfigBuilder()
-                .withMasterUrl(kubernetesMaster)
-                .withApiVersion(kubernetesApiVersion)
-                .withTrustCerts(kubernetesTrustCertificates)
-                .withDisableHostnameVerification(kubernetesDisableHostnameVerification)
-                .withCaCertFile(kubernetesCertsCaFile)
-                .withCaCertData(kubernetesCertsCaData)
-                .withClientCertFile(kubernetesCertsClientFile)
-                .withClientCertData(kubernetesCertsClientData)
-                .withClientKeyFile(kubernetesCertsClientKeyFile)
-                .withClientKeyData(kubernetesCertsClientKeyData)
-                .withClientKeyAlgo(kubernetesCertsClientKeyAlgo)
-                .withClientKeyPassphrase(kubernetesCertsClientKeyPassphrase)
-                .withUsername(kubernetesAuthBasicUsername)
-                .withPassword(kubernetesAuthBasicPassword)
-                .withOauthToken(kubernetesOauthToken)
-                .withWatchReconnectInterval(kubernetesWatchReconnectInterval)
-                .withWatchReconnectLimit(kubernetesWatchReconnectLimit)
-                .withUserAgent(kubernetesUserAgent)
-                .withTlsVersions(TlsVersion.forJavaName(kubernetesTlsVersion))
-                .withTrustStoreFile(kubernetesTruststoreFile)
-                .withTrustStorePassphrase(kubernetesTruststorePassphrase)
-                .withKeyStoreFile(kubernetesKeystoreFile)
-                .withKeyStorePassphrase(kubernetesKeystorePassphrase)
-                .build();
+        TlsVersion[] tlsVersions = {};
+        if (kubernetesTlsVersion != null) {
+            tlsVersions = new TlsVersion[1];
+            tlsVersions[0] = TlsVersion.forJavaName(kubernetesTlsVersion);
+        }
+
+        Config config;
+        if (kubernetesAutoconfigure) {
+            config = Config.autoConfigure(null);
+            config.setTlsVersions(tlsVersions); // avoid NPE in io.fabric8.kubernetes.client.utils.URLUtils.join(URLUtils.java:47)
+        } else {
+            config = new ConfigBuilder()
+                    .withMasterUrl(kubernetesMaster)
+                    .withApiVersion(kubernetesApiVersion)
+                    .withNamespace(kubernetesNamespace)
+                    .withTrustCerts(kubernetesTrustCertificates)
+                    .withDisableHostnameVerification(kubernetesDisableHostnameVerification)
+                    .withCaCertFile(kubernetesCertsCaFile)
+                    .withCaCertData(kubernetesCertsCaData)
+                    .withClientCertFile(kubernetesCertsClientFile)
+                    .withClientCertData(kubernetesCertsClientData)
+                    .withClientKeyFile(kubernetesCertsClientKeyFile)
+                    .withClientKeyData(kubernetesCertsClientKeyData)
+                    .withClientKeyAlgo(kubernetesCertsClientKeyAlgo)
+                    .withClientKeyPassphrase(kubernetesCertsClientKeyPassphrase)
+                    .withUsername(kubernetesAuthBasicUsername)
+                    .withPassword(kubernetesAuthBasicPassword)
+                    .withOauthToken(kubernetesOauthToken)
+                    .withWatchReconnectInterval(kubernetesWatchReconnectInterval)
+                    .withWatchReconnectLimit(kubernetesWatchReconnectLimit)
+                    .withUserAgent(kubernetesUserAgent)
+                    .withTlsVersions(tlsVersions)
+                    .withTrustStoreFile(kubernetesTruststoreFile)
+                    .withTrustStorePassphrase(kubernetesTruststorePassphrase)
+                    .withKeyStoreFile(kubernetesKeystoreFile)
+                    .withKeyStorePassphrase(kubernetesKeystorePassphrase)
+                    .build();
+        }
+
+        return config;
     }
 
     public void init() {
@@ -121,8 +140,8 @@ public class KubernetesDiscoveryService implements DiscoveryService {
         try {
             PodList podList = kubernetesClient.pods().list();
             for (Pod pod : podList.getItems()) {
-                String value = pod.getMetadata().getLabels().get(kubernetesPodLabelKey);
-                if (value != null && !value.isEmpty() && value.equals(kubernetesPodLabelValue)) {
+                String value = getKubernetesPodLabelKey(pod);
+                if (value != null && !value.isEmpty() && value.equals(kubernetesPodLabelValue) && pod.getStatus().getPodIP() != null) {
                     members.add(pod.getStatus().getPodIP());
                 }
             }
@@ -130,6 +149,16 @@ public class KubernetesDiscoveryService implements DiscoveryService {
             LOGGER.error("CELLAR KUBERNETES: can't get pods", e);
         }
         return members;
+    }
+
+    private String getKubernetesPodLabelKey(Pod pod) {
+        ObjectMeta metadata = pod.getMetadata();
+        if (metadata == null)
+            return null;
+        Map<String, String> labels = metadata.getLabels();
+        if (labels == null)
+            return null;
+        return labels.get(kubernetesPodLabelKey);
     }
 
     @Override
@@ -145,6 +174,16 @@ public class KubernetesDiscoveryService implements DiscoveryService {
     @Override
     public void signOut() {
         // nothing to do for Kubernetes
+    }
+
+    public boolean isKubernetesAutoconfigure() {
+        return kubernetesAutoconfigure;
+    }
+
+    public void setKubernetesAutoconfigure(String kubernetesAutoconfigure) {
+        if (kubernetesAutoconfigure != null) {
+            this.kubernetesAutoconfigure = Boolean.parseBoolean(kubernetesAutoconfigure);
+        }
     }
 
     void setKubernetesClient(KubernetesClient kubernetesClient) {
@@ -181,6 +220,14 @@ public class KubernetesDiscoveryService implements DiscoveryService {
 
     public void setKubernetesApiVersion(String kubernetesApiVersion) {
         this.kubernetesApiVersion = kubernetesApiVersion;
+    }
+
+    public String getKubernetesNamespace() {
+        return kubernetesNamespace;
+    }
+
+    public void setKubernetesNamespace(String kubernetesNamespace) {
+        this.kubernetesNamespace = kubernetesNamespace;
     }
 
     public boolean isKubernetesTrustCertificates() {
