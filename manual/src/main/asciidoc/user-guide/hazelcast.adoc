@@ -35,7 +35,12 @@ The `<group/>` element in the `etc/hazelcast.xml` defines the identification of 
     </group>
 ----
 
-All Cellar nodes have to use the same name and password (to be part of the same Hazelcast cluster).
+All Cellar nodes have to use the same name and password to be part of the same Hazelcast cluster.
+
+IMPORTANT: this name/password pair is a cluster membership identifier only. In Hazelcast OSS (the
+version used by Cellar), it is *not* a security or authentication mechanism: it is not verified the
+way a real credential would be, and by itself it does not prevent an unauthorized host from joining
+the cluster. See the "Security considerations" section below for hardening recommendations.
 
 ==== Network
 
@@ -153,5 +158,35 @@ Two modes are supported:
             <iteration-count>19</iteration-count>
         </symmetric-encryption>
 ----
+
+==== Security considerations
+
+The Hazelcast group name/password shown above are *not* an authentication mechanism in Hazelcast
+OSS. They identify which logical cluster a node wants to join, but Hazelcast OSS does not verify
+or enforce this password when a node joins — it's a convenience/namespacing feature, not a security
+boundary.
+
+Combined with multicast auto-discovery (enabled by default, see the Network section above), this
+means that, by default, *any host able to reach the configured multicast group on the network
+segment can join the Cellar/Hazelcast cluster*, with no further check. Once joined, a malicious
+member can publish cluster events (bundle install/start, configuration changes, feature changes,
+etc.) that other nodes in the cluster will apply. Cellar's `groups.cfg` bundle/config/feature
+whitelist and blacklist properties are content-type filters (e.g. to exclude `*.xml` bundle
+locations) used to control what kind of cluster events a node applies during normal operation —
+they are *not* a security boundary against a malicious or unauthorized cluster member, and do not
+authenticate or restrict who can join the cluster in the first place.
+
+Recommendations:
+
+* Never expose the multicast group/network used by Hazelcast/Cellar to untrusted hosts or
+  networks. Isolate and firewall the network segment used for cluster communication.
+* For anything other than a trusted, isolated network, disable multicast
+  (`<multicast enabled="false"/>`) and use `<tcp-ip enabled="true">` with an explicit, restricted
+  list of member addresses instead of relying on auto-discovery.
+* Change the default group name/password to non-default values. This does not provide
+  authentication in Hazelcast OSS, but it does prevent accidental cross-joining between unrelated
+  Cellar clusters that both left the shipped defaults in place.
+* Enable SSL or symmetric-encryption (see above) to protect cluster traffic, and consider a
+  socket-interceptor for additional connection-level control.
 
 Cellar provides additional discovery mechanisms, See link:cloud[Discovery Service (jclouds and kubernetes)] section for details.

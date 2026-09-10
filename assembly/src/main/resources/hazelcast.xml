@@ -2,6 +2,15 @@
 <hazelcast xmlns="http://www.hazelcast.com/schema/config"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.hazelcast.com/schema/config http://www.hazelcast.com/schema/config/hazelcast-config-3.12.xsd">
+    <!--
+        SECURITY NOTE: the group name/password below are NOT an authentication mechanism in Hazelcast
+        OSS (the version used by Cellar). They only identify which cluster a node wants to join; they
+        are not verified/enforced the way a real credential would be. Any host that can reach this
+        cluster (e.g. via the multicast group below) can join it regardless of this password, and once
+        joined can push cluster events (including bundle installs) to every node. Change these values
+        and/or restrict network access to trusted hosts. See the "Security considerations" section in
+        the Cellar Hazelcast user guide documentation.
+    -->
     <group>
         <name>cellar</name>
         <password>pass</password>
@@ -17,6 +26,14 @@
             <ports>0</ports>
         </outbound-ports>
         <join>
+            <!--
+                SECURITY NOTE: multicast auto-discovery lets ANY host on this multicast group/segment
+                join the cluster with no further verification (see the note on <group/> above). For
+                anything other than a trusted, isolated network, disable multicast below in favor of
+                <tcp-ip enabled="true"> with an explicit member list, and/or isolate/firewall this
+                network from untrusted hosts. See the "Security considerations" section in the Cellar
+                Hazelcast user guide documentation.
+            -->
             <multicast enabled="true">
                 <multicast-group>224.2.2.3</multicast-group>
                 <multicast-port>54327</multicast-port>
